@@ -1,95 +1,93 @@
 <div class="flex flex-col items-center w-full h-full">
-    <div class="flex flex-col items-center w-full h-full overflow-y-auto">
-        <!-- Banner -->
-        <div class="w-full h-190" style="background-image: url('assets/images/example/banner.png')">
-            <div class="flex flex-col h-full items-start w-3xl md:mx-24 xl:mx-60">
-                <div class="w-full sm:w-110 h-full prose prose-sm bg-black">
-                    <div class="flex flex-col items-center px-10 w-full text-white">
-                        <img
-                            class="w-52 my-1.5"
-                            src="assets/images/example/logo.png"
-                            alt="Logo image">
-                        <div class="w-2/3 border-t border-gray-500"></div>
-                        <h1 class="text-white my-6">Welcome !</h1>
-                        <p class="text-center">
-                            This can be the landing or the welcome page of your application. If you have an SSR (Server Side Rendering) setup, or if you don't need to have Search engine
-                            visibility and optimizations, you can even use this page as your primary landing page.
-                        </p>
-                        <p class="text-center">
-                            This is a separate "module", it has its own directory and routing setup and also it's completely separated from the actual application. This is also a simple example of
-                            a multiple applications setup that uses the same codebase. You can have different entry points and essentially have different applications within the same codebase.
-                        </p>
-                    </div>
+    <!-- Banner -->
+    <div class="flex flex-col items-center w-full h-140 bg-no-repeat bg-cover bg-center" [style]="currentSlider === 0 ? 'background-image: url(\'assets/images/example/banner.png\')' : 'background-image: url(\'https:\/\/symplified.biz\/store-assets\/BA_PROFILEPIC_988pxX344px.jpg\')'">
+        <div class="flex flex-col relative h-full w-full max-w-280">
+            <div class="w-full sm:w-96 h-full prose prose-sm bg-black">
+                <div class="flex flex-col items-center px-10 w-full text-white">
+                    <img
+                        class="w-40 my-1.5"
+                        src="assets/images/example/logo.png"
+                        alt="Logo image">
+                    <div class="w-2/3 border-t border-gray-500"></div>
+                    <h1 class="text-white my-6">Welcome !</h1>
+                    <p class="text-center">
+                        This can be the landing or the welcome page of your application. If you have an SSR (Server Side Rendering) setup, or if you don't need to have Search engine
+                        visibility and optimizations, you can even use this page as your primary landing page.
+                    </p>
                 </div>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 justify-between w-12 mx-auto pb-2 hidden sm:flex">
+                <button (click)="showSlider(0)" [ngClass]="{'ring-primary': currentSlider === 0, 'ring-white': currentSlider !== 0}" class="bg-transparent ring rounded-full w-2 mb-4 p-2 " ></button>
+                <button (click)="showSlider(1)" [ngClass]="{'ring-primary': currentSlider === 1, 'ring-white': currentSlider !== 1}" class="bg-transparent ring rounded-full w-2 mb-4 p-2"></button>
             </div>
         </div>
-        <!-- Main menu -->
-        <div class="w-full h-auto md:py-20">
-            <div class="flex flex-col py-10 md:py-40 pl-20 items-start justify-center w-3xl md:mx-24 xl:mx-60 bg-black md:rounded-3xl"
-                 style="background-image: url('assets/images/example/discount.png')"
-            >
-                <div class="flex flex-col max-w-90 ">
-                    <h1 class="text-white leading-none font-bold text-7xl"><span class="text-orange-300">20%</span> Discount on All Items</h1>
-                    <p class="text-white pt-5 text-3xl">Discount automatically applied on all orders at check out.</p>
-                </div>
-            </div>
-
-            <div class="flex flex-col py-10 items-center w-3xl md:mx-24 xl:mx-60">
-                <p class="font-semibold text-4xl">Please select one of the Categories</p>
-                <div class="flex flex-row w-full mt-10 items-center justify-center">
-                    <div class="flex flex-col items-center">
-                        <img
-                            class="w-72 my-1.5 mx-3 rounded-xl ring-offset-4 ring-offset-white ring-2 ring-black"
-                            src="assets/images/example/entree.png"
-                            alt="Logo image">
-                        <p class="mt-4 font-bold text-4xl">Entree</p>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <img
-                            class="w-72 my-1.5 mx-3 rounded-xl ring-offset-4 ring-offset-white ring-2 ring-black"
-                            src="assets/images/example/pasta.png"
-                            alt="Logo image">
-                        <p class="mt-4 font-bold text-4xl">Pasta</p>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <img
-                            class="w-72 my-1.5 mx-3 rounded-xl ring-offset-4 ring-offset-white ring-2 ring-black"
-                            src="assets/images/example/main.png"
-                            alt="Logo image">
-                        <p class="mt-4 font-bold text-4xl">Main</p>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <img
-                            class="w-72 my-1.5 mx-3 rounded-xl ring-offset-4 ring-offset-white ring-2 ring-black"
-                            src="assets/images/example/bread_and_pizza.png"
-                            alt="Logo image">
-                        <p class="mt-4 font-bold text-4xl">Bread and Pizza</p>
-                    </div>
-                </div>
+    </div>
+    <!-- Main menu -->
+    <div class="flex flex-col items-center w-full h-auto md:py-20">
+        <div class="flex flex-col py-10 md:py-28 pl-20 items-start justify-center w-full max-w-280 bg-black md:rounded-3xl"
+                style="background-image: url('assets/images/example/discount.png')"
+        >
+            <div class="flex flex-col max-w-90">
+                <h1 class="text-white leading-none font-bold text-7xl"><span class="text-orange-300">20%</span> Discount on All Items</h1>
+                <p class="text-white pt-5 text-3xl">Discount automatically applied on all orders at check out.</p>
             </div>
         </div>
 
-        <!-- Footer -->
-        <div class="w-full h-80 bg-black">
-            <div class="flex flex-col h-full items-center w-3xl md:mx-24 xl:mx-60">
-                    <div class="flex flex-col w-full items-center px-10 text-white">
-                        <img
-                            class="w-52 my-1.5"
-                            src="assets/images/example/logo.png"
-                            alt="Logo image">
-                        <div class="w-full border-t border-gray-500"></div>
-                        <div class="flex flex-wrap w-full justify-between">
-                            <div class="flex flex-col">
-                                <p class="text-white pt-2">Contact Us: +60 13 218 0998</p>
-                                <p class="text-white pt-1">Email: info@gobonappetit.com</p>
-                            </div>
-                            <div class="flex flex-col">
-                                <p class="text-white pt-2">Location: D-G-06, Block D, Oasis Square Ara Damansara,</p>
-                                <p class="text-white pt-1">2, Jalan PJU 1A/7A Ara Damansara 47301 Petaling Jaya, Selangor, Malaysia</p>
-                            </div>
+        <div class="flex flex-col mt-10 items-center w-full max-w-280">
+            <p class="font-semibold text-3xl">Please select one of the Categories</p>
+            <div class="flex flex-row w-full mt-10 items-center justify-center">
+                <div class="flex flex-col items-center">
+                    <img
+                        class="w-52 my-1.5 mx-3 rounded-xl ring-offset-4 ring-offset-white ring-2 ring-black"
+                        src="assets/images/example/entree.png"
+                        alt="Logo image">
+                    <p class="mt-4 font-bold text-3xl">Entree</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <img
+                        class="w-52 my-1.5 mx-3 rounded-xl ring-offset-4 ring-offset-white ring-2 ring-black"
+                        src="assets/images/example/pasta.png"
+                        alt="Logo image">
+                    <p class="mt-4 font-bold text-3xl">Pasta</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <img
+                        class="w-52 my-1.5 mx-3 rounded-xl ring-offset-4 ring-offset-white ring-2 ring-black"
+                        src="assets/images/example/main.png"
+                        alt="Logo image">
+                    <p class="mt-4 font-bold text-3xl">Main</p>
+                </div>
+                <div class="flex flex-col items-center">
+                    <img
+                        class="w-52 my-1.5 mx-3 rounded-xl ring-offset-4 ring-offset-white ring-2 ring-black"
+                        src="assets/images/example/bread_and_pizza.png"
+                        alt="Logo image">
+                    <p class="mt-4 font-bold text-3xl">Bread and Pizza</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex flex-col items-center w-full bg-black">
+        <div class="flex flex-col h-full items-center w-full max-w-280">
+                <div class="flex flex-col w-full items-center px-10 text-white">
+                    <img
+                        class="w-52 my-1.5"
+                        src="assets/images/example/logo.png"
+                        alt="Logo image">
+                    <div class="w-full border-t border-gray-500"></div>
+                    <div class="flex flex-wrap w-full justify-between">
+                        <div class="flex flex-col">
+                            <p class="text-white pt-2">Contact Us: +60 13 218 0998</p>
+                            <p class="text-white pt-1">Email: info@gobonappetit.com</p>
+                        </div>
+                        <div class="flex flex-col">
+                            <p class="text-white pt-2">Location: D-G-06, Block D, Oasis Square Ara Damansara,</p>
+                            <p class="text-white pt-1">2, Jalan PJU 1A/7A Ara Damansara 47301 Petaling Jaya, Selangor, Malaysia</p>
                         </div>
                     </div>
-            </div>
+                </div>
         </div>
     </div>
 </div>
