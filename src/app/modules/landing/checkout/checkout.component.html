@@ -25,7 +25,7 @@
                             for="shopping-cart-button"
                             matRipple>
                             <mat-icon
-                                class="text-white"
+                                class="text-black"
                                 [svgIcon]="'heroicons_outline:shopping-cart'"></mat-icon>
                         </label>
                     </div>
@@ -54,7 +54,7 @@
     </div>
     
     <!-- Main menu -->
-    <div class="flex flex-col items-center w-full h-auto md:my-20">
+    <div class="flex flex-col items-center w-full h-auto my-20 sm:mx-20">
         <!-- Back button & sort -->
         <div class="flex flex-row items-center justify-between w-full max-w-280">
             <input
@@ -69,110 +69,321 @@
                 <mat-icon
                 class="mr-1 text-black"
                 [svgIcon]="'heroicons_outline:chevron-left'"></mat-icon>
-                <span class="text-black">Back</span>
+                <span class="font-bold text-black">Back</span>
             </label>
         </div>
         
         <!-- Container -->
-        <div class="flex flex-col md:flex-row justify-between mt-10 w-full md:max-w-280">
-            <!-- Checkout form -->
+        <div class="flex flex-col md:flex-row justify-between mt-10 w-full md:max-w-280 pr-10">
+            <!-- Contact information part -->
             <form
-                class="flex flex-col w-full bg-red-400"
+                class="flex flex-col w-full"
                 [formGroup]="checkoutForm"
-                #supportNgForm="ngForm">
+                >
                 <div class="flex flex-row justify-between items-center w-full">
                     <h1 class="text-2xl font-bold">Contact Information</h1>
                     <div class="flex flex-row">
                         <p class="mr-4">I want to pick my food from store</p>
                         <mat-slide-toggle
-                            [color]="'primary'">
+                            [color]="'primary'"
+                            [formControlName]="'storePickup'"
+                            (change)="allowPickupStore()"
+                            >
                         </mat-slide-toggle>
                     </div>
                 </div>
-                <div class="flex flex-row">
+                <div class="w-full flex flex-row pt-10">
                     <!-- NAQI START DISINI -->
+                    <!--First Name -->
+                    <mat-form-field class="w-1/2 pr-2" floatLabel="always">
+                        <mat-label>First Name</mat-label>
+                        <input
+                            matInput
+                            [formControlName]="'firstName'"
+                            placeholder="Enter first name"
+                            [required]="true"
+                            >
+                            <mat-error *ngIf="checkoutForm.get('firstName').hasError('required')">
+                                Required
+                            </mat-error>
+                    </mat-form-field>
+                    <!--Last Name -->
+                    <mat-form-field class="w-1/2 pl-2" floatLabel="always">
+                        <mat-label>Last Name</mat-label>
+                        <input
+                            matInput
+                            [formControlName]="'lastName'"
+                            placeholder="Enter last name"
+                            [required]="true"
+                            >
+                        <mat-error *ngIf="checkoutForm.get('lastName').hasError('required')">
+                            Required
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="w-full flex flex-row">
+                    <!-- Email Address -->
+                    <mat-form-field class="w-1/2 pr-2" floatLabel="always">
+                        <mat-label>Email Address</mat-label>
+                        <input
+                            matInput
+                            [formControlName]="'email'"
+                            placeholder="Enter email address"
+                            [required]="true"
+                            >
+                        <mat-error *ngIf="checkoutForm.get('email').hasError('required')">
+                            Required
+                        </mat-error>
+                        <mat-error *ngIf="checkoutForm.get('email').hasError('email')">
+                            Enter a valid email address
+                        </mat-error>
+                    </mat-form-field>
+                    <!--Phone Number -->
+                    <mat-form-field class="w-1/2 pl-2" floatLabel="always">
+                        <mat-label>Phone Number</mat-label>
+                        <input
+                            matInput
+                            [formControlName]="'phoneNumber'"
+                            placeholder="Enter phone number"
+                            [required]="true"
+                            >
+                        <mat-error *ngIf="checkoutForm.get('phoneNumber').hasError('required')">
+                            Required
+                        </mat-error>
+                        <mat-error *ngIf="checkoutForm.get('phoneNumber').hasError('invalidPhonenumber')">
+                            Invalid Phone number
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="w-full">
+                    <!-- Address -->
+                    <mat-form-field class="w-full" floatLabel="always" *ngIf="!checkoutForm.get('storePickup').value">
+                        <mat-label>Address</mat-label>
+                        <input
+                            matInput
+                            [formControlName]="'address'"
+                            placeholder="Enter address"
+                            [required]="true">
+                        <mat-error *ngIf="checkoutForm.get('address').hasError('required')">
+                            Required
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field 
+                        class="w-full" 
+                        floatLabel="always"
+                        *ngIf="checkoutForm.get('storePickup').value">
+                        <mat-label>Store Address</mat-label>
+                        <textarea 
+                            maxlength="500" 
+                            value="D-G-06, Block D, Oasis Square, No.2, Jalan PJU 1A/7A, Ara damansara, 47301, Petaling Jaya, Selangor, Malaysia" 
+                            matTextareaAutosize 
+                            matInput></textarea>
+                        <textarea 
+                            maxlength="500" 
+                            value="Contact Us &#13;&#10;Email: bonapetitoasis@gmail.com &#13;&#10;Phone No: 0132180998" 
+                            matTextareaAutosize 
+                            matInput></textarea>
+                    </mat-form-field>
+                </div>
+                <div class="flex flex-row w-full pb-7">
+                    <!-- Postcode -->
+                    <mat-form-field class="w-1/2 pr-2" floatLabel="always">
+                        <mat-label>Postcode</mat-label>
+                        <input
+                            matInput
+                            [formControlName]="'postcode'"
+                            [required]="true"
+                            >
+                        <mat-error *ngIf="checkoutForm.get('postcode').hasError('required')">
+                            Required
+                        </mat-error>
+                        <mat-error *ngIf="checkoutForm.get('postcode').hasError('invalidPostcode')">
+                            Invalid postcode
+                        </mat-error>
+                        <mat-error *ngIf="checkoutForm.get('postcode').hasError('minlength')">
+                            Minimum length of postcode not meet
+                        </mat-error>
+                        <mat-error *ngIf="checkoutForm.get('postcode').hasError('maxlength')">
+                            Exceed maximum length of postcode
+                        </mat-error>
+                    </mat-form-field>
+                    <!--State -->
+                    <mat-form-field class="w-1/2" floatLabel="always">
+                        <mat-label>State</mat-label>
+                        <input
+                            matInput
+                            [formControlName]="'state'"
+                            [required]="true"
+                            >
+                        <mat-error *ngIf="checkoutForm.get('state').hasError('required')">
+                            Required
+                        </mat-error>
+                    </mat-form-field>
+                    <!--City -->
+                    <mat-form-field class="w-1/2 pl-2" floatLabel="always">
+                        <mat-label>City</mat-label>
+                        <input
+                            matInput
+                            [formControlName]="'city'"
+                            [required]="true"
+                            >
+                        <mat-error *ngIf="checkoutForm.get('city').hasError('required')">
+                            Required
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="w-full">
+                    <!-- Additional info -->
+                    <mat-label class="font-light">Additional Information</mat-label>
+                    <mat-form-field class="w-full" floatLabel="always">
+                        <textarea
+                            matInput
+                            placeholder="Leave us a not e.g Pickup/delivery time or instruction"
+                            [rows]="5"
+                            maxlength="100"
+                            matTextareaAutosize></textarea>
+                        <mat-label>Order Notes (Optional)</mat-label>
+                        <input
+                            matInput
+                            >
+                    </mat-form-field>
+                    <mat-checkbox
+                        class="font-semibold">
+                        Save my information for future order
+                    </mat-checkbox>
                 </div>
             </form>
-            <!-- Search & Filter -->
-            <div class="flex flex-col bg-green-400">
-                <!-- Search -->
-                <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript min-w-64">
-                    <mat-icon
-                        class="icon-size-5"
-                        matPrefix
-                        [svgIcon]="'heroicons_solid:search'"></mat-icon>
-                    <input
-                        matInput
-                        [autocomplete]="'off'"
-                        [placeholder]="'Search products'">
-                </mat-form-field>
-
-                <!-- Filter -->
-                <div class="flex flex-col mt-3 border border-gray-300 rounded-lg p-2">
-                    <!-- Price -->
-                    <div class="flex flex-col">
-                        <div class="flex flex-row items-center justify-between w-full">
-                            <h3>Price</h3>
-                            <input
-                                id="filter-product-button"
-                                type="button"
-                                class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                mat-button>
-                            <label 
-                                class="flex items-center justify-center h-10 px-1.5 cursor-pointer mr-2"
-                                for="filter-product-button"
-                                matRipple>
-                                <mat-icon
-                                    class="icon-size-5"
-                                    [svgIcon]="'heroicons_outline:filter'"></mat-icon>
-                            </label>
+            <!-- Cart summary section -->
+            <div class="flex flex-col  min-w-90 pl-20">
+                <!-- Cart Summary -->
+                <div class="flex flex-col mt-3 border border-gray-300 rounded-lg p-5">
+                    <h1 class="text-xl font-bold py-2">Cart Summary</h1>
+                    <!-- image & payment value details -->
+                    <div class="flex flex-col border-b">
+                        <!-- images details -->
+                        <div class="h-80 leading-none overflow-y-auto">
+                            <div class="flex items-center py-2 border-b">
+                                <div class="relative flex flex-0 items-center justify-center w-16 h-16 mr-6 rounded overflow-hidden border">
+                                    <img
+                                        class="w-30"
+                                        [alt]="'Product thumbnail image'"
+                                        [src]="'https://simply-delicious-food.com/wp-content/uploads/2019/05/blt-chicken-salad-2.jpg'">
+                                    <div
+                                        class="flex items-center justify-center w-full h-full text-xs font-semibold leading-none text-center uppercase">
+                                    </div>
+                                </div>
+                                <div>
+                                    <h1 class="font-semibold">Fresh Garden Salad with Skinless Grilled Chicken</h1>
+                                    <h1 class="font-semibold text-primary">RM 16.20 x 1</h1>
+                                </div>
+                            </div>
+                            <div class="flex items-center py-2 border-b">
+                                <div class="relative flex flex-0 items-center justify-center w-16 h-16 mr-6 rounded overflow-hidden border">
+                                    <img
+                                        class="w-30"
+                                        [alt]="'Product thumbnail image'"
+                                        [src]="'https://static.vecteezy.com/system/resources/previews/002/762/426/non_2x/stir-fried-spaghetti-with-clams-and-garlic-and-chilli-photo.jpg'">
+                                    <div
+                                        class="flex items-center justify-center w-full h-full text-xs font-semibold leading-none text-center uppercase">
+                                    </div>
+                                </div>
+                                <div>
+                                    <h1 class="font-semibold">Chilli Garlic Vongole</h1>
+                                    <h1 class="font-semibold text-primary">RM 16.20 x 2</h1>
+                                </div>
+                            </div>
+                            <div class="flex items-center py-2 border-b">
+                                <div class="relative flex flex-0 items-center justify-center w-16 h-16 mr-6 rounded overflow-hidden border">
+                                    <img
+                                        class="w-30"
+                                        [alt]="'Product thumbnail image'"
+                                        [src]="'https://i.pinimg.com/originals/f6/b4/df/f6b4df1cf045e869ef672e95925ec99b.jpg'">
+                                    <div
+                                        class="flex items-center justify-center w-full h-full text-xs font-semibold leading-none text-center uppercase">
+                                    </div>
+                                </div>
+                                <div>
+                                    <h1 class="font-semibold">Latte Caramel Choclate Milkshake</h1>
+                                    <h1 class="font-semibold text-primary">RM 7.30 x 2</h1>
+                                </div>
+                            </div>
+                            <div class="flex items-center py-2 border-b">
+                                <div class="relative flex flex-0 items-center justify-center w-16 h-16 mr-6 rounded overflow-hidden border">
+                                    <img
+                                        class="w-30"
+                                        [alt]="'Product thumbnail image'"
+                                        [src]="'https://www.baycream.in/wp-content/uploads/2021/03/Dutch-Chocolate-1-819x1024.jpg'">
+                                    <div
+                                        class="flex items-center justify-center w-full h-full text-xs font-semibold leading-none text-center uppercase">
+                                    </div>
+                                </div>
+                                <div>
+                                    <h1 class="font-semibold">Haagen-Dazs Dutch Choclate Ice-cream</h1>
+                                    <h1 class="font-semibold text-primary">RM 40.90 x 2</h1>
+                                </div>
+                            </div>
+                            <div class="flex items-center py-2">
+                                <div class="relative flex flex-0 items-center justify-center w-16 h-16 mr-6 rounded overflow-hidden border">
+                                    <img
+                                        class="w-30"
+                                        [alt]="'Product thumbnail image'"
+                                        [src]="'https://www.nigella.com/assets/uploads/recipes/public-thumbnail/fishburger-5a69c6d50c78a.jpg'">
+                                    <div
+                                        class="flex items-center justify-center w-full h-full text-xs font-semibold leading-none text-center uppercase">
+                                    </div>
+                                </div>
+                                <div>
+                                    <h1 class="font-semibold">Big Meg Fish Burger</h1>
+                                    <h1 class="font-semibold text-primary">RM 23.20 x 2</h1>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- payment details -->
+                        <div class="py-4 border-t w-full">
+                            <div class="flex flex-row w-full justify-between py-2">
+                                <span class="font-semibold text-gray-500">Sub Total</span> 
+                                <span class="font-semibold">RM 95.80</span>
+                            </div>
+                            <div class="flex flex-row w-full justify-between py-2">
+                                <span class="font-semibold text-gray-500">Takeaway Fee (0%)</span> 
+                                <span class="font-semibold">RM 0.0</span>
+                            </div>
+                            <div class="flex flex-row w-full justify-between py-2">
+                                <span class="font-semibold text-gray-500">Delivery Charges</span> 
+                                <span class="font-semibold">RM 50.80</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="flex flex-col">
-                        <div class="flex flex-row items-center justify-between w-full">
-                            <h3>Categories</h3>
-                            <input
-                                id="collapse-category-button"
-                                type="button"
-                                class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                mat-button>
-                            <label 
-                                class="flex items-center justify-center h-10 px-1.5 cursor-pointer mr-2"
-                                for="collapse-category-button"
-                                matRipple>
-                                <mat-icon
-                                    class="icon-size-5"
-                                    [svgIcon]="'heroicons_outline:chevron-down'"></mat-icon>
-                            </label>
-                        </div>
-                        <div class="border-t w-full"></div>
-                        <div>
-                            <mat-checkbox
-                                class="flex items-center h-10 min-h-10 px-4"
-                                [color]="'primary'">
-                                All Products
-                            </mat-checkbox>
-                            <mat-checkbox
-                                class="flex items-center h-10 min-h-10 px-4"
-                                [color]="'primary'">
-                                Entree
-                            </mat-checkbox>
-                            <mat-checkbox
-                                class="flex items-center h-10 min-h-10 px-4"
-                                [color]="'primary'">
-                                Pasta
-                            </mat-checkbox>
-                            <mat-checkbox
-                                class="flex items-center h-10 min-h-10 px-4"
-                                [color]="'primary'">
-                                Main
-                            </mat-checkbox>
-                            <mat-checkbox
-                                class="flex items-center h-10 min-h-10 px-4"
-                                [color]="'primary'">
-                                Bread and Pizza
-                            </mat-checkbox>
-                        </div>
+                    <!-- grand total -->
+                    <div class="flex flex-row w-full justify-between py-5">
+                        <span class="font-semibold text-gray-500">Grand Total</span> 
+                        <span class="font-semibold">RM 100.00</span>
+                    </div>
+                    <!-- pay button -->
+                    <div class="flex flex-row items-center justify-center w-full max-w-280">
+                        <input
+                            id="continue-payment-button"
+                            type="button"
+                            class="absolute h-0 w-0 opacity-0 bg-green-500 pointer-events-none"
+                            mat-button>
+                        <label 
+                            class="flex items-center justify-center h-10 px-4 border rounded bg-green-500 cursor-pointer hover:bg-green-400"
+                            for="continue-payment-button"
+                            matRipple>
+                            <span class="font-semibold">Continue to Payment</span>
+                        </label>
+                        <!-- <input
+                            id="go-back-button"
+                            type="button"
+                            color="bg-green"
+                            class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                            mat-button>
+                        <label 
+                            class="flex items-center justify-center h-10 pl-2 pr-4 border rounded border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
+                            for="go-back-button"
+                            matRipple>
+                            <span class="font-bold text-black">Continue to Payment</span>
+                        </label> -->
                     </div>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription, timer } from 'rxjs';
+import { CheckoutValidationService } from './checkout.validation.service';
 
 @Component({
     selector     : 'landing-checkout',
@@ -49,13 +50,15 @@ export class LandingCheckoutComponent implements OnInit
         // Create the support form
         this.checkoutForm = this._formBuilder.group({
             // Main Store Section
-            username           : ['', Validators.required],
-            name               : ['', Validators.required],
-            email              : ['', [Validators.required, Validators.email]],
-            // phoneNumber        : ['', RegisterStoreValidationService.phonenumberValidator],
-            bankName           : ['', Validators.required],
-            bankAccountNumber  : ['', Validators.required],
-            
+            firstName           : ['', Validators.required],
+            lastName            : ['', Validators.required],
+            email               : ['', [Validators.required, Validators.email]],
+            phoneNumber         : ['', CheckoutValidationService.phonenumberValidator],
+            address             : ['', Validators.required],
+            storePickup         : [false],
+            postcode            : ['', [Validators.required, Validators.minLength(5), Validators.maxLength(10), CheckoutValidationService.postcodeValidator]],
+            state                : ['', Validators.required],
+            city                : ['', Validators.required]           
         });
 
         this.countDown = timer(0, this.tick)
@@ -82,5 +85,14 @@ export class LandingCheckoutComponent implements OnInit
     
     increment() {
         this.quantity ++;
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Public methods
+    // -----------------------------------------------------------------------------------------------------
+
+    allowPickupStore() {
+        console.log("pickup",this.checkoutForm.get('storePickup').value)
+        this.checkoutForm.get('storePickup').setValue(this.checkoutForm.get('storePickup').value);
     }
 }
