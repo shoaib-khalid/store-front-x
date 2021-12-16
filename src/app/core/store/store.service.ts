@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
 import { switchMap, take, map, tap, catchError, filter } from 'rxjs/operators';
-import { Store, StoreRegionCountries, StoreTiming, StorePagination, StoreAssets, CreateStore, StoreDeliveryDetails, StoreSelfDeliveryStateCharges, StoreDeliveryProvider, StoreCategory } from 'app/core/store/store.types';
+import { Store, StoreRegionCountry, StoreTiming, StorePagination, StoreAssets, CreateStore, StoreDeliveryDetails, StoreSelfDeliveryStateCharges, StoreDeliveryProvider, StoreCategory, StoreDiscount } from 'app/core/store/store.types';
 import { AppConfig } from 'app/config/service.config';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { takeUntil } from 'rxjs/operators';
@@ -18,8 +18,10 @@ export class StoresService
     private _stores: BehaviorSubject<Store[] | null> = new BehaviorSubject(null);
     private _storeCategory: BehaviorSubject<StoreCategory | null> = new BehaviorSubject(null);
     private _storeCategories: BehaviorSubject<StoreCategory[] | null> = new BehaviorSubject(null);
+    private _storeDiscount: BehaviorSubject<StoreDiscount | null> = new BehaviorSubject(null);
+    private _storeDiscounts: BehaviorSubject<StoreDiscount[] | null> = new BehaviorSubject(null);
     private _pagination: BehaviorSubject<StorePagination | null> = new BehaviorSubject(null);
-    private _storeRegionCountries: ReplaySubject<StoreRegionCountries[]> = new ReplaySubject<StoreRegionCountries[]>(1);
+    private _storeRegionCountries: ReplaySubject<StoreRegionCountry[]> = new ReplaySubject<StoreRegionCountry[]>(1);
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     private _currentStores: Store[] = [];
     public storeControl: FormControl = new FormControl();
@@ -120,12 +122,53 @@ export class StoresService
         // Store the value
         this._storeCategory.next(value);
     }
+
+    /**
+     * Getter for store Discounts
+     *
+    */
+    get storeDiscounts$(): Observable<StoreDiscount[]>
+    {
+        return this._storeDiscounts.asObservable();
+    }
+    
+    /**
+     * Setter for store Discounts
+     *
+     * @param value
+     */
+    set storeDiscounts(value: StoreDiscount[])
+    {
+        // Store the value
+        this._storeDiscounts.next(value);
+    }
+
+    /**
+     * Getter for store Discount
+     *
+     */
+    get storeDiscount$(): Observable<StoreDiscount>
+    {
+        return this._storeDiscount.asObservable();
+    }
+    
+    /**
+     * Setter for store Discount
+     *
+     * @param value
+     */
+    set storeDiscount(value: StoreDiscount)
+    {
+        // Store the value
+        this._storeDiscount.next(value);
+    }
  
     /**
      * Getter for store region countries
      *
      */
-    get storeRegionCountries$(): Observable<StoreRegionCountries[]>
+
+    get storeRegionCountries$(): Observable<StoreRegionCountry[]>
     {
         return this._storeRegionCountries.asObservable();
     }
@@ -298,13 +341,13 @@ export class StoresService
                     this._logging.debug("Response from StoresService (getStoreByDomainName)", response);
 
                     // Update the store
-                    this._store.next(response["data"].content);
+                    this._store.next(response["data"].content[0]);
 
                     // Update local storage
                     this.storeId = response["data"].content[0].id;
     
                     // Return the store
-                    return response["data"].content;
+                    return response["data"].content[0];
                 })
             ))
         );
@@ -510,6 +553,32 @@ export class StoresService
                 return of(storeCategory);
             })
         );
+    }
+
+    // ---------------------------
+    // Store Discount Section
+    // ---------------------------
+
+    getStoreDiscounts(): Observable<any>
+    {
+        let productService = this._apiServer.settings.apiServer.productService;
+        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
+        let accessToken = "accessToken";
+
+        const header = {  
+            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+        };
+
+        return this._httpClient.get<any>(productService + '/stores/' + this.storeId$ + '/discount/active', header)
+            .pipe(
+                tap((response) => {
+                    this._logging.debug("Response from StoresService (getStoreDiscounts)",response);
+
+                    this._storeDiscounts.next(response["data"]);
+
+                    return response["data"];
+                })
+            );
     }
 
     // ---------------------------

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
 import { StoresService } from 'app/core/store/store.service';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -25,8 +25,13 @@ export class LandingHomeResolver implements Resolve<any>
      * @param route
      * @param state
      */
+
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any>
     {
-        return this._storesService.getStoreCategories();
+        // Fork join multiple API endpoint calls to wait all of them to finish
+        return forkJoin([
+            this._storesService.getStoreCategories(),
+            this._storesService.getStoreDiscounts(),
+        ]);
     }
 }

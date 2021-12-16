@@ -5,5 +5,9 @@ export const landingCatalogueRoutes: Route[] = [
     {
         path     : '',
         component: LandingCatalogueComponent
+    },
+    {
+        path    : ':catalogue-slug',
+        component: LandingCatalogueComponent
     }
 ];

@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Router } from '@angular/router';
 import { StoresService } from 'app/core/store/store.service';
-import { StoreCategory } from 'app/core/store/store.types';
+import { Store, StoreCategory, StoreDiscount } from 'app/core/store/store.types';
 import { Subscription, timer } from 'rxjs';
 
 @Component({
@@ -14,7 +15,9 @@ import { Subscription, timer } from 'rxjs';
 })
 export class LandingHomeComponent implements OnInit
 {
+    store: Store;
     storeCategories: StoreCategory[];
+    storeDiscounts: StoreDiscount[];
 
     currentSlider = {
         active  : null,
@@ -31,18 +34,29 @@ export class LandingHomeComponent implements OnInit
      * Constructor
      */
     constructor(
-        private _storesService: StoresService
+        private _storesService: StoresService,
+        private _router: Router
     )
     {
     }
 
     ngOnInit() {
 
-        this._storesService.storeCategories$.subscribe((response)=> {
-            this.storeCategories = response;
+        this._storesService.store$
+            .subscribe((response) => {
+                this.store = response;
+            });
 
-            console.log("this.storeCategories", this.storeCategories)
-        });
+        this._storesService.storeCategories$
+            .subscribe((response) => {
+                this.storeCategories = response;
+            });
+
+        this._storesService.storeDiscounts$
+            .subscribe((response) => {
+                console.log(response);
+                this.storeDiscounts = response;
+            });
 
         // SLider
         this.countDown = timer(0, this.tick)
@@ -69,5 +83,15 @@ export class LandingHomeComponent implements OnInit
     
     showSlider(sliderNumber) {
         this.currentSlider.current = sliderNumber;
+    }
+
+    chooseCategory(id) {
+        let index = this.storeCategories.findIndex(item => item.id === id);
+        if (index > -1) {
+            let slug = this.storeCategories[index].name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '');;
+            this._router.navigate(['/catalogue/' + slug]);
+        } else {
+            console.error("Invalid category: Category not found");
+        }
     }
 }

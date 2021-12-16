@@ -38,6 +38,7 @@ export interface Store
         currentStep?: number;
         completed?: number;
     };
+    regionCountry: StoreRegionCountry,
     duration?: number;
     featured?: boolean;
     completed?: number;
@@ -82,7 +83,7 @@ export interface StoreTiming
     openTime: string;
 }
 
-export interface StoreRegionCountries
+export interface StoreRegionCountry
 {
     id: string;
     name: string;
@@ -141,6 +142,29 @@ export interface StoreAssets
     bannerUrl?: string;
     logoUrl?: string;
     storeId?: string;
+}
+
+export interface StoreDiscount
+{
+    discountName: string;
+    discountType: string;
+    endDate: string;
+    id: string;
+    isActive: string;
+    maxDiscountAmount: string;
+    normalPriceItemOnly: null
+    startDate: string;
+    storeDiscountTierList: StoreDiscountTierList[],
+    storeId: string;
+}
+
+export interface StoreDiscountTierList {
+    calculationType: string;
+    discountAmount: number;
+    endTotalSalesAmount: number;
+    id: string;
+    startTotalSalesAmount: number;
+    storeDiscountId: string;
 }
 
 export interface StorePagination
