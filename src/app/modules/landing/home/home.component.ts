@@ -4,16 +4,26 @@ import { Subscription, timer } from 'rxjs';
 @Component({
     selector     : 'landing-home',
     templateUrl  : './home.component.html',
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    styles       : [
+        /* language=SCSS */
+        `
+        `]
 })
 export class LandingHomeComponent implements OnInit
 {
-    currentSlider: number = 0;
+    currentSlider = {
+        active  : null,
+        previous: null,
+        next    : null,
+        current : 0,
+        last    : 4
+    };
     countDown:Subscription;
     counter = 1800;
-    tick = 10000;
+    tick = 5000;
     
-    /**
+    /**S
      * Constructor
      */
     constructor()
@@ -21,14 +31,20 @@ export class LandingHomeComponent implements OnInit
     }
 
     ngOnInit() {
+
+        // SLider
         this.countDown = timer(0, this.tick)
-        .subscribe(() => {
-            if (this.currentSlider >= 1) {
-                this.currentSlider = 0;
-            } else {
-                this.currentSlider++;
-            }
-        })
+            .subscribe(() => {
+                if (this.currentSlider.current <= this.currentSlider.last) {
+                    this.currentSlider.active   = "translate-x-0";
+                    this.currentSlider.previous = "-translate-x-full",
+                    this.currentSlider.next     = "translate-x-full";
+                    this.currentSlider.current  = this.currentSlider.current + 1;
+                    if (this.currentSlider.current > this.currentSlider.last) {
+                        this.currentSlider.current  = 1;
+                    }
+                }
+            });
     }
     
     ngOnDestroy(){
@@ -36,6 +52,6 @@ export class LandingHomeComponent implements OnInit
     }
     
     showSlider(sliderNumber) {
-        this.currentSlider = sliderNumber;
+        this.currentSlider.current = sliderNumber;
     }
 }
