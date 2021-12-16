@@ -2,7 +2,7 @@ import { Route } from '@angular/router';
 import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
-import { InitialDataResolver } from 'app/app.resolvers';
+import { InitialDataResolver, StoreResolver } from 'app/app.resolvers';
 
 // @formatter:off
 // tslint:disable:max-line-length
@@ -57,6 +57,9 @@ export const appRoutes: Route[] = [
         component  : LayoutComponent,
         data: {
             layout: 'empty'
+        },
+        resolve    : {
+            getStoreInfo: StoreResolver
         },
         children   : [
             {path: 'home', loadChildren: () => import('app/modules/landing/home/home.module').then(m => m.LandingHomeModule)},
