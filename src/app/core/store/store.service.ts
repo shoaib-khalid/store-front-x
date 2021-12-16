@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
 import { switchMap, take, map, tap, catchError, filter } from 'rxjs/operators';
-import { Store, StoreRegionCountries, StoreTiming, StorePagination, StoreAssets, CreateStore, StoreDeliveryDetails, StoreSelfDeliveryStateCharges, StoreDeliveryProvider } from 'app/core/store/store.types';
+import { Store, StoreRegionCountries, StoreTiming, StorePagination, StoreAssets, CreateStore, StoreDeliveryDetails, StoreSelfDeliveryStateCharges, StoreDeliveryProvider, StoreCategory } from 'app/core/store/store.types';
 import { AppConfig } from 'app/config/service.config';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { takeUntil } from 'rxjs/operators';
@@ -16,6 +16,8 @@ export class StoresService
 {
     private _store: BehaviorSubject<Store | null> = new BehaviorSubject(null);
     private _stores: BehaviorSubject<Store[] | null> = new BehaviorSubject(null);
+    private _storeCategory: BehaviorSubject<StoreCategory | null> = new BehaviorSubject(null);
+    private _storeCategories: BehaviorSubject<StoreCategory[] | null> = new BehaviorSubject(null);
     private _pagination: BehaviorSubject<StorePagination | null> = new BehaviorSubject(null);
     private _storeRegionCountries: ReplaySubject<StoreRegionCountries[]> = new ReplaySubject<StoreRegionCountries[]>(1);
     private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -79,7 +81,46 @@ export class StoresService
         this._stores.next(value);
     }
 
+    /**
+     * Getter for store Categories
+     *
+    */
+    get storeCategories$(): Observable<StoreCategory[]>
+    {
+        return this._storeCategories.asObservable();
+    }
+    
+    /**
+     * Setter for store Categories
+     *
+     * @param value
+     */
+    set storeCategories(value: StoreCategory[])
+    {
+        // Store the value
+        this._storeCategories.next(value);
+    }
 
+    /**
+     * Getter for store Category
+     *
+    */
+    get storeCategory$(): Observable<StoreCategory>
+    {
+        return this._storeCategory.asObservable();
+    }
+    
+    /**
+     * Setter for store Category
+     *
+     * @param value
+     */
+    set storeCategory(value: StoreCategory)
+    {
+        // Store the value
+        this._storeCategory.next(value);
+    }
+ 
     /**
      * Getter for store region countries
      *
@@ -215,9 +256,6 @@ export class StoresService
                 // Find the store
                 const store = stores.find(item => item.id === id) || null;
 
-                // set this
-                this.storeControl.setValue(store);
-
                 this._logging.debug("Response from StoresService (getStoresById)",store);
 
                 // Update the store
@@ -260,10 +298,13 @@ export class StoresService
                     this._logging.debug("Response from StoresService (getStoreByDomainName)", response);
 
                     // Update the store
-                    this._store.next(response);
+                    this._store.next(response["data"].content);
+
+                    // Update local storage
+                    this.storeId = response["data"].content[0].id;
     
                     // Return the store
-                    return store;
+                    return response["data"].content;
                 })
             ))
         );
@@ -408,6 +449,67 @@ export class StoresService
             .subscribe((storeList: Store[]) => {
                 this.storeId = storeList[0].id;
             });  
+    }
+
+    // ---------------------------
+    // Store Categories Section
+    // ---------------------------
+
+    getStoreCategories(): Observable<any>
+    {
+        let productService = this._apiServer.settings.apiServer.productService;
+        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
+        let accessToken = "accessToken";
+
+        const header = {  
+            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            params: {
+                storeId: this.storeId$
+            }
+        };
+
+        return this._httpClient.get<any>(productService + '/store-categories', header)
+            .pipe(
+                tap((response) => {
+                    this._logging.debug("Response from StoresService (getStoreCategories)",response);
+
+                    this._storeCategories.next(response["data"].content);
+
+                    return response["data"].content;
+                })
+            );
+    }
+
+    getStoreCategoriesById(id: string): Observable<StoreCategory>
+    {
+        return this._storeCategories.pipe(
+            take(1),
+            map((storeCategries) => {
+
+                // Find the storeCategory 
+                const storeCategory = storeCategries.find(item => item.id === id) || null;
+
+                // set this
+                this.storeControl.setValue(storeCategory);
+
+                this._logging.debug("Response from StoresService (getStoresById)",storeCategory);
+
+                // Update the storeCategory
+                this._storeCategory.next(storeCategory);
+
+                // Return the store
+                return storeCategory;
+            }),
+            switchMap((storeCategory) => {
+
+                if ( !storeCategory )
+                {
+                    return throwError('Could not found store with id of ' + id + '!');
+                }
+
+                return of(storeCategory);
+            })
+        );
     }
 
     // ---------------------------

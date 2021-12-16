@@ -77,38 +77,16 @@
                             [svgIcon]="'heroicons_solid:chevron-left'"></mat-icon>
                     </label>
                 </div>
-                <div class="flex flex-col group items-center cursor-pointer">
-                    <div class="h-5 group-hover:hidden"></div>
-                    <img
-                        class="w-52 my-1.5 mx-3 rounded-xl ring-offset-4 ring-offset-white ring-2 ring-black group-hover:ring-primary"
-                        src="assets/images/example/entree.png"
-                        alt="Logo image">
-                    <p class="mt-4 font-bold text-3xl group-hover:text-primary">Entree</p>
-                </div>
-                <div class="flex flex-col group items-center cursor-pointer">
-                    <div class="h-5 group-hover:hidden"></div>
-                    <img
-                        class="w-52 my-1.5 mx-3 rounded-xl ring-offset-4 ring-offset-white ring-2 ring-black group-hover:ring-primary"
-                        src="assets/images/example/pasta.png"
-                        alt="Logo image">
-                    <p class="mt-4 font-bold text-3xl group-hover:text-primary">Pasta</p>
-                </div>
-                <div class="flex flex-col group items-center cursor-pointer">
-                    <div class="h-5 group-hover:hidden"></div>
-                    <img
-                        class="w-52 my-1.5 mx-3 rounded-xl ring-offset-4 ring-offset-white ring-2 ring-black group-hover:ring-primary"
-                        src="assets/images/example/main.png"
-                        alt="Logo image">
-                    <p class="mt-4 font-bold text-3xl group-hover:text-primary">Main</p>
-                </div>
-                <div class="flex flex-col group items-center cursor-pointer">
-                    <div class="h-5 group-hover:hidden"></div>
-                    <img
-                        class="w-52 my-1.5 mx-3 rounded-xl ring-offset-4 ring-offset-white ring-2 ring-black group-hover:ring-primary"
-                        src="assets/images/example/bread_and_pizza.png"
-                        alt="Logo image">
-                    <p class="mt-4 font-bold text-3xl group-hover:text-primary">Bread and Pizza</p>
-                </div>
+                <ng-container *ngFor="let category of storeCategories">
+                    <div class="flex flex-col group items-center cursor-pointer">
+                        <div class="h-5 group-hover:hidden"></div>
+                        <img
+                            class="w-52 h-32 my-1.5 mx-3 rounded-xl ring-offset-4 ring-offset-white ring-2 ring-black group-hover:ring-primary"
+                            [src]="category.thumbnailUrl"
+                            alt="Logo image">
+                        <p class="mt-4 font-bold text-3xl group-hover:text-primary">{{category.name}}</p>
+                    </div>
+                </ng-container>
                 <div class="ml-5">
                     <div class="-mt-5"></div>
                     <input

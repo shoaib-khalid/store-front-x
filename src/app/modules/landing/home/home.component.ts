@@ -1,4 +1,6 @@
 import { AfterViewInit, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { StoresService } from 'app/core/store/store.service';
+import { StoreCategory } from 'app/core/store/store.types';
 import { Subscription, timer } from 'rxjs';
 
 @Component({
@@ -12,6 +14,8 @@ import { Subscription, timer } from 'rxjs';
 })
 export class LandingHomeComponent implements OnInit
 {
+    storeCategories: StoreCategory[];
+
     currentSlider = {
         active  : null,
         previous: null,
@@ -26,11 +30,19 @@ export class LandingHomeComponent implements OnInit
     /**S
      * Constructor
      */
-    constructor()
+    constructor(
+        private _storesService: StoresService
+    )
     {
     }
 
     ngOnInit() {
+
+        this._storesService.storeCategories$.subscribe((response)=> {
+            this.storeCategories = response;
+
+            console.log("this.storeCategories", this.storeCategories)
+        });
 
         // SLider
         this.countDown = timer(0, this.tick)

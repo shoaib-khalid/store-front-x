@@ -3,6 +3,9 @@ export interface StoreCategory
     id?: string;
     name?: string;
     slug?: string;
+    parentCategoryId?: string;
+    storeId?: string;
+    thumbnailUrl?: string;
 }
 
 export interface Store
