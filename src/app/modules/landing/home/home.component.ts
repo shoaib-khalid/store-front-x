@@ -41,9 +41,13 @@ export class LandingHomeComponent implements OnInit
                     this.currentSlider.next     = "translate-x-full";
                     this.currentSlider.current  = this.currentSlider.current + 1;
                     if (this.currentSlider.current > this.currentSlider.last) {
-                        this.currentSlider.current  = 1;
+                        this.currentSlider.active   = null;
+                        this.currentSlider.previous = null,
+                        this.currentSlider.next     = null;
+                        this.currentSlider.current  = 0;
                     }
                 }
+
             });
     }
     
