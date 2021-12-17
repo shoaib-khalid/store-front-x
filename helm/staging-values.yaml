@@ -1,0 +1,81 @@
+affinity: {}
+autoscaling:
+  enabled: false
+  maxReplicas: 100
+  minReplicas: 1
+  targetCPUUtilizationPercentage: 80
+configProdJson:
+  configmap:
+    config.prod.json: |
+      {
+          "env": {
+              "name": "prod"
+          },
+          "serviceUrl": {
+              "userServiceURL": "https://api.symplified.it/user-service/v1/",
+              "productServiceURL": "https://api.symplified.it/product-service/v1/",
+              "payServiceURL": "https://api.symplified.it/payment-service/v1/",
+              "orderServiceURL": "https://api.symplified.it/order-service/v1/",
+              "deliveryServiceURL": "https://api.symplified.it/delivery-service/v1/"
+          }
+      }
+  volumeMount:
+  - mountPath: /usr/local/apache2/htdocs/assets/config/config.prod.json
+    name: store-front-x-cpj-vol
+    subPath: config.prod.json
+  volumes:
+  - configMap:
+      name: store-front-x-cpj-cm
+    name: store-front-x-cpj-vol
+fullnameOverride: ""
+image:
+  pullPolicy: Always
+  repository: kalsym/store-front-x
+  tag: 0.0.1-beta
+imagePullSecrets:
+- name: kalsym-docker-hub
+ingress:
+  annotations:
+    nginx.ingress.kubernetes.io/server-snippet: |
+      location = / {
+        if ($host = 'deliverin.my') {
+          set $temp_cache 1;
+        }
+        if ($request_uri !~ '\?') {
+          set $temp_cache 1$temp_cache;
+        }
+        if ($temp_cache = 11) {
+          return 302 https://symplified.it;
+        }
+      }
+  className: ""
+  enabled: true
+  hosts:
+  - host: deliverin.my
+    paths:
+    - path: /
+      pathType: Prefix
+  - host: '*.deliverin.my'
+    paths:
+    - path: /
+      pathType: Prefix
+  tls:
+  - hosts:
+    - deliverin.my
+    - '*.deliverin.my'
+    secretName: secret-tls-ai
+nameOverride: ""
+nodeSelector: {}
+podAnnotations: {}
+podSecurityContext: {}
+replicaCount: 1
+resources: {}
+securityContext: {}
+service:
+  port: 8080
+  type: ClusterIP
+serviceAccount:
+  annotations: {}
+  create: false
+  name: ""
+tolerations: []
