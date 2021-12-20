@@ -2,6 +2,7 @@ import { AfterViewInit, Component, OnInit, ViewEncapsulation } from '@angular/co
 import { Router } from '@angular/router';
 import { StoresService } from 'app/core/store/store.service';
 import { Store, StoreCategory, StoreDiscount } from 'app/core/store/store.types';
+import { environment } from 'environments/environment';
 import { Subscription, timer } from 'rxjs';
 
 @Component({
@@ -18,6 +19,7 @@ export class LandingHomeComponent implements OnInit
     store: Store;
     storeCategories: StoreCategory[];
     storeDiscounts: StoreDiscount[];
+    public version: string = environment.appVersion;
 
     currentSlider = {
         active  : null,
@@ -40,6 +42,26 @@ export class LandingHomeComponent implements OnInit
     {
     }
 
+    // -----------------------------------------------------------------------------------------------------
+    // @ Accessors
+    // -----------------------------------------------------------------------------------------------------
+
+    // (later ubah ni buang telak dekat shared component)
+    /**
+     * Getter for current year
+     */
+    get currentYear(): number
+    {
+        return new Date().getFullYear();
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Lifecycle hooks
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * On init
+    */
     ngOnInit() {
 
         this._storesService.store$
