@@ -9,15 +9,18 @@ configProdJson:
     config.prod.json: |
       {
           "env": {
-              "name": "prod"
+              "name": "dev"
           },
-          "serviceUrl": {
-              "userServiceURL": "https://api.symplified.it/user-service/v1/",
-              "productServiceURL": "https://api.symplified.it/product-service/v1/",
-              "payServiceURL": "https://api.symplified.it/payment-service/v1/",
-              "orderServiceURL": "https://api.symplified.it/order-service/v1/",
-              "deliveryServiceURL": "https://api.symplified.it/delivery-service/v1/"
-          }
+          "apiServer": {
+              "flowBuilderService": "https://api.symplified.it/flow-builder/v1",
+              "userService": "https://api.symplified.it/user-service/v1",
+              "productService": "https://api.symplified.it/product-service/v1",
+              "orderService": "https://api.symplified.it/order-service/v1",
+              "reportService": "https://api.symplified.it/report-service/v1",
+              "deliveryService": "https://api.symplified.it/delivery-service/v1"
+          },
+          "storeFrontDomain": ".symplified.ai",
+          "logging": 0
       }
   volumeMount:
   - mountPath: /usr/local/apache2/htdocs/assets/config/config.prod.json
