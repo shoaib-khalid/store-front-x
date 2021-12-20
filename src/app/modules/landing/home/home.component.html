@@ -50,7 +50,7 @@
     <div class="flex flex-col items-center w-full h-auto md:py-20">
 
         <!-- Discounts -->
-        <div class="flex flex-col relative py-5 md:py-10 pl-15 items-start justify-center w-full max-w-280 bg-black md:rounded-3xl overflow-hidden"
+        <div *ngIf="storeDiscounts.length > 0" class="flex flex-col relative py-5 md:py-10 pl-15 items-start justify-center w-full max-w-280 bg-black md:rounded-3xl overflow-hidden"
         >
             <div class="absolute inset-0 text-white flex items-center justify-center text-5xl z-10">
                 <img class="object-cover w-full h-full" src="assets/images/example/discount.png">
