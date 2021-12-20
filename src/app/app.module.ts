@@ -17,7 +17,7 @@ import { AppConfig } from 'app/config/service.config';
 const routerConfig: ExtraOptions = {
     preloadingStrategy       : PreloadAllModules,
     scrollPositionRestoration: 'enabled',
-    useHash: true
+    // useHash: true
 };
 
 @NgModule({
