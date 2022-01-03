@@ -1,9 +1,11 @@
-import { AfterViewInit, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { StoresService } from 'app/core/store/store.service';
 import { Store, StoreCategory, StoreDiscount } from 'app/core/store/store.types';
 import { environment } from 'environments/environment';
 import { Subscription, timer } from 'rxjs';
+import { HostListener } from "@angular/core";
+import { IBannerCarouselImage } from '@nghacks/banner-carousel';
 
 @Component({
     selector     : 'landing-home',
@@ -16,6 +18,9 @@ import { Subscription, timer } from 'rxjs';
 })
 export class LandingHomeComponent implements OnInit
 {
+
+    @Input() data: IBannerCarouselImage[];
+
     store: Store;
     storeCategories: StoreCategory[];
     storeDiscounts: StoreDiscount[];
@@ -31,6 +36,12 @@ export class LandingHomeComponent implements OnInit
     countDown:Subscription;
     counter = 1800;
     tick = 5000;
+
+    screenHeight: number;
+    screenWidth: number;
+
+    carouselCellsToShow: number = 1;
+    carouselArrowsOutside: boolean = true
     
     /**S
      * Constructor
@@ -40,6 +51,7 @@ export class LandingHomeComponent implements OnInit
         private _router: Router
     )
     {
+        this.onResize();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -63,6 +75,33 @@ export class LandingHomeComponent implements OnInit
      * On init
     */
     ngOnInit() {
+
+        this.data = [
+            { 
+                src: "https://s3.amazonaws.com/htw/portfolio-images/2b91b68defcc3b8989e9fd85a25fb90d/Banner_1.png",
+                alt: "test",
+                data: "test",
+                id: 1
+            },
+            { 
+                src: "https://s3.amazonaws.com/htw/portfolio-images/2b91b68defcc3b8989e9fd85a25fb90d/Banner_1.png",
+                alt: "test",
+                data: "test",
+                id: 2
+            },
+            { 
+                src: "https://s3.amazonaws.com/htw/portfolio-images/2b91b68defcc3b8989e9fd85a25fb90d/Banner_1.png",
+                alt: "test",
+                data: "test",
+                id: 3
+            },
+            { 
+                src: "https://s3.amazonaws.com/htw/portfolio-images/2b91b68defcc3b8989e9fd85a25fb90d/Banner_1.png",
+                alt: "test",
+                data: "test",
+                id: 4
+            }
+        ];
 
         this._storesService.store$
             .subscribe((response) => {
@@ -115,5 +154,23 @@ export class LandingHomeComponent implements OnInit
         } else {
             console.error("Invalid category: Category not found");
         }
+    }
+
+    @HostListener('window:resize', ['$event'])
+    onResize(event?) {
+        this.screenHeight = window.innerHeight;
+        this.screenWidth = window.innerWidth;
+
+        // if 
+        if (this.screenWidth < 500) {
+            this.carouselCellsToShow = 1;
+        } else if (this.screenWidth >= 500 && this.screenWidth <= 1000) {
+            this.carouselCellsToShow = 3;
+        } else {
+            this.carouselCellsToShow = 4;
+        }
+
+        console.log("screenHeight", this.screenHeight);
+        console.log("innerWidth", this.screenWidth);
     }
 }

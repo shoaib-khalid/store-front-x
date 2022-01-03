@@ -5,6 +5,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { SharedModule } from 'app/shared/shared.module';
 import { LandingHomeComponent } from 'app/modules/landing/home/home.component';
 import { landingHomeRoutes } from 'app/modules/landing/home/home.routing';
+import { IvyCarouselModule } from 'angular-responsive-carousel';
+import { BannerCarouselModule } from '@nghacks/banner-carousel';
 
 @NgModule({
     declarations: [
@@ -14,7 +16,9 @@ import { landingHomeRoutes } from 'app/modules/landing/home/home.routing';
         RouterModule.forChild(landingHomeRoutes),
         MatButtonModule,
         MatIconModule,
-        SharedModule
+        SharedModule,
+        IvyCarouselModule,
+        BannerCarouselModule
     ]
 })
 export class LandingHomeModule
