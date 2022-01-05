@@ -34,14 +34,17 @@ fullnameOverride: ""
 image:
   pullPolicy: Always
   repository: kalsym/store-front-x
-  tag: 0.0.1-beta
+  tag: 0.0.2
 imagePullSecrets:
 - name: kalsym-docker-hub
 ingress:
   annotations:
     nginx.ingress.kubernetes.io/server-snippet: |
       location = / {
-        if ($host = 'deliverin.my') {
+        if ($host = 'dev-my.symplified.ai') {
+          set $temp_cache 1;
+        }
+        if ($host = 'dev-pk.symplified.ai') {
           set $temp_cache 1;
         }
         if ($request_uri !~ '\?') {
@@ -54,19 +57,29 @@ ingress:
   className: ""
   enabled: true
   hosts:
-  - host: deliverin.my
+  - host: dev-my.symplified.ai
     paths:
     - path: /
       pathType: Prefix
-  - host: '*.deliverin.my'
+  - host: '*.dev-my.symplified.ai'
+    paths:
+    - path: /
+      pathType: Prefix
+  - host: dev-pk.symplified.ai
+    paths:
+    - path: /
+      pathType: Prefix
+  - host: '*.dev-pk.symplified.ai'
     paths:
     - path: /
       pathType: Prefix
   tls:
   - hosts:
-    - deliverin.my
-    - '*.deliverin.my'
-    secretName: secret-tls-ai
+    - dev-my.symplified.ai
+    - '*.dev-my.symplified.ai'
+    - dev-pk.symplified.ai
+    - '*.dev-pk.symplified.ai'
+    secretName: secret-devmy-tls-ai
 nameOverride: ""
 nodeSelector: {}
 podAnnotations: {}
