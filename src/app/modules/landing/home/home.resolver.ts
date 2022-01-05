@@ -3,6 +3,9 @@ import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/r
 import { StoresService } from 'app/core/store/store.service';
 import { forkJoin, Observable } from 'rxjs';
 
+import { AcademyService } from 'app/modules/landing/academy/academy.service';
+import { Course } from 'app/modules/landing/academy/academy.types';
+
 @Injectable({
     providedIn: 'root'
 })
@@ -33,5 +36,33 @@ export class LandingHomeResolver implements Resolve<any>
             this._storesService.getStoreCategories(),
             this._storesService.getStoreDiscounts(),
         ]);
+    }
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class AcademyCoursesResolver implements Resolve<any>
+{
+    /**
+     * Constructor
+     */
+    constructor(private _academyService: AcademyService)
+    {
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Public methods
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Resolver
+     *
+     * @param route
+     * @param state
+     */
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Course[]>
+    {
+        return this._academyService.getCourses();
     }
 }
