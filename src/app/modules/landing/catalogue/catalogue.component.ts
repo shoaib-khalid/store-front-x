@@ -12,7 +12,24 @@ import { merge, Observable, Subject } from 'rxjs';
 @Component({
     selector     : 'landing-catalogue',
     templateUrl  : './catalogue.component.html',
-    styles       : [``],
+    styles       : [
+        `
+        /** Custom input number **/
+        input[type='number']::-webkit-inner-spin-button,
+        input[type='number']::-webkit-outer-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+      
+        .custom-number-input input:focus {
+          outline: none !important;
+        }
+      
+        .custom-number-input button:focus {
+          outline: none !important;
+        }
+        `
+    ],
     encapsulation: ViewEncapsulation.None
 })
 export class LandingCatalogueComponent implements OnInit
