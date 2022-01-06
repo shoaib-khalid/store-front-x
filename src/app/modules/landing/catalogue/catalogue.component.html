@@ -121,63 +121,20 @@
         </div>
 
         <!-- Catelogue Navigation -->
-        <div class="flex flex-row items-center justify-between w-full max-w-280 mt-8 overflow-y-hidden overflow-x-auto">
-            <ul class="flex flex-auto items-center justify-between">
+        <div class="flex flex-row items-center justify-between w-full max-w-280 mt-8 overflow-y-hidden overflow-x-auto bg-card bg-opacity-25 dark:bg-opacity-100 rounded-lg py-2 shadow">
+            <ul class="flex flex-auto items-center justify-around">
                 <li class="mr-6">
-                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
-                        <span class="truncate font-medium">All Products</span>
+                    <a (click)="chooseCategory()" class="text-black hover:text-primary hover:text-lg hover:underline cursor-pointer">
+                        <span class="truncate font-medium dark:text-white">All Products</span>
                     </a>
                 </li>
-                <li class="mr-6">
-                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
-                        <span class="truncate font-medium">Entree</span>
-                    </a>
-                </li>
-                <li class="mr-6">
-                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
-                        <span class="truncate font-medium">Pasta</span>
-                    </a>
-                </li>
-                <li class="mr-6">
-                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
-                        <span class="truncate font-medium">Main</span>
-                    </a>
-                </li>
-                <li class="mr-6">
-                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
-                        <span class="truncate font-medium">Bread And Pizza</span>
-                    </a>
-                </li>
-                <li class="mr-6">
-                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
-                        <span class="truncate font-medium">Burger</span>
-                    </a>
-                </li>
-                <li class="mr-6">
-                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
-                        <span class="truncate font-medium">Noodles</span>
-                    </a>
-                </li>
-                <li class="mr-6">
-                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
-                        <span class="truncate font-medium">Lasagna</span>
-                    </a>
-                </li>
-                <li class="mr-6">
-                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
-                        <span class="truncate font-medium">Fried Items</span>
-                    </a>
-                </li>
-                <li class="mr-6">
-                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
-                        <span class="truncate font-medium">Rice</span>
-                    </a>
-                </li>
-                <li class="mr-6">
-                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
-                        <span class="truncate font-medium">Steaks</span>
-                    </a>
-                </li>
+                <ng-container *ngFor="let category of storeCategories">
+                    <li class="mr-6">
+                        <a (click)="chooseCategory(category.id)" class="text-black hover:text-primary hover:text-lg hover:underline cursor-pointer">
+                            <span class="truncate font-medium dark:text-white">{{category.name}}</span>
+                        </a>
+                    </li>
+                </ng-container>
             </ul>
         </div>
 
@@ -257,674 +214,105 @@
                                 [color]="'primary'">
                                 All Products
                             </mat-checkbox>
-                            <mat-checkbox
-                                class="flex items-center h-10 min-h-10 px-4"
-                                [color]="'primary'">
-                                Entree
-                            </mat-checkbox>
-                            <mat-checkbox
-                                class="flex items-center h-10 min-h-10 px-4"
-                                [color]="'primary'">
-                                Pasta
-                            </mat-checkbox>
-                            <mat-checkbox
-                                class="flex items-center h-10 min-h-10 px-4"
-                                [color]="'primary'">
-                                Main
-                            </mat-checkbox>
-                            <mat-checkbox
-                                class="flex items-center h-10 min-h-10 px-4"
-                                [color]="'primary'">
-                                Bread and Pizza
-                            </mat-checkbox>
+                            <ng-container *ngFor="let category of storeCategories">
+                                <mat-checkbox
+                                    class="flex items-center h-10 min-h-10 px-4"
+                                    [color]="'primary'">
+                                    {{category.name}}
+                                </mat-checkbox>
+                            </ng-container>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Products -->
-            <div class="flex flex-col flex-auto w-full max-w-xs sm:max-w-5xl mx-auto md:ml-10">
+            <div class="flex flex-col flex-auto relative w-full max-w-xs sm:max-w-5xl mx-auto md:ml-10">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 sm:mb-10">
-                    <!-- Course -->
-                    <div class="flex flex-col h-96 shadow rounded-2xl overflow-hidden bg-card">
-                        <div class="flex flex-col p-3 h-60 bg-black bg-no-repeat bg-cover bg-center" style="background-image: url('assets/images/example/product1.png')">
-                            <div class="flex items-center justify-between">
-                                <!-- Course category -->
-                                <ng-container>
-                                    <div
-                                        class="py-0.5 px-3 rounded text-xs font-semibold"
-                                        [ngClass]="'text-orange-100 bg-orange-800 dark:text-orange-50 dark:bg-orange-500'">
-                                        20% Off
-                                    </div>
-                                </ng-container>
-                                <!-- Completed at least once -->
-                                <div class="flex items-center">
+                    <!-- Products -->
+                    <ng-container *ngFor="let product of products">
+                        <!-- Product -->
+                        <div class="flex flex-col h-96 shadow rounded-2xl overflow-hidden bg-card">
+                            <!-- Product Header -->
+                            <div class="flex flex-col p-3 h-60 bg-black bg-no-repeat bg-cover bg-center" [style]="'background-image: url(\'' + product.thumbnailUrl + '\')'">
+                                <div class="flex items-center justify-between">
+                                    <!-- Course category -->
                                     <ng-container>
-                                        <mat-icon
-                                            class="icon-size-5 text-green-600"
-                                            [svgIcon]="'heroicons_solid:badge-check'"
-                                            [matTooltip]="'You completed this course at least once'"></mat-icon>
+                                        <div
+                                            class="py-0.5 px-3 rounded text-xs font-semibold"
+                                            [ngClass]="'text-primary-100 bg-primary-800 dark:text-primary-50 dark:bg-primary-500'">
+                                            20% Off
+                                        </div>
                                     </ng-container>
-                                </div>
-                            </div>                               
-                        </div>
-                        <!-- Footer -->
-                        <div class="flex flex-col w-full">
-                            <div class="ml-4 mt-4 font-medium">Title</div>
-                            <div class="ml-4 text-sm line-through">RM 4.00</div>
-                            <div class="ml-4 text-lg">RM 4.00</div>
-                            <div class="ml-4 mt-4">
-                                <div class="flex flex-row justify-between items-center custom-number-input h-10 w-full">
-                                    <div class="flex flex-row h-8 w-20 border rounded-lg relative bg-transparent mt-1">
-                                        <button (click)="decrement()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none">
-                                            <span class="text-2xl font-thin">−</span>
-                                        </button>
-                                        <input [(ngModel)]="quantity"  type="number" class="outline-none focus:outline-none text-center w-full font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700  outline-none" name="custom-input-number" value="0"/>
-                                        <button (click)="increment()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer">
-                                            <span class="text-2xl font-thin">+</span>
-                                        </button>
+                                    <!-- Completed at least once -->
+                                    <div class="flex items-center">
+                                        <ng-container>
+                                            <mat-icon
+                                                class="icon-size-5 text-green-600"
+                                                [svgIcon]="'heroicons_solid:badge-check'"
+                                                [matTooltip]="'You completed this course at least once'"></mat-icon>
+                                        </ng-container>
                                     </div>
-                                    <p class="text-sm font-bold mr-4">Total: RM: 4.00</p>
-                                </div>
+                                </div>                               
                             </div>
-                            <!-- Course launch button -->
-                            <div class="flex flex-row justify-between p-4 text-right bg-gray-50 dark:bg-transparent">
-                                <input
-                                    id="cancel-add-item-btn"
-                                    type="button"
-                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                    mat-button>
-                                <label 
-                                    class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer border border-warn hover:bg-warn-500"
-                                    for="cancel-add-item-btn"
-                                    matRipple>
-                                    <span>Cancel</span>
-                                </label>
-
-                                <input
-                                    id="confirm-add-item-btn"
-                                    type="button"
-                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                    mat-button>
-                                <label 
-                                    class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer bg-primary hover:bg-primary-700"
-                                    for="confirm-add-item-btn"
-                                    matRipple>
-                                    <span class="text-white">Confirm</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Course -->
-                    <div class="flex flex-col h-96 shadow rounded-2xl overflow-hidden bg-card">
-                        <div class="flex flex-col p-3 h-60 bg-black bg-no-repeat bg-cover bg-center" style="background-image: url('assets/images/example/product1.png')">
-                            <div class="flex items-center justify-between">
-                                <!-- Course category -->
-                                <ng-container>
-                                    <div
-                                        class="py-0.5 px-3 rounded text-xs font-semibold"
-                                        [ngClass]="'text-orange-100 bg-orange-800 dark:text-orange-50 dark:bg-orange-500'">
-                                        20% Off
+                            <!-- Product Footer -->
+                            <div class="flex flex-col w-full">
+                                <div class="ml-4 mt-4 font-medium">{{product.name}}</div>
+                                <div class="ml-4 text-sm line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</div>
+                                <div class="ml-4 text-lg">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</div>
+                                <div class="ml-4 mt-4">
+                                    <div class="flex flex-row justify-between items-center custom-number-input h-10 w-full">
+                                        <div class="flex flex-row h-8 w-20 border rounded-lg relative bg-transparent mt-1">
+                                            <button (click)="decrement()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none">
+                                                <span class="text-2xl font-thin">−</span>
+                                            </button>
+                                            <input [(ngModel)]="quantity"  type="number" class="outline-none focus:outline-none text-center w-full font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700  outline-none" name="custom-input-number" value="0"/>
+                                            <button (click)="increment()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer">
+                                                <span class="text-2xl font-thin">+</span>
+                                            </button>
+                                        </div>
+                                        <p class="text-sm font-bold mr-4">Total: RM: 4.00</p>
                                     </div>
-                                </ng-container>
-                                <!-- Completed at least once -->
-                                <div class="flex items-center">
-                                    <ng-container>
-                                        <mat-icon
-                                            class="icon-size-5 text-green-600"
-                                            [svgIcon]="'heroicons_solid:badge-check'"
-                                            [matTooltip]="'You completed this course at least once'"></mat-icon>
-                                    </ng-container>
                                 </div>
-                            </div>                               
-                        </div>
-                        <!-- Footer -->
-                        <div class="flex flex-col w-full">
-                            <div class="ml-4 mt-4 font-medium">Title</div>
-                            <div class="ml-4 text-sm line-through">RM 4.00</div>
-                            <div class="ml-4 text-lg">RM 4.00</div>
-                            <div class="ml-4 mt-4">
-                                <div class="flex flex-row justify-between items-center custom-number-input h-10 w-full">
-                                    <div class="flex flex-row h-8 w-20 border rounded-lg relative bg-transparent mt-1">
-                                        <button (click)="decrement()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none">
-                                            <span class="text-2xl font-thin">−</span>
-                                        </button>
-                                        <input [(ngModel)]="quantity"  type="number" class="outline-none focus:outline-none text-center w-full font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700  outline-none" name="custom-input-number" value="0"/>
-                                        <button (click)="increment()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer">
-                                            <span class="text-2xl font-thin">+</span>
-                                        </button>
-                                    </div>
-                                    <p class="text-sm font-bold mr-4">Total: RM: 4.00</p>
+                                <!-- Course launch button -->
+                                <div class="flex flex-row justify-between p-4 text-right bg-gray-50 dark:bg-transparent">
+                                    <input
+                                        id="cancel-add-item-btn"
+                                        type="button"
+                                        class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                                        mat-button>
+                                    <label 
+                                        class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer border border-warn hover:bg-warn-500"
+                                        for="cancel-add-item-btn"
+                                        matRipple>
+                                        <span>Cancel</span>
+                                    </label>
+    
+                                    <input
+                                        id="confirm-add-item-btn"
+                                        type="button"
+                                        class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                                        mat-button>
+                                    <label 
+                                        class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer bg-primary hover:bg-primary-700"
+                                        for="confirm-add-item-btn"
+                                        matRipple>
+                                        <span class="text-white">Confirm</span>
+                                    </label>
                                 </div>
                             </div>
-                            <!-- Course launch button -->
-                            <div class="flex flex-row justify-between p-4 text-right bg-gray-50 dark:bg-transparent">
-                                <input
-                                    id="cancel-add-item-btn"
-                                    type="button"
-                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                    mat-button>
-                                <label 
-                                    class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer border border-warn hover:bg-warn-500"
-                                    for="cancel-add-item-btn"
-                                    matRipple>
-                                    <span>Cancel</span>
-                                </label>
-
-                                <input
-                                    id="confirm-add-item-btn"
-                                    type="button"
-                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                    mat-button>
-                                <label 
-                                    class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer bg-primary hover:bg-primary-700"
-                                    for="confirm-add-item-btn"
-                                    matRipple>
-                                    <span class="text-white">Confirm</span>
-                                </label>
-                            </div>
                         </div>
-                    </div>
-
-                    <!-- Course -->
-                    <div class="flex flex-col h-96 shadow rounded-2xl overflow-hidden bg-card">
-                        <div class="flex flex-col p-3 h-60 bg-black bg-no-repeat bg-cover bg-center" style="background-image: url('assets/images/example/product1.png')">
-                            <div class="flex items-center justify-between">
-                                <!-- Course category -->
-                                <ng-container>
-                                    <div
-                                        class="py-0.5 px-3 rounded text-xs font-semibold"
-                                        [ngClass]="'text-orange-100 bg-orange-800 dark:text-orange-50 dark:bg-orange-500'">
-                                        20% Off
-                                    </div>
-                                </ng-container>
-                                <!-- Completed at least once -->
-                                <div class="flex items-center">
-                                    <ng-container>
-                                        <mat-icon
-                                            class="icon-size-5 text-green-600"
-                                            [svgIcon]="'heroicons_solid:badge-check'"
-                                            [matTooltip]="'You completed this course at least once'"></mat-icon>
-                                    </ng-container>
-                                </div>
-                            </div>                               
-                        </div>
-                        <!-- Footer -->
-                        <div class="flex flex-col w-full">
-                            <div class="ml-4 mt-4 font-medium">Title</div>
-                            <div class="ml-4 text-sm line-through">RM 4.00</div>
-                            <div class="ml-4 text-lg">RM 4.00</div>
-                            <div class="ml-4 mt-4">
-                                <div class="flex flex-row justify-between items-center custom-number-input h-10 w-full">
-                                    <div class="flex flex-row h-8 w-20 border rounded-lg relative bg-transparent mt-1">
-                                        <button (click)="decrement()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none">
-                                            <span class="text-2xl font-thin">−</span>
-                                        </button>
-                                        <input [(ngModel)]="quantity"  type="number" class="outline-none focus:outline-none text-center w-full font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700  outline-none" name="custom-input-number" value="0"/>
-                                        <button (click)="increment()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer">
-                                            <span class="text-2xl font-thin">+</span>
-                                        </button>
-                                    </div>
-                                    <p class="text-sm font-bold mr-4">Total: RM: 4.00</p>
-                                </div>
-                            </div>
-                            <!-- Course launch button -->
-                            <div class="flex flex-row justify-between p-4 text-right bg-gray-50 dark:bg-transparent">
-                                <input
-                                    id="cancel-add-item-btn"
-                                    type="button"
-                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                    mat-button>
-                                <label 
-                                    class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer border border-warn hover:bg-warn-500"
-                                    for="cancel-add-item-btn"
-                                    matRipple>
-                                    <span>Cancel</span>
-                                </label>
-
-                                <input
-                                    id="confirm-add-item-btn"
-                                    type="button"
-                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                    mat-button>
-                                <label 
-                                    class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer bg-primary hover:bg-primary-700"
-                                    for="confirm-add-item-btn"
-                                    matRipple>
-                                    <span class="text-white">Confirm</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Course -->
-                    <div class="flex flex-col h-96 shadow rounded-2xl overflow-hidden bg-card">
-                        <div class="flex flex-col p-3 h-60 bg-black bg-no-repeat bg-cover bg-center" style="background-image: url('assets/images/example/product1.png')">
-                            <div class="flex items-center justify-between">
-                                <!-- Course category -->
-                                <ng-container>
-                                    <div
-                                        class="py-0.5 px-3 rounded text-xs font-semibold"
-                                        [ngClass]="'text-orange-100 bg-orange-800 dark:text-orange-50 dark:bg-orange-500'">
-                                        20% Off
-                                    </div>
-                                </ng-container>
-                                <!-- Completed at least once -->
-                                <div class="flex items-center">
-                                    <ng-container>
-                                        <mat-icon
-                                            class="icon-size-5 text-green-600"
-                                            [svgIcon]="'heroicons_solid:badge-check'"
-                                            [matTooltip]="'You completed this course at least once'"></mat-icon>
-                                    </ng-container>
-                                </div>
-                            </div>                               
-                        </div>
-                        <!-- Footer -->
-                        <div class="flex flex-col w-full">
-                            <div class="ml-4 mt-4 font-medium">Title</div>
-                            <div class="ml-4 text-sm line-through">RM 4.00</div>
-                            <div class="ml-4 text-lg">RM 4.00</div>
-                            <div class="ml-4 mt-4">
-                                <div class="flex flex-row justify-between items-center custom-number-input h-10 w-full">
-                                    <div class="flex flex-row h-8 w-20 border rounded-lg relative bg-transparent mt-1">
-                                        <button (click)="decrement()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none">
-                                            <span class="text-2xl font-thin">−</span>
-                                        </button>
-                                        <input [(ngModel)]="quantity"  type="number" class="outline-none focus:outline-none text-center w-full font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700  outline-none" name="custom-input-number" value="0"/>
-                                        <button (click)="increment()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer">
-                                            <span class="text-2xl font-thin">+</span>
-                                        </button>
-                                    </div>
-                                    <p class="text-sm font-bold mr-4">Total: RM: 4.00</p>
-                                </div>
-                            </div>
-                            <!-- Course launch button -->
-                            <div class="flex flex-row justify-between p-4 text-right bg-gray-50 dark:bg-transparent">
-                                <input
-                                    id="cancel-add-item-btn"
-                                    type="button"
-                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                    mat-button>
-                                <label 
-                                    class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer border border-warn hover:bg-warn-500"
-                                    for="cancel-add-item-btn"
-                                    matRipple>
-                                    <span>Cancel</span>
-                                </label>
-
-                                <input
-                                    id="confirm-add-item-btn"
-                                    type="button"
-                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                    mat-button>
-                                <label 
-                                    class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer bg-primary hover:bg-primary-700"
-                                    for="confirm-add-item-btn"
-                                    matRipple>
-                                    <span class="text-white">Confirm</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Course -->
-                    <div class="flex flex-col h-96 shadow rounded-2xl overflow-hidden bg-card">
-                        <div class="flex flex-col p-3 h-60 bg-black bg-no-repeat bg-cover bg-center" style="background-image: url('assets/images/example/product1.png')">
-                            <div class="flex items-center justify-between">
-                                <!-- Course category -->
-                                <ng-container>
-                                    <div
-                                        class="py-0.5 px-3 rounded text-xs font-semibold"
-                                        [ngClass]="'text-orange-100 bg-orange-800 dark:text-orange-50 dark:bg-orange-500'">
-                                        20% Off
-                                    </div>
-                                </ng-container>
-                                <!-- Completed at least once -->
-                                <div class="flex items-center">
-                                    <ng-container>
-                                        <mat-icon
-                                            class="icon-size-5 text-green-600"
-                                            [svgIcon]="'heroicons_solid:badge-check'"
-                                            [matTooltip]="'You completed this course at least once'"></mat-icon>
-                                    </ng-container>
-                                </div>
-                            </div>                               
-                        </div>
-                        <!-- Footer -->
-                        <div class="flex flex-col w-full">
-                            <div class="ml-4 mt-4 font-medium">Title</div>
-                            <div class="ml-4 text-sm line-through">RM 4.00</div>
-                            <div class="ml-4 text-lg">RM 4.00</div>
-                            <div class="ml-4 mt-4">
-                                <div class="flex flex-row justify-between items-center custom-number-input h-10 w-full">
-                                    <div class="flex flex-row h-8 w-20 border rounded-lg relative bg-transparent mt-1">
-                                        <button (click)="decrement()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none">
-                                            <span class="text-2xl font-thin">−</span>
-                                        </button>
-                                        <input [(ngModel)]="quantity"  type="number" class="outline-none focus:outline-none text-center w-full font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700  outline-none" name="custom-input-number" value="0"/>
-                                        <button (click)="increment()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer">
-                                            <span class="text-2xl font-thin">+</span>
-                                        </button>
-                                    </div>
-                                    <p class="text-sm font-bold mr-4">Total: RM: 4.00</p>
-                                </div>
-                            </div>
-                            <!-- Course launch button -->
-                            <div class="flex flex-row justify-between p-4 text-right bg-gray-50 dark:bg-transparent">
-                                <input
-                                    id="cancel-add-item-btn"
-                                    type="button"
-                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                    mat-button>
-                                <label 
-                                    class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer border border-warn hover:bg-warn-500"
-                                    for="cancel-add-item-btn"
-                                    matRipple>
-                                    <span>Cancel</span>
-                                </label>
-
-                                <input
-                                    id="confirm-add-item-btn"
-                                    type="button"
-                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                    mat-button>
-                                <label 
-                                    class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer bg-primary hover:bg-primary-700"
-                                    for="confirm-add-item-btn"
-                                    matRipple>
-                                    <span class="text-white">Confirm</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Course -->
-                    <div class="flex flex-col h-96 shadow rounded-2xl overflow-hidden bg-card">
-                        <div class="flex flex-col p-3 h-60 bg-black bg-no-repeat bg-cover bg-center" style="background-image: url('assets/images/example/product1.png')">
-                            <div class="flex items-center justify-between">
-                                <!-- Course category -->
-                                <ng-container>
-                                    <div
-                                        class="py-0.5 px-3 rounded text-xs font-semibold"
-                                        [ngClass]="'text-orange-100 bg-orange-800 dark:text-orange-50 dark:bg-orange-500'">
-                                        20% Off
-                                    </div>
-                                </ng-container>
-                                <!-- Completed at least once -->
-                                <div class="flex items-center">
-                                    <ng-container>
-                                        <mat-icon
-                                            class="icon-size-5 text-green-600"
-                                            [svgIcon]="'heroicons_solid:badge-check'"
-                                            [matTooltip]="'You completed this course at least once'"></mat-icon>
-                                    </ng-container>
-                                </div>
-                            </div>                               
-                        </div>
-                        <!-- Footer -->
-                        <div class="flex flex-col w-full">
-                            <div class="ml-4 mt-4 font-medium">Title</div>
-                            <div class="ml-4 text-sm line-through">RM 4.00</div>
-                            <div class="ml-4 text-lg">RM 4.00</div>
-                            <div class="ml-4 mt-4">
-                                <div class="flex flex-row justify-between items-center custom-number-input h-10 w-full">
-                                    <div class="flex flex-row h-8 w-20 border rounded-lg relative bg-transparent mt-1">
-                                        <button (click)="decrement()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none">
-                                            <span class="text-2xl font-thin">−</span>
-                                        </button>
-                                        <input [(ngModel)]="quantity"  type="number" class="outline-none focus:outline-none text-center w-full font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700  outline-none" name="custom-input-number" value="0"/>
-                                        <button (click)="increment()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer">
-                                            <span class="text-2xl font-thin">+</span>
-                                        </button>
-                                    </div>
-                                    <p class="text-sm font-bold mr-4">Total: RM: 4.00</p>
-                                </div>
-                            </div>
-                            <!-- Course launch button -->
-                            <div class="flex flex-row justify-between p-4 text-right bg-gray-50 dark:bg-transparent">
-                                <input
-                                    id="cancel-add-item-btn"
-                                    type="button"
-                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                    mat-button>
-                                <label 
-                                    class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer border border-warn hover:bg-warn-500"
-                                    for="cancel-add-item-btn"
-                                    matRipple>
-                                    <span>Cancel</span>
-                                </label>
-
-                                <input
-                                    id="confirm-add-item-btn"
-                                    type="button"
-                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                    mat-button>
-                                <label 
-                                    class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer bg-primary hover:bg-primary-700"
-                                    for="confirm-add-item-btn"
-                                    matRipple>
-                                    <span class="text-white">Confirm</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Course -->
-                    <div class="flex flex-col h-96 shadow rounded-2xl overflow-hidden bg-card">
-                        <div class="flex flex-col p-3 h-60 bg-black bg-no-repeat bg-cover bg-center" style="background-image: url('assets/images/example/product1.png')">
-                            <div class="flex items-center justify-between">
-                                <!-- Course category -->
-                                <ng-container>
-                                    <div
-                                        class="py-0.5 px-3 rounded text-xs font-semibold"
-                                        [ngClass]="'text-orange-100 bg-orange-800 dark:text-orange-50 dark:bg-orange-500'">
-                                        20% Off
-                                    </div>
-                                </ng-container>
-                                <!-- Completed at least once -->
-                                <div class="flex items-center">
-                                    <ng-container>
-                                        <mat-icon
-                                            class="icon-size-5 text-green-600"
-                                            [svgIcon]="'heroicons_solid:badge-check'"
-                                            [matTooltip]="'You completed this course at least once'"></mat-icon>
-                                    </ng-container>
-                                </div>
-                            </div>                               
-                        </div>
-                        <!-- Footer -->
-                        <div class="flex flex-col w-full">
-                            <div class="ml-4 mt-4 font-medium">Title</div>
-                            <div class="ml-4 text-sm line-through">RM 4.00</div>
-                            <div class="ml-4 text-lg">RM 4.00</div>
-                            <div class="ml-4 mt-4">
-                                <div class="flex flex-row justify-between items-center custom-number-input h-10 w-full">
-                                    <div class="flex flex-row h-8 w-20 border rounded-lg relative bg-transparent mt-1">
-                                        <button (click)="decrement()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none">
-                                            <span class="text-2xl font-thin">−</span>
-                                        </button>
-                                        <input [(ngModel)]="quantity"  type="number" class="outline-none focus:outline-none text-center w-full font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700  outline-none" name="custom-input-number" value="0"/>
-                                        <button (click)="increment()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer">
-                                            <span class="text-2xl font-thin">+</span>
-                                        </button>
-                                    </div>
-                                    <p class="text-sm font-bold mr-4">Total: RM: 4.00</p>
-                                </div>
-                            </div>
-                            <!-- Course launch button -->
-                            <div class="flex flex-row justify-between p-4 text-right bg-gray-50 dark:bg-transparent">
-                                <input
-                                    id="cancel-add-item-btn"
-                                    type="button"
-                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                    mat-button>
-                                <label 
-                                    class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer border border-warn hover:bg-warn-500"
-                                    for="cancel-add-item-btn"
-                                    matRipple>
-                                    <span>Cancel</span>
-                                </label>
-
-                                <input
-                                    id="confirm-add-item-btn"
-                                    type="button"
-                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                    mat-button>
-                                <label 
-                                    class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer bg-primary hover:bg-primary-700"
-                                    for="confirm-add-item-btn"
-                                    matRipple>
-                                    <span class="text-white">Confirm</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Course -->
-                    <div class="flex flex-col h-96 shadow rounded-2xl overflow-hidden bg-card">
-                        <div class="flex flex-col p-3 h-60 bg-black bg-no-repeat bg-cover bg-center" style="background-image: url('assets/images/example/product1.png')">
-                            <div class="flex items-center justify-between">
-                                <!-- Course category -->
-                                <ng-container>
-                                    <div
-                                        class="py-0.5 px-3 rounded text-xs font-semibold"
-                                        [ngClass]="'text-orange-100 bg-orange-800 dark:text-orange-50 dark:bg-orange-500'">
-                                        20% Off
-                                    </div>
-                                </ng-container>
-                                <!-- Completed at least once -->
-                                <div class="flex items-center">
-                                    <ng-container>
-                                        <mat-icon
-                                            class="icon-size-5 text-green-600"
-                                            [svgIcon]="'heroicons_solid:badge-check'"
-                                            [matTooltip]="'You completed this course at least once'"></mat-icon>
-                                    </ng-container>
-                                </div>
-                            </div>                               
-                        </div>
-                        <!-- Footer -->
-                        <div class="flex flex-col w-full">
-                            <div class="ml-4 mt-4 font-medium">Title</div>
-                            <div class="ml-4 text-sm line-through">RM 4.00</div>
-                            <div class="ml-4 text-lg">RM 4.00</div>
-                            <div class="ml-4 mt-4">
-                                <div class="flex flex-row justify-between items-center custom-number-input h-10 w-full">
-                                    <div class="flex flex-row h-8 w-20 border rounded-lg relative bg-transparent mt-1">
-                                        <button (click)="decrement()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none">
-                                            <span class="text-2xl font-thin">−</span>
-                                        </button>
-                                        <input [(ngModel)]="quantity"  type="number" class="outline-none focus:outline-none text-center w-full font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700  outline-none" name="custom-input-number" value="0"/>
-                                        <button (click)="increment()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer">
-                                            <span class="text-2xl font-thin">+</span>
-                                        </button>
-                                    </div>
-                                    <p class="text-sm font-bold mr-4">Total: RM: 4.00</p>
-                                </div>
-                            </div>
-                            <!-- Course launch button -->
-                            <div class="flex flex-row justify-between p-4 text-right bg-gray-50 dark:bg-transparent">
-                                <input
-                                    id="cancel-add-item-btn"
-                                    type="button"
-                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                    mat-button>
-                                <label 
-                                    class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer border border-warn hover:bg-warn-500"
-                                    for="cancel-add-item-btn"
-                                    matRipple>
-                                    <span>Cancel</span>
-                                </label>
-
-                                <input
-                                    id="confirm-add-item-btn"
-                                    type="button"
-                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                    mat-button>
-                                <label 
-                                    class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer bg-primary hover:bg-primary-700"
-                                    for="confirm-add-item-btn"
-                                    matRipple>
-                                    <span class="text-white">Confirm</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Course -->
-                    <div class="flex flex-col h-96 shadow rounded-2xl overflow-hidden bg-card">
-                        <div class="flex flex-col p-3 h-60 bg-black bg-no-repeat bg-cover bg-center" style="background-image: url('assets/images/example/product1.png')">
-                            <div class="flex items-center justify-between">
-                                <!-- Course category -->
-                                <ng-container>
-                                    <div
-                                        class="py-0.5 px-3 rounded text-xs font-semibold"
-                                        [ngClass]="'text-orange-100 bg-orange-800 dark:text-orange-50 dark:bg-orange-500'">
-                                        20% Off
-                                    </div>
-                                </ng-container>
-                                <!-- Completed at least once -->
-                                <div class="flex items-center">
-                                    <ng-container>
-                                        <mat-icon
-                                            class="icon-size-5 text-green-600"
-                                            [svgIcon]="'heroicons_solid:badge-check'"
-                                            [matTooltip]="'You completed this course at least once'"></mat-icon>
-                                    </ng-container>
-                                </div>
-                            </div>                               
-                        </div>
-                        <!-- Footer -->
-                        <div class="flex flex-col w-full">
-                            <div class="ml-4 mt-4 font-medium">Title</div>
-                            <div class="ml-4 text-sm line-through">RM 4.00</div>
-                            <div class="ml-4 text-lg">RM 4.00</div>
-                            <div class="ml-4 mt-4">
-                                <div class="flex flex-row justify-between items-center custom-number-input h-10 w-full">
-                                    <div class="flex flex-row h-8 w-20 border rounded-lg relative bg-transparent mt-1">
-                                        <button (click)="decrement()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none">
-                                            <span class="text-2xl font-thin">−</span>
-                                        </button>
-                                        <input [(ngModel)]="quantity"  type="number" class="outline-none focus:outline-none text-center w-full font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700  outline-none" name="custom-input-number" value="0"/>
-                                        <button (click)="increment()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer">
-                                            <span class="text-2xl font-thin">+</span>
-                                        </button>
-                                    </div>
-                                    <p class="text-sm font-bold mr-4">Total: RM: 4.00</p>
-                                </div>
-                            </div>
-                            <!-- Course launch button -->
-                            <div class="flex flex-row justify-between p-4 text-right bg-gray-50 dark:bg-transparent">
-                                <input
-                                    id="cancel-add-item-btn"
-                                    type="button"
-                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                    mat-button>
-                                <label 
-                                    class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer border border-warn hover:bg-warn-500"
-                                    for="cancel-add-item-btn"
-                                    matRipple>
-                                    <span>Cancel</span>
-                                </label>
-
-                                <input
-                                    id="confirm-add-item-btn"
-                                    type="button"
-                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                    mat-button>
-                                <label 
-                                    class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer bg-primary hover:bg-primary-700"
-                                    for="confirm-add-item-btn"
-                                    matRipple>
-                                    <span class="text-white">Confirm</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                    
+                    </ng-container>
                 </div>
+                <div class="mb-12"></div>
+                <mat-paginator
+                    class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 rounded-lg shadow bg-gray-50 dark:bg-transparent"
+                    [ngClass]="{'pointer-events-none': isLoading}"
+                    [length]="pagination.length"
+                    [pageIndex]="pagination.page"
+                    [pageSize]="pagination.size"
+                    [pageSizeOptions]="[5, 10, 25, 100]"
+                    [showFirstLastButtons]="true"></mat-paginator>
             </div>
         </div>
     </div>

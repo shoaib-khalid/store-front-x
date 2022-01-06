@@ -9,6 +9,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { SharedModule } from 'app/shared/shared.module';
 import { LandingCatalogueComponent } from 'app/modules/landing/catalogue/catalogue.component';
 import { landingCatalogueRoutes } from 'app/modules/landing/catalogue/catalogue.routing';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
     declarations: [
@@ -22,6 +23,7 @@ import { landingCatalogueRoutes } from 'app/modules/landing/catalogue/catalogue.
         MatInputModule,
         MatCheckboxModule,
         MatTooltipModule,
+        MatPaginatorModule,
         SharedModule
     ]
 })

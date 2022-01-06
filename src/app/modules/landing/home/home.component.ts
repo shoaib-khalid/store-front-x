@@ -113,7 +113,7 @@ export class LandingHomeComponent implements OnInit
         this.currentSlider.current = sliderNumber;
     }
 
-    chooseCategory(id) {
+    chooseCategory(id: string = null) {
         let index = this.storeCategories.findIndex(item => item.id === id);
         if (index > -1) {
             let slug = this.storeCategories[index].name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '');;
