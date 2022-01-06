@@ -22,7 +22,7 @@ import { academyRoutes } from 'app/modules/landing/academy/academy.routing';
 import { AcademyComponent } from 'app/modules/landing/academy/academy.component';
 import { AcademyDetailsComponent } from 'app/modules/landing/academy/details/details.component';
 import { AcademyListComponent } from 'app/modules/landing/academy/list/list.component';
-import { DiscountBannerComponent } from 'app/shared/discount-banner/discount-banner.component';
+import { DiscountBannerComponent } from 'app/shared/store-discount/store-discount.component';
 
 @NgModule({
     declarations: [

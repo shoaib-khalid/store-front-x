@@ -137,7 +137,7 @@ export class LandingHomeComponent implements OnInit
             this.carouselCellsToShow = 4;
         }
 
-        console.log("screenHeight", this.screenHeight);
-        console.log("innerWidth", this.screenWidth);
+        // console.log("screenHeight", this.screenHeight);
+        // console.log("innerWidth", this.screenWidth);
     }
 }
