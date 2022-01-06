@@ -1,15 +1,16 @@
 import { ChangeDetectorRef, Component, Inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatTabGroup } from '@angular/material/tabs';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
-import { Course } from 'app/modules/landing/academy/academy.types';
 import { DOCUMENT } from '@angular/common';
 import { AcademyService } from 'app/modules/landing/academy/academy.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, Subscription } from 'rxjs';
+import { StoresService } from 'app/core/store/store.service';
+import { StoreDiscount } from 'app/core/store/store.types';
 
 @Component({
-    selector     : 'discount-banner',
-    templateUrl  : './discount-banner.component.html',
+    selector     : 'store-discount',
+    templateUrl  : './store-discount.component.html',
     styles       : [``],
     encapsulation: ViewEncapsulation.None
 })
@@ -18,7 +19,9 @@ export class DiscountBannerComponent implements OnInit
 
     @ViewChild('courseSteps', {static: true}) courseSteps: MatTabGroup;
     currentStep: number = 0;
-    course: Course;
+
+    discounts: any[] = [];
+    storeDiscounts: StoreDiscount[];
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -30,27 +33,44 @@ export class DiscountBannerComponent implements OnInit
         private _academyService: AcademyService,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _changeDetectorRef: ChangeDetectorRef,
+        private _storesService: StoresService
     )
     {
     }
 
     ngOnInit(){
-        // Get the course
-        this._academyService.course$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((course: Course) => {
 
-                console.log("hare", course)
+        // Get the discounts
+        this._storesService.storeDiscounts$
+        .subscribe((response: StoreDiscount[]) => {
+            console.log("disini",response);
+            this.storeDiscounts = response;
 
-                // Get the course
-                this.course = course;
+            this.storeDiscounts.forEach(item => {
+                this.discounts.push(...item.storeDiscountTierList.map(object => {
+                    return {
+                        discountName: item.discountName,
+                        discountType: item.discountType,
+                        startDate   : item.startDate,
+                        endDate     : item.endDate,
+                        maxDiscountAmount   : item.maxDiscountAmount,
+                        normalPriceItemOnly : item.normalPriceItemOnly,
 
-                // Go to step
-                this.goToStep(course.progress.currentStep);
+                        calculationType       : object.calculationType,
+                        discountAmount        : object.discountAmount,
+                        startTotalSalesAmount : object.startTotalSalesAmount
+                    }
+                }));
+            })
 
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-                    });
+            console.log("disana ---> ", this.discounts)
+
+            // Go to step
+            this.goToStep(0);
+
+            // Mark for check
+            this._changeDetectorRef.markForCheck();
+        });
 
         // Subscribe to media changes
         this._fuseMediaWatcherService.onMediaChange$
@@ -137,7 +157,7 @@ export class DiscountBannerComponent implements OnInit
     goToNextStep(): void
     {
         // Return if we already on the last step
-        if ( this.currentStep === this.course.totalSteps - 1 )
+        if ( this.currentStep === this.storeDiscounts.length - 1 )
         {
             return;
         }
