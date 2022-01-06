@@ -1,7 +1,6 @@
 import { Route } from '@angular/router';
 import { LandingCatalogueComponent } from 'app/modules/landing/catalogue/catalogue.component';
-import { LandingResolver } from 'app/modules/landing/landing.resolver';
-import { ProductsResolver } from 'app/modules/landing/catalogue/catalogue.resolver';
+import { ProductsResolver, StoreCategoriesResolver } from 'app/modules/landing/landing.resolver';
 
 export const landingCatalogueRoutes: Route[] = [
     {
@@ -12,8 +11,8 @@ export const landingCatalogueRoutes: Route[] = [
     {
         path    : ':catalogue-slug',
         resolve  : {
-            landing: LandingResolver,
-            products: ProductsResolver
+            products: ProductsResolver,
+            categories: StoreCategoriesResolver
         },
         component: LandingCatalogueComponent
     }

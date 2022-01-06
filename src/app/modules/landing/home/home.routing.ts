@@ -1,14 +1,14 @@
 import { Route } from '@angular/router';
 import { LandingHomeComponent } from 'app/modules/landing/home/home.component';
 import { AcademyCoursesResolver } from 'app/modules/landing/home/home.resolver';
-import { LandingResolver } from 'app/modules/landing/landing.resolver';
+import { StoreCategoriesResolver } from 'app/modules/landing/landing.resolver';
 
 export const landingHomeRoutes: Route[] = [
     {
         path     : '',
         component: LandingHomeComponent,
         resolve  : {
-            landing: LandingResolver,
+            categories: StoreCategoriesResolver,
             courses: AcademyCoursesResolver
         }
     },

@@ -204,7 +204,10 @@
                         <!-- Product -->
                         <div class="flex flex-col h-96 shadow rounded-2xl overflow-hidden bg-card">
                             <!-- Product Header -->
-                            <div class="flex flex-col p-3 h-60 bg-black bg-no-repeat bg-cover bg-center" [style]="'background-image: url(\'' + product.thumbnailUrl + '\')'">
+                            <div class="flex flex-col p-3 h-60 bg-black bg-no-repeat bg-cover bg-center cursor-pointer" 
+                                [style]="'background-image: url(\'' + product.thumbnailUrl + '\')'"
+                                [routerLink]="['/product/' + product.seoName]"
+                            >
                                 <div class="flex items-center justify-between">
                                     <!-- Course category -->
                                     <ng-container>
