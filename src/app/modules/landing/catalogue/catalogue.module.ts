@@ -6,7 +6,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { SharedModule } from 'app/shared/shared.module';
 import { LandingCatalogueComponent } from 'app/modules/landing/catalogue/catalogue.component';
 import { landingCatalogueRoutes } from 'app/modules/landing/catalogue/catalogue.routing';
@@ -23,7 +22,6 @@ import { landingCatalogueRoutes } from 'app/modules/landing/catalogue/catalogue.
         MatInputModule,
         MatCheckboxModule,
         MatTooltipModule,
-        NgxSliderModule,
         SharedModule
     ]
 })

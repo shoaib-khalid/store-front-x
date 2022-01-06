@@ -57,15 +57,16 @@
                 id="go-back-button"
                 type="button"
                 class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                [routerLink]="['/']"
                 mat-button>
             <label 
                 class="flex items-center justify-center h-10 pl-2 pr-4 border rounded border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
                 for="go-back-button"
                 matRipple>
                 <mat-icon
-                class="mr-1 text-black"
+                class="mr-1 text-white"
                 [svgIcon]="'heroicons_outline:chevron-left'"></mat-icon>
-                <span class="text-black">Back</span>
+                <span class="text-white">Back</span>
             </label>
             <div class="flex flex-row">
 
@@ -119,6 +120,67 @@
             </div>
         </div>
 
+        <!-- Catelogue Navigation -->
+        <div class="flex flex-row items-center justify-between w-full max-w-280 mt-8 overflow-y-hidden overflow-x-auto">
+            <ul class="flex flex-auto items-center justify-between">
+                <li class="mr-6">
+                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
+                        <span class="truncate font-medium">All Products</span>
+                    </a>
+                </li>
+                <li class="mr-6">
+                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
+                        <span class="truncate font-medium">Entree</span>
+                    </a>
+                </li>
+                <li class="mr-6">
+                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
+                        <span class="truncate font-medium">Pasta</span>
+                    </a>
+                </li>
+                <li class="mr-6">
+                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
+                        <span class="truncate font-medium">Main</span>
+                    </a>
+                </li>
+                <li class="mr-6">
+                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
+                        <span class="truncate font-medium">Bread And Pizza</span>
+                    </a>
+                </li>
+                <li class="mr-6">
+                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
+                        <span class="truncate font-medium">Burger</span>
+                    </a>
+                </li>
+                <li class="mr-6">
+                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
+                        <span class="truncate font-medium">Noodles</span>
+                    </a>
+                </li>
+                <li class="mr-6">
+                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
+                        <span class="truncate font-medium">Lasagna</span>
+                    </a>
+                </li>
+                <li class="mr-6">
+                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
+                        <span class="truncate font-medium">Fried Items</span>
+                    </a>
+                </li>
+                <li class="mr-6">
+                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
+                        <span class="truncate font-medium">Rice</span>
+                    </a>
+                </li>
+                <li class="mr-6">
+                    <a href="#" class="text-black hover:text-primary hover:text-lg hover:underline">
+                        <span class="truncate font-medium">Steaks</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
         <!-- Container -->
         <div class="flex flex-col md:flex-row justify-between mt-10 w-full max-w-280">
             <!-- Search & Filter -->
@@ -155,8 +217,20 @@
                                     [svgIcon]="'heroicons_outline:filter'"></mat-icon>
                             </label>
                         </div>
-                        <div class="custom-slider px-2 mt-2">
-                            <ngx-slider class="custom-slider" [(value)]="minValue" [(highValue)]="maxValue" [options]="options"></ngx-slider>
+                        <div class="flex flex-row w-full px-2 mt-2">
+                            <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript w-1/2">
+                                <input
+                                    matInput
+                                    [autocomplete]="'off'"
+                                    [placeholder]="'Min price'">
+                            </mat-form-field>
+                            <span class="p-2">-</span>
+                            <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript w-1/2">
+                                <input
+                                    matInput
+                                    [autocomplete]="'off'"
+                                    [placeholder]="'Max price'">
+                            </mat-form-field>
                         </div>
                     </div>
                     <div class="flex flex-col">
@@ -276,7 +350,7 @@
                                     class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer bg-primary hover:bg-primary-700"
                                     for="confirm-add-item-btn"
                                     matRipple>
-                                    <span>Confirm</span>
+                                    <span class="text-white">Confirm</span>
                                 </label>
                             </div>
                         </div>
@@ -347,7 +421,7 @@
                                     class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer bg-primary hover:bg-primary-700"
                                     for="confirm-add-item-btn"
                                     matRipple>
-                                    <span>Confirm</span>
+                                    <span class="text-white">Confirm</span>
                                 </label>
                             </div>
                         </div>
@@ -418,7 +492,7 @@
                                     class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer bg-primary hover:bg-primary-700"
                                     for="confirm-add-item-btn"
                                     matRipple>
-                                    <span>Confirm</span>
+                                    <span class="text-white">Confirm</span>
                                 </label>
                             </div>
                         </div>
@@ -489,7 +563,7 @@
                                     class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer bg-primary hover:bg-primary-700"
                                     for="confirm-add-item-btn"
                                     matRipple>
-                                    <span>Confirm</span>
+                                    <span class="text-white">Confirm</span>
                                 </label>
                             </div>
                         </div>
@@ -560,7 +634,7 @@
                                     class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer bg-primary hover:bg-primary-700"
                                     for="confirm-add-item-btn"
                                     matRipple>
-                                    <span>Confirm</span>
+                                    <span class="text-white">Confirm</span>
                                 </label>
                             </div>
                         </div>
@@ -631,7 +705,7 @@
                                     class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer bg-primary hover:bg-primary-700"
                                     for="confirm-add-item-btn"
                                     matRipple>
-                                    <span>Confirm</span>
+                                    <span class="text-white">Confirm</span>
                                 </label>
                             </div>
                         </div>
@@ -702,7 +776,7 @@
                                     class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer bg-primary hover:bg-primary-700"
                                     for="confirm-add-item-btn"
                                     matRipple>
-                                    <span>Confirm</span>
+                                    <span class="text-white">Confirm</span>
                                 </label>
                             </div>
                         </div>
@@ -773,7 +847,7 @@
                                     class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer bg-primary hover:bg-primary-700"
                                     for="confirm-add-item-btn"
                                     matRipple>
-                                    <span>Confirm</span>
+                                    <span class="text-white">Confirm</span>
                                 </label>
                             </div>
                         </div>
@@ -844,7 +918,7 @@
                                     class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer bg-primary hover:bg-primary-700"
                                     for="confirm-add-item-btn"
                                     matRipple>
-                                    <span>Confirm</span>
+                                    <span class="text-white">Confirm</span>
                                 </label>
                             </div>
                         </div>

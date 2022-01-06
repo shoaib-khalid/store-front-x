@@ -1,5 +1,4 @@
 import { Component, ViewEncapsulation } from '@angular/core';
-import { LabelType, Options } from '@angular-slider/ngx-slider';
 
 @Component({
     selector     : 'landing-catalogue',
@@ -79,15 +78,6 @@ import { LabelType, Options } from '@angular-slider/ngx-slider';
 })
 export class LandingCatalogueComponent
 {
-
-    minValue: number = 20;
-    maxValue: number = 80;
-    options: Options = {
-      floor: 0,
-      ceil: 100,
-      step: 10,
-      showTicks: true
-    };
 
     quantity: number = 0;
 
