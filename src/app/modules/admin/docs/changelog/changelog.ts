@@ -9,6 +9,27 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v0.0.4
+        {
+            version    : 'v0.0.4',
+            releaseDate: 'Jan 07, 2022',
+            changes    : [
+                {
+                    type: 'Fix',
+                    list: [
+                        '(LandingCataloguePage) Add category navigation',
+                        '(LandingCataloguePage) Implement functionality',
+                        '(LandingProductPage) Implement functionality'
+                    ]
+                },
+                {
+                    type: 'Added',
+                    list: [
+                        '(LandingCataloguePage) Add list view'
+                    ]
+                }
+            ]
+        },
         // v0.0.3
         {
             version    : 'v0.0.3',
