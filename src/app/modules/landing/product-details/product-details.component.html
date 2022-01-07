@@ -1,37 +1,7 @@
 <div class="flex flex-col items-center w-full h-full">
-    <!-- Banner -->
-    <div class="flex flex-col items-center w-full h-28 bg-black">
-        <div class="flex flex-row justify-between h-full w-full max-w-280">
-            <div class="flex flex-col justify-center text-white">
-                <img
-                    class="w-40"
-                    src="assets/images/example/logo2.png"
-                    alt="Logo image">
-            </div>
-            <div class="flex flex-col justify-center text-white">
-                <div class="flex flex-row w-auto">
-                    <div class="flex flex-col text-right">
-                        <p>Call Us!</p>
-                        <p>+60 12 218 0998</p>
-                    </div>
-                    <div class="pl-8">
-                        <input
-                            id="shopping-cart-button"
-                            class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                            type="button"
-                            mat-icon-button>
-                        <label 
-                            class="flex items-center justify-center w-10 h-10 rounded-full cursor-pointer bg-primary hover:bg-primary-700"
-                            for="shopping-cart-button"
-                            matRipple>
-                            <mat-icon
-                                class="text-white"
-                                [svgIcon]="'heroicons_outline:shopping-cart'"></mat-icon>
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- Header -->
+    <div class="flex items-center w-full">
+        <store-header class="w-full"></store-header>
     </div>
 
     <!-- Breadcrumbs -->
@@ -61,15 +31,16 @@
                 id="go-back-button"
                 type="button"
                 class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                (click)="goToCatalogue()"
                 mat-button>
             <label 
                 class="flex items-center justify-center h-10 pl-2 pr-4 border rounded border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
                 for="go-back-button"
                 matRipple>
                 <mat-icon
-                class="mr-1 text-black"
+                class="mr-1 text-white"
                 [svgIcon]="'heroicons_outline:chevron-left'"></mat-icon>
-                <span class="text-black">Back</span>
+                <span class="text-white">Back</span>
             </label>
         </div>
         
@@ -78,7 +49,13 @@
             <!-- Products -->
             <div class="flex flex-col flex-auto w-full sm:max-w-xs sm:max-w-5xl mx-auto md:ml-10">
                 <div class="flex flex-col md:flex-row w-full">
-                    <div class="grid grid-cols-3 gap-5 px-5 sm:px-20 w-full md:w-1/2 md:w-140">
+
+                    <!-- Product Assets -->
+                    <div class="px-5 sm:px-20 w-full md:w-1/2 md:w-140">
+                        <ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
+                    </div>
+                    
+                    <!-- <div class="grid grid-cols-3 gap-5 px-5 sm:px-20 w-full md:w-1/2 md:w-140">
                         <div class="col-span-3 rounded shadow-lg">
                             <img class="object-cover w-full h-96" src="https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=750&amp;w=1260" alt="" />
                         </div>
@@ -91,24 +68,26 @@
                         <div class="rounded shadow-lg">
                             <img class="object-cover w-full h-32" src="https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&amp;cs=tinysrgb&amp;dpr=2&amp;h=750&amp;w=1260" alt="" />
                         </div>
-                    </div>
+                    </div> -->
+                    
+                    <!-- Product Details -->
                     <div class="flex flex-col px-5 sm:px-20 w-full md:w-1/2">
-                        <h1 class="text-2xl font-semibold mt-5 sm:mt-10 md:mt-0">Fish and Chips</h1>
+                        <h1 class="text-2xl font-semibold mt-5 sm:mt-10 md:mt-0">{{product.name}}</h1>
                         <div>
-                            <p>Price: <span class="text-lg font-semibold">RM: 24.20</span> </p>
+                            <p>Price: <span class="text-lg font-semibold">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</span> </p>
                         </div>
                         <div>
-                            <p>Details:</p> <span class="text-sm font-semibold">Served with Cheese Sauce, Coleslaw and Fries</span>
+                            <p>Details:</p> <span class="text-sm font-semibold" [innerHTML]="product.description"></span>
                         </div>
                         <div class="flex flex-row justify-between items-center">
                             <span>Quantity:</span> 
                             <div class="flex flex-row h-8 w-20 border rounded-lg relative bg-primary mt-1">
-                                <button (click)="decrement()" class="text-black hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none">
-                                    <span class="text-2xl font-bold">−</span>
+                                <button (click)="decrement()" class="text-white hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none">
+                                    <span class="text-2xl">−</span>
                                 </button>
-                                <input [(ngModel)]="quantity"  type="number" class="outline-none focus:outline-none text-center w-full font-semibold text-md text-black focus:text-black  md:text-basecursor-default flex items-center outline-none" name="custom-input-number" value="0"/>
-                                <button (click)="increment()" class="text-black  hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer">
-                                    <span class="text-2xl font-bold">+</span>
+                                <input [(ngModel)]="quantity"  type="number" class="outline-none focus:outline-none text-center w-full font-semibold text-md text-white focus:text-white  md:text-basecursor-default flex items-center outline-none" name="custom-input-number" value="0"/>
+                                <button (click)="increment()" class="text-white  hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer">
+                                    <span class="text-2xl">+</span>
                                 </button>
                             </div>
                         </div>
@@ -118,6 +97,7 @@
                                 <textarea
                                     matInput
                                     maxlength="500"
+                                    placeholder="Make it special"
                                     [required]="true"
                                     [rows]="5"
                                     matTextareaAutosize></textarea>
@@ -133,9 +113,9 @@
                                 class="flex items-center justify-center h-10 px-2 border rounded border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
                                 for="go-back-button"
                                 matRipple>
-                                <span class="text-sm font-bold text-black">Add to Cart</span>
+                                <span class="text-sm text-white">Add to Cart</span>
                                 <mat-icon
-                                    class="ml-1 text-black transform scale-75"
+                                    class="ml-1 text-white transform scale-75"
                                     [svgIcon]="'heroicons_outline:shopping-cart'"></mat-icon>
                             </label>
 
@@ -148,9 +128,9 @@
                                 class="flex items-center justify-center h-10 px-2 border rounded border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
                                 for="go-back-button"
                                 matRipple>
-                                <span class="text-sm font-bold text-black">Checkout</span>
+                                <span class="text-sm text-white">Checkout</span>
                                 <mat-icon
-                                    class="ml-2 text-black transform scale-75"
+                                    class="ml-2 text-white transform scale-75"
                                     [svgIcon]="'heroicons_solid:shopping-bag'"></mat-icon>
                             </label>
                         </div>
@@ -161,25 +141,7 @@
     </div>
 
     <!-- Footer -->
-    <div class="flex flex-col items-center w-full bg-black">
-        <div class="flex flex-col h-full items-center w-full max-w-280">
-            <div class="flex flex-col w-full items-center px-10 text-white">
-                <img
-                    class="w-52 my-1.5"
-                    src="assets/images/example/logo.png"
-                    alt="Logo image">
-                <div class="w-full border-t border-gray-500"></div>
-                <div class="flex flex-wrap w-full justify-between">
-                    <div class="flex flex-col">
-                        <p class="text-white pt-2">Contact Us: +60 13 218 0998</p>
-                        <p class="text-white pt-1">Email: info@gobonappetit.com</p>
-                    </div>
-                    <div class="flex flex-col">
-                        <p class="text-white pt-2">Location: D-G-06, Block D, Oasis Square Ara Damansara,</p>
-                        <p class="text-white pt-1">2, Jalan PJU 1A/7A Ara Damansara 47301 Petaling Jaya, Selangor, Malaysia</p>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="flex items-center w-full">
+        <store-footer class="w-full"></store-footer>
     </div>
 </div>

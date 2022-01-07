@@ -195,6 +195,34 @@ export class ProductsService
         );
     }
 
+    getProductBySeoName(seoName: string): Observable<any>
+    {
+        let productService = this._apiServer.settings.apiServer.productService;
+        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
+        let accessToken = "accessToken";
+        let clientId = this._jwt.getJwtPayload(this.accessToken).uid;
+
+        const header = {
+            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            params: {
+                seoName: encodeURI(seoName)
+            }
+        };
+
+        return this._httpClient.get<Product>(productService + '/stores/' + this.storeId$ + '/products', header).pipe(
+                map((response) => {
+
+                    this._logging.debug("Response from ProductsService (getProductBySeoName)", response);
+
+                    // Update the products with the new product
+                    this._product.next(response["data"].content[0]);
+
+                    // Return the new product
+                    return response["data"].content;
+                })
+            );
+    }
+
     /**
      * Create product
      */
