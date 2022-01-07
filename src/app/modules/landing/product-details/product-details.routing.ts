@@ -1,12 +1,14 @@
 import { Route } from '@angular/router';
 import { LandingProductDetailsComponent } from 'app/modules/landing/product-details/product-details.component';
-import { ProductsResolver } from '../landing.resolver';
+import { ProductResolver } from 'app/modules/landing/product-details/product-details.resolver';
+import { StoreCategoriesResolver } from '../landing.resolver';
 
 export const landingProductDetailsRoutes: Route[] = [
     {
         path    : ':product-slug',
         resolve  : {
-            products: ProductsResolver
+            product: ProductResolver,
+            categories: StoreCategoriesResolver
         },
         component: LandingProductDetailsComponent
     },

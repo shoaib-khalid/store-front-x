@@ -7,6 +7,7 @@ import { LandingProductDetailsComponent } from 'app/modules/landing/product-deta
 import { landingProductDetailsRoutes } from 'app/modules/landing/product-details/product-details.routing';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { NgxGalleryModule } from 'ngx-gallery-9';
 
 @NgModule({
     declarations: [
@@ -18,6 +19,7 @@ import { MatInputModule } from '@angular/material/input';
         MatIconModule,
         MatFormFieldModule,
         MatInputModule,
+        NgxGalleryModule,
         SharedModule
     ]
 })
