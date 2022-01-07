@@ -46,6 +46,8 @@ export class LandingCatalogueComponent implements OnInit
     products: Product[];
     productName: string = null;
 
+    productViewOrientation: string = 'grid';
+
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     isLoading: boolean = false;
 

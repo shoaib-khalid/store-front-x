@@ -42,13 +42,14 @@
 
                 <!-- List view -->
                 <input
-                    id="go-back-button"
+                    id="list-view-button"
                     type="button"
                     class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                    (click)="productViewOrientation = 'list'"
                     mat-button>
                 <label 
                     class="flex items-center justify-center h-10 px-1.5 cursor-pointer mr-2"
-                    for="go-back-button"
+                    for="list-view-button"
                     matRipple>
                     <mat-icon
                     class="text-black"
@@ -57,13 +58,14 @@
 
                 <!-- Grid view -->
                 <input
-                    id="go-back-button"
+                    id="grid-view-button"
                     type="button"
                     class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                    (click)="productViewOrientation = 'grid'"
                     mat-button>
                 <label 
                     class="flex items-center justify-center h-10 px-1.5 cursor-pointer mr-2"
-                    for="go-back-button"
+                    for="grid-view-button"
                     matRipple>
                     <mat-icon
                     class="text-black"
@@ -197,8 +199,9 @@
             </div>
 
             <!-- Products -->
-            <div class="flex flex-col flex-auto relative w-full max-w-xs sm:max-w-5xl mx-auto md:ml-10">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 sm:mb-10">
+            <div class="flex flex-col flex-wrap relative w-full px-4">
+                <!-- Grid -->
+                <div *ngIf="productViewOrientation === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 sm:mb-10">
                     <!-- Products -->
                     <ng-container *ngFor="let product of products">
                         <!-- Product -->
@@ -277,6 +280,41 @@
                         </div>
                     </ng-container>
                 </div>
+                <!-- List -->
+                <div *ngIf="productViewOrientation === 'list'" class="w-full mb-8 sm:mb-10">
+                    <ng-container *ngFor="let product of products">
+                        <div class="flex flex-row h-40 w-full bg-card shadow rounded-2xl justify-between items-center mb-4">
+                            <!-- Image Thumbnail -->
+                            <div class="h-full w-50 rounded-l-2xl" [style]="'background-image: url(\'' + product.thumbnailUrl + '\'); background-size: cover;'"></div>
+                            <!-- List Body -->
+                            <div class="flex flex-row justify-between h-full w-full rounded-r-2xl">
+                                <div class="flex flex-col w-1/2 p-6">
+                                    <span class="text-xl font-bold mb-0">{{product.name}}</span>
+                                    <p class="font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p>
+                                </div>
+                                <div class="flex flex-col w-1/2 p-4 justify-end items-end">
+                                    <span class="text-2xl font-bold">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</span>
+                                    <input
+                                        id="add-to-cart-button"
+                                        type="button"
+                                        class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                                        [routerLink]="['/']"
+                                        mat-button>
+                                    <label 
+                                        class="flex items-center justify-center h-10 pl-2 pr-4 border rounded-lg border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
+                                        for="add-to-cart-button"
+                                        matRipple>
+                                        <span class="text-white">Add to cart</span>
+                                        <mat-icon
+                                            class="ml-1 icon-size-5 text-white"
+                                            [svgIcon]="'heroicons_outline:shopping-cart'"></mat-icon>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+
                 <div class="mb-12"></div>
                 <mat-paginator
                     class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 rounded-lg shadow bg-gray-50 dark:bg-transparent"
