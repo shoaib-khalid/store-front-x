@@ -1,0 +1,16 @@
+<div class="flex flex-col items-center justify-center w-full h-16 bg-primary">
+    <div class="w-full flex flex-row max-w-280">
+        <div>
+            <a [routerLink]="['']" class="whitespace-nowrap text-gray font-semibold cursor-pointer">Home</a>
+        </div>
+        <ng-container *ngFor="let breadcrumb of breadcrumbs; let i = index;">
+            <div class="flex items-center ml-1 whitespace-nowrap">
+                <mat-icon
+                    class="icon-size-5 text-secondary"
+                    [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+                <a [routerLink]="breadcrumb.url" routerLinkActive="router-link-active" 
+                   [ngClass]="breadcrumbs.length === (i + 1) ? 'text-black' : 'text-gray'" class="ml-1 font-semibold cursor-pointer">{{ breadcrumb.label | titlecase }}</a>
+            </div>
+        </ng-container>
+    </div>
+</div>

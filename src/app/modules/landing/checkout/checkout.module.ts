@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { BreadcrumbModule } from 'app/layout/common/breadcrumb/breadcrumb.module';
 
 @NgModule({
     declarations: [
@@ -22,6 +23,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
         MatCheckboxModule,
         MatInputModule,
         MatSlideToggleModule,
+        BreadcrumbModule,
         SharedModule
     ]
 })

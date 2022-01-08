@@ -10,6 +10,7 @@ import { SharedModule } from 'app/shared/shared.module';
 import { LandingCatalogueComponent } from 'app/modules/landing/catalogue/catalogue.component';
 import { landingCatalogueRoutes } from 'app/modules/landing/catalogue/catalogue.routing';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { BreadcrumbModule } from 'app/layout/common/breadcrumb/breadcrumb.module';
 
 @NgModule({
     declarations: [
@@ -24,6 +25,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
         MatCheckboxModule,
         MatTooltipModule,
         MatPaginatorModule,
+        BreadcrumbModule,
         SharedModule
     ]
 })

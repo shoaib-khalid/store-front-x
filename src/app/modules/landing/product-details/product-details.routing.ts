@@ -10,6 +10,9 @@ export const landingProductDetailsRoutes: Route[] = [
             product: ProductResolver,
             categories: StoreCategoriesResolver
         },
+        data: {
+            breadcrumb: ''
+        },
         component: LandingProductDetailsComponent
     },
     {

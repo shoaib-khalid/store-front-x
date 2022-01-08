@@ -35,22 +35,8 @@
     </div>
 
     <!-- Breadcrumbs -->
-    <div class="flex flex-col items-center justify-center w-full h-16 bg-primary">
-        <div class="w-full flex flex-row max-w-280">
-            <div class="flex items-center ml-1 whitespace-nowrap">
-                <a class="text-white">Home</a>
-                <mat-icon
-                    class="icon-size-5 text-secondary"
-                    [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
-                <a class="text-white">Main</a>
-            </div>
-            <div class="flex items-center ml-1 whitespace-nowrap">
-                <mat-icon
-                    class="icon-size-5 text-secondary"
-                    [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
-                <a class="ml-1 text-black font-semibold">All Product</a>
-            </div>
-        </div>
+    <div class="flex items-center w-full">
+        <breadcrumb class="w-full"></breadcrumb>
     </div>
     
     <!-- Main menu -->

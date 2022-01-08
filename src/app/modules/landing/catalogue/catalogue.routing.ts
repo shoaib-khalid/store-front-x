@@ -14,6 +14,9 @@ export const landingCatalogueRoutes: Route[] = [
             products: ProductsResolver,
             categories: StoreCategoriesResolver
         },
+        data: {
+            breadcrumb: ''
+        },
         component: LandingCatalogueComponent
     }
 ];
