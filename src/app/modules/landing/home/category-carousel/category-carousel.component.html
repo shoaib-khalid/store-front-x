@@ -14,7 +14,7 @@
                 <div class="h-5 group-hover:hidden"></div>
                 <img
                     class="w-52 h-32 my-1.5 mx-3 rounded-lg ring-offset-2 ring-offset-white ring-1 ring-black group-hover:ring-primary"
-                    [src]="category.thumbnailUrl ? category.thumbnailUrl : store.storeAsset.logoUrl"
+                    [src]="(category.thumbnailUrl && category.thumbnailUrl !== null) ? category.thumbnailUrl : store.storeAsset.logoUrl"
                     alt="Logo image">
                 <p class="mt-2 font-bold text-3xl group-hover:text-primary">{{category.name}}</p>
             </label>

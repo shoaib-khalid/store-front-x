@@ -93,7 +93,6 @@ export class StoreResolver implements Resolve<any>
                 this.url.domain = this.url.domain.split('.')[0] + ".symplified.ai";
             }
 
-            // console.log(this.url);
         }
 
     }

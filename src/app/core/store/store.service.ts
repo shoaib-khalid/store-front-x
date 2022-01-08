@@ -340,14 +340,16 @@ export class StoresService
 
                     this._logging.debug("Response from StoresService (getStoreByDomainName)", response);
 
+                    const store = response["data"].content.length > 0 ? response["data"].content[0] : null;
+
                     // Update the store
-                    this._store.next(response["data"].content[0]);
+                    this._store.next(store);
 
                     // Update local storage
-                    this.storeId = response["data"].content[0].id;
+                    this.storeId = store !== null ? store.id : null;
     
                     // Return the store
-                    return response["data"].content[0];
+                    return store;
                 })
             ))
         );

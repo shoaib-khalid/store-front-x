@@ -8,12 +8,12 @@ import { StoresService } from 'app/core/store/store.service';
 import { StoreDiscount } from 'app/core/store/store.types';
 
 @Component({
-    selector     : 'store-discount',
-    templateUrl  : './store-discount.component.html',
+    selector     : 'sliders',
+    templateUrl  : './silders.component.html',
     styles       : [``],
     encapsulation: ViewEncapsulation.None
 })
-export class DiscountBannerComponent implements OnInit
+export class SlidersComponent implements OnInit
 {
 
     @ViewChild('courseSteps', {static: true}) courseSteps: MatTabGroup;
@@ -41,7 +41,6 @@ export class DiscountBannerComponent implements OnInit
         // Get the discounts
         this._storesService.storeDiscounts$
         .subscribe((response: StoreDiscount[]) => {
-            console.log("disini",response);
             this.storeDiscounts = response;
 
             this.storeDiscounts.forEach(item => {
@@ -60,8 +59,6 @@ export class DiscountBannerComponent implements OnInit
                     }
                 }));
             })
-
-            console.log("disana ---> ", this.discounts)
 
             // Go to step
             this.goToStep(0);
@@ -122,7 +119,7 @@ export class DiscountBannerComponent implements OnInit
     goToStep(step: number): void
     {
         // Set the current step
-        this.currentStep = step;
+        this.currentStep = step;        
 
         // Go to the step
         this.courseSteps.selectedIndex = this.currentStep;

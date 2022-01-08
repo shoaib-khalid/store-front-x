@@ -1,9 +1,7 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { StoresService } from 'app/core/store/store.service';
-import { Store, StoreCategory, StoreDiscount } from 'app/core/store/store.types';
-import { environment } from 'environments/environment';
-import { Subject, Subscription } from 'rxjs';
+import { Store, StoreCategory } from 'app/core/store/store.types';
 import { HostListener } from "@angular/core";
 
 @Component({
@@ -15,7 +13,7 @@ import { HostListener } from "@angular/core";
         `
         `]
 })
-export class CategoryCarouselComponent implements OnInit
+export class CategoryCarouselComponent
 {    
     store: Store;
     storeCategories: StoreCategory[];
@@ -41,15 +39,6 @@ export class CategoryCarouselComponent implements OnInit
     // @ Accessors
     // -----------------------------------------------------------------------------------------------------
 
-    // (later ubah ni buang telak dekat shared component)
-    /**
-     * Getter for current year
-     */
-    get currentYear(): number
-    {
-        return new Date().getFullYear();
-    }
-
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks
     // -----------------------------------------------------------------------------------------------------
@@ -57,11 +46,29 @@ export class CategoryCarouselComponent implements OnInit
     /**
      * On init
     */
-    ngOnInit() {
-        this._storesService.storeCategories$
-            .subscribe((response) => {
-                this.storeCategories = response;
-            });
+    ngOnInit(): void
+    {
+
+    }
+
+    /**
+     * After view init
+     */
+    ngAfterViewInit(): void
+    {
+        setTimeout(() => {
+            // Get store data
+            this._storesService.store$
+                .subscribe((response) => {
+                    this.store = response;
+                });
+    
+            // Get store categories data
+            this._storesService.storeCategories$
+                .subscribe((response) => {
+                    this.storeCategories = response;
+                });
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------

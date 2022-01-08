@@ -64,7 +64,6 @@ export class LandingCheckoutComponent implements OnInit
     // -----------------------------------------------------------------------------------------------------
 
     allowPickupStore() {
-        console.log("pickup",this.checkoutForm.get('storePickup').value)
         this.checkoutForm.get('storePickup').setValue(this.checkoutForm.get('storePickup').value);
     }
 
