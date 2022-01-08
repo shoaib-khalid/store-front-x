@@ -2,7 +2,6 @@ import { ChangeDetectorRef, Component, Inject, OnInit, ViewChild, ViewEncapsulat
 import { MatTabGroup } from '@angular/material/tabs';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { DOCUMENT } from '@angular/common';
-import { AcademyService } from 'app/modules/landing/academy/academy.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, Subscription } from 'rxjs';
 import { StoresService } from 'app/core/store/store.service';
@@ -30,7 +29,6 @@ export class DiscountBannerComponent implements OnInit
      */
     constructor(
         @Inject(DOCUMENT) private _document: Document,
-        private _academyService: AcademyService,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _changeDetectorRef: ChangeDetectorRef,
         private _storesService: StoresService

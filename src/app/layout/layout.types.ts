@@ -11,4 +11,7 @@ export type Layout =
     | 'compact'
     | 'dense'
     | 'futuristic'
-    | 'thin';
+    | 'thin'
+    // SYMplified
+    | 'fnb'
+    ;

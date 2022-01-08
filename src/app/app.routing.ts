@@ -56,7 +56,7 @@ export const appRoutes: Route[] = [
         path: '',
         component  : LayoutComponent,
         data: {
-            layout: 'empty'
+            layout: 'fnb'
         },
         resolve    : {
             getStoreInfo: StoreResolver

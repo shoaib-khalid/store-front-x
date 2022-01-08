@@ -1,0 +1,23 @@
+<carousel [cellsToShow]="carouselCellsToShow" [arrowsOutside]="carouselArrowsOutside">
+    <ng-container *ngFor="let category of storeCategories">
+        <div class="carousel-cell">
+            <input
+                [id]="'category-button' + category.id"
+                class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                type="button"
+                (click)="chooseCategory(category.id)"
+                mat-icon-button>
+            <label 
+                class="flex flex-col group items-center justify-center cursor-pointer"
+                [for]="'category-button' + category.id"
+                matRipple>
+                <div class="h-5 group-hover:hidden"></div>
+                <img
+                    class="w-52 h-32 my-1.5 mx-3 rounded-lg ring-offset-2 ring-offset-white ring-1 ring-black group-hover:ring-primary"
+                    [src]="category.thumbnailUrl ? category.thumbnailUrl : store.storeAsset.logoUrl"
+                    alt="Logo image">
+                <p class="mt-2 font-bold text-3xl group-hover:text-primary">{{category.name}}</p>
+            </label>
+        </div>
+    </ng-container>
+</carousel>

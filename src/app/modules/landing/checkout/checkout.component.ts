@@ -28,14 +28,8 @@ import { CheckoutValidationService } from './checkout.validation.service';
 })
 export class LandingCheckoutComponent implements OnInit
 {
-    currentSlider: number = 0;
-    countDown:Subscription;
-    counter = 1800;
-    tick = 15000;
 
     checkoutForm: FormGroup;
-
-    quantity: number = 0;
 
     /**
      * Constructor
@@ -60,31 +54,9 @@ export class LandingCheckoutComponent implements OnInit
             state                : ['', Validators.required],
             city                : ['', Validators.required]           
         });
-
-        this.countDown = timer(0, this.tick)
-        .subscribe(() => {
-            if (this.currentSlider >= 1) {
-                this.currentSlider = 0;
-            } else {
-                this.currentSlider++;
-            }
-        })
     }
     
     ngOnDestroy(){
-        this.countDown=null;
-    }
-    
-    showSlider(sliderNumber) {
-        this.currentSlider = sliderNumber;
-    }
-
-    decrement() {
-        this.quantity --;
-    }
-    
-    increment() {
-        this.quantity ++;
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -94,5 +66,10 @@ export class LandingCheckoutComponent implements OnInit
     allowPickupStore() {
         console.log("pickup",this.checkoutForm.get('storePickup').value)
         this.checkoutForm.get('storePickup').setValue(this.checkoutForm.get('storePickup').value);
+    }
+
+    goBack() {
+        history.back();
+        // this._router.navigate(['/catalogue/'+this.categorySlug]);
     }
 }

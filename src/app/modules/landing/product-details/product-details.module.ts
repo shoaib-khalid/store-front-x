@@ -8,7 +8,6 @@ import { landingProductDetailsRoutes } from 'app/modules/landing/product-details
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { NgxGalleryModule } from 'ngx-gallery-9';
-import { BreadcrumbModule } from 'app/layout/common/breadcrumb/breadcrumb.module';
 
 @NgModule({
     declarations: [
@@ -21,7 +20,6 @@ import { BreadcrumbModule } from 'app/layout/common/breadcrumb/breadcrumb.module
         MatFormFieldModule,
         MatInputModule,
         NgxGalleryModule,
-        BreadcrumbModule,
         SharedModule
     ]
 })

@@ -7,22 +7,18 @@ import { Subject, Subscription } from 'rxjs';
 import { HostListener } from "@angular/core";
 
 @Component({
-    selector     : 'landing-home',
-    templateUrl  : './home.component.html',
+    selector     : 'category-carousel',
+    templateUrl  : './category-carousel.component.html',
     encapsulation: ViewEncapsulation.None,
     styles       : [
         /* language=SCSS */
         `
         `]
 })
-export class LandingHomeComponent implements OnInit
-{
-
-    public version: string = environment.appVersion;
-    
+export class CategoryCarouselComponent implements OnInit
+{    
     store: Store;
     storeCategories: StoreCategory[];
-    storeDiscounts: StoreDiscount[];
 
     screenHeight: number;
     screenWidth: number;
@@ -38,6 +34,7 @@ export class LandingHomeComponent implements OnInit
         private _router: Router,
     )
     {
+        this.onResize();
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -61,16 +58,42 @@ export class LandingHomeComponent implements OnInit
      * On init
     */
     ngOnInit() {
-
-        this._storesService.store$
+        this._storesService.storeCategories$
             .subscribe((response) => {
-                this.store = response;
+                this.storeCategories = response;
             });
+    }
 
-        this._storesService.storeDiscounts$
-            .subscribe((response) => {
-                console.log(response);
-                this.storeDiscounts = response;
-            });
+    // -----------------------------------------------------------------------------------------------------
+    // @ Public methods
+    // -----------------------------------------------------------------------------------------------------
+
+    chooseCategory(id) {
+        let index = this.storeCategories.findIndex(item => item.id === id);
+        if (index > -1) {
+            let slug = this.storeCategories[index].name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '');;
+            this._router.navigate(['/catalogue/' + slug]);
+        } else {
+            console.error("Invalid category: Category not found");
+        }
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Private methods
+    // -----------------------------------------------------------------------------------------------------
+
+    @HostListener('window:resize', ['$event'])
+    onResize(event?) {
+        this.screenHeight = window.innerHeight;
+        this.screenWidth = window.innerWidth;
+
+        // if 
+        if (this.screenWidth < 500) {
+            this.carouselCellsToShow = 1;
+        } else if (this.screenWidth >= 500 && this.screenWidth <= 1000) {
+            this.carouselCellsToShow = 3;
+        } else {
+            this.carouselCellsToShow = 4;
+        }
     }
 }
