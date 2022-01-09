@@ -8,6 +8,8 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { merge, Observable, Subject } from 'rxjs';
+import { CartService } from 'app/core/cart/cart.service';
+import { Cart } from 'app/core/cart/cart.types';
 
 @Component({
     selector     : 'landing-catalogue',
@@ -59,12 +61,17 @@ export class LandingCatalogueComponent implements OnInit
     constructor(
         private _storesService: StoresService,
         private _productsService: ProductsService,
+        private _cartService: CartService,
         private _changeDetectorRef: ChangeDetectorRef,
         private _router: Router,
         private _route: ActivatedRoute
     )
     {
     }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Lifecycle hooks
+    // -----------------------------------------------------------------------------------------------------
 
     ngOnInit(): void {
 
@@ -91,15 +98,21 @@ export class LandingCatalogueComponent implements OnInit
 
         // Get the products pagination
         this._productsService.pagination$
-        .pipe(takeUntil(this._unsubscribeAll))
-        .subscribe((pagination: ProductPagination) => {
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((pagination: ProductPagination) => {
 
-            // Update the pagination
-            this.pagination = pagination;
+                // Update the pagination
+                this.pagination = pagination;
 
-            // Mark for check
-            this._changeDetectorRef.markForCheck();
-        });
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
+
+        // Get cart
+        this._cartService.cart$
+            .subscribe((cart: Cart)=>{
+                console.log("cart", cart)
+            });
     }
 
     /**
@@ -159,6 +172,20 @@ export class LandingCatalogueComponent implements OnInit
             }
         }, 0);
     }
+
+    /**
+     * On destroy
+     */
+    ngOnDestroy(): void
+    {
+        // Unsubscribe from all subscriptions
+        this._unsubscribeAll.next();
+        this._unsubscribeAll.complete();
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Public methods
+    // -----------------------------------------------------------------------------------------------------
 
     chooseCategory(id: string = null) {
 

@@ -59,7 +59,7 @@ export const appRoutes: Route[] = [
             layout: 'fnb'
         },
         resolve    : {
-            getStoreInfo: StoreResolver
+            storeInfo: StoreResolver
         },
         children   : [
             {path: 'home', loadChildren: () => import('app/modules/landing/home/home.module').then(m => m.LandingHomeModule)},

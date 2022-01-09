@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
-import { forkJoin, Observable } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
+import { switchMap, take, map, tap, catchError, filter } from 'rxjs/operators';
 import { MessagesService } from 'app/layout/common/messages/messages.service';
 import { NavigationService } from 'app/core/navigation/navigation.service';
 import { NotificationsService } from 'app/layout/common/notifications/notifications.service';
@@ -9,6 +10,8 @@ import { ShortcutsService } from 'app/layout/common/shortcuts/shortcuts.service'
 import { UserService } from 'app/core/user/user.service';
 import { StoresService } from './core/store/store.service';
 import { PlatformLocation } from '@angular/common';
+import { CartService } from 'app/core/cart/cart.service';
+import { Cart } from 'app/core/cart/cart.types';
 
 @Injectable({
     providedIn: 'root'
@@ -65,14 +68,22 @@ export class StoreResolver implements Resolve<any>
         subDomainName: null,
     };
 
+    cartId: string;
+
     /**
      * Constructor
      */
     constructor(
         private _storesService: StoresService,
+        private _cartService: CartService,
         private _platformLocation: PlatformLocation
     )
     {
+
+        // ----------------------
+        // Get store by URL
+        // ----------------------
+
         this.url.full = (this._platformLocation as any).location.origin;
         let sanatiseUrl = this.url.full.replace(/^(https?:|)\/\//, '').split(':')[0]; // this will get the domain from the URL
 
@@ -109,7 +120,45 @@ export class StoreResolver implements Resolve<any>
      */
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any>
     {
-        return this._storesService.getStoreByDomainName(this.url.domain);
+        return forkJoin([
+            this._storesService.getStoreByDomainName(this.url.domain).pipe(
+                take(1),
+                switchMap(() => {
+
+                    // ----------------------
+                    // Get cart id / create cart id
+                    // ----------------------
+
+                    if (this._cartService.cartId$) {
+                        this.cartId = this._cartService.cartId$;
+                        this.getCartItems(this.cartId);
+                    } else if (this._storesService.storeId$) {
+                        let createCartBody = {
+                            customerId: null, // later make a getter to get logged in user
+                            storeId: this._storesService.storeId$,
+                        }
+                        this._cartService.createCart(createCartBody)
+                            .subscribe((cart: Cart)=>{
+                                // set cart id
+                                this.cartId = cart.id;
+                                this.getCartItems(this.cartId);
+                            });
+                    } else {
+                        alert("no store id");
+                        console.error("no store id");
+                    }
+
+                    return of(true);
+                })
+            ),
+            this._storesService.getStoreCategories()
+        ])
+    }
+
+    getCartItems(cartId: string){
+        this._cartService.getCartItems(cartId)
+            .subscribe((response)=>{
+
+            });
     }
 }
-

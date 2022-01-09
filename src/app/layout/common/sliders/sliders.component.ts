@@ -43,25 +43,27 @@ export class SlidersComponent implements OnInit
         .subscribe((response: StoreDiscount[]) => {
             this.storeDiscounts = response;
 
-            this.storeDiscounts.forEach(item => {
-                this.discounts.push(...item.storeDiscountTierList.map(object => {
-                    return {
-                        discountName: item.discountName,
-                        discountType: item.discountType,
-                        startDate   : item.startDate,
-                        endDate     : item.endDate,
-                        maxDiscountAmount   : item.maxDiscountAmount,
-                        normalPriceItemOnly : item.normalPriceItemOnly,
-
-                        calculationType       : object.calculationType,
-                        discountAmount        : object.discountAmount,
-                        startTotalSalesAmount : object.startTotalSalesAmount
-                    }
-                }));
-            })
-
-            // Go to step
-            this.goToStep(0);
+            if (this.storeDiscounts.length > 0) {
+                this.storeDiscounts.forEach(item => {
+                    this.discounts.push(...item.storeDiscountTierList.map(object => {
+                        return {
+                            discountName: item.discountName,
+                            discountType: item.discountType,
+                            startDate   : item.startDate,
+                            endDate     : item.endDate,
+                            maxDiscountAmount   : item.maxDiscountAmount,
+                            normalPriceItemOnly : item.normalPriceItemOnly,
+    
+                            calculationType       : object.calculationType,
+                            discountAmount        : object.discountAmount,
+                            startTotalSalesAmount : object.startTotalSalesAmount
+                        }
+                    }));
+                })
+    
+                // Go to step
+                this.goToStep(0);
+            }
 
             // Mark for check
             this._changeDetectorRef.markForCheck();

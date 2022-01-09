@@ -6,6 +6,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatMenuModule } from '@angular/material/menu';
 import { SharedModule } from 'app/shared/shared.module';
 import { LandingCatalogueComponent } from 'app/modules/landing/catalogue/catalogue.component';
 import { landingCatalogueRoutes } from 'app/modules/landing/catalogue/catalogue.routing';
@@ -24,6 +25,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
         MatCheckboxModule,
         MatTooltipModule,
         MatPaginatorModule,
+        MatMenuModule,
         SharedModule
     ]
 })

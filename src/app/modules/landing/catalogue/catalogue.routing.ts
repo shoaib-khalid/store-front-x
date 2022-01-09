@@ -12,7 +12,8 @@ export const landingCatalogueRoutes: Route[] = [
         path    : ':catalogue-slug',
         resolve  : {
             products: ProductsResolver,
-            categories: StoreCategoriesResolver
+            // categories: StoreCategoriesResolver,
+            // cartItems: CartItemsResolver
         },
         data: {
             breadcrumb: ''

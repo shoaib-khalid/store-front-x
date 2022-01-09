@@ -147,7 +147,7 @@ export class ProductsService
         return this._httpClient.get<any>(productService +'/stores/'+this.storeId$+'/products', header).pipe(
             tap((response) => {
 
-                this._logging.debug("Response from ProductsService",response);
+                this._logging.debug("Response from ProductsService (getProducts)",response);
 
                 let _pagination = {
                     length: response.data.totalElements,

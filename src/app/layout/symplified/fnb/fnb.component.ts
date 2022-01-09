@@ -1,10 +1,12 @@
-import { Component, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { StoresService } from 'app/core/store/store.service';
 import { Store } from 'app/core/store/store.types';
 import { Subject, Subscription } from 'rxjs';
 import { environment } from 'environments/environment';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { filter, distinctUntilChanged } from 'rxjs/operators';
+import { filter, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { CartService } from 'app/core/cart/cart.service';
+import { CartItem } from 'app/core/cart/cart.types';
 
 @Component({
     selector     : 'fnb-layout',
@@ -16,6 +18,8 @@ export class FnbLayoutComponent implements OnDestroy
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     public version: string = environment.appVersion;
     store: Store;
+    cartItem: CartItem[];
+    cartItemQuantity: number = 0;
 
     isHomePage: boolean = true;
 
@@ -35,6 +39,8 @@ export class FnbLayoutComponent implements OnDestroy
      */
     constructor(
         private _storesService: StoresService,
+        private _cartService: CartService,
+        private _changeDetectorRef: ChangeDetectorRef,
         private _router: Router,
         private _activatedRoute: ActivatedRoute
     )
@@ -45,7 +51,6 @@ export class FnbLayoutComponent implements OnDestroy
     // @ Accessors
     // -----------------------------------------------------------------------------------------------------
 
-    // (later ubah ni buang telak dekat shared component)
     /**
      * Getter for current year
      */
@@ -66,9 +71,26 @@ export class FnbLayoutComponent implements OnDestroy
             .subscribe((response) => {
                 this.store = response;
             });
+            
+        this._cartService.cartItems$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((response) => {
+                this.cartItem = response;
 
+                // return array of quantity of each cartItem
+                let _cartItemQttyArr: number[] = this.cartItem.map(item => {
+                    return item.quantity;
+                });
+
+                // sum up the quantity in the array
+                this.cartItemQuantity = _cartItemQttyArr.reduce((sum, a) => sum + a, 0);
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
+
+        // below used to decide which banner or header to be displayed
         this.isHomePage = this._router.url === "/home" ? true : false;
-
         this._router.events.pipe(
             filter((event) => event instanceof NavigationEnd),
             distinctUntilChanged(),
