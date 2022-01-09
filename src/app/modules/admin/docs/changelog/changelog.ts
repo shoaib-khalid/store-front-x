@@ -9,6 +9,31 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v0.0.6
+        {
+            version    : 'v0.0.6',
+            releaseDate: 'Jan 09, 2022',
+            changes    : [
+                {
+                    type: 'Fix',
+                    list: [
+                        '(UIResponsive) Fix some UI responsiveness',
+                        '(UIFunction) Fix some UI functions. Enable back button, cart button, breadcrumb navigation',
+                        '(Layout) Make layout dynamic',
+                        '(CataloguePage) Enable click product, make default image to store logo if product image null',
+                        '(ProductPage) Enable product variants & product combo',
+                        '(BannerSlider) Fix banner slider if there\'s no banner'
+                    ]
+                },
+                {
+                    type: 'Added',
+                    list: [
+                        '(CartService) Create add to cart function, count quantity of cart item and display in header',
+                        '(DefaultPage) Add 404 page if there\'re no store'
+                    ]
+                }
+            ]
+        },
         // v0.0.5
         {
             version    : 'v0.0.5',
