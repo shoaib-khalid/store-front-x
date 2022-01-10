@@ -1,15 +1,16 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ProductsService } from 'app/core/product/product.service';
 import { StoresService } from 'app/core/store/store.service';
 import { Store, StoreCategory } from 'app/core/store/store.types';
 import { Product, ProductPagination } from 'app/core/product/product.types';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { map, switchMap, takeUntil } from 'rxjs/operators';
+import { map, switchMap, takeUntil, debounceTime, filter, distinctUntilChanged } from 'rxjs/operators';
 import { merge, Observable, Subject } from 'rxjs';
 import { CartService } from 'app/core/cart/cart.service';
 import { Cart } from 'app/core/cart/cart.types';
+import { FormArray, FormControl, FormGroup } from '@angular/forms';
 
 @Component({
     selector     : 'landing-catalogue',
@@ -39,6 +40,8 @@ export class LandingCatalogueComponent implements OnInit
 
     store: Store;
     storeCategories: StoreCategory[];
+    storeCategory: StoreCategory;
+
     catalogueSlug: string;
 
     @ViewChild(MatPaginator) private _paginator: MatPaginator;
@@ -48,7 +51,18 @@ export class LandingCatalogueComponent implements OnInit
     products: Product[];
     productName: string = null;
 
+    // product
+    products$: Observable<Product[]>;
+    selectedProduct: Product | null = null;
+
     productViewOrientation: string = 'grid';
+
+    searchInputControl: FormControl = new FormControl();
+    categoryFilterControl: FormControl = new FormControl();
+
+    filterControl: FormControl = new FormControl();
+    sortName: 'asc' | 'desc' | '' = 'asc';
+    searchName: string = "";
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     isLoading: boolean = false;
@@ -87,8 +101,23 @@ export class LandingCatalogueComponent implements OnInit
                 this.storeCategories = response;
             });
 
-        // Get the store slug name in url path
         this.catalogueSlug = this._route.snapshot.paramMap.get('catalogue-slug');
+
+        // Get the store slug name in url path
+        this._router.events.pipe(
+            filter((event) => event instanceof NavigationEnd),
+            distinctUntilChanged(),
+        ).subscribe(() => {
+            this.catalogueSlug = this._route.snapshot.paramMap.get('catalogue-slug');
+            
+
+            let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === this.catalogueSlug);
+            this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
+            
+            // Mark for check
+            this._changeDetectorRef.markForCheck();
+        });
+    
 
         // Get the products
         this._productsService.products$
@@ -113,6 +142,28 @@ export class LandingCatalogueComponent implements OnInit
             .subscribe((cart: Cart)=>{
                 console.log("cart", cart)
             });
+
+        // Subscribe to search input field value changes
+        this.searchInputControl.valueChanges
+            .pipe(
+                takeUntil(this._unsubscribeAll),
+                debounceTime(300),
+                switchMap((query) => {
+
+                    this.searchName = query;
+                    
+                    this.isLoading = true;
+                    
+                    return this._productsService.getProducts(0, 10, 'name', this.sortName, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '');
+                }),
+                map(() => {
+                    this.isLoading = false;
+                })
+            )
+            .subscribe();
+
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
     }
 
     /**
@@ -192,7 +243,7 @@ export class LandingCatalogueComponent implements OnInit
         if (id){
             let index = this.storeCategories.findIndex(item => item.id === id);
             if (index > -1) {
-                let slug = this.storeCategories[index].name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '');;
+                let slug = this.storeCategories[index].name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '');
                 this._router.navigate(['/catalogue/' + slug]);
             } else {
                 console.error("Invalid category: Category not found");
@@ -201,6 +252,20 @@ export class LandingCatalogueComponent implements OnInit
             this._router.navigate(['/catalogue/all-products']);
         }
 
+    }
+
+    getCategorySlug(categoryName: string) {
+        return categoryName.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '');
+    }
+
+    changeCatalogue(event) {
+
+        if (event.checked === false) {
+            return;
+        }
+
+        this._router.navigate(['catalogue/' + event.source.value]);
+        
     }
 
     decrement() {

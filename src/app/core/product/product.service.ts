@@ -125,7 +125,7 @@ export class ProductsService
      * @param order
      * @param search
      */
-    getProducts(page: number = 0, size: number = 20, sort: string = 'name', order: 'asc' | 'desc' | '' = 'asc', search: string = '', status: string = 'ACTIVE,INACTIVE'):
+    getProducts(page: number = 0, size: number = 20, sort: string = 'name', order: 'asc' | 'desc' | '' = 'asc', search: string = '', status: string = 'ACTIVE,INACTIVE', categoryId: string = null):
         Observable<{ pagination: ProductPagination; products: Product[] }>
     {
         let productService = this._apiServer.settings.apiServer.productService;
@@ -140,9 +140,12 @@ export class ProductsService
                 sortByCol   : '' + sort,
                 sortingOrder: '' + order.toUpperCase(),
                 name        : '' + search,
-                status      : '' + status
+                status      : '' + status,
+                categoryId  : '' + categoryId
             }
         };
+
+        if (categoryId === null) delete header.params.categoryId;
 
         return this._httpClient.get<any>(productService +'/stores/'+this.storeId$+'/products', header).pipe(
             tap((response) => {

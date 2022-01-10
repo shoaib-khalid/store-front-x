@@ -78,7 +78,7 @@ export class CategoryCarouselComponent
     chooseCategory(id) {
         let index = this.storeCategories.findIndex(item => item.id === id);
         if (index > -1) {
-            let slug = this.storeCategories[index].name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '');;
+            let slug = this.storeCategories[index].name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '');
             this._router.navigate(['/catalogue/' + slug]);
         } else {
             console.error("Invalid category: Category not found");
