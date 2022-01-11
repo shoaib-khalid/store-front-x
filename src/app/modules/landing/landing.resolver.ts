@@ -4,7 +4,7 @@ import { CartService } from 'app/core/cart/cart.service';
 import { ProductsService } from 'app/core/product/product.service';
 import { StoresService } from 'app/core/store/store.service';
 import { StoreCategory } from 'app/core/store/store.types';
-import { forkJoin, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
@@ -31,10 +31,7 @@ export class StoreCategoriesResolver implements Resolve<any>
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any>
     {
-        // Fork join multiple API endpoint calls to wait all of them to finish
-        return forkJoin([
-            this._storesService.getStoreCategories(),
-        ]);
+        return this._storesService.storeId$ ? this._storesService.getStoreCategories() : of(true);
     }
 }
 
@@ -63,10 +60,7 @@ export class StoreDiscountsResolver implements Resolve<any>
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any>
     {
-        // Fork join multiple API endpoint calls to wait all of them to finish
-        return forkJoin([
-            this._storesService.getStoreDiscounts(),
-        ]);
+        return this._storesService.storeId$ ? this._storesService.getStoreDiscounts() : of(true);
     }
 }
 
@@ -101,56 +95,53 @@ export class ProductsResolver implements Resolve<any>
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any>
     {
-        
-        // Get store categories data
-        this._storesService.storeCategories$
-            .subscribe((response) => {
 
-                this.storeCategories = response;
+        if (this._storesService.storeId$) {
+            
+            // Get store categories data
+            this._storesService.storeCategories$
+                .subscribe((response) => {
 
-                let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === route["params"]["catalogue-slug"]);
-                this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
+                    this.storeCategories = response;
 
-            });
+                    let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === route["params"]["catalogue-slug"]);
+                    this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
 
-        
-        // Fork join multiple API endpoint calls to wait all of them to finish
-        return forkJoin([
-            this._productsService.getProducts(0, 10, 'name', 'asc', '', "ACTIVE" , this.storeCategory ? this.storeCategory.id : '')
-        ]);
+                });
+        }
+
+        return this._storesService.storeId$ ? this._productsService.getProducts(0, 10, 'name', 'asc', '', "ACTIVE" , this.storeCategory ? this.storeCategory.id : '') : of(true);
     }
 }
 
-// @Injectable({
-//     providedIn: 'root'
-// })
-// export class CartItemsResolver implements Resolve<any>
-// {
-//     /**
-//      * Constructor
-//      */
-//     constructor(
-//         private _cartService: CartService
-//     )
-//     {
-//     }
+@Injectable({
+    providedIn: 'root'
+})
+export class CartItemsResolver implements Resolve<any>
+{
+    /**
+     * Constructor
+     */
+    constructor(
+        private _cartService: CartService,
+        private _storesService: StoresService
+    )
+    {
+    }
 
-//     // -----------------------------------------------------------------------------------------------------
-//     // @ Public methods
-//     // -----------------------------------------------------------------------------------------------------
+    // -----------------------------------------------------------------------------------------------------
+    // @ Public methods
+    // -----------------------------------------------------------------------------------------------------
 
-//     /**
-//      * Resolver
-//      *
-//      * @param route
-//      * @param state
-//      */
+    /**
+     * Resolver
+     *
+     * @param route
+     * @param state
+     */
 
-//     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any>
-//     {
-//         // Fork join multiple API endpoint calls to wait all of them to finish
-//         return forkJoin([
-//             this._cartService.getCartItems(this._cartService.cartId$),
-//         ]);
-//     }
-// }
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any>
+    {
+        return this._storesService.storeId$ ? this._cartService.getCartItems(this._cartService.cartId$) : of(true);
+    }
+}

@@ -133,109 +133,112 @@ export class LandingProductDetailsComponent implements OnInit
                 // Get category info by category id
                 // ----------------------------------
 
-                this._storesService.getStoreCategoriesById(response.categoryId)
-                    .subscribe((response: StoreCategory) => {
-                        this.categorySlug = response.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '');
-                    });
-                
-                // -----------------------
-                // get cheapest item price
-                // -----------------------
-                this.selectedProductInventory = this.product.productInventories.reduce((r, e) => r.price < e.price ? r : e);
-
-                // set initial selectedProductInventoryItems to the cheapest item
-                this.selectedProductInventoryItems = this.selectedProductInventory.productInventoryItems;
-
-                if (this.selectedProductInventoryItems) {
-                    this.displayedProduct.price = this.selectedProductInventory.price;
-                    this.displayedProduct.itemCode = this.selectedProductInventory.itemCode;
-                    this.displayedProduct.sku = this.selectedProductInventory.sku;
-                } 
-                else {
-                    this.displayedProduct.price = this.selectedProductInventory.price;
-                    this.displayedProduct.itemCode = this.selectedProductInventory.itemCode;
-                    this.displayedProduct.sku = this.selectedProductInventory.sku;
-                }
-
-                // ------------------
-                // Product Assets
-                // ------------------
-
-                this.productAssets = this.product.productAssets;
-
-                // first this will push all images expect the one that are currently display
-                response.productAssets.forEach( object => {
-                    let _imageObject = {
-                        small   : '' + object.url,
-                        medium  : '' + object.url,
-                        big     : '' + object.url
-                    }
+                if (this.product) {
                     
-                    if(object.itemCode != this.displayedProduct.itemCode){
-                        this.imageCollection.push(_imageObject)
-                    } 
-                });
-
-                // loop second one to push the one that are currently display in first array
-                response.productAssets.forEach( object => {
-                    let _imageObject = {
-                        small   : '' + object.url,
-                        medium  : '' + object.url,
-                        big     : '' + object.url
-                    }
-                    
-                    if(object.itemCode == this.displayedProduct.itemCode){
-                        this.imageCollection.unshift(_imageObject)
-                    }
-                });
-        
-                // set to galerry images
-                this.galleryImages = this.imageCollection
-
-                // -----------------------
-                // Product Variants
-                // -----------------------
-
-                // set currentVariant
-                this.selectedProductInventoryItems.forEach(item => {
-                    this.selectedVariants.push(item.productVariantAvailableId)
-                });
-
-                // logic here is to extract current selected variant and to reconstruct new object with its string identifier 
-                // basically it create new array of object from this.product.productVariants to => this.requestParamVariant
-                let _productVariants = this.product.productVariants
-                _productVariants.map(variantBase => {
-                    let _productVariantsAvailable = variantBase.productVariantsAvailable;
-                    _productVariantsAvailable.forEach(element => {
-                        this.selectedVariants.map(currentVariant => {
-                            if(currentVariant.indexOf(element.id) > -1){
-                                let _data = {
-                                    basename: variantBase.name,
-                                    variantID: element.id,
-                                }
-                                this.selectedVariant.push(_data)
-                            }
-                        })
-
-                    })
-                });
-
-                // -----------------------
-                // Product Combo
-                // -----------------------
-
-                // get product package if exists
-                if (this.product.isPackage) {
-                    this._productsService.getProductPackageOptions(this.product.id)
-                    .subscribe((response)=>{
-                        console.log("response:", response);
-                        this.combos = response["data"];
-                        
-                        this.combos.forEach(element => {
-                            this.selectedCombo[element.id] = [];
+                    this._storesService.getStoreCategoriesById(response.categoryId)
+                        .subscribe((response: StoreCategory) => {
+                            this.categorySlug = response.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '');
                         });
-
+                    
+                    // -----------------------
+                    // get cheapest item price
+                    // -----------------------
+                    this.selectedProductInventory = this.product.productInventories.reduce((r, e) => r.price < e.price ? r : e);
+    
+                    // set initial selectedProductInventoryItems to the cheapest item
+                    this.selectedProductInventoryItems = this.selectedProductInventory.productInventoryItems;
+    
+                    if (this.selectedProductInventoryItems) {
+                        this.displayedProduct.price = this.selectedProductInventory.price;
+                        this.displayedProduct.itemCode = this.selectedProductInventory.itemCode;
+                        this.displayedProduct.sku = this.selectedProductInventory.sku;
+                    } 
+                    else {
+                        this.displayedProduct.price = this.selectedProductInventory.price;
+                        this.displayedProduct.itemCode = this.selectedProductInventory.itemCode;
+                        this.displayedProduct.sku = this.selectedProductInventory.sku;
+                    }
+    
+                    // ------------------
+                    // Product Assets
+                    // ------------------
+    
+                    this.productAssets = this.product.productAssets;
+    
+                    // first this will push all images expect the one that are currently display
+                    response.productAssets.forEach( object => {
+                        let _imageObject = {
+                            small   : '' + object.url,
+                            medium  : '' + object.url,
+                            big     : '' + object.url
+                        }
+                        
+                        if(object.itemCode != this.displayedProduct.itemCode){
+                            this.imageCollection.push(_imageObject)
+                        } 
                     });
+    
+                    // loop second one to push the one that are currently display in first array
+                    response.productAssets.forEach( object => {
+                        let _imageObject = {
+                            small   : '' + object.url,
+                            medium  : '' + object.url,
+                            big     : '' + object.url
+                        }
+                        
+                        if(object.itemCode == this.displayedProduct.itemCode){
+                            this.imageCollection.unshift(_imageObject)
+                        }
+                    });
+            
+                    // set to galerry images
+                    this.galleryImages = this.imageCollection
+    
+                    // -----------------------
+                    // Product Variants
+                    // -----------------------
+    
+                    // set currentVariant
+                    this.selectedProductInventoryItems.forEach(item => {
+                        this.selectedVariants.push(item.productVariantAvailableId)
+                    });
+    
+                    // logic here is to extract current selected variant and to reconstruct new object with its string identifier 
+                    // basically it create new array of object from this.product.productVariants to => this.requestParamVariant
+                    let _productVariants = this.product.productVariants
+                    _productVariants.map(variantBase => {
+                        let _productVariantsAvailable = variantBase.productVariantsAvailable;
+                        _productVariantsAvailable.forEach(element => {
+                            this.selectedVariants.map(currentVariant => {
+                                if(currentVariant.indexOf(element.id) > -1){
+                                    let _data = {
+                                        basename: variantBase.name,
+                                        variantID: element.id,
+                                    }
+                                    this.selectedVariant.push(_data)
+                                }
+                            })
+    
+                        })
+                    });
+    
+                    // -----------------------
+                    // Product Combo
+                    // -----------------------
+    
+                    // get product package if exists
+                    if (this.product.isPackage) {
+                        this._productsService.getProductPackageOptions(this.product.id)
+                        .subscribe((response)=>{
+
+                            this.combos = response["data"];
+                            
+                            this.combos.forEach(element => {
+                                this.selectedCombo[element.id] = [];
+                            });
+    
+                        });
+                    }
                 }
             });
     }

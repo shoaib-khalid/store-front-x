@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+// import { HttpClient } from '@angular/common/http';
 import { Observable, ReplaySubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -11,7 +11,7 @@ export class CheckoutValidationService {
     /**
      * Constructor
      */
-    constructor(private _httpClient: HttpClient)
+    constructor()
     {
     }
   
@@ -21,7 +21,8 @@ export class CheckoutValidationService {
             invalidEmailAddress: 'Invalid email address',
             invalidPhonenumber: 'Invalid phonenumber',
             invalidPostcode: 'Invalid postcode',
-            minlength: `Minimum length ${validatorValue.requiredLength}`
+            minlength: `Minimum length ${validatorValue.requiredLength}`,
+            deliveryProviderHasError: `Error found in delivery service provider ${validatorValue}`
         };
         
         return config[validatorName];
@@ -82,5 +83,9 @@ export class CheckoutValidationService {
         } else {
           return { invalidPostcode: true };
         }
+    }
+
+    static deliveryProviderValidator(control){
+      return null;
     }
 }

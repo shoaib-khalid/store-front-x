@@ -9,10 +9,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSelectModule } from '@angular/material/select';
+import { ChooseDeliveryAddressComponent } from './choose-delivery-address/choose-delivery-address.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
     declarations: [
-        LandingCheckoutComponent
+        LandingCheckoutComponent,
+        ChooseDeliveryAddressComponent
     ],
     imports     : [
         RouterModule.forChild(landingCheckoutRoutes),
@@ -21,7 +25,9 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
         MatFormFieldModule,
         MatCheckboxModule,
         MatInputModule,
+        MatSelectModule,
         MatSlideToggleModule,
+        MatDialogModule,
         SharedModule
     ]
 })

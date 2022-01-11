@@ -5,13 +5,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { SharedModule } from 'app/shared/shared.module';
 import { LandingProductDetailsComponent } from 'app/modules/landing/product-details/product-details.component';
 import { landingProductDetailsRoutes } from 'app/modules/landing/product-details/product-details.routing';
+import { Error404Component } from 'app/shared/error/error-404/error-404.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { NgxGalleryModule } from 'ngx-gallery-9';
 
 @NgModule({
     declarations: [
-        LandingProductDetailsComponent
+        LandingProductDetailsComponent,
     ],
     imports     : [
         RouterModule.forChild(landingProductDetailsRoutes),
