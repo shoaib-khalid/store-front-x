@@ -1,7 +1,7 @@
 <div class="flex flex-col items-center w-full h-full">
 
     <!-- Main menu -->
-    <div class="flex flex-col items-center w-full h-auto my-5 md:my-20 px-5 md:px-0">
+    <div class="flex flex-col items-center w-full h-auto my-5 px-5">
         <!-- Back button & sort -->
         <div class="flex flex-row items-center justify-between w-full max-w-280">
             <input
@@ -23,139 +23,153 @@
         
         <!-- Container -->
         <div class="flex flex-col md:flex-row justify-between mt-10 w-full md:max-w-280">
-            <!-- Products -->
+            
             <div class="flex flex-col flex-auto w-full sm:max-w-xs sm:max-w-5xl mx-auto md:ml-10">
-                <div class="flex flex-col md:flex-row w-full">
 
-                    <!-- Product Assets -->
-                    <div class="px-5 sm:px-20 w-full md:w-1/2 md:w-140">
-                        <ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
-                    </div>
-                    
-                    <!-- Product Details -->
-                    <div class="flex flex-col px-5 sm:px-20 w-full md:w-1/2">
-                        <!-- Title -->
-                        <span class="mb-2 text-4xl font-semibold mt-5 sm:mt-10 md:mt-0">{{product.name}}</span>
-                        <!-- Price -->
-                        <div class="mb-2">
-                            <p class="font-semibold">Price: &nbsp; <span class="text-xl font-bold">{{displayedProduct.price | currency: store.regionCountry.currencySymbol}}</span> </p>
+                <!-- Products -->
+                <ng-container *ngIf="product;else noProduct">
+                    <div class="flex flex-col md:flex-row w-full">
+    
+                        <!-- Product Assets -->
+                        <div class="flex justify-center w-full md:w-1/2 md:w-140">
+                            <ngx-gallery [options]="galleryOptions" [images]="galleryImages"></ngx-gallery>
                         </div>
-                        <!-- Details -->
-                        <div class="mb-2">
-                            <p class="font-semibold">Details:</p> <span class="text-sm font-normal" [innerHTML]="product.description"></span>
-                        </div>
-                        <!-- Variants / Combo -->
-                        <ng-container *ngIf="!product.isPackage; else comboProduct">
-                            <!-- Variants -->
-                            <fieldset 
-                                [id]="variant.name" 
-                                *ngFor="let variant of product.productVariants; let i = index;"
-                                class="py-1">
-                                <label class="font-semibold" for="{{variant.name}}">{{variant.name | titlecase }} : </label>
-                                <ul class="grid grid-cols-2">
-                                    <li *ngFor="let option of variant.productVariantsAvailable; let i = index;" class="flex items-center">
-                                        <input type="radio" 
-                                            id="{{variant.name + i}}" 
-                                            value="{{option.value}}" 
-                                            name="{{variant.name}}" 
-                                            [checked]="selectedVariants.indexOf(option.id) > -1"
-                                            (change)="onChangeVariant(option.id, variant.name, option.productId)"
-                                        >
-                                        <label class="pl-2" for="{{variant.name + i}}">{{option.value}}</label>
-                                        <!-- <label for="{{variant.name + i}}">{{option.value}} / {{ selectedVariants.indexOf(option.id) }} / {{option.id}}</label> -->
-                                    </li>
-                                </ul>
-                            </fieldset>
-                        </ng-container>
-                        <ng-template #comboProduct>
-                            <!-- Combo -->
-                            <fieldset 
-                                [id]="combo.title" 
-                                *ngFor="let combo of combos; let i = index;"
-                                class="py-1">
-                                <label class="font-semibold" for="{{combo.title}}">{{combo.title | uppercase}} : (Select {{ combo.totalAllow }} of {{ combo.productPackageOptionDetail.length }})</label>
-                                <ul class="grid grid-cols-2">
-                                    <li *ngFor="let option of combo.productPackageOptionDetail; let i = index;" class="flex items-center">
-                                        <input type="checkbox" 
-                                            [id]="'combo-checkbox-' + combo.id + '-' + option.productId"
-                                            [value]="option.productId" 
-                                            [name]="'combo-checkbox-' + combo.id + '-' + option.productId"
-                                            [checked]="selectedCombo[combo.id].indexOf(option.productId) > -1"
-                                            (change)="onChangeCombo(combo.id, option.productId, $event)"
-                                        >
-                                        <label class="pl-2" [for]="'combo-checkbox-' + combo.id + '-' + option.productId">{{option.product.name}}</label>
-                                        <!-- <label for="{{variant.name + i}}">{{option.value}} / {{ selectedVariants.indexOf(option.id) }} / {{option.id}}</label> -->
-                                    </li>
-                                </ul>
-                            </fieldset>
-                        </ng-template>
-
-                        <!-- Quantity -->
-                        <div class="flex flex-row justify-between items-center">
-                            <span class="font-semibold">Quantity:</span> 
-                            <div class="flex flex-row h-8 w-20 rounded-lg relative bg-primary mt-1">
-                                <button (click)="checkQuantity('decrement')" class="text-white hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l-lg cursor-pointer outline-none">
-                                    <span class="text-2xl">−</span>
-                                </button>
-                                <input [(ngModel)]="quantity" (change)="checkQuantity()" type="number" class="outline-none focus:outline-none text-center w-full font-semibold text-md text-white focus:text-white md:text-basecursor-default flex items-center outline-none" name="custom-input-number" value="0"/>
-                                <button (click)="checkQuantity('increment')" class="text-white hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r-lg cursor-pointer">
-                                    <span class="text-2xl">+</span>
-                                </button>
+                        
+                        <!-- Product Details -->
+                        <div class="flex flex-col w-full md:w-1/2">
+                            <!-- Title -->
+                            <span class="mb-2 text-4xl font-semibold mt-5 sm:mt-10 md:mt-0">{{product.name}}</span>
+                            <!-- Price -->
+                            <div class="mb-2">
+                                <p class="font-semibold">Price: &nbsp; <span class="text-xl font-bold">{{displayedProduct.price | currency: store.regionCountry.currencySymbol}}</span> </p>
+                            </div>
+                            <!-- Details -->
+                            <div class="mb-2">
+                                <p class="font-semibold">Details:</p> <span class="text-sm font-normal" [innerHTML]="product.description"></span>
+                            </div>
+                            <!-- Variants / Combo -->
+                            <ng-container *ngIf="!product.isPackage; else comboProduct">
+                                <!-- Variants -->
+                                <fieldset 
+                                    [id]="variant.name" 
+                                    *ngFor="let variant of product.productVariants; let i = index;"
+                                    class="py-1">
+                                    <label class="font-semibold" for="{{variant.name}}">{{variant.name | titlecase }} : </label>
+                                    <ul class="grid grid-cols-2">
+                                        <li *ngFor="let option of variant.productVariantsAvailable; let i = index;" class="flex items-center">
+                                            <input type="radio" 
+                                                id="{{variant.name + i}}" 
+                                                value="{{option.value}}" 
+                                                name="{{variant.name}}" 
+                                                [checked]="selectedVariants.indexOf(option.id) > -1"
+                                                (change)="onChangeVariant(option.id, variant.name, option.productId)"
+                                            >
+                                            <label class="pl-2" for="{{variant.name + i}}">{{option.value}}</label>
+                                            <!-- <label for="{{variant.name + i}}">{{option.value}} / {{ selectedVariants.indexOf(option.id) }} / {{option.id}}</label> -->
+                                        </li>
+                                    </ul>
+                                </fieldset>
+                            </ng-container>
+                            <ng-template #comboProduct>
+                                <!-- Combo -->
+                                <fieldset 
+                                    [id]="combo.title" 
+                                    *ngFor="let combo of combos; let i = index;"
+                                    class="py-1">
+                                    <label class="font-semibold" for="{{combo.title}}">{{combo.title | uppercase}} : (Select {{ combo.totalAllow }} of {{ combo.productPackageOptionDetail.length }})</label>
+                                    <ul class="grid grid-cols-2">
+                                        <li *ngFor="let option of combo.productPackageOptionDetail; let i = index;" class="flex items-center">
+                                            <input type="checkbox" 
+                                                [id]="'combo-checkbox-' + combo.id + '-' + option.productId"
+                                                [value]="option.productId" 
+                                                [name]="'combo-checkbox-' + combo.id + '-' + option.productId"
+                                                [checked]="selectedCombo[combo.id].indexOf(option.productId) > -1"
+                                                (change)="onChangeCombo(combo.id, option.productId, $event)"
+                                            >
+                                            <label class="pl-2" [for]="'combo-checkbox-' + combo.id + '-' + option.productId">{{option.product.name}}</label>
+                                            <!-- <label for="{{variant.name + i}}">{{option.value}} / {{ selectedVariants.indexOf(option.id) }} / {{option.id}}</label> -->
+                                        </li>
+                                    </ul>
+                                </fieldset>
+                            </ng-template>
+    
+                            <!-- Quantity -->
+                            <div class="flex flex-row justify-between items-center">
+                                <span class="font-semibold">Quantity:</span> 
+                                <div class="flex flex-row h-8 w-20 rounded-lg relative bg-primary mt-1">
+                                    <button (click)="checkQuantity('decrement')" class="text-white hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l-lg cursor-pointer outline-none">
+                                        <span class="text-2xl">−</span>
+                                    </button>
+                                    <input [(ngModel)]="quantity" (change)="checkQuantity()" type="number" class="outline-none focus:outline-none text-center w-full font-semibold text-md text-white focus:text-white md:text-basecursor-default flex items-center outline-none" name="custom-input-number" value="0"/>
+                                    <button (click)="checkQuantity('increment')" class="text-white hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r-lg cursor-pointer">
+                                        <span class="text-2xl">+</span>
+                                    </button>
+                                </div>
+                            </div>
+    
+                            <!-- Special Instruction -->
+                            <div class="w-full mt-2">
+                                <span class="font-semibold">Special Instruction:</span> 
+                                <mat-form-field class="fuse-mat-textarea w-full" floatLabel="always">
+                                    <textarea
+                                        matInput
+                                        [(ngModel)]="specialInstruction"
+                                        maxlength="500"
+                                        placeholder="Make it special"
+                                        [required]="true"
+                                        [rows]="5"
+                                        matTextareaAutosize></textarea>
+                                </mat-form-field>
+                            </div>
+    
+                            <!-- Add to cart / checkoout -->
+                            <div class="w-full flex flex-row justify-between items-center">
+                                <!-- Add to cart -->
+                                <input
+                                    id="add-to-cart-button"
+                                    type="button"
+                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                                    (click)="addToCart()"
+                                    mat-button>
+                                <label 
+                                    class="flex items-center justify-center h-10 px-2 border rounded border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
+                                    for="add-to-cart-button"
+                                    matRipple>
+                                    <span class="text-sm text-white">Add to Cart</span>
+                                    <mat-icon
+                                        class="hidden sm:block ml-1 text-white transform scale-75"
+                                        [svgIcon]="'heroicons_outline:shopping-cart'"></mat-icon>
+                                </label>
+    
+                                <!-- Checkout -->
+                                <input
+                                    id="go-back-button"
+                                    type="button"
+                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                                    mat-button>
+                                <label 
+                                    class="flex items-center justify-center h-10 px-2 border rounded border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
+                                    for="go-back-button"
+                                    matRipple>
+                                    <span class="text-sm text-white">Checkout</span>
+                                    <mat-icon
+                                        class="hidden sm:block ml-2 text-white transform scale-75"
+                                        [svgIcon]="'heroicons_solid:shopping-bag'"></mat-icon>
+                                </label>
                             </div>
                         </div>
-
-                        <!-- Special Instruction -->
-                        <div class="w-full mt-2">
-                            <span class="font-semibold">Special Instruction:</span> 
-                            <mat-form-field class="fuse-mat-textarea w-full" floatLabel="always">
-                                <textarea
-                                    matInput
-                                    [(ngModel)]="specialInstruction"
-                                    maxlength="500"
-                                    placeholder="Make it special"
-                                    [required]="true"
-                                    [rows]="5"
-                                    matTextareaAutosize></textarea>
-                            </mat-form-field>
-                        </div>
-
-                        <!-- Add to cart / checkoout -->
-                        <div class="w-full flex flex-row justify-between items-center">
-                            <!-- Add to cart -->
-                            <input
-                                id="add-to-cart-button"
-                                type="button"
-                                class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                (click)="addToCart()"
-                                mat-button>
-                            <label 
-                                class="flex items-center justify-center h-10 px-2 border rounded border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
-                                for="add-to-cart-button"
-                                matRipple>
-                                <span class="text-sm text-white">Add to Cart</span>
-                                <mat-icon
-                                    class="ml-1 text-white transform scale-75"
-                                    [svgIcon]="'heroicons_outline:shopping-cart'"></mat-icon>
-                            </label>
-
-                            <!-- Checkout -->
-                            <input
-                                id="go-back-button"
-                                type="button"
-                                class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                mat-button>
-                            <label 
-                                class="flex items-center justify-center h-10 px-2 border rounded border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
-                                for="go-back-button"
-                                matRipple>
-                                <span class="text-sm text-white">Checkout</span>
-                                <mat-icon
-                                    class="ml-2 text-white transform scale-75"
-                                    [svgIcon]="'heroicons_solid:shopping-bag'"></mat-icon>
-                            </label>
-                        </div>
                     </div>
-                </div>
+                </ng-container>
+
+                <!-- No Product -->
+                <ng-template #noProduct>
+                    <div class="flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+                        <mat-icon
+                            class="icon-size-20"
+                            [svgIcon]="'iconsmind:file_search'"></mat-icon>
+                        <div class="mt-6 text-2xl font-semibold tracking-tight text-secondary">No products found!</div>
+                    </div>
+                </ng-template>
             </div>
         </div>
     </div>

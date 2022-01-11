@@ -1,0 +1,59 @@
+<div class="flex flex-col max-w-120 md:min-w-160 ">
+
+    <!-- Compose form -->
+    <div
+        class="flex flex-col flex-auto p-6 sm:p-8 overflow-y-auto"
+    >
+        <div class="flex items-center flex-auto min-w-0">
+            <mat-icon
+                class="w-10"
+                [svgIcon]="'heroicons_solid:location-marker'"></mat-icon>
+            <span class="pl-4 text-2xl font-bold text-primary">Delivery Address Found</span> <br>
+        </div>
+        <div class="flex items-center flex-auto min-w-0 mb-8">
+            <span class="pl-14 text-lg">We have found your previous delivery address in our store. Would you like to use the delivery address ?
+            </span>
+        </div>
+
+        <mat-form-field appearance="fill">
+            <mat-label>{{ this.addresses.length === 1 ? 'Available Address' : 'Available Addresses' }}</mat-label>
+            <mat-select
+                required
+                [(ngModel)]="selectedAddressId"
+                floatLabel="always"
+                placeholder="Select delivery addresss"
+                #addressSelector="matSelect"
+                >
+                <mat-select-trigger>
+                    <span class="flex items-center">
+                        <span>{{ addressSelector.triggerValue }}</span>
+                    </span>
+                </mat-select-trigger>
+                <ng-container *ngFor="let address of addresses">
+                    <mat-option [value]="address.id">{{address.displayAddress}}</mat-option>
+                </ng-container>
+            </mat-select>
+        </mat-form-field>
+
+        <!-- Actions -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-end mt-4 sm:mt-6">
+            <div class="order-last">
+                <!-- Send -->
+                <button
+                    class="hover:bg-gray-500 border border-gray-500"
+                    mat-flat-button
+                    (click)="cancel()"
+                    [color]="'gray'">
+                    Cancel
+                </button>
+                <span>&nbsp;&nbsp;</span>
+                <button
+                    mat-flat-button
+                    (click)="chooseAddress()"
+                    [color]="'primary'">
+                    Ok
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

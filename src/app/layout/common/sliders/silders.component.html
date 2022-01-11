@@ -1,4 +1,4 @@
-<mat-drawer-container *ngIf="storeDiscounts.length > 0" class="w-full h-72 md:rounded-3xl shadow" style="background-image: url('https://cinema-online.symplified.ai/assets/image/banner_sales.png'); background-size: cover;">
+<mat-drawer-container [ngClass]="storeDiscounts.length > 0 ? 'block' : 'hidden'" class="w-full h-72 md:rounded-3xl shadow" style="background-image: url('https://cinema-online.symplified.ai/assets/image/banner_sales.png'); background-size: cover;">
     <!-- <img class="object-cover w-full h-full" src="assets/images/example/banner.png"> -->
     <mat-drawer class="h-full"
         #matDrawer>

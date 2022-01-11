@@ -39,6 +39,7 @@ export interface Store
         completed?: number;
     };
     regionCountry: StoreRegionCountry,
+    serviceChargesPercentage?: number;
     duration?: number;
     featured?: boolean;
     completed?: number;

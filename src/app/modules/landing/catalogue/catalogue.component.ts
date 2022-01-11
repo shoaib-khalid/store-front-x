@@ -111,7 +111,6 @@ export class LandingCatalogueComponent implements OnInit
         // Get cart
         this._cartService.cart$
             .subscribe((cart: Cart)=>{
-                console.log("cart", cart)
             });
     }
 

@@ -346,7 +346,7 @@ export class StoresService
                     this._store.next(store);
 
                     // Update local storage
-                    this.storeId = store !== null ? store.id : null;
+                    this.storeId = store !== null ? store.id : '';
     
                     // Return the store
                     return store;

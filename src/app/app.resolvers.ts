@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@angular/router';
 import { forkJoin, Observable, of } from 'rxjs';
 import { switchMap, take, map, tap, catchError, filter } from 'rxjs/operators';
 import { MessagesService } from 'app/layout/common/messages/messages.service';
@@ -76,7 +76,8 @@ export class StoreResolver implements Resolve<any>
     constructor(
         private _storesService: StoresService,
         private _cartService: CartService,
-        private _platformLocation: PlatformLocation
+        private _platformLocation: PlatformLocation,
+        private _router: Router
     )
     {
 
@@ -120,39 +121,36 @@ export class StoreResolver implements Resolve<any>
      */
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any>
     {
-        return forkJoin([
-            this._storesService.getStoreByDomainName(this.url.domain).pipe(
-                take(1),
-                switchMap(() => {
-
-                    // ----------------------
-                    // Get cart id / create cart id
-                    // ----------------------
-
+        return this._storesService.getStoreByDomainName(this.url.domain).pipe(
+            take(1),
+            switchMap(() => {
+                // check if store id exists
+                if (this._storesService.storeId$ && this._storesService.storeId$ !== null) {
+                    // check if cart id exists
                     if (this._cartService.cartId$) {
                         this.cartId = this._cartService.cartId$;
                         this.getCartItems(this.cartId);
-                    } else if (this._storesService.storeId$) {
+                    } else {
                         let createCartBody = {
                             customerId: null, // later make a getter to get logged in user
                             storeId: this._storesService.storeId$,
                         }
                         this._cartService.createCart(createCartBody)
-                            .subscribe((cart: Cart)=>{
+                        .subscribe((cart: Cart)=>{
                                 // set cart id
                                 this.cartId = cart.id;
                                 this.getCartItems(this.cartId);
                             });
-                    } else {
-                        alert("no store id");
-                        console.error("no store id");
                     }
+                } else {
+                    // this._router.navigate(['home']);
+                    // alert("no store id");
+                    console.error("No store found");
+                }
 
-                    return of(true);
-                })
-            ),
-            this._storesService.getStoreCategories()
-        ])
+                return of(true);
+            })
+        );
     }
 
     getCartItems(cartId: string){
