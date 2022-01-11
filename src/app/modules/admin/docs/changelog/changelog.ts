@@ -9,6 +9,37 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v0.0.7
+        {
+            version    : 'v0.0.7',
+            releaseDate: 'Jan 11, 2022',
+            changes    : [
+                {
+                    type: 'Fix',
+                    list: [
+                        '(ProductService) Fix get products to support pagination based on category id',
+                        '(CataloguePage) Remove top navigation bar in catalogue page',
+                        '(FnBLayout) Fix no store page, add 404 if no store at backend',
+                        '(FnBLayout) Fix checkout logo design from outline to fill',
+                        '(DiscountSlider) Fix discount slider if there\'s no store discount at backend',
+
+                    ]
+                },
+                {
+                    type: 'Added',
+                    list: [
+                        '(CataloguePage) Implement search product',
+                        '(CoreInterceptor) Add default popup if any error from backend',
+                        '(CheckoutPage) Add choose delivery provider popup',
+                        '(CheckoutPage) Add input validation for checkout form',
+                        '(CheckoutPage) Integrate with delivery service to get price',
+                        '(CheckoutPage) Integrate with order service to get discount price',
+                        '(CheckoutPage) Implement order discount capped, delivery discount capped',
+                        '(ProductPage) Show no product if no product from backend'
+                    ]
+                }
+            ]
+        },
         // v0.0.6
         {
             version    : 'v0.0.6',
