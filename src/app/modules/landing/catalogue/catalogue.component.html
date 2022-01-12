@@ -55,8 +55,9 @@
 
                 <!-- Sort -->
                 <mat-select
-                    class="hidden sm:block border border-gray-300 w-auto px-2 pt-3 rounded text-sm"
+                    class="hidden sm:block border border-gray-300 w-40 px-2 pt-3 rounded text-sm"
                     placeholder="Sort by Relevan"
+                    [formControl]="sortInputControl"
                     #sortSelector="matSelect"
                     >
                     <mat-select-trigger>
@@ -64,11 +65,10 @@
                             <span>{{ sortSelector.triggerValue }}</span>
                         </span>
                     </mat-select-trigger>
-                    <div>
-                        <mat-option [value]="'ACTIVE'">Active</mat-option>
-                        <mat-option [value]="'INACTIVE'">Inactive</mat-option>
-                        <mat-option [value]="'DRAF'">Draf</mat-option>
-                    </div>
+                    <ng-container>
+                        <mat-option [value]="'asc'">Ascending</mat-option>
+                        <mat-option [value]="'desc'">Descending</mat-option>
+                    </ng-container>
                 </mat-select>
                 <!-- Sort for xs view -->
                 <div class="sm:hidden">
@@ -86,7 +86,7 @@
             </div>
         </div>
 
-        <!-- Catelogue Navigation -->
+        <!-- Catalogue Navigation -->
         <!-- <div class="flex flex-row items-center justify-between w-full max-w-280 mt-8 overflow-y-hidden overflow-x-auto bg-card bg-opacity-25 dark:bg-opacity-100 rounded-lg py-2 shadow">
             <ul class="flex flex-auto items-center justify-around">
                 <li class="mr-6">
@@ -107,7 +107,7 @@
         <!-- Container -->
         <div class="flex flex-col md:flex-row justify-between mt-10 w-full max-w-280">
             <!-- Search & Filter -->
-            <div class="flex flex-col pr-6">
+            <div class="flex flex-col lg:pr-6">
                 <!-- Search -->
                 <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript min-w-64">
                     <mat-icon
@@ -122,10 +122,10 @@
                 </mat-form-field>
 
                 <!-- Filter -->
-                <div class="flex flex-col mt-3 border border-gray-300 rounded-lg p-2">
+                <div class="flex flex-col mt-2 border border-gray-300 rounded-lg py-2 px-4 mb-4">
                     <!-- Price -->
                     <div class="flex flex-col">
-                        <div class="flex flex-row items-center justify-between w-full">
+                        <!-- <div class="flex flex-row items-center justify-between w-full">
                             <h3>Price</h3>
                             <input
                                 id="filter-product-button"
@@ -140,8 +140,9 @@
                                     class="icon-size-5"
                                     [svgIcon]="'heroicons_outline:filter'"></mat-icon>
                             </label>
-                        </div>
-                        <div class="flex flex-row w-full px-2 mt-2">
+                        </div> -->
+                        <!-- Price Range Input -->
+                        <!-- <div class="flex flex-row w-full px-2 mt-2">
                             <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript w-1/2">
                                 <input
                                     matInput
@@ -155,27 +156,28 @@
                                     [autocomplete]="'off'"
                                     [placeholder]="'Max price'">
                             </mat-form-field>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="flex flex-col">
                         <div class="flex flex-row items-center justify-between w-full">
-                            <h3>Categories</h3>
+                            <h3 class="font-semibold">Categories</h3>
                             <input
                                 id="collapse-category-button"
                                 type="button"
                                 class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                                (click)="collapseCategory = !collapseCategory"
                                 mat-button>
                             <label 
-                                class="flex items-center justify-center h-10 px-1.5 cursor-pointer mr-2"
+                                class="flex items-center justify-center h-10 cursor-pointer"
                                 for="collapse-category-button"
                                 matRipple>
                                 <mat-icon
                                     class="icon-size-5"
-                                    [svgIcon]="'heroicons_outline:chevron-down'"></mat-icon>
+                                    [svgIcon]="collapseCategory ? 'heroicons_outline:chevron-up' : 'heroicons_outline:chevron-down'"></mat-icon>
                             </label>
                         </div>
-                        <div class="border-t w-full"></div>
-                        <div>
+                        <div @expandCollapse *ngIf="!collapseCategory">
+                            <div class="border-t w-full"></div>
                             <mat-checkbox
                                 [checked]="catalogueSlug === 'all-products' ? true : false"
                                 value="all-products"
@@ -202,14 +204,14 @@
             </div>
 
             <!-- Products -->
-            <div class="flex flex-col flex-wrap relative w-full px-4">
-                <ng-container *ngIf="products.length > 0; else noCourses">
+            <div class="flex flex-col flex-wrap relative w-full md:px-4">
+                <ng-container *ngIf="products && products.length > 0; else noCourses">
                     <!-- Grid -->
                     <div *ngIf="productViewOrientation === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 sm:mb-10">
                         <!-- Products -->
                         <ng-container *ngFor="let product of products">
                             <!-- Product -->
-                            <div class="flex flex-col h-96 shadow rounded-2xl overflow-hidden bg-card">
+                            <div class="flex flex-col h-120 shadow rounded-2xl overflow-hidden bg-card">
                                 <!-- Product Header -->
                                 <div class="flex flex-col p-3 h-60 bg-black bg-no-repeat bg-cover bg-center cursor-pointer" 
                                     [style]="product.thumbnailUrl ? 'background-image: url(\'' + product.thumbnailUrl + '\');' : 'background-image: url(\'' + store.storeAsset.logoUrl + '\');' + 'background-size: cover;'"
@@ -224,23 +226,27 @@
                                                 20% Off
                                             </div>
                                         </ng-container>
-                                        <!-- Completed at least once -->
-                                        <div class="flex items-center">
+                                        <!-- Badges -->
+                                        <!-- <div class="flex items-center">
                                             <ng-container>
                                                 <mat-icon
                                                     class="icon-size-5 text-green-600"
                                                     [svgIcon]="'heroicons_solid:badge-check'"
                                                     [matTooltip]="'You completed this course at least once'"></mat-icon>
                                             </ng-container>
-                                        </div>
+                                        </div> -->
                                     </div>                               
                                 </div>
                                 <!-- Product Footer -->
-                                <div class="flex flex-col w-full">
-                                    <div class="ml-4 mt-4 font-medium">{{product.name}}</div>
-                                    <div class="ml-4 text-sm line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</div>
-                                    <div class="ml-4 text-lg">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</div>
-                                    <div class="ml-4 mt-4">
+                                <div class="flex flex-col px-4 mb-4 h-60 w-full">
+                                    <div class="mt-4 text-xl font-bold font-medium">{{product.name}}</div>
+                                    <div class="mt-2 mb-4 h-40 text-ellipsis overflow-hidden">
+                                        <span class="text-gray-500" [innerHtml]="product.description"></span>
+                                    </div>
+                                    <div class="text-sm font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</div>
+                                    <div class="font-semibold text-primary text-xl">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</div>
+                                    <!-- Input Quantity -->
+                                    <!-- <div class="mt-4">
                                         <div class="flex flex-row justify-between items-center custom-number-input h-10 w-full">
                                             <div class="flex flex-row h-8 w-20 border rounded-lg relative bg-transparent mt-1">
                                                 <button (click)="decrement()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none">
@@ -253,9 +259,9 @@
                                             </div>
                                             <p class="text-sm font-bold mr-4">Total: RM: 4.00</p>
                                         </div>
-                                    </div>
-                                    <!-- Course launch button -->
-                                    <div class="flex flex-row justify-between p-4 text-right bg-gray-50 dark:bg-transparent">
+                                    </div> -->
+                                    <!-- Checkout and Confirm Button -->
+                                    <!-- <div class="flex flex-row justify-between py-4 text-right">
                                         <input
                                             id="cancel-add-item-btn"
                                             type="button"
@@ -279,7 +285,7 @@
                                             matRipple>
                                             <span class="text-white">Confirm</span>
                                         </label>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                         </ng-container>
@@ -287,10 +293,12 @@
                     <!-- List -->
                     <div *ngIf="productViewOrientation === 'list'" class="w-full mb-8 sm:mb-10">
                         <ng-container *ngFor="let product of products">
-                            <div class="flex flex-row h-40 w-full bg-card shadow rounded-2xl justify-between items-center mb-4">
+                            <div class="flex flex-row h-48 w-full bg-card shadow rounded-2xl justify-between items-center mb-4">
                                 <!-- Image Thumbnail -->
-                                <div class="h-full w-50 rounded-l-2xl p-2" 
-                                    [style]="product.thumbnailUrl ? 'background-image: url(\'' + product.thumbnailUrl + '\');' : 'background-image: url(\'' + store.storeAsset.logoUrl + '\');' + 'background-size: cover;'">
+                                <div class="h-full w-52 rounded-l-2xl p-2 bg-black bg-no-repeat bg-cover bg-center cursor-pointer" 
+                                    [style]="product.thumbnailUrl ? 'background-image: url(\'' + product.thumbnailUrl + '\');' : 'background-image: url(\'' + store.storeAsset.logoUrl + '\');' + 'background-size: cover;'"
+                                    [routerLink]="['/product/' + product.seoName]"
+                                >
                                     <div class="flex items-center justify-between">
                                         <!-- Course category -->
                                         <ng-container>
@@ -300,40 +308,26 @@
                                                 20% Off
                                             </div>
                                         </ng-container>
-                                        <!-- Completed at least once -->
-                                        <div class="flex items-center">
+                                        <!-- Badges -->
+                                        <!-- <div class="flex items-center">
                                             <ng-container>
                                                 <mat-icon
                                                     class="icon-size-5 text-green-600"
                                                     [svgIcon]="'heroicons_solid:badge-check'"
                                                     [matTooltip]="'You completed this course at least once'"></mat-icon>
                                             </ng-container>
-                                        </div>
+                                        </div> -->
                                     </div>  
                                 </div>
                                 <!-- List Body -->
-                                <div class="flex flex-row justify-between h-full w-full rounded-r-2xl">
-                                    <div class="flex flex-col w-1/2 p-6">
-                                        <span class="text-xl font-bold mb-0">{{product.name}}</span>
+                                <div class="flex flex-row justify-between h-full w-full rounded-r-2xl text-ellipsis overflow-hidden">
+                                    <div class="flex flex-col w-full p-6">
+                                        <span class="text-xl h-10 font-bold mb-0 text-ellipsis overflow-hidden">{{product.name}}</span>
+                                        <div class="mt-2 mb-4 h-20 text-ellipsis overflow-hidden">
+                                            <span class="text-gray-500" [innerHtml]="product.description"></span>
+                                        </div>
                                         <p class="font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p>
-                                    </div>
-                                    <div class="flex flex-col w-1/2 p-4 justify-end items-end">
-                                        <span class="text-2xl font-bold">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</span>
-                                        <input
-                                            id="add-to-cart-button"
-                                            type="button"
-                                            class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                            [routerLink]="['/']"
-                                            mat-button>
-                                        <label 
-                                            class="flex items-center justify-center h-10 pl-2 pr-4 border rounded-lg border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
-                                            for="add-to-cart-button"
-                                            matRipple>
-                                            <span class="text-white">Add to cart</span>
-                                            <mat-icon
-                                                class="ml-1 icon-size-5 text-white"
-                                                [svgIcon]="'heroicons_outline:shopping-cart'"></mat-icon>
-                                        </label>
+                                        <span class="text-xl font-semibold text-primary">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</span>
                                     </div>
                                 </div>
                             </div>

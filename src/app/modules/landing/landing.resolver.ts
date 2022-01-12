@@ -97,16 +97,15 @@ export class ProductsResolver implements Resolve<any>
     {
 
         if (this._storesService.storeId$) {
-            
             // Get store categories data
             this._storesService.storeCategories$
                 .subscribe((response) => {
-
-                    this.storeCategories = response;
-
-                    let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === route["params"]["catalogue-slug"]);
-                    this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
-
+                    if (response !== null) {
+                        this.storeCategories = response;
+    
+                        let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === route["params"]["catalogue-slug"]);
+                        this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
+                    }
                 });
         }
 
