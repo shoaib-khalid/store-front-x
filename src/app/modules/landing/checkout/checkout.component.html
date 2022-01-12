@@ -201,6 +201,7 @@
                         <mat-form-field class="w-full" floatLabel="always">
                             <textarea
                                 matInput
+                                [formControlName]="'specialInstruction'"
                                 placeholder="Leave us a not e.g Pickup/delivery time or instruction"
                                 [rows]="5"
                                 maxlength="100"
@@ -212,6 +213,7 @@
                                 >
                         </mat-form-field>
                         <mat-checkbox
+                            [formControlName]="'saveMyInfo'"
                             class="font-semibold">
                             Save my information for future order
                         </mat-checkbox>
@@ -269,8 +271,8 @@
                                 <span class="font-semibold">-{{paymentDetails.subTotalDiscount | currency: store.regionCountry.currencySymbol}}</span>
                             </div>
                             <div class="flex flex-row w-full justify-between py-1">
-                                <p class="font-semibold text-gray-500">Service Charges ({{store.serviceChargesPercentage | number}}%)</p> 
-                                <span class="font-semibold">{{paymentDetails.serviceCharges | currency: store.regionCountry.currencySymbol}}</span>
+                                <p class="font-semibold text-gray-500">Service Charges ({{paymentDetails.storeServiceChargePercentage | number}}%)</p> 
+                                <span class="font-semibold">{{paymentDetails.storeServiceCharge | currency: store.regionCountry.currencySymbol}}</span>
                             </div>
                             <!-- Delivery Section -->
                             <ng-container *ngIf="deliveryProviders.length > 0">
@@ -329,16 +331,16 @@
                         <!-- grand total -->
                         <div class="flex flex-row w-full border-t justify-between py-2">
                             <span class="font-semibold text-gray-500">Grand Total</span> 
-                            <span class="font-semibold">{{paymentDetails.grandTotal | currency: store.regionCountry.currencySymbol}}</span>
+                            <span class="font-semibold">{{paymentDetails.cartGrandTotal | currency: store.regionCountry.currencySymbol}}</span>
                         </div>
                         <!-- Calculate price button -->
                         <button
                             [disabled]="isLoading" 
                             class="my-2 w-auto font-semibold p-2 rounded"
                             [ngClass]="isLoading ? 'cursor-wait bg-gray-200' : 'bg-green-500'"
-                            (click)="calculateCharges()">
+                            (click)="executeAction(paymentCompletionStatus.id)">
                             <span>
-                                Calculate Charges
+                                {{ paymentCompletionStatus.label }}
                             </span>
                         </button>
 

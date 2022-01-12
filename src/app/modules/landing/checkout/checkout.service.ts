@@ -106,28 +106,73 @@ export class CheckoutService
     /**
      * Get Discount
      */
-     getDiscountOfCart(id: string, deliveryQuotationId: string, deliveryPrice): Observable<CartDiscount>
-     {
-         let orderService = this._apiServer.settings.apiServer.orderService;
-         //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-         let accessToken = "accessToken";
- 
-         const header = {  
-             headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
-             params: {
-                deliveryPrice
-             }
-         };
- 
-         return this._httpClient.get<any>(orderService + '/carts/'+ id +'/discount', header)
-             .pipe(
-                 map((response) => {
-                     this._logging.debug("Response from StoresService (getDiscountOfCart)",response);
- 
-                     return response["data"];
-                 })
-             );
-     }
+    getDiscountOfCart(id: string, deliveryQuotationId: string, deliveryType: string): Observable<CartDiscount>
+    {
+        let orderService = this._apiServer.settings.apiServer.orderService;
+        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
+        let accessToken = "accessToken";
+
+        const header = {  
+            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            params: {
+            deliveryQuotationId,
+            deliveryType
+            }
+        };
+
+        return this._httpClient.get<any>(orderService + '/carts/'+ id +'/discount', header)
+            .pipe(
+                map((response) => {
+                    this._logging.debug("Response from StoresService (getDiscountOfCart)",response);
+
+                    return response["data"];
+                })
+            );
+    }
+
+    postPlaceOrder(cartId: string, orderBody, saveInfo: boolean) : Observable<any>
+    {
+        let orderService = this._apiServer.settings.apiServer.orderService;
+        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
+        let accessToken = "accessToken";
+
+        const header = {  
+            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            params: {
+                cartId,
+                saveCustomerInformation: saveInfo
+            }
+        };
+
+        return this._httpClient.post<any>(orderService + '/orders/placeOrder', orderBody, header)
+            .pipe(
+                map((response) => {
+                    this._logging.debug("Response from StoresService (postPlaceOrder)",response);
+
+                    return response["data"];
+                })
+            );
+    }
+
+    postMakePayment(paymentBody) : Observable<any>
+    {
+        let paymentService = this._apiServer.settings.apiServer.paymentService;
+        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
+        let accessToken = "accessToken";
+
+        const header = {  
+            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`)
+        };
+
+        return this._httpClient.post<any>(paymentService + '/payments/makePayment', paymentBody, header)
+            .pipe(
+                map((response) => {
+                    this._logging.debug("Response from StoresService (postMakePayment)",response);
+
+                    return response["data"];
+                })
+            );
+    }
     
     // /**
     //  * Create the cart

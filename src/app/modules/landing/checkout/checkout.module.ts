@@ -12,6 +12,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSelectModule } from '@angular/material/select';
 import { ChooseDeliveryAddressComponent } from './choose-delivery-address/choose-delivery-address.component';
 import { MatDialogModule } from '@angular/material/dialog';
+import { DatePipe } from '@angular/common';
 
 @NgModule({
     declarations: [
@@ -29,6 +30,9 @@ import { MatDialogModule } from '@angular/material/dialog';
         MatSlideToggleModule,
         MatDialogModule,
         SharedModule
+    ],
+    providers   : [
+        DatePipe
     ]
 })
 export class LandingCheckoutModule
