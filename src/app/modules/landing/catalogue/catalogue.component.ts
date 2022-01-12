@@ -6,11 +6,13 @@ import { Store, StoreCategory } from 'app/core/store/store.types';
 import { Product, ProductPagination } from 'app/core/product/product.types';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
+import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { map, switchMap, takeUntil, debounceTime, filter, distinctUntilChanged } from 'rxjs/operators';
 import { merge, Observable, Subject } from 'rxjs';
 import { CartService } from 'app/core/cart/cart.service';
 import { Cart } from 'app/core/cart/cart.types';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
+import { fuseAnimations } from '@fuse/animations';
 
 @Component({
     selector     : 'landing-catalogue',
@@ -33,7 +35,8 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
         }
         `
     ],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    animations     : fuseAnimations,
 })
 export class LandingCatalogueComponent implements OnInit
 {
@@ -57,12 +60,13 @@ export class LandingCatalogueComponent implements OnInit
 
     productViewOrientation: string = 'grid';
 
-    searchInputControl: FormControl = new FormControl();
-    categoryFilterControl: FormControl = new FormControl();
-
-    filterControl: FormControl = new FormControl();
+    sortInputControl: FormControl = new FormControl();
     sortName: 'asc' | 'desc' | '' = 'asc';
+
+    searchInputControl: FormControl = new FormControl();
     searchName: string = "";
+
+    collapseCategory: boolean = true;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     isLoading: boolean = false;
@@ -77,6 +81,7 @@ export class LandingCatalogueComponent implements OnInit
         private _productsService: ProductsService,
         private _cartService: CartService,
         private _changeDetectorRef: ChangeDetectorRef,
+        private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _router: Router,
         private _route: ActivatedRoute
     )
@@ -88,20 +93,6 @@ export class LandingCatalogueComponent implements OnInit
     // -----------------------------------------------------------------------------------------------------
 
     ngOnInit(): void {
-
-        // Get the store info
-        this._storesService.store$
-            .subscribe((response: Store) => {
-                this.store = response;
-            });
-
-        // Get the store categories
-        this._storesService.storeCategories$
-            .subscribe((response: StoreCategory[]) => {
-                this.storeCategories = response;
-            });
-
-        this.catalogueSlug = this._route.snapshot.paramMap.get('catalogue-slug');
 
         // Get the store slug name in url path
         this._router.events.pipe(
@@ -117,13 +108,35 @@ export class LandingCatalogueComponent implements OnInit
             // Mark for check
             this._changeDetectorRef.markForCheck();
         });
-    
 
-        // Get the products
+        // get initial store category
+        this.catalogueSlug = this._route.snapshot.paramMap.get('catalogue-slug');
+
+        // Get the store info
+        this._storesService.store$
+            .subscribe((response: Store) => {
+                this.store = response;
+            });
+
+        // Get the store categories
+        this._storesService.storeCategories$
+            .subscribe((response: StoreCategory[]) => {
+                this.storeCategories = response;
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
+    
+        // // Get the products
         this._productsService.products$
+            .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((response: Product[]) => {
                 this.products = response;
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
             })
+
 
         // Get the products pagination
         this._productsService.pagination$
@@ -139,7 +152,10 @@ export class LandingCatalogueComponent implements OnInit
 
         // Get cart
         this._cartService.cart$
+            .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((cart: Cart)=>{
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
             });
 
         // Subscribe to search input field value changes
@@ -161,6 +177,44 @@ export class LandingCatalogueComponent implements OnInit
             )
             .subscribe();
 
+        this.sortInputControl.valueChanges
+            .pipe(
+                takeUntil(this._unsubscribeAll),
+                debounceTime(300),
+                switchMap((query) => {
+
+                    this.sortName = query;
+                    
+                    this.isLoading = true;
+                    
+                    return this._productsService.getProducts(0, 10, 'name', this.sortName, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '');
+                }),
+                map(() => {
+                    this.isLoading = false;
+                })
+            ).subscribe();
+
+        // collapse category to false if desktop by default, 
+        // Subscribe to media changes
+        this._fuseMediaWatcherService.onMediaChange$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe(({matchingAliases}) => {
+
+                // Set the drawerMode and drawerOpened
+                if ( matchingAliases.includes('sm') )
+                {
+                    this.collapseCategory = false;
+                }
+                else
+                {
+                    this.collapseCategory = true;
+                }
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });    
+
+        
         // Mark for check
         this._changeDetectorRef.markForCheck();
     }

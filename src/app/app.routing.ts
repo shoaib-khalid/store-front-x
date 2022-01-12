@@ -63,7 +63,7 @@ export const appRoutes: Route[] = [
         },
         children   : [
             {path: 'home', loadChildren: () => import('app/modules/landing/home/home.module').then(m => m.LandingHomeModule)},
-            {path: 'catalogue', data: { breadcrumb: 'Catelogue' }, loadChildren: () => import('app/modules/landing/catalogue/catalogue.module').then(m => m.LandingCatalogueModule)},
+            {path: 'catalogue', data: { breadcrumb: 'Catalogue' }, loadChildren: () => import('app/modules/landing/catalogue/catalogue.module').then(m => m.LandingCatalogueModule)},
             {path: 'product', data: { breadcrumb: 'Product' }, loadChildren: () => import('app/modules/landing/product-details/product-details.module').then(m => m.LandingProductDetailsModule)},
             {path: 'checkout', data: { breadcrumb: 'Checkout' }, loadChildren: () => import('app/modules/landing/checkout/checkout.module').then(m => m.LandingCheckoutModule)}
         ]
