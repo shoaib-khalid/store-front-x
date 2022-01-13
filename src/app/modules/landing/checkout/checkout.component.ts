@@ -503,6 +503,11 @@ export class LandingCheckoutComponent implements OnInit
         };
         this._checkoutService.postPlaceOrder(this._cartService.cartId$, orderBody, this.checkoutForm.get('saveMyInfo').value)
             .subscribe((response) => {
+                // after success set the cartItem to empty array
+                this.cartItems = [];
+                // set in cart service
+                this._cartService.cartItems = this.cartItems;
+
                 this._router.navigate(['thankyou/SUCCESS/COD/ORDER_CONFIRMED']); 
             }, (error) => {
                 // Set Loading to false
