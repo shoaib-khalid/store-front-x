@@ -175,7 +175,7 @@ export class CartService
             );
     }
 
-    postCartItem(cartId, cartItem: CartItem):  Observable<CartItem>
+    postCartItem(cartId: string, cartItem: CartItem):  Observable<CartItem>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
         //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
@@ -201,6 +201,73 @@ export class CartService
                     } else {
                         // add new if cart item not exist yet in cart
                         this._cartItems.next([response["data"], ...cartItems]);
+                    }
+
+                    return response["data"];
+                })
+            ))
+        );
+    }
+
+    putCartItem(cartId: string, cartItem: CartItem, itemId: string):  Observable<CartItem>
+    {
+        let orderService = this._apiServer.settings.apiServer.orderService;
+        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
+        let accessToken = "accessToken";
+
+        const header = {  
+            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`)
+        };
+
+        return this.cartItems$.pipe(
+            take(1),
+            switchMap(cartItems => this._httpClient.put<any>(orderService + '/carts/' + cartId + '/items/' + itemId, cartItem, header)
+            .pipe(
+                map((response) => {
+                    this._logging.debug("Response from StoresService (postCartItem)",response);
+
+                    let index = cartItems.findIndex(item => item.id === response["data"].id);
+
+                    if (index > -1) {
+                        // update if existing cart item id exists
+                        cartItems[index] = { ...cartItems[index], ...response["data"]};
+                        this._cartItems.next(cartItems);
+                    } else {
+                        // add new if cart item not exist yet in cart
+                        this._cartItems.next([response["data"], ...cartItems]);
+                    }
+
+                    return response["data"];
+                })
+            ))
+        );
+    }
+
+    deleteCartItem(cartId: string, itemId: string):  Observable<CartItem>
+    {
+        let orderService = this._apiServer.settings.apiServer.orderService;
+        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
+        let accessToken = "accessToken";
+
+        const header = {  
+            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`)
+        };
+
+        return this.cartItems$.pipe(
+            take(1),
+            switchMap(cartItems => this._httpClient.delete<any>(orderService + '/carts/' + cartId + '/items/' + itemId, header)
+            .pipe(
+                map((response) => {
+                    this._logging.debug("Response from StoresService (deleteCartItem)",response);
+
+                    let index = cartItems.findIndex(item => item.id === itemId);
+
+                    if (index > -1) {
+                        // Delete the cartItems
+                        cartItems.splice(index, 1);
+
+                        // Update the products
+                        this._cartItems.next(cartItems);
                     }
 
                     return response["data"];

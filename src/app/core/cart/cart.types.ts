@@ -14,8 +14,8 @@ export interface CartItem
     cartId: string;
     productId: string;
     itemCode: string;
-    price: number;
-    productPrice: number;
+    price?: number;
+    productPrice?: number;
     weight?: string;
     productName?: string;
     specialInstruction?: string;
@@ -26,7 +26,7 @@ export interface CartItem
     discountCalculationValue?: null,
     cartSubItem?: [];
     productInventory?: ProductInventory;
-    SKU: string;
+    SKU?: string;
 }
 
 export interface ProductInventory
