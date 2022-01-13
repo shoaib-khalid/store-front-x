@@ -143,13 +143,14 @@
     
                                 <!-- Checkout -->
                                 <input
-                                    id="go-back-button"
+                                    id="go-checkout-button"
                                     type="button"
                                     class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                                    [routerLink]="['/checkout']"
                                     mat-button>
                                 <label 
                                     class="flex items-center justify-center h-10 px-2 border rounded border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
-                                    for="go-back-button"
+                                    for="go-checkout-button"
                                     matRipple>
                                     <span class="text-sm text-white">Checkout</span>
                                     <mat-icon
