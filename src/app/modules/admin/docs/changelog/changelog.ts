@@ -9,6 +9,29 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v0.0.8
+        {
+            version    : 'v0.0.8',
+            releaseDate: 'Jan 13, 2022',
+            changes    : [
+                {
+                    type: 'Fix',
+                    list: [
+                        '(LandingCataloguePage) Fix sort product',
+                        '(LandingCheckoutPage) Fix payment details, get data from backend',
+                        '(AppResolver) Fix hardcode store url'
+                    ]
+                },
+                {
+                    type: 'Added',
+                    list: [
+                        '(LandingCheckoutPage) Implement online payment functionality',
+                        '(LandingCheckoutPage) Implement place order functionality',
+                        '(ThankyouPage) Create dummy thankyou page',
+                    ]
+                }
+            ]
+        },
         // v0.0.7
         {
             version    : 'v0.0.7',
