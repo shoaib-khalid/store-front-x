@@ -36,7 +36,7 @@
                             <mat-slide-toggle
                                 [color]="'primary'"
                                 [formControlName]="'storePickup'"
-                                (change)="allowPickupStore()"
+                                (change)="allowPickupStore();addressFormChanges();"
                                 >
                             </mat-slide-toggle>
                         </div>
@@ -351,7 +351,7 @@
                                 <span class="font-semibold">{{paymentDetails.storeServiceCharge | currency: store.regionCountry.currencySymbol}}</span>
                             </div>
                             <!-- Delivery Section -->
-                            <ng-container *ngIf="deliveryProviders.length > 0">
+                            <ng-container *ngIf="deliveryProviders.length > 0 && checkoutForm.get('storePickup').value === false">
                                 <div class="flex flex-row w-full mt-2">
                                     <mat-form-field class="w-full rounded text-sm">
                                         <mat-select

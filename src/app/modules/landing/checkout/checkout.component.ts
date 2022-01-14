@@ -225,6 +225,18 @@ export class LandingCheckoutComponent implements OnInit
     }
 
     addressFormChanges() {
+
+        // Set back delivery charges & grand total to 0
+        this.paymentDetails.deliveryCharges = 0;
+        this.paymentDetails.deliveryDiscount = 0;
+        this.paymentDetails.cartGrandTotal = 0;
+
+        // set this.deliveryProviders to empty array
+        this.deliveryProviders = [];
+
+        // set this.selectedDeliveryProvider to null
+        this.selectedDeliveryProvider = null;
+
         // Set Payment Completion Status "Calculate Charges"
         this.paymentCompletionStatus = { id:"CALCULATE_CHARGES", label: "Calculate Charges" };
     }
@@ -489,8 +501,12 @@ export class LandingCheckoutComponent implements OnInit
                         if (this.payment.isSuccess === true) {
                             if (this.payment.providerId == "1") {
                                 window.location.href = this.payment.paymentLink;
-                            } else if (this.payment.providerId == "2") {                                
-                                this.postForm(this.payment.paymentLink, {"detail" : this.store.name, "amount": this.paymentDetails.cartGrandTotal.toFixed(2), "order_id": this.order.id, "name": this.order.orderShipmentDetail.receiverName, "email": this.order.orderShipmentDetail.email, "phone": this.order.orderShipmentDetail.phoneNumber, "hash": this.payment.hash },'post');
+                            } else if (this.payment.providerId == "2") {
+                                console.log("this.payment.paymentLink",this.payment.paymentLink,);
+                                
+                                console.log("data: ", {"detail" : this.store.name, "amount": this.paymentDetails.cartGrandTotal.toFixed(2), "order_id": this.order.id, "name": this.order.orderShipmentDetail.receiverName, "email": this.order.orderShipmentDetail.email, "phone": this.order.orderShipmentDetail.phoneNumber, "hash": this.payment.hash });
+                                
+                                this.postForm("post-to-senangpay", this.payment.paymentLink, {"detail" : this.store.name, "amount": this.paymentDetails.cartGrandTotal.toFixed(2), "order_id": this.order.id, "name": this.order.orderShipmentDetail.receiverName, "email": this.order.orderShipmentDetail.email, "phone": this.order.orderShipmentDetail.phoneNumber, "hash": this.payment.hash },'post');
                             } else {
                                 this.displayError("Provider id not configured");
                                 console.error("Provider id not configured");
@@ -549,16 +565,17 @@ export class LandingCheckoutComponent implements OnInit
             });
     }
 
-    postForm(path, params, method) {
+    postForm(id, path, params, method) {
         method = method || 'post';
     
-        var form = document.createElement('form');
+        let form = document.createElement('form');
         form.setAttribute('method', method);
         form.setAttribute('action', path);
+        form.setAttribute('id', id);
     
-        for (var key in params) {
+        for (let key in params) {
             if (params.hasOwnProperty(key)) {
-                var hiddenField = document.createElement('input');
+                let hiddenField = document.createElement('input');
                 hiddenField.setAttribute('type', 'hidden');
                 hiddenField.setAttribute('name', key);
                 hiddenField.setAttribute('value', params[key]);
@@ -568,6 +585,9 @@ export class LandingCheckoutComponent implements OnInit
         }
     
         document.body.appendChild(form);
+
+        console.log("form", form);
+        
         form.submit();
     }
 }
