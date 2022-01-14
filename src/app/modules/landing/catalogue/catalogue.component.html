@@ -159,16 +159,17 @@
                         </div> -->
                     </div>
                     <div class="flex flex-col">
-                        <div class="flex flex-row items-center justify-between w-full">
+                        <div class="flex flex-row items-center justify-between cursor-pointer w-full"
+                            (click)="collapseCategory = !collapseCategory">
                             <h3 class="font-semibold">Categories</h3>
                             <input
                                 id="collapse-category-button"
                                 type="button"
-                                class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
                                 (click)="collapseCategory = !collapseCategory"
+                                class="h-0 w-0 opacity-0 invisible pointer-events-none"
                                 mat-button>
                             <label 
-                                class="flex items-center justify-center h-10 cursor-pointer"
+                                class="flex items-center justify-center cursor-pointer h-10"
                                 for="collapse-category-button"
                                 matRipple>
                                 <mat-icon
@@ -205,7 +206,7 @@
 
             <!-- Products -->
             <div class="flex flex-col flex-wrap relative w-full md:px-4">
-                <ng-container *ngIf="products && products.length > 0; else noCourses">
+                <ng-container *ngIf="products && products.length > 0; else noProduct">
                     <!-- Grid -->
                     <div *ngIf="productViewOrientation === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 sm:mb-10">
                         <!-- Products -->
@@ -335,8 +336,8 @@
                     </div>
                 </ng-container>
                 <!-- No Products -->
-                <ng-template #noCourses>
-                    <div class="flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+                <ng-template #noProduct>
+                    <div class="flex flex-auto h-96 flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
                         <mat-icon
                             class="icon-size-20"
                             [svgIcon]="'iconsmind:file_search'"></mat-icon>
@@ -354,7 +355,6 @@
                     [pageSizeOptions]="[5, 10, 25, 100]"
                     [showFirstLastButtons]="true"></mat-paginator>
             </div>
-            
         </div>
     </div>
 </div>

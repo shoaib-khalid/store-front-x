@@ -106,7 +106,7 @@ export class CheckoutService
     /**
      * Get Discount
      */
-    getDiscountOfCart(id: string, deliveryQuotationId: string, deliveryType: string): Observable<CartDiscount>
+    getDiscountOfCart(id: string, deliveryQuotationId: string = null, deliveryType: string): Observable<CartDiscount>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
         //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
@@ -115,10 +115,12 @@ export class CheckoutService
         const header = {  
             headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
             params: {
-            deliveryQuotationId,
-            deliveryType
+                deliveryQuotationId,
+                deliveryType
             }
         };
+
+        if (deliveryQuotationId === null) { delete header.params.deliveryQuotationId; }
 
         return this._httpClient.get<any>(orderService + '/carts/'+ id +'/discount', header)
             .pipe(

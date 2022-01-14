@@ -143,8 +143,7 @@ export class LandingProductDetailsComponent implements OnInit
                     // -----------------------
                     // get cheapest item price
                     // -----------------------
-                    this.selectedProductInventory = this.product.productInventories.reduce((r, e) => r.price < e.price ? r : e);
-    
+                    this.selectedProductInventory = this.product.productInventories.reduce((r, e) => r.price < e.price ? r : e);    
                     // set initial selectedProductInventoryItems to the cheapest item
                     this.selectedProductInventoryItems = this.selectedProductInventory.productInventoryItems;
     
@@ -264,6 +263,36 @@ export class LandingProductDetailsComponent implements OnInit
             specialInstruction: this.specialInstruction
         };
 
+        // additinal step for product combo
+        if(this.product.isPackage){
+            cartItemBody["cartSubItem"] = [];
+            // loop all combos from backend
+            this.combos.forEach(item => {
+                // compare it with current selected combo by user
+                if (this.selectedCombo[item.id]) {
+                    // loop the selected current combo
+                    this.selectedCombo[item.id].forEach(element => {
+                        // get productPakageOptionDetail from this.combo[].productPackageOptionDetail where it's subitem.productId == element (id in this.currentcombo array)
+                        let productPakageOptionDetail = item.productPackageOptionDetail.find(subitem => subitem.productId === element);
+                        if (productPakageOptionDetail){
+                            // push to cart
+                            cartItemBody["cartSubItem"].push(
+                                {
+                                    SKU: productPakageOptionDetail.productInventory[0].sku,
+                                    productName: productPakageOptionDetail.product.name,
+                                    productId: element,
+                                    itemCode: productPakageOptionDetail.productInventory[0].itemCode,
+                                    quantity: 1, // this is set to one because this is not main product quantity, this is item for selected prouct in this combo
+                                    productPrice: 0, // this is set to zero because we don't charge differently for product combo item
+                                    specialInstruction: this.specialInstruction // we actually don't need this because this already included in main product, we'll at this later
+                                }
+                            );
+                        }
+                    });
+                }
+            });            
+        }
+
         this._cartService.postCartItem(this._cartService.cartId$, cartItemBody)
             .subscribe(()=>{
                 const confirmation = this._fuseConfirmationService.open({
@@ -319,10 +348,10 @@ export class LandingProductDetailsComponent implements OnInit
         
         for (let i = 0; i < inventories.length; i++) {
             flag=true;
-            selectedProductInventory = inventories[i]
+            selectedProductInventory = inventories[i];
 
             // find the inventory items
-            productInventoryItems = inventories[i]['productInventoryItems']
+            productInventoryItems = inventories[i]['productInventoryItems'];
             for (let j = 0; j < productInventoryItems.length; j++) {
                 if(toFind.includes(productInventoryItems[j].productVariantAvailableId)){
                     continue;

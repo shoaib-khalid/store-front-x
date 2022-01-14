@@ -46,7 +46,7 @@ export class LandingCheckoutComponent implements OnInit
     
     checkoutForm: FormGroup;
     store: Store;
-    cartItems: CartItem[];
+    cartItems: CartItem[] = [];
     order: Order;
     payment: Payment;
 
@@ -293,73 +293,95 @@ export class LandingCheckoutComponent implements OnInit
         this.selectedDeliveryProvider = null;
         this.checkoutForm.get('deliveryProviderId').patchValue(null);
 
-        // retrieveDeliveryCharges
+        // retrieveDeliveryCharges if not store pickup
+        if (this.checkoutForm.get('storePickup').value === false) {
+            const deliveryChargesBody = {
+                cartId: this._cartService.cartId$,
+                customerId: "undefined", // need to fix later when have customer login
+                delivery: {
+                    deliveryAddress: this.checkoutForm.get('address').value,
+                    deliveryCity: this.checkoutForm.get('city').value,
+                    deliveryState: this.checkoutForm.get('state').value,
+                    deliveryPostcode: this.checkoutForm.get('postCode').value,
+                    deliveryCountry: this.checkoutForm.get('country').value,
+                    deliveryContactEmail: this.checkoutForm.get('email').value,
+                    deliveryContactName: this.checkoutForm.get('fullName').value,
+                    deliveryContactPhone: this.checkoutForm.get('phoneNumber').value
+                },
+                deliveryProviderId: null,
+                storeId: this._storesService.storeId$
+            }
 
-        const deliveryChargesBody = {
-            cartId: this._cartService.cartId$,
-            customerId: "undefined", // need to fix later when have customer login
-            delivery: {
-                deliveryAddress: this.checkoutForm.get('address').value,
-                deliveryCity: this.checkoutForm.get('city').value,
-                deliveryState: this.checkoutForm.get('state').value,
-                deliveryPostcode: this.checkoutForm.get('postCode').value,
-                deliveryCountry: this.checkoutForm.get('country').value,
-                deliveryContactEmail: this.checkoutForm.get('email').value,
-                deliveryContactName: this.checkoutForm.get('fullName').value,
-                deliveryContactPhone: this.checkoutForm.get('phoneNumber').value
-            },
-            deliveryProviderId: null,
-            storeId: this._storesService.storeId$
-        }
-        this._checkoutService.postToRetrieveDeliveryCharges(deliveryChargesBody)
-            .subscribe((deliveryProviderResponse: DeliveryProvider[])=>{
-
-                if (deliveryProviderResponse.length === 0) {
-                    // if there's no delivery provider, display error
-                    this.displayError("No available delivery provider");
-                    console.error("No available delivery provider")
-                } else if(deliveryProviderResponse.length === 1){
-
-                    // load the delivery providers
-                    this.deliveryProviders = deliveryProviderResponse;
-                    
-                    // if there's 1 delivery provider, load the delivery provider to mat-select
-                    this.checkoutForm.get('deliveryProviderId').patchValue(this.deliveryProviders[0].providerId);
-                    this.selectedDeliveryProvider = this.deliveryProviders[0];
-
-                    if (this.selectedDeliveryProvider.isError === true) {
-                        let confirmation = this.displayError(this.selectedDeliveryProvider.providerName + " error: " + this.selectedDeliveryProvider.message);
-        
-                        confirmation.afterClosed().subscribe((result) => {
-                            // reset selectedDeliveryProvider
-                            this.selectedDeliveryProvider = null;
-                            this.checkoutForm.get('deliveryProviderId').patchValue(null);
-                        });
-                    } else {
-                        this._checkoutService.getDiscountOfCart(this._cartService.cartId$, this.selectedDeliveryProvider.refId, this.selectedDeliveryProvider.deliveryType)
-                        .subscribe((response)=>{
-                            this.paymentDetails = {...this.paymentDetails, ...response};
-                        });
+            this._checkoutService.postToRetrieveDeliveryCharges(deliveryChargesBody)
+                .subscribe((deliveryProviderResponse: DeliveryProvider[])=>{
     
-                        // set price (this is based on delivery service api getPrice)
-                        this.paymentDetails.deliveryCharges = this.selectedDeliveryProvider.price;
-
-                        if(this.store.paymentType === "ONLINEPAYMENT") {
-                            // change text to placeorder OR paynow
-                            this.paymentCompletionStatus = { id: "ONLINE_PAY", label: "Pay Now" };
-                        } else if (this.store.paymentType === "COD") {
-                            // change text to placeorder OR paynow
-                            this.paymentCompletionStatus = { id: "PLACE_ORDER", label: "Place Order" };
+                    if (deliveryProviderResponse.length === 0) {
+                        // if there's no delivery provider, display error
+                        this.displayError("No available delivery provider");
+                        console.error("No available delivery provider")
+                    } else if(deliveryProviderResponse.length === 1){
+    
+                        // load the delivery providers
+                        this.deliveryProviders = deliveryProviderResponse;
+                        
+                        // if there's 1 delivery provider, load the delivery provider to mat-select
+                        this.checkoutForm.get('deliveryProviderId').patchValue(this.deliveryProviders[0].providerId);
+                        this.selectedDeliveryProvider = this.deliveryProviders[0];
+    
+                        if (this.selectedDeliveryProvider.isError === true) {
+                            let confirmation = this.displayError(this.selectedDeliveryProvider.providerName + " error: " + this.selectedDeliveryProvider.message);
+            
+                            confirmation.afterClosed().subscribe((result) => {
+                                // reset selectedDeliveryProvider
+                                this.selectedDeliveryProvider = null;
+                                this.checkoutForm.get('deliveryProviderId').patchValue(null);
+                            });
+                        } else {
+                            this._checkoutService.getDiscountOfCart(this._cartService.cartId$, this.selectedDeliveryProvider.refId, this.selectedDeliveryProvider.deliveryType)
+                            .subscribe((response)=>{
+                                this.paymentDetails = {...this.paymentDetails, ...response};
+                            });
+        
+                            // set price (this is based on delivery service api getPrice)
+                            this.paymentDetails.deliveryCharges = this.selectedDeliveryProvider.price;
+    
+                            if(this.store.paymentType === "ONLINEPAYMENT") {
+                                // change text to placeorder OR paynow
+                                this.paymentCompletionStatus = { id: "ONLINE_PAY", label: "Pay Now" };
+                            } else if (this.store.paymentType === "COD") {
+                                // change text to placeorder OR paynow
+                                this.paymentCompletionStatus = { id: "PLACE_ORDER", label: "Place Order" };
+                            }
                         }
+                    } else {
+                        // load all delivery provider in mat-select without default provider
+                        this.deliveryProviders = deliveryProviderResponse;
                     }
-                } else {
-                    // load all delivery provider in mat-select without default provider
-                    this.deliveryProviders = deliveryProviderResponse;
-                }
+    
+                    // Set Loading to false
+                    this.isLoading = false;
+                });
+        } else {
+            // Get discount for store pickup    
+            this._checkoutService.getDiscountOfCart(this._cartService.cartId$, null, "PICKUP")
+                .subscribe((response)=>{
+                    this.paymentDetails = {...this.paymentDetails, ...response};
 
-                // Set Loading to false
-                this.isLoading = false;
-            });
+                    if(this.store.paymentType === "ONLINEPAYMENT") {
+                        // change text to placeorder OR paynow
+                        this.paymentCompletionStatus = { id: "ONLINE_PAY", label: "Pay Now" };
+                    } else if (this.store.paymentType === "COD") {
+                        // change text to placeorder OR paynow
+                        this.paymentCompletionStatus = { id: "PLACE_ORDER", label: "Place Order" };
+                    }
+
+                    // Mark for check
+                    this._changeDetectorRef.markForCheck();
+                });
+
+            // Set Loading to false
+            this.isLoading = false;
+        }
     }
 
     changeDeliveryProvider(deliveryProviderId: string) {
@@ -380,20 +402,31 @@ export class LandingCheckoutComponent implements OnInit
                     // reset selectedDeliveryProvider
                     this.selectedDeliveryProvider = null;
                     this.checkoutForm.get('deliveryProviderId').patchValue(null);
+
+                    // Set Payment Completion Status "Calculate Charges"
+                    this.paymentCompletionStatus = { id:"CALCULATE_CHARGES", label: "Calculate Charges" };
                 });
 
             } else {
 
                 this._checkoutService.getDiscountOfCart(this._cartService.cartId$, this.selectedDeliveryProvider.refId, this.selectedDeliveryProvider.deliveryType)
-                    .subscribe((response)=>{
+                    .subscribe((response: CartDiscount)=>{
                         this.paymentDetails = {...this.paymentDetails, ...response};
+
+                        // Mark for check
+                        this._changeDetectorRef.markForCheck();
                     });
 
                 // set price (this is based on delivery service api getPrice)
                 this.paymentDetails.deliveryCharges = this.selectedDeliveryProvider.price;
 
-                // change text to placeorder OR paynow
-                this.paymentCompletionStatus = { id: "ONLINE_PAY", label: "Pay Now" };
+                if(this.store.paymentType === "ONLINEPAYMENT") {
+                    // change text to placeorder OR paynow
+                    this.paymentCompletionStatus = { id: "ONLINE_PAY", label: "Pay Now" };
+                } else if (this.store.paymentType === "COD") {
+                    // change text to placeorder OR paynow
+                    this.paymentCompletionStatus = { id: "PLACE_ORDER", label: "Place Order" };
+                }
             }
 
         } else {
@@ -412,7 +445,7 @@ export class LandingCheckoutComponent implements OnInit
             customerNotes: this.checkoutForm.get("specialInstruction").value,
             orderPaymentDetails: {
                 accountName: this.checkoutForm.get('fullName').value, // ni mace saloh
-                deliveryQuotationReferenceId: this.selectedDeliveryProvider.refId
+                deliveryQuotationReferenceId: (this.checkoutForm.get('storePickup').value === false) ? this.selectedDeliveryProvider.refId : null, // deliveryQuotationReferenceId not needed if it's a store pickup
             },
             orderShipmentDetails: {
                 address:  this.checkoutForm.get("address").value,
@@ -424,10 +457,11 @@ export class LandingCheckoutComponent implements OnInit
                 state: this.checkoutForm.get("state").value,
                 storePickup: this.checkoutForm.get("storePickup").value,
                 zipcode: this.checkoutForm.get("postCode").value,
-                deliveryProviderId: this.selectedDeliveryProvider.providerId,
-                deliveryType: this.selectedDeliveryProvider.deliveryType
+                deliveryProviderId: (this.checkoutForm.get('storePickup').value === false) ? this.selectedDeliveryProvider.providerId : null, // deliveryProviderId not needed if it's a store pickup
+                deliveryType: (this.checkoutForm.get('storePickup').value === false) ? this.selectedDeliveryProvider.deliveryType : "PICKUP" // deliveryType is "PICKUP" if it's a store pickup
             }
         };
+
         this._checkoutService.postPlaceOrder(this._cartService.cartId$, orderBody, this.checkoutForm.get('saveMyInfo').value)
             .subscribe((response) => {
 
@@ -440,11 +474,11 @@ export class LandingCheckoutComponent implements OnInit
                     // callbackUrl: "https://bon-appetit.symplified.ai/thankyou",
                     customerId: "undefined",
                     customerName: this.checkoutForm.get('fullName').value,
-                    paymentAmount: this.paymentDetails.cartGrandTotal,
+                    // paymentAmount: this.paymentDetails.cartGrandTotal.toFixed(2),
                     productCode: "parcel", // 
                     storeName: this.store.name,
                     systemTransactionId: transactionId,
-                    transactionId: response.id,
+                    transactionId: this.order.id,
                 }
 
                 this._checkoutService.postMakePayment(paymentBody)
@@ -455,8 +489,8 @@ export class LandingCheckoutComponent implements OnInit
                         if (this.payment.isSuccess === true) {
                             if (this.payment.providerId == "1") {
                                 window.location.href = this.payment.paymentLink;
-                            } else if (this.payment.providerId == "2") {
-                                this.postForm(this.payment.paymentLink, {"detail" : this.store.name, "amount": this.paymentDetails.cartGrandTotal, "order_id": this.order.id, "name": this.order.orderShipmentDetail.receiverName, "email": this.order.orderShipmentDetail.email, "phone": this.order.orderShipmentDetail.phoneNumber, "hash": this.payment.hash },'post');
+                            } else if (this.payment.providerId == "2") {                                
+                                this.postForm(this.payment.paymentLink, {"detail" : this.store.name, "amount": this.paymentDetails.cartGrandTotal.toFixed(2), "order_id": this.order.id, "name": this.order.orderShipmentDetail.receiverName, "email": this.order.orderShipmentDetail.email, "phone": this.order.orderShipmentDetail.phoneNumber, "hash": this.payment.hash },'post');
                             } else {
                                 this.displayError("Provider id not configured");
                                 console.error("Provider id not configured");
@@ -485,7 +519,7 @@ export class LandingCheckoutComponent implements OnInit
             customerNotes: this.checkoutForm.get("specialInstruction").value,
             orderPaymentDetails: {
                 accountName: this.checkoutForm.get('fullName').value, // ni mace saloh
-                deliveryQuotationReferenceId: this.selectedDeliveryProvider.refId
+                deliveryQuotationReferenceId: (this.checkoutForm.get('storePickup').value === false) ? this.selectedDeliveryProvider.refId : null, // deliveryQuotationReferenceId not needed if it's a store pickup
             },
             orderShipmentDetails: {
                 address:  this.checkoutForm.get("address").value,
@@ -497,8 +531,8 @@ export class LandingCheckoutComponent implements OnInit
                 state: this.checkoutForm.get("state").value,
                 storePickup: this.checkoutForm.get("storePickup").value,
                 zipcode: this.checkoutForm.get("postCode").value,
-                deliveryProviderId: this.selectedDeliveryProvider.providerId,
-                deliveryType: this.selectedDeliveryProvider.deliveryType
+                deliveryProviderId: (this.checkoutForm.get('storePickup').value === false) ? this.selectedDeliveryProvider.providerId : null, // deliveryProviderId not needed if it's a store pickup
+                deliveryType: (this.checkoutForm.get('storePickup').value === false) ? this.selectedDeliveryProvider.deliveryType : "PICKUP" // deliveryType is "PICKUP" if it's a store pickup
             }
         };
         this._checkoutService.postPlaceOrder(this._cartService.cartId$, orderBody, this.checkoutForm.get('saveMyInfo').value)
