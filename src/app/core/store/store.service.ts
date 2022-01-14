@@ -319,6 +319,31 @@ export class StoresService
         );
     }
 
+    getStoreById(id: string): Observable<Store>
+    {
+        let productService = this._apiServer.settings.apiServer.productService;
+        // let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
+        let accessToken = "accessToken";
+        let clientId = this._jwt.getJwtPayload(this.accessToken).uid;
+
+        const header = {
+            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+        };
+        
+        return this._httpClient.get<Store>(productService + '/stores/' + id , header)
+        .pipe(
+            map((response) => {
+                this._logging.debug("Response from StoresService (getStoreById)",response);
+                this._store.next(response["data"]);
+
+                // set this
+                this.storeControl.setValue(response["data"]);
+
+                return response["data"];
+            })
+        )
+    }
+
     getStoreByDomainName(domainName: string): Observable<Store>
     {
         let productService = this._apiServer.settings.apiServer.productService;
