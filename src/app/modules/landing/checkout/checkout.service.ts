@@ -132,6 +132,26 @@ export class CheckoutService
             );
     }
 
+    getSubTotalDiscount(id: string): Observable<CartDiscount>
+    {
+        let orderService = this._apiServer.settings.apiServer.orderService;
+        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
+        let accessToken = "accessToken";
+
+        const header = {  
+            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`)
+        };
+
+        return this._httpClient.get<any>(orderService + '/carts/'+ id +'/subtotaldiscount', header)
+            .pipe(
+                map((response) => {
+                    this._logging.debug("Response from StoresService (getSubTotalDiscount)",response);
+
+                    return response["data"];
+                })
+            );
+    }
+
     postPlaceOrder(cartId: string, orderBody, saveInfo: boolean) : Observable<any>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;

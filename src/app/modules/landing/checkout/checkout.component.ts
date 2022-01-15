@@ -124,7 +124,11 @@ export class LandingCheckoutComponent implements OnInit
             .subscribe((response: Store) => {
                 this.store = response;
 
+                // service charges percentage
                 this.paymentDetails.storeServiceChargePercentage = this.store.serviceChargesPercentage;
+
+                // set country
+                this.checkoutForm.get('country').patchValue(this.store.regionCountry.name);
 
                 // ---------------
                 // Get cart item
@@ -146,7 +150,20 @@ export class LandingCheckoutComponent implements OnInit
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
-            });        
+            });
+
+            // Get subtotal discount
+            this._checkoutService.getSubTotalDiscount(this._cartService.cartId$)
+                .subscribe((response: CartDiscount) => {
+
+                    // update for subtotal only
+                    this.paymentDetails.subTotalDiscount = response.subTotalDiscount;
+                    this.paymentDetails.subTotalDiscountDescription = response.subTotalDiscountDescription;
+                    this.paymentDetails.cartSubTotal = response.cartSubTotal;
+
+                    // Mark for check
+                    this._changeDetectorRef.markForCheck();
+                });
     }
     
     ngOnDestroy(){
