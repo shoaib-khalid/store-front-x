@@ -646,9 +646,9 @@ export class StoresService
 
         return this._httpClient.get<any>(productService + '/region-country-state', header)
             .pipe(
-                tap((response) => {
+                map((response) => {
                     this._logging.debug("Response from StoresService (getStoreRegionCountryState)",response);
-                    return response;
+                    return response["data"].content;
                 })
             );
     }

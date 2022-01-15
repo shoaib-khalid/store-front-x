@@ -72,6 +72,8 @@ export class LandingCheckoutComponent implements OnInit
     deliveryProviders: DeliveryProvider[] = [];
     selectedDeliveryProvider: DeliveryProvider;
 
+    regionCountryStates: any;
+
     minQuantity: number = 1;
     maxQuantity: number = 100;
 
@@ -110,6 +112,7 @@ export class LandingCheckoutComponent implements OnInit
             city                : ['', Validators.required],
             deliveryProviderId  : ['', CheckoutValidationService.deliveryProviderValidator],
             country             : [''],
+            regionCountryStateId: [''],
             specialInstruction  : [''],
             saveMyInfo          : [false]
         });
@@ -129,6 +132,16 @@ export class LandingCheckoutComponent implements OnInit
 
                 // set country
                 this.checkoutForm.get('country').patchValue(this.store.regionCountry.name);
+
+                // Get store states
+                this._storesService.getStoreRegionCountryState(this.store.regionCountry.id)
+                    .subscribe((response)=>{
+
+                        this.regionCountryStates = response;
+
+                        // Mark for check
+                        this._changeDetectorRef.markForCheck();
+                    })
 
                 // ---------------
                 // Get cart item

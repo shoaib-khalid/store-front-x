@@ -127,7 +127,7 @@
                         </mat-form-field>
 
                         <!--State -->
-                        <mat-form-field class="w-full sm:w-1/2 sm:pl-1" floatLabel="always">
+                        <!-- <mat-form-field class="w-full sm:w-1/2 sm:pl-1" floatLabel="always">
                             <mat-label>State</mat-label>
                             <input
                                 matInput
@@ -138,6 +138,28 @@
                                 (change)="addressFormChanges()"
                                 [required]="true"
                                 >
+                            <mat-error *ngIf="checkoutForm.get('state').hasError('required')">
+                                Required
+                            </mat-error>
+                        </mat-form-field> -->
+                        <!-- State -->
+                        <mat-form-field class="fuse-mat-no-subscript w-full sm:w-1/2 sm:pl-1" floatLabel="always">
+                            <mat-label>State</mat-label>
+                            <mat-select 
+                                [formControlName]="'state'"
+                                [required]="true"
+                                [placeholder]="'Select State'"
+                                (selectionChange)="checkoutForm.get('state').patchValue($event.value);"
+                                #stateSelector="matSelect">
+                                <mat-select-trigger>
+                                    <span class="flex items-center">
+                                        <span>{{ stateSelector.triggerValue }}</span>
+                                    </span>
+                                </mat-select-trigger>
+                                <div *ngFor="let state of regionCountryStates">
+                                    <mat-option [value]="state.name">{{state.name}}</mat-option>
+                                </div>
+                            </mat-select>
                             <mat-error *ngIf="checkoutForm.get('state').hasError('required')">
                                 Required
                             </mat-error>
