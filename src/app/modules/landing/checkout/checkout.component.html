@@ -106,7 +106,7 @@
                             </mat-error>
                         </mat-form-field>
                     </div>
-                    <div class="w-full flex flex-col sm:flex-row">
+                    <div class="w-full flex flex-col sm:flex-row mb-4 sm:mb-0">
                         <!--Phone Number -->
                         <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
                             <mat-label>Phone Number</mat-label>
@@ -126,22 +126,6 @@
                             </mat-error>
                         </mat-form-field>
 
-                        <!--State -->
-                        <!-- <mat-form-field class="w-full sm:w-1/2 sm:pl-1" floatLabel="always">
-                            <mat-label>State</mat-label>
-                            <input
-                                matInput
-                                [formControlName]="'state'"
-                                placeholder="Enter state"
-                                autocomplete="disabled"
-                                (input)="addressFormChanges()"
-                                (change)="addressFormChanges()"
-                                [required]="true"
-                                >
-                            <mat-error *ngIf="checkoutForm.get('state').hasError('required')">
-                                Required
-                            </mat-error>
-                        </mat-form-field> -->
                         <!-- State -->
                         <mat-form-field class="fuse-mat-no-subscript w-full sm:w-1/2 sm:pl-1" floatLabel="always">
                             <mat-label>State</mat-label>
@@ -157,7 +141,7 @@
                                     </span>
                                 </mat-select-trigger>
                                 <div *ngFor="let state of regionCountryStates">
-                                    <mat-option [value]="state.name">{{state.name}}</mat-option>
+                                    <mat-option [value]="state.id">{{state.name}}</mat-option>
                                 </div>
                             </mat-select>
                             <mat-error *ngIf="checkoutForm.get('state').hasError('required')">

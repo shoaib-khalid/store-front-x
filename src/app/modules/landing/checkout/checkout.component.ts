@@ -337,13 +337,18 @@ export class LandingCheckoutComponent implements OnInit
 
         // retrieveDeliveryCharges if not store pickup
         if (this.checkoutForm.get('storePickup').value === false) {
+
+            let _selectedStateIndex = this.regionCountryStates.findIndex(item => item.id === this.checkoutForm.get('state').value)
+            console.log("_selectedStateIndex", _selectedStateIndex);
+            
+
             const deliveryChargesBody = {
                 cartId: this._cartService.cartId$,
                 customerId: "undefined", // need to fix later when have customer login
                 delivery: {
                     deliveryAddress: this.checkoutForm.get('address').value,
                     deliveryCity: this.checkoutForm.get('city').value,
-                    deliveryState: this.checkoutForm.get('state').value,
+                    deliveryState: (_selectedStateIndex > -1) ? this.regionCountryStates[_selectedStateIndex].name : this.checkoutForm.get('state').value,
                     deliveryPostcode: this.checkoutForm.get('postCode').value,
                     deliveryCountry: this.checkoutForm.get('country').value,
                     deliveryContactEmail: this.checkoutForm.get('email').value,
