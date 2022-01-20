@@ -3,12 +3,8 @@ import { LandingPaymentRedirectComponent } from 'app/modules/landing/payment-red
 
 export const landingPaymentRedirectRoutes: Route[] = [
     {
-        path     : ':name/:email/:phone/:amount/:hash/:status_id/:order_id/:transaction_id/:msg',
-        component: LandingPaymentRedirectComponent
-    },
-    {
+        // path     : ':name/:email/:phone/:amount/:hash/:status_id/:order_id/:transaction_id/:msg',
         path     : '',
-        redirectTo: '/home',
         component: LandingPaymentRedirectComponent
     }
 ];

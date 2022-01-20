@@ -89,10 +89,10 @@ export class StoreResolver implements Resolve<any>
         let sanatiseUrl = this.url.full.replace(/^(https?:|)\/\//, '').split(':')[0]; // this will get the domain from the URL
 
         // check if the domain name valid for processing
-        if (sanatiseUrl.split('.').length > 3) {
-            console.error("Invalid domain name: ", sanatiseUrl);
-            this.url.domain = sanatiseUrl.split('.')[0] + ".symplified.ai"
-        } else {
+        // if (sanatiseUrl.split('.').length > 3) {
+        //     console.error("Invalid domain name: ", sanatiseUrl);
+        //     this.url.domain = sanatiseUrl.split('.')[0] + ".symplified.ai"
+        // } else {
             this.url.domain = sanatiseUrl;
             this.url.domainName = sanatiseUrl.split('.').at(-1); 
             this.url.subDomainName = sanatiseUrl.split('.')[0];
@@ -104,7 +104,7 @@ export class StoreResolver implements Resolve<any>
                 // check for local development
                 this.url.domain = this.url.domain.split('.')[0] + ".symplified.ai";
             }
-        }
+        // }
 
     }
 
@@ -119,7 +119,7 @@ export class StoreResolver implements Resolve<any>
      * @param state
      */
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any>
-    {
+    {     
         return this._storesService.getStoreByDomainName(this.url.domain).pipe(
             take(1),
             switchMap(() => {
@@ -141,6 +141,8 @@ export class StoreResolver implements Resolve<any>
                                 this.getCartItems(this.cartId);
                             });
                     }
+                } if (this.url.subDomainName === "symplified" && state.url.indexOf("/payment-redirect") > -1) {
+                    // redirecting
                 } else {
                     // this._router.navigate(['home']);
                     // alert("no store id");
