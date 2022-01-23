@@ -9,6 +9,33 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v0.0.10
+        {
+            version    : 'v0.0.10',
+            releaseDate: 'Jan 23, 2022',
+            changes    : [
+                {
+                    type: 'Fix',
+                    list: [
+                        '(LandingHomePage) Fix category',
+                        '(LandingHomePage) Fix discount slider',
+                        '(LandingCataloguePage) Fix icons',
+                        '(LandingProductPage) Fix image gallery',
+                        '(LandingCheckoutPage) Fix checkout image thumbnail',
+                        '(Footer) Fix responsive',
+                    ]
+                },
+                {
+                    type: 'Added',
+                    list: [
+                        '(LandingCheckoutPage) Add store closing UI',
+                        '(NotificationBanner) Add store closing UI',
+                        '(PaymentRedirect) Add store payment completion function',
+                        '(ThankYouPage) Add thankyou page UI',
+                    ]
+                }
+            ]
+        },
         // v0.0.9
         {
             version    : 'v0.0.9',
