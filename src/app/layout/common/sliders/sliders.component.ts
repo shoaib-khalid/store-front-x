@@ -5,7 +5,7 @@ import { DOCUMENT } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, Subscription } from 'rxjs';
 import { StoresService } from 'app/core/store/store.service';
-import { StoreDiscount } from 'app/core/store/store.types';
+import { Store, StoreDiscount } from 'app/core/store/store.types';
 
 @Component({
     selector     : 'sliders',
@@ -18,6 +18,8 @@ export class SlidersComponent implements OnInit
 
     @ViewChild('courseSteps', {static: true}) courseSteps: MatTabGroup;
     currentStep: number = 0;
+
+    store: Store;
 
     discounts: any[] = [];
     storeDiscounts: StoreDiscount[];
@@ -38,36 +40,42 @@ export class SlidersComponent implements OnInit
 
     ngOnInit(){
 
+        // Get the store
+        this._storesService.store$
+            .subscribe((response: Store) => {
+                this.store = response;
+            })
+
         // Get the discounts
         this._storesService.storeDiscounts$
-        .subscribe((response: StoreDiscount[]) => {
-            this.storeDiscounts = response;
+            .subscribe((response: StoreDiscount[]) => {
+                this.storeDiscounts = response;
 
-            if (this.storeDiscounts.length > 0) {
-                this.storeDiscounts.forEach(item => {
-                    this.discounts.push(...item.storeDiscountTierList.map(object => {
-                        return {
-                            discountName: item.discountName,
-                            discountType: item.discountType,
-                            startDate   : item.startDate,
-                            endDate     : item.endDate,
-                            maxDiscountAmount   : item.maxDiscountAmount,
-                            normalPriceItemOnly : item.normalPriceItemOnly,
-    
-                            calculationType       : object.calculationType,
-                            discountAmount        : object.discountAmount,
-                            startTotalSalesAmount : object.startTotalSalesAmount
-                        }
-                    }));
-                })
-    
-                // Go to step
-                this.goToStep(0);
-            }
+                if (this.storeDiscounts.length > 0) {
+                    this.storeDiscounts.forEach(item => {
+                        this.discounts.push(...item.storeDiscountTierList.map(object => {
+                            return {
+                                discountName: item.discountName,
+                                discountType: item.discountType,
+                                startDate   : item.startDate,
+                                endDate     : item.endDate,
+                                maxDiscountAmount   : item.maxDiscountAmount,
+                                normalPriceItemOnly : item.normalPriceItemOnly,
+        
+                                calculationType       : object.calculationType,
+                                discountAmount        : object.discountAmount,
+                                startTotalSalesAmount : object.startTotalSalesAmount
+                            }
+                        }));
+                    });                    
+        
+                    // Go to step
+                    this.goToStep(0);
+                }
 
-            // Mark for check
-            this._changeDetectorRef.markForCheck();
-        });
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
 
         // Subscribe to media changes
         this._fuseMediaWatcherService.onMediaChange$
@@ -154,7 +162,7 @@ export class SlidersComponent implements OnInit
     goToNextStep(): void
     {
         // Return if we already on the last step
-        if ( this.currentStep === this.storeDiscounts.length - 1 )
+        if ( this.currentStep === this.discounts.length - 1 )
         {
             return;
         }

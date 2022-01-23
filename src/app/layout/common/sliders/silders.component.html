@@ -1,4 +1,4 @@
-<mat-drawer-container [ngClass]="storeDiscounts.length > 0 ? 'block' : 'hidden'" class="w-full h-72 md:rounded-3xl shadow" style="background-image: url('https://cinema-online.symplified.ai/assets/image/banner_sales.png'); background-size: cover;">
+<mat-drawer-container [ngClass]="storeDiscounts.length > 0 ? 'block' : 'hidden'" class="w-full h-72 md:rounded-3xl mt-4 mb-8 shadow" style="background-image: url('https://symplified.it/store-assets/fnb_discount_banner.png'); background-size: cover;">
     <!-- <img class="object-cover w-full h-full" src="assets/images/example/banner.png"> -->
     <mat-drawer class="h-full"
         #matDrawer>
@@ -11,12 +11,29 @@
             <ng-container *ngFor="let discount of discounts; trackBy: trackByFn">
                 <mat-tab class="h-full">
                     <ng-template matTabContent>
-                        <div class="prose prose-sm w-full h-full py-4 px-2 md:rounded-2xl bg-black bg-opacity-75 text-white">
+                        <div class="prose prose-sm w-full h-full py-4 px-2 md:rounded-2xl text-white">
                             <h1 class="mb-0 text-white">{{discount.discountName}}</h1>
                             <span>{{discount.startDate | date: 'longDate'}} to {{discount.endDate | date: 'longDate'}}</span>
-                            <h2 class="mb-0 text-white">{{discount.discountAmount}}% Off</h2>
+                            <h2 class="mb-0 text-white flex items-center">
+                                <mat-icon
+                                    *ngIf="discount.discountType === 'SHIPPING'"
+                                    class="text-white icon-size-8 mr-2"
+                                    [svgIcon]="'mat_solid:delivery_dining'"
+                                ></mat-icon>
+                                <mat-icon
+                                    *ngIf="discount.discountType === 'TOTALSALES'"
+                                    class="text-white icon-size-7 mr-2"
+                                    [svgIcon]="'mat_solid:receipt_long'"
+                                ></mat-icon>
+                                <mat-icon
+                                    *ngIf="discount.discountType === 'ITEM'"
+                                    class="text-white icon-size-7 mr-2"
+                                    [svgIcon]="'feather:tag'"
+                                ></mat-icon>
+                                <span>{{discount.discountAmount}}% Off</span>
+                            </h2>
                             <ng-container *ngIf="discount.startTotalSalesAmount > 0; else noMinDiscountLimit">
-                                <p class="my-0">Total spend from {{discount.startTotalSalesAmount | currency: '$'}}</p>
+                                <p class="my-0">Total spend from {{discount.startTotalSalesAmount | currency: store.regionCountry.currencySymbol}}</p>
                             </ng-container>
                             <ng-template #noMinDiscountLimit>
                                 <p class="my-0">Total spend on any amount</p>
@@ -29,8 +46,8 @@
         </mat-tab-group>
 
         <!-- Desktop -->
-        <div class="z-10 w-full hidden lg:flex absolute bottom-2">
-            <div class="flex items-center justify-center mx-auto p-2 rounded-full shadow-lg bg-primary">
+        <div *ngIf="discounts.length > 1" class="z-10 w-full hidden lg:flex absolute bottom-2">
+            <div class="flex items-center justify-center mx-auto p-0.5 rounded-full shadow-lg bg-primary">
                 <button
                     class="flex-0"
                     mat-flat-button
@@ -41,10 +58,10 @@
                         [svgIcon]="'heroicons_outline:arrow-narrow-left'"></mat-icon>
                     <span class="mr-1">Prev</span>
                 </button>
-                <div class="flex items-center justify-center mx-2.5 font-medium leading-5 text-on-primary">
+                <div class="flex items-center justify-center mx-1.5 font-medium leading-5 text-on-primary">
                     <span>{{currentStep + 1}}</span>
-                    <span class="mx-0.5 text-hint">/</span>
-                    <span>{{storeDiscounts.length}}</span>
+                    <span class="mx-0.5 text-hint text-black">/</span>
+                    <span>{{discounts.length}}</span>
                 </div>
                 <button
                     class="flex-0"
@@ -64,11 +81,11 @@
             <div class="flex items-center justify-center ml-1 lg:ml-2 font-medium leading-5">
                 <span>{{currentStep + 1}}</span>
                 <span class="mx-0.5 text-hint">/</span>
-                <span>{{storeDiscounts.length}}</span>
+                <span>{{discounts.length}}</span>
             </div>
             <mat-progress-bar
                 class="flex-auto ml-6 rounded-full"
-                [value]="100 * (currentStep + 1) / storeDiscounts.length"></mat-progress-bar>
+                [value]="100 * (currentStep + 1) / discounts.length"></mat-progress-bar>
             <button
                 class="ml-4"
                 mat-icon-button

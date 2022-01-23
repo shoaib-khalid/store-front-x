@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
 import { switchMap, take, map, tap, catchError, filter } from 'rxjs/operators';
-import { Store, StoreRegionCountry, StoreTiming, StorePagination, StoreAssets, CreateStore, StoreDeliveryDetails, StoreSelfDeliveryStateCharges, StoreDeliveryProvider, StoreCategory, StoreDiscount } from 'app/core/store/store.types';
+import { Store, StoreRegionCountry, StoreTiming, StorePagination, StoreAssets, CreateStore, StoreDeliveryDetails, StoreSelfDeliveryStateCharges, StoreDeliveryProvider, StoreCategory, StoreDiscount, StoreSnooze } from 'app/core/store/store.types';
 import { AppConfig } from 'app/config/service.config';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { takeUntil } from 'rxjs/operators';
@@ -20,6 +20,7 @@ export class StoresService
     private _storeCategories: BehaviorSubject<StoreCategory[] | null> = new BehaviorSubject(null);
     private _storeDiscount: BehaviorSubject<StoreDiscount | null> = new BehaviorSubject(null);
     private _storeDiscounts: BehaviorSubject<StoreDiscount[] | null> = new BehaviorSubject(null);
+    private _storeSnooze: BehaviorSubject<StoreSnooze | null> = new BehaviorSubject(null);
     private _pagination: BehaviorSubject<StorePagination | null> = new BehaviorSubject(null);
     private _storeRegionCountries: ReplaySubject<StoreRegionCountry[]> = new ReplaySubject<StoreRegionCountry[]>(1);
     private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -161,6 +162,26 @@ export class StoresService
     {
         // Store the value
         this._storeDiscount.next(value);
+    }
+
+    /**
+     * Getter for store Discount
+     *
+     */
+    get storeSnooze$(): Observable<StoreSnooze>
+    {
+        return this._storeSnooze.asObservable();
+    }
+    
+    /**
+     * Setter for store Discount
+     *
+     * @param value
+     */
+    set storeSnooze(value: StoreSnooze)
+    {
+        // Store the value
+        this._storeSnooze.next(value);
     }
  
     /**
@@ -689,6 +710,27 @@ export class StoresService
                 this._logging.debug("Response from StoresService (putTiming)",response);
             })
         );
+    }
+
+    getStoreSnooze() : Observable<any>
+    {
+        let productService = this._apiServer.settings.apiServer.productService;
+        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
+        let accessToken = "accessToken";
+
+        const header = {
+            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+        };
+
+        return this._httpClient.get<any>(productService + '/stores/' + this.storeId$ + '/timings/snooze', header)
+            .pipe(
+                map((response) => {
+                    this._logging.debug("Response from StoresService (getStoreSnooze)",response);
+
+                    this._storeSnooze.next(response["data"]);
+                    return response["data"];
+                })
+            );
     }
 
     // ---------------------------

@@ -1,9 +1,8 @@
 <div class="flex flex-col items-center w-full h-full">
-    
     <!-- Main menu -->
     <div class="flex flex-col items-center w-full h-auto my-5 px-5">
         <!-- Back button & sort -->
-        <div class="flex flex-row items-center justify-between w-full max-w-280">
+        <div class="flex flex-row items-center justify-between w-full max-w-256">
             <input
                 id="go-back-button"
                 type="button"
@@ -21,6 +20,24 @@
             </label>
             <!-- View orientation -->
             <div class="flex flex-row">
+
+            <!-- Grid view -->
+            <input
+                id="grid-view-button"
+                type="button"
+                class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                (click)="productViewOrientation = 'grid'"
+                mat-button>
+                <label 
+                class="flex items-center justify-center h-10 px-1 cursor-pointer mr-1"
+                for="grid-view-button"
+                matRipple>
+                <mat-icon
+                    [ngClass]="productViewOrientation === 'grid' ? 'text-black dark:text-white' : 'text-gray'"
+                    class="icon-size-4"
+                    [svgIcon]="'block-view'"></mat-icon>
+                </label>
+
                 <!-- List view -->
                 <input
                     id="list-view-button"
@@ -29,34 +46,19 @@
                     (click)="productViewOrientation = 'list'"
                     mat-button>
                 <label 
-                    class="flex items-center justify-center h-10 px-1.5 cursor-pointer mr-2"
+                    class="flex items-center justify-center h-10 px-1 cursor-pointer mr-2"
                     for="list-view-button"
                     matRipple>
                     <mat-icon
-                        class="text-black dark:text-white"
-                        [svgIcon]="'heroicons_outline:view-list'"></mat-icon>
-                </label>
-
-                <!-- Grid view -->
-                <input
-                    id="grid-view-button"
-                    type="button"
-                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                    (click)="productViewOrientation = 'grid'"
-                    mat-button>
-                <label 
-                    class="flex items-center justify-center h-10 px-1.5 cursor-pointer mr-2"
-                    for="grid-view-button"
-                    matRipple>
-                    <mat-icon
-                        class="text-black dark:text-white"
-                        [svgIcon]="'heroicons_outline:view-grid'"></mat-icon>
+                        [ngClass]="productViewOrientation === 'list' ? 'text-black dark:text-white' : 'text-gray'"
+                        class="icon-size-4"
+                        [svgIcon]="'list-view'"></mat-icon>
                 </label>
 
                 <!-- Sort -->
                 <mat-select
                     class="hidden sm:block border border-gray-300 w-40 px-2 pt-3 rounded text-sm"
-                    placeholder="Sort by Relevan"
+                    placeholder="Sort by name"
                     [formControl]="sortInputControl"
                     #sortSelector="matSelect"
                     >
@@ -87,7 +89,7 @@
         </div>
 
         <!-- Catalogue Navigation -->
-        <!-- <div class="flex flex-row items-center justify-between w-full max-w-280 mt-8 overflow-y-hidden overflow-x-auto bg-card bg-opacity-25 dark:bg-opacity-100 rounded-lg py-2 shadow">
+        <!-- <div class="flex flex-row items-center justify-between w-full max-w-256 mt-8 overflow-y-hidden overflow-x-auto bg-card bg-opacity-25 dark:bg-opacity-100 rounded-lg py-2 shadow">
             <ul class="flex flex-auto items-center justify-around">
                 <li class="mr-6">
                     <a (click)="chooseCategory()" class="text-black hover:text-primary hover:text-lg hover:underline cursor-pointer">
@@ -105,15 +107,15 @@
         </div> -->
 
         <!-- Container -->
-        <div class="flex flex-col md:flex-row justify-between mt-10 w-full max-w-280">
+        <div class="flex flex-col md:flex-row justify-between mt-10 w-full max-w-256">
             <!-- Search & Filter -->
             <div class="flex flex-col lg:pr-6">
                 <!-- Search -->
                 <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript min-w-64">
                     <mat-icon
-                        class="icon-size-5"
+                        class="icon-size-4 text-primary"
                         matPrefix
-                        [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                        [svgIcon]="'search'"></mat-icon>
                     <input
                         matInput
                         [formControl]="searchInputControl"

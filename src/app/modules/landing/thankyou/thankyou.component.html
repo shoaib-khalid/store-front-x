@@ -1,7 +1,54 @@
 <div class="flex flex-col items-center w-full h-full">
     
     <!-- Main menu -->
-    <div class="flex flex-col items-center w-full h-auto md:mt-10 md:mb-10">
-        Thank you .. hehe
+    <div class="flex flex-col items-center w-full h-auto mt-10 md:mb-10">
+        <!-- Logo -->
+        <div class="flex flex-col items-center px-10 w-full text-white">
+            <img
+                class="w-40 h-40 my-1.5 rounded-full"
+                [src]="store.storeAsset.logoUrl"
+                alt="Logo image">
+        </div>
+        <div>
+            <ng-container *ngIf="(completionStatus === 'Payment_was_successful' || completionStatus === 'ORDER_CONFIRMED'); else orderFailed">
+                <span class="text-6xl font-bold text-primary">Thank You!</span>
+            </ng-container>
+            <ng-template #orderFailed>
+                <span class="text-6xl font-bold text-primary">Oh no!</span>
+            </ng-template>
+        </div>
+        <div class="flex flex-row justify-center items-center">
+            <ng-container *ngIf="(completionStatus === 'Payment_was_successful' || completionStatus === 'ORDER_CONFIRMED'); else orderFailedDescription">
+                <mat-icon 
+                    class="icon-size-7 sm:icon-size-8 pr-1 text-green-400"
+                    [svgIcon]="'heroicons_solid:check-circle'"></mat-icon>
+                <span class="text-2xl sm:text-3xl font-semibold">Your order is complete!</span>
+            </ng-container>
+            <ng-template #orderFailedDescription>
+                <mat-icon 
+                    class="icon-size-6 sm:icon-size-7 pr-1 text-red-400"
+                    [svgIcon]="'heroicons_solid:exclamation-circle'"></mat-icon>
+                <span class="text-2xl sm:text-3xl font-semibold">Your order failed!</span>
+            </ng-template>
+        </div>
+        <div class="flex items-center justify-center">
+            <ng-container *ngIf="(completionStatus === 'Payment_was_successful' || completionStatus === 'ORDER_CONFIRMED'); else orderFailedInstruction">
+                <span *ngIf="paymentType ==='COD'" class="text2xl text-center">You will be receiving a confirmation email with order details.</span>
+                <span *ngIf="paymentType === 'ONLINEPAYMENT'" class="text2xl text-center">You will be receiving a confirmation email with payment details.</span>
+            </ng-container>
+            <ng-template #orderFailedInstruction>
+                <span class="text2xl text-center">Your order have failed due to {{completionStatus.replaceAll('_',' ')}}!</span>
+            </ng-template>
+        </div>
+        <div>
+            <button
+                class="flex flex-row items-center mt-8 font-medium bg-primary-500 py-2 px-4 rounded"
+                [routerLink]="['/home']">
+                <span class="pr-2 font-semibold">Shop Again?</span>
+                <mat-icon
+                    class="icon-size-5 text-black"
+                    [svgIcon]="'heroicons_solid:shopping-cart'"></mat-icon>
+            </button>
+        </div>
     </div>
 </div>

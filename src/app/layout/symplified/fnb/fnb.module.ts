@@ -5,6 +5,8 @@ import { FnbLayoutComponent } from 'app/layout/symplified/fnb/fnb.component';
 import { MatIconModule } from '@angular/material/icon';
 import { BreadcrumbModule } from 'app/layout/common/breadcrumb/breadcrumb.module';
 import { Error404Component } from 'app/shared/error/error-404/error-404.component';
+import { FuseAlertModule } from '@fuse/components/alert';
+import { DatePipe } from '@angular/common';
 
 @NgModule({
     declarations: [
@@ -16,10 +18,14 @@ import { Error404Component } from 'app/shared/error/error-404/error-404.componen
         SharedModule,
         BreadcrumbModule,
         MatIconModule,
+        FuseAlertModule
     ],
     exports     : [
         FnbLayoutComponent,
         Error404Component
+    ],
+    providers   : [
+        DatePipe
     ]
 })
 export class FnbLayoutModule

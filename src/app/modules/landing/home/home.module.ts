@@ -10,6 +10,13 @@ import { CategoryCarouselComponent } from './category-carousel/category-carousel
 import { LandingHomeComponent } from 'app/modules/landing/home/home.component';
 import { landingHomeRoutes } from 'app/modules/landing/home/home.routing';
 
+import { NgxGalleryModule } from 'ngx-gallery-9';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+
+
+
+
+
 @NgModule({
     declarations: [
         LandingHomeComponent,
@@ -22,8 +29,12 @@ import { landingHomeRoutes } from 'app/modules/landing/home/home.routing';
         SlidersModule,
 
         IvyCarouselModule,
+
+        NgxGalleryModule,
+        FontAwesomeModule
     ]
 })
-export class LandingHomeModule
+export class LandingHomeModule 
 {
 }
+

@@ -49,7 +49,6 @@ export class LandingPaymentRedirectComponent
             this.payment.transaction_id = params['transaction_id'];
             this.payment.msg = params['msg'];
 
-
             let status;
             if (this.payment.status_id == "1" || this.payment.status_id == 1) {
                 status = "SUCCESS"

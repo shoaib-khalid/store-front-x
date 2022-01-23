@@ -6,6 +6,7 @@ import { Product } from 'app/core/product/product.types';
 import { StoresService } from 'app/core/store/store.service';
 import { Store, StoreCategory } from 'app/core/store/store.types';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
+
 import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from 'ngx-gallery-9';
 
 @Component({
@@ -85,8 +86,6 @@ export class LandingProductDetailsComponent implements OnInit
 
     ngOnInit() {
 
-        
-
         // Get the store info
         this._storesService.store$
             .subscribe((response: Store) => {
@@ -105,16 +104,17 @@ export class LandingProductDetailsComponent implements OnInit
                 // previewDownload: true,
                 imageArrowsAutoHide: true, 
                 thumbnailsArrowsAutoHide: true,
+                thumbnailsAutoHide: true,
                 // "imageSize": "contain",
                 "previewCloseOnClick": true, 
                 "previewCloseOnEsc": true,
                 // "thumbnailsRemainingCount": true
-                
             },
             // max-width 767 Mobile configuration
             {
                 breakpoint: 767,
                 thumbnailsColumns: 2,
+                thumbnailsAutoHide: true,
                 width: '350px',
                 height: '350px',
                 // imagePercent: 100,
@@ -192,6 +192,14 @@ export class LandingProductDetailsComponent implements OnInit
             
                     // set to galerry images
                     this.galleryImages = this.imageCollection
+
+                    if (this.galleryImages.length < 1) {
+                        this.galleryImages = [{
+                            small   : '' + this.store.storeAsset.logoUrl,
+                            medium  : '' + this.store.storeAsset.logoUrl,
+                            big     : '' + this.store.storeAsset.logoUrl
+                        }];
+                    }
     
                     // -----------------------
                     // Product Variants
@@ -403,6 +411,13 @@ export class LandingProductDetailsComponent implements OnInit
                 });
 
                 this.galleryImages = this.imageCollection
+                if (this.galleryImages.length < 1) {
+                    this.galleryImages = [{
+                        small   : '' + this.store.storeAsset.logoUrl,
+                        medium  : '' + this.store.storeAsset.logoUrl,
+                        big     : '' + this.store.storeAsset.logoUrl
+                    }];
+                }
                 // end of reorder image collection
             }
         }

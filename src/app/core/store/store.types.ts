@@ -25,12 +25,7 @@ export interface Store
     city?: string;
     verticalCode?: string;
     category?: string;
-    storeTiming?: {
-        day?: string;
-        openTime?: string;
-        closeTime?: string;
-        isOff?: boolean;
-    };
+    storeTiming?: StoreTiming[];
     type?: string;
     totalSteps?: number;
     updatedAt?: number;
@@ -82,6 +77,16 @@ export interface StoreTiming
     day: string;
     isOff: boolean;
     openTime: string;
+    breakStartTime: string;
+    breakEndTime: string;
+}
+
+export interface StoreSnooze
+{
+    isSnooze: boolean;
+    snoozeEndTime: string;
+    snoozeReason: string;
+    snoozeStartTime: string;
 }
 
 export interface StoreRegionCountry

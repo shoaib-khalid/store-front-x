@@ -13,12 +13,20 @@ import { LayoutModule } from 'app/layout/layout.module';
 import { AppComponent } from 'app/app.component';
 import { appRoutes } from 'app/app.routing';
 import { AppConfig } from 'app/config/service.config';
+import * as Hammer from 'hammerjs';
+import { HammerGestureConfig, HAMMER_GESTURE_CONFIG, HammerModule } from '@angular/platform-browser';
 
 const routerConfig: ExtraOptions = {
     preloadingStrategy       : PreloadAllModules,
     scrollPositionRestoration: 'enabled',
     // useHash: true
 };
+
+export class MyHammerConfig extends HammerGestureConfig {
+    overrides = <any> {
+      swipe: { direction: Hammer.DIRECTION_ALL }
+    };
+}
 
 @NgModule({
     declarations: [
@@ -40,17 +48,24 @@ const routerConfig: ExtraOptions = {
         // Layout module of your application
         LayoutModule,
 
+        // Hammer Module
+        HammerModule,
+
         // 3rd party modules that require global configuration via forRoot
         MarkdownModule.forRoot({})
     ],
     providers: [
         AppConfig,
         { 
-          provide: APP_INITIALIZER,
-          useFactory: initializeApp,
-          deps: [AppConfig], 
-          multi: true 
-        }
+            provide: APP_INITIALIZER,
+            useFactory: initializeApp,
+            deps: [AppConfig], 
+            multi: true 
+        },
+        {
+            provide: HAMMER_GESTURE_CONFIG,
+            useClass: MyHammerConfig,
+        },
     ],
     bootstrap   : [
         AppComponent

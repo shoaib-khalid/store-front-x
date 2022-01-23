@@ -5,10 +5,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { SharedModule } from 'app/shared/shared.module';
 import { LandingProductDetailsComponent } from 'app/modules/landing/product-details/product-details.component';
 import { landingProductDetailsRoutes } from 'app/modules/landing/product-details/product-details.routing';
-import { Error404Component } from 'app/shared/error/error-404/error-404.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { NgxGalleryModule } from 'ngx-gallery-9';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @NgModule({
     declarations: [
@@ -21,7 +21,12 @@ import { NgxGalleryModule } from 'ngx-gallery-9';
         MatFormFieldModule,
         MatInputModule,
         NgxGalleryModule,
+        FontAwesomeModule,
         SharedModule
+    ],
+    exports     : [
+        FontAwesomeModule,
+        NgxGalleryModule
     ]
 })
 export class LandingProductDetailsModule

@@ -12,6 +12,7 @@ import { StoresService } from './core/store/store.service';
 import { PlatformLocation } from '@angular/common';
 import { CartService } from 'app/core/cart/cart.service';
 import { Cart } from 'app/core/cart/cart.types';
+import { NotificationService } from './core/notification/notification.service';
 
 @Injectable({
     providedIn: 'root'
@@ -102,7 +103,7 @@ export class StoreResolver implements Resolve<any>
                 this.url.domain = "cinema-online.symplified.ai"
             } else if (this.url.domain.split('.').at(-1) === "test") {
                 // check for local development
-                this.url.domain = this.url.domain.split('.')[0] + ".symplified.ai";
+                this.url.domain = this.url.domain.split('.')[0] + ".dev-my.symplified.ai";
             }
         // }
 
@@ -125,7 +126,11 @@ export class StoreResolver implements Resolve<any>
             switchMap(() => {
                 // check if store id exists
                 if (this._storesService.storeId$ && this._storesService.storeId$ !== null) {
+
+                    // -----------------------
                     // check if cart id exists
+                    // -----------------------
+
                     if (this._cartService.cartId$) {
                         this.cartId = this._cartService.cartId$;
                         this.getCartItems(this.cartId);
@@ -141,6 +146,16 @@ export class StoreResolver implements Resolve<any>
                                 this.getCartItems(this.cartId);
                             });
                     }
+
+                    // -----------------------
+                    // Get Store Snooze
+                    // -----------------------
+                    
+                    this._storesService.getStoreSnooze()
+                        .subscribe(() => {
+                             
+                        });
+
                 } if (this.url.subDomainName === "symplified" && state.url.indexOf("/payment-redirect") > -1) {
                     // redirecting
                 } else {

@@ -13,6 +13,8 @@ import { CartService } from 'app/core/cart/cart.service';
 import { Cart } from 'app/core/cart/cart.types';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { fuseAnimations } from '@fuse/animations';
+import { MatIconRegistry } from "@angular/material/icon";
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
     selector     : 'landing-catalogue',
@@ -82,10 +84,16 @@ export class LandingCatalogueComponent implements OnInit
         private _cartService: CartService,
         private _changeDetectorRef: ChangeDetectorRef,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
+        private _domSanitizer: DomSanitizer,
+        private _matIconRegistry: MatIconRegistry,
         private _router: Router,
-        private _route: ActivatedRoute
+        private _activatedRoute: ActivatedRoute
     )
     {
+        this._matIconRegistry
+            .addSvgIcon('search',this._domSanitizer.bypassSecurityTrustResourceUrl('assets/symplified/fnb/icons/search.svg'))
+            .addSvgIcon('block-view',this._domSanitizer.bypassSecurityTrustResourceUrl('assets/symplified/fnb/icons/block-view.svg'))
+            .addSvgIcon('list-view',this._domSanitizer.bypassSecurityTrustResourceUrl('assets/symplified/fnb/icons/list-view.svg'));
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -99,7 +107,7 @@ export class LandingCatalogueComponent implements OnInit
             filter((event) => event instanceof NavigationEnd),
             distinctUntilChanged(),
         ).subscribe(() => {
-            this.catalogueSlug = this._route.snapshot.paramMap.get('catalogue-slug');
+            this.catalogueSlug = this._activatedRoute.snapshot.paramMap.get('catalogue-slug');
             
 
             let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === this.catalogueSlug);
@@ -110,7 +118,7 @@ export class LandingCatalogueComponent implements OnInit
         });
 
         // get initial store category
-        this.catalogueSlug = this._route.snapshot.paramMap.get('catalogue-slug');
+        this.catalogueSlug = this._activatedRoute.snapshot.paramMap.get('catalogue-slug');
 
         // Get the store info
         this._storesService.store$

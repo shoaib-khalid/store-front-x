@@ -4,7 +4,7 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { CartService } from 'app/core/cart/cart.service';
 import { CartItem } from 'app/core/cart/cart.types';
 import { StoresService } from 'app/core/store/store.service';
-import { Store } from 'app/core/store/store.types';
+import { Store, StoreSnooze, StoreTiming } from 'app/core/store/store.types';
 import { of, Subject, Subscription, timer } from 'rxjs';
 import { map, switchMap, takeUntil, debounceTime, filter, distinctUntilChanged } from 'rxjs/operators';
 import { CheckoutService } from './checkout.service';
@@ -46,6 +46,11 @@ export class LandingCheckoutComponent implements OnInit
     
     checkoutForm: FormGroup;
     store: Store;
+
+    storeSnooze: StoreSnooze = null;
+    notificationMessage: string;
+    daysArray = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+
     cartItems: CartItem[] = [];
     order: Order;
     payment: Payment;
@@ -126,6 +131,18 @@ export class LandingCheckoutComponent implements OnInit
         this._storesService.store$
             .subscribe((response: Store) => {
                 this.store = response;
+
+                // get store timings & snooze
+                this._storesService.storeSnooze$
+                    .subscribe((response: StoreSnooze) => {
+                        this.storeSnooze = response;
+                        
+                        // check store timings
+                        this.checkStoreTiming(this.store.storeTiming, this.storeSnooze);
+        
+                        // Mark for check
+                        this._changeDetectorRef.markForCheck();
+                    });
 
                 // service charges percentage
                 this.paymentDetails.storeServiceChargePercentage = this.store.serviceChargesPercentage;
@@ -338,9 +355,7 @@ export class LandingCheckoutComponent implements OnInit
         // retrieveDeliveryCharges if not store pickup
         if (this.checkoutForm.get('storePickup').value === false) {
 
-            let _selectedStateIndex = this.regionCountryStates.findIndex(item => item.id === this.checkoutForm.get('state').value)
-            console.log("_selectedStateIndex", _selectedStateIndex);
-            
+            let _selectedStateIndex = this.regionCountryStates.findIndex(item => item.id === this.checkoutForm.get('state').value)           
 
             const deliveryChargesBody = {
                 cartId: this._cartService.cartId$,
@@ -617,5 +632,182 @@ export class LandingCheckoutComponent implements OnInit
     
         document.body.appendChild(form);        
         form.submit();
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Private methods
+    // -----------------------------------------------------------------------------------------------------
+
+    checkStoreTiming(storeTiming: StoreTiming[], storeSnooze: StoreSnooze): void
+    {
+        // the only thing that this function required is this.store.storeTiming
+
+        let todayDate = new Date();
+        let today = this.daysArray[todayDate.getDay()];
+
+        // check if store closed for all days
+        let isStoreCloseAllDay = storeTiming.map(item => item.isOff);
+
+        // --------------------
+        // Check store timing
+        // --------------------
+
+        // isStoreCloseAllDay.includes(false) means that there's a day that the store is open
+        // hence, we need to find the day that the store is open
+        if (isStoreCloseAllDay.includes(false)) {
+            storeTiming.forEach((item, index) => {
+                if (item.day === today) {
+                    // this mean store opened
+                    if (item.isOff === false) {
+                        let openTime = new Date();
+                        openTime.setHours(Number(item.openTime.split(":")[0]), Number(item.openTime.split(":")[1]), 0);
+
+                        let closeTime = new Date();
+                        closeTime.setHours(Number(item.closeTime.split(":")[0]), Number(item.closeTime.split(":")[1]), 0);
+
+                        if(todayDate >= openTime && todayDate < closeTime ) {
+                            // console.info("We are OPEN today!");
+
+                            // --------------------
+                            // Check store snooze
+                            // --------------------
+
+                            let snoozeEndTime = new Date(storeSnooze.snoozeEndTime);
+                            let nextStoreOpeningTime: string = "";                            
+
+                            if (storeSnooze.isSnooze === true) {
+                                // console.info("Store is currently on snooze");
+
+                                // check if snoozeEndTime exceed closeTime
+                                if (snoozeEndTime > closeTime) {
+                                    // console.info("Store snooze exceed closeTime");
+
+                                    // ------------------------
+                                    // Find next available day
+                                    // ------------------------
+
+                                    let dayBeforeArray = storeTiming.slice(0, index + 1);
+                                    let dayAfterArray = storeTiming.slice(index + 1, storeTiming.length);
+                                    
+                                    let nextAvailableDay = dayAfterArray.concat(dayBeforeArray);                                
+                                    nextAvailableDay.forEach((object, iteration, array) => {
+                                        // this mean store opened
+                                        if (object.isOff === false) {
+                                            let nextOpenTime = new Date();
+                                            nextOpenTime.setHours(Number(object.openTime.split(":")[0]), Number(object.openTime.split(":")[1]), 0);
+
+                                            let nextCloseTime = new Date();
+                                            nextCloseTime.setHours(Number(object.closeTime.split(":")[0]), Number(object.closeTime.split(":")[1]), 0);
+
+                                            if(todayDate >= nextOpenTime){
+                                                let nextOpen = (iteration === 0) ? ("tommorow at " + object.openTime) : ("on " + object.day + " " + object.openTime);
+                                                // console.info("We will be open " + nextOpen);
+                                                this.notificationMessage = "Sorry for the inconvenience, We are closed! We will be open " + nextOpen;
+                                                nextStoreOpeningTime = "Store will be open " + nextOpen;
+                                                array.length = iteration + 1;
+                                            }
+                                        } else {
+                                            console.warn("Store close on " + object.day);
+                                        }
+                                    });
+
+                                } else {
+                                    nextStoreOpeningTime = "Store will be open at " + this._datePipe.transform(storeSnooze.snoozeEndTime,'EEEE, h:mm a');
+                                }                                
+
+                                if (storeSnooze.snoozeReason && storeSnooze.snoozeReason !== null) {
+                                    this.notificationMessage = "Sorry for the inconvenience, Store is currently closed due to " + storeSnooze.snoozeReason + ". " + nextStoreOpeningTime;
+                                } else {
+                                    this.notificationMessage = "Sorry for the inconvenience, Store is currently closed due to unexpected reason. " + nextStoreOpeningTime;
+                                }
+                            }
+                            
+                            // ---------------------
+                            // check for break hour
+                            // ---------------------
+                            if ((item.breakStartTime && item.breakStartTime !== null) && (item.breakEndTime && item.breakEndTime !== null)) {
+                                let breakStartTime = new Date();
+                                breakStartTime.setHours(Number(item.breakStartTime.split(":")[0]), Number(item.breakStartTime.split(":")[1]), 0);
+    
+                                let breakEndTime = new Date();
+                                breakEndTime.setHours(Number(item.breakEndTime.split(":")[0]), Number(item.breakEndTime.split(":")[1]), 0);
+
+                                if(todayDate >= breakStartTime && todayDate < breakEndTime ) {
+                                    // console.info("We are on BREAK! We will be open at " + item.breakEndTime);
+                                    this.notificationMessage = "Sorry for the inconvenience, We are on break! We will be open at " + item.breakEndTime;
+                                }
+                            }
+                        } else {
+
+                            // console.info("We are CLOSED for the day!");
+
+                            // ------------------------
+                            // Find next available day
+                            // ------------------------
+
+                            let dayBeforeArray = storeTiming.slice(0, index + 1);
+                            let dayAfterArray = storeTiming.slice(index + 1, storeTiming.length);
+                            
+                            let nextAvailableDay = dayAfterArray.concat(dayBeforeArray);                                
+                            nextAvailableDay.forEach((object, iteration, array) => {
+                                // this mean store opened
+                                if (object.isOff === false) {
+                                    let nextOpenTime = new Date();
+                                    nextOpenTime.setHours(Number(object.openTime.split(":")[0]), Number(object.openTime.split(":")[1]), 0);
+
+                                    let nextCloseTime = new Date();
+                                    nextCloseTime.setHours(Number(object.closeTime.split(":")[0]), Number(object.closeTime.split(":")[1]), 0);
+
+                                    if(todayDate >= nextOpenTime){
+                                        let nextOpen = (iteration === 0) ? ("tommorow at " + object.openTime) : ("on " + object.day + " " + object.openTime);
+                                        // console.info("We will be open " + nextOpen);
+                                        this.notificationMessage = "Sorry for the inconvenience, We are closed! We will be open " + nextOpen;
+                                        array.length = iteration + 1;
+                                    }
+                                } else {
+                                    console.warn("Store close on " + object.day);
+                                }
+                            });
+                        }
+                    } else {
+
+                        console.warn("We are CLOSED today");
+                        
+                        // ------------------------
+                        // Find next available day
+                        // ------------------------
+
+                        let dayBeforeArray = storeTiming.slice(0, index + 1);
+                        let dayAfterArray = storeTiming.slice(index + 1, storeTiming.length);
+                        
+                        let nextAvailableDay = dayAfterArray.concat(dayBeforeArray);
+            
+                        nextAvailableDay.forEach((object, iteration, array) => {
+                            // this mean store opened
+                            if (object.isOff === false) {
+                                
+                                let nextOpenTime = new Date();                    
+                                nextOpenTime.setHours(Number(object.openTime.split(":")[0]), Number(object.openTime.split(":")[1]), 0);
+                                
+                                let nextCloseTime = new Date();
+                                nextCloseTime.setHours(Number(object.closeTime.split(":")[0]), Number(object.closeTime.split(":")[1]), 0);
+                                  
+                                if(todayDate >= nextOpenTime){
+                                    let nextOpen = (iteration === 0) ? ("tommorow at " + object.openTime) : ("on " + object.day + " " + object.openTime);
+                                    // console.info("We will be open " + nextOpen);
+                                    this.notificationMessage = "Sorry for the inconvenience, We are closed! We will be open " + nextOpen;
+                                    array.length = iteration + 1;
+                                }
+                            } else {
+                                console.warn("Store close on this " + object.day);
+                            }
+                        });
+                    }
+                }
+            });
+        } else {
+            // this indicate that store closed for all days
+            this.notificationMessage = "Sorry for the inconvenience, We are closed!";
+        }
     }
 }

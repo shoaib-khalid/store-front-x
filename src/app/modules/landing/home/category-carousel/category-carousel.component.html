@@ -1,23 +1,58 @@
-<carousel [cellsToShow]="carouselCellsToShow" [arrowsOutside]="carouselArrowsOutside">
-    <ng-container *ngFor="let category of storeCategories">
-        <div class="carousel-cell">
-            <input
-                [id]="'category-button' + category.id"
-                class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                type="button"
-                (click)="chooseCategory(category.id)"
-                mat-icon-button>
-            <label 
-                class="flex flex-col group items-center justify-center cursor-pointer"
-                [for]="'category-button' + category.id"
-                matRipple>
+<ng-container *ngIf="storeCategories.length > 0">
+    <carousel [cellsToShow]="carouselCellsToShow" class="flex w-full justify-center items-center" [arrowsOutside]="arrowsOutside">
+        <ng-container *ngFor="let category of storeCategories">
+            <div class="carousel-cell group">
+                <input
+                    [id]="'category-button' + category.id"
+                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                    type="button"
+                    (click)="chooseCategory(category.id)"
+                    mat-icon-button>
                 <div class="h-5 group-hover:hidden"></div>
-                <img
-                    class="w-52 h-32 my-1.5 mx-3 rounded-lg ring-offset-2 ring-offset-white ring-1 ring-black group-hover:ring-primary"
-                    [src]="(category.thumbnailUrl && category.thumbnailUrl !== null) ? category.thumbnailUrl : store.storeAsset.logoUrl"
-                    alt="Logo image">
-                <p class="mt-2 font-bold text-3xl group-hover:text-primary">{{category.name}}</p>
-            </label>
+                <label 
+                    class="flex flex-col items-center justify-center cursor-pointer"
+                    [for]="'category-button' + category.id"
+                    matRipple>
+                    <div class="relative w-52 h-32 my-1.5 mx-3 rounded-lg border-2 border-black group-hover:border-primary">
+                        <img
+                            class="object-fill rounded-lg"
+                            [src]="(category.thumbnailUrl && category.thumbnailUrl !== null) ? category.thumbnailUrl : store.storeAsset.logoUrl"
+                            alt="Logo image">
+                        <div class="rounded border-2 border-black group-hover:border-primary absolute top-0.5 bottom-0.5 left-0.5 right-0.5"></div>
+                    </div>
+                    <p class="mt-2 font-bold text-3xl group-hover:text-primary">{{category.name}}</p>
+                </label>
+            </div>
+            <!-- <div class="carousel-cell">
+                <img src="https://cdn.pixabay.com/photo/2013/07/12/17/47/test-pattern-152459_960_720.png">
+            </div> -->
+        </ng-container>
+        <!-- <div class="carousel-cell">
+            <img src="https://cdn.pixabay.com/photo/2013/07/12/17/47/test-pattern-152459_960_720.png">
         </div>
-    </ng-container>
-</carousel>
+        <div class="carousel-cell">
+            <img src="https://cdn.pixabay.com/photo/2013/07/12/17/47/test-pattern-152459_960_720.png">
+        </div>
+        <div class="carousel-cell">
+            <img src="https://cdn.pixabay.com/photo/2013/07/12/17/47/test-pattern-152459_960_720.png">
+        </div>
+        <div class="carousel-cell">
+            <img src="https://cdn.pixabay.com/photo/2013/07/12/17/47/test-pattern-152459_960_720.png">
+        </div>
+        <div class="carousel-cell">
+            <img src="https://cdn.pixabay.com/photo/2013/07/12/17/47/test-pattern-152459_960_720.png">
+        </div>
+        <div class="carousel-cell">
+            <img src="https://cdn.pixabay.com/photo/2013/07/12/17/47/test-pattern-152459_960_720.png">
+        </div>
+        <div class="carousel-cell">
+            <img src="https://cdn.pixabay.com/photo/2013/07/12/17/47/test-pattern-152459_960_720.png">
+        </div>
+        <div class="carousel-cell">
+            <img src="https://cdn.pixabay.com/photo/2013/07/12/17/47/test-pattern-152459_960_720.png">
+        </div>
+        <div class="carousel-cell">
+            <img src="https://cdn.pixabay.com/photo/2013/07/12/17/47/test-pattern-152459_960_720.png">
+        </div> -->
+    </carousel>
+</ng-container>
