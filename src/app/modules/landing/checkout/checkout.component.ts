@@ -50,6 +50,7 @@ export class LandingCheckoutComponent implements OnInit
     storeSnooze: StoreSnooze = null;
     notificationMessage: string;
     daysArray = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+    storeTimings: { days: string[], timing: string }[] = [];
 
     cartItems: CartItem[] = [];
     order: Order;
@@ -132,7 +133,11 @@ export class LandingCheckoutComponent implements OnInit
             .subscribe((response: Store) => {
                 this.store = response;
 
-                // get store timings & snooze
+                // -----------------------
+                // Store Timings & Snooze
+                // -----------------------
+                
+                // get store timings & snooze (for store closing)
                 this._storesService.storeSnooze$
                     .subscribe((response: StoreSnooze) => {
                         this.storeSnooze = response;
@@ -144,8 +149,50 @@ export class LandingCheckoutComponent implements OnInit
                         this._changeDetectorRef.markForCheck();
                     });
 
+                // display store timing operating hour
+                this.store.storeTiming.forEach(item => {
+                    let index = this.storeTimings.findIndex(element => element.timing === item.openTime + " - " + item.closeTime);
+                    if (item.isOff === false) {
+                        if (index > -1) {
+                            this.storeTimings[index].days.push(item.day)
+                        } else {
+                            this.storeTimings.push({
+                                days:  [item.day],
+                                timing: item.openTime + " - " + item.closeTime
+                            });
+                        }
+                    }
+                });
+
+                console.log("storeTimings", this.storeTimings)
+
+
+                // -----------------------
+                // Service Charges
+                // -----------------------
+
                 // service charges percentage
                 this.paymentDetails.storeServiceChargePercentage = this.store.serviceChargesPercentage;
+
+                // Get subtotal discount
+                this._checkoutService.getSubTotalDiscount(this._cartService.cartId$)
+                    .subscribe((response: CartDiscount) => {
+
+                        // update for subtotal only
+                        this.paymentDetails.subTotalDiscount = response.subTotalDiscount;
+                        this.paymentDetails.subTotalDiscountDescription = response.subTotalDiscountDescription;
+                        this.paymentDetails.cartSubTotal = response.cartSubTotal;
+
+                        this.paymentDetails.storeServiceChargePercentage = response.storeServiceChargePercentage;
+                        this.paymentDetails.storeServiceCharge = response.storeServiceCharge;
+
+                        // Mark for check
+                        this._changeDetectorRef.markForCheck();
+                    });
+
+                // -----------------------
+                // Store Country & States
+                // -----------------------
 
                 // set country
                 this.checkoutForm.get('country').patchValue(this.store.regionCountry.name);
@@ -160,9 +207,10 @@ export class LandingCheckoutComponent implements OnInit
                         this._changeDetectorRef.markForCheck();
                     })
 
-                // ---------------
+                // -----------------------
                 // Get cart item
-                // ---------------
+                // -----------------------
+
                 this._cartService.cartItems$
                 .subscribe((response: CartItem[])=>{
                     this.cartItems = response;
@@ -182,18 +230,6 @@ export class LandingCheckoutComponent implements OnInit
                 this._changeDetectorRef.markForCheck();
             });
 
-            // Get subtotal discount
-            this._checkoutService.getSubTotalDiscount(this._cartService.cartId$)
-                .subscribe((response: CartDiscount) => {
-
-                    // update for subtotal only
-                    this.paymentDetails.subTotalDiscount = response.subTotalDiscount;
-                    this.paymentDetails.subTotalDiscountDescription = response.subTotalDiscountDescription;
-                    this.paymentDetails.cartSubTotal = response.cartSubTotal;
-
-                    // Mark for check
-                    this._changeDetectorRef.markForCheck();
-                });
     }
     
     ngOnDestroy(){

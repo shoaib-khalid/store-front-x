@@ -74,15 +74,10 @@
                 </mat-select>
                 <!-- Sort for xs view -->
                 <div class="sm:hidden">
-                    <button
-                        [matMenuTriggerFor]="actionsMenu"
-                        mat-icon-button>
-                        <mat-icon [svgIcon]="'heroicons_outline:dots-vertical'"></mat-icon>
-                    </button>
-                    <mat-menu #actionsMenu="matMenu">
-                        <button mat-menu-item>Active</button>
-                        <button mat-menu-item>Inactive</button>
-                        <button mat-menu-item>Draf</button>
+                    <mat-icon class="h-10 cursor-pointer" [matMenuTriggerFor]="sortMenu" [svgIcon]="'mat_solid:sort'"></mat-icon>
+                    <mat-menu #sortMenu="matMenu">
+                        <mat-option (click)="sortInputControl.setValue('asc')">Ascending</mat-option>
+                        <mat-option (click)="sortInputControl.setValue('desc')">Descending</mat-option>
                     </mat-menu>
                 </div>
             </div>
@@ -214,21 +209,22 @@
                         <!-- Products -->
                         <ng-container *ngFor="let product of products">
                             <!-- Product -->
-                            <div class="flex flex-col h-120 shadow rounded-2xl overflow-hidden bg-card">
+                            <div class="flex flex-col h-120 shadow-lg border hover:border-2 hover:border-primary rounded-lg overflow-hidden bg-card cursor-pointer"
+                                [routerLink]="['/product/' + product.seoName]"
+                            >
                                 <!-- Product Header -->
-                                <div class="flex flex-col p-3 h-60 bg-black bg-no-repeat bg-cover bg-center cursor-pointer" 
+                                <div class="flex flex-col p-3 h-60 bg-black bg-no-repeat bg-cover bg-center" 
                                     [style]="product.thumbnailUrl ? 'background-image: url(\'' + product.thumbnailUrl + '\');' : 'background-image: url(\'' + store.storeAsset.logoUrl + '\');' + 'background-size: cover;'"
-                                    [routerLink]="['/product/' + product.seoName]"
                                 >
                                     <div class="flex items-center justify-between">
-                                        <!-- Course category -->
-                                        <ng-container>
+                                        <!-- Product discount -->
+                                        <!-- <ng-container>
                                             <div
                                                 class="py-0.5 px-3 rounded text-xs font-semibold"
                                                 [ngClass]="'text-primary-100 bg-primary-800 dark:text-primary-50 dark:bg-primary-500'">
                                                 20% Off
                                             </div>
-                                        </ng-container>
+                                        </ng-container> -->
                                         <!-- Badges -->
                                         <!-- <div class="flex items-center">
                                             <ng-container>
@@ -246,7 +242,7 @@
                                     <div class="mt-2 mb-4 h-40 text-ellipsis overflow-hidden">
                                         <span class="text-gray-500" [innerHtml]="product.description"></span>
                                     </div>
-                                    <div class="text-sm font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</div>
+                                    <!-- <div class="text-sm font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</div> -->
                                     <div class="font-semibold text-primary text-xl">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</div>
                                     <!-- Input Quantity -->
                                     <!-- <div class="mt-4">
@@ -296,21 +292,22 @@
                     <!-- List -->
                     <div *ngIf="productViewOrientation === 'list'" class="w-full mb-8 sm:mb-10">
                         <ng-container *ngFor="let product of products">
-                            <div class="flex flex-row h-48 w-full bg-card shadow rounded-2xl justify-between items-center mb-4">
+                            <div class="flex flex-row h-48 w-full bg-card shadow border hover:border-2 hover:border-primary rounded-lg justify-between items-center mb-4 cursor-pointer"
+                                [routerLink]="['/product/' + product.seoName]"
+                            >
                                 <!-- Image Thumbnail -->
-                                <div class="h-full w-52 rounded-l-2xl p-2 bg-black bg-no-repeat bg-cover bg-center cursor-pointer" 
+                                <div class="h-full w-52 rounded-l-lg p-2 bg-black bg-no-repeat bg-cover bg-center" 
                                     [style]="product.thumbnailUrl ? 'background-image: url(\'' + product.thumbnailUrl + '\');' : 'background-image: url(\'' + store.storeAsset.logoUrl + '\');' + 'background-size: cover;'"
-                                    [routerLink]="['/product/' + product.seoName]"
                                 >
                                     <div class="flex items-center justify-between">
-                                        <!-- Course category -->
-                                        <ng-container>
+                                        <!-- Product Discount -->
+                                        <!-- <ng-container>
                                             <div
                                                 class="py-0.5 px-3 rounded text-xs font-semibold"
                                                 [ngClass]="'text-primary-100 bg-primary-800 dark:text-primary-50 dark:bg-primary-500'">
                                                 20% Off
                                             </div>
-                                        </ng-container>
+                                        </ng-container> -->
                                         <!-- Badges -->
                                         <!-- <div class="flex items-center">
                                             <ng-container>
@@ -323,13 +320,13 @@
                                     </div>  
                                 </div>
                                 <!-- List Body -->
-                                <div class="flex flex-row justify-between h-full w-full rounded-r-2xl text-ellipsis overflow-hidden">
+                                <div class="flex flex-row justify-between h-full w-full rounded-r-lg text-ellipsis overflow-hidden">
                                     <div class="flex flex-col w-full p-6">
                                         <span class="text-xl h-10 font-bold mb-0 text-ellipsis overflow-hidden">{{product.name}}</span>
                                         <div class="mt-2 mb-4 h-20 text-ellipsis overflow-hidden">
                                             <span class="text-gray-500" [innerHtml]="product.description"></span>
                                         </div>
-                                        <p class="font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p>
+                                        <!-- <p class="font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p> -->
                                         <span class="text-xl font-semibold text-primary">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</span>
                                     </div>
                                 </div>
@@ -339,17 +336,18 @@
                 </ng-container>
                 <!-- No Products -->
                 <ng-template #noProduct>
-                    <div class="flex flex-auto h-96 flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+                    <div class="flex flex-auto h-96 flex-col items-center justify-center rounded-lg border border-gray-300 dark:bg-transparent">
                         <mat-icon
                             class="icon-size-20"
-                            [svgIcon]="'iconsmind:file_search'"></mat-icon>
+                            [svgIcon]="'heroicons_outline:document-search'"></mat-icon>
                         <div class="mt-6 text-2xl font-semibold tracking-tight text-secondary">No products found!</div>
                     </div>
+                    <div class="mb-12"></div>
                 </ng-template>
 
                 <div class="mb-12"></div>
                 <mat-paginator
-                    class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 rounded-lg shadow bg-gray-50 dark:bg-transparent"
+                    class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 sm:mx-4 z-10 rounded-lg shadow bg-gray-50 dark:bg-transparent"
                     [ngClass]="{'pointer-events-none': isLoading}"
                     [length]="pagination.length"
                     [pageIndex]="pagination.page"

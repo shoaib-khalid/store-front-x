@@ -35,7 +35,7 @@ fullnameOverride: ""
 image:
   pullPolicy: Always
   repository: kalsym/store-front-x
-  tag: 0.0.10
+  tag: 0.0.11
 imagePullSecrets:
 - name: kalsym-docker-hub
 ingress:
@@ -78,9 +78,11 @@ ingress:
   - hosts:
     - dev-my.symplified.ai
     - '*.dev-my.symplified.ai'
+    secretName: secret-devmy-tls-ai
+  - hosts:
     - dev-pk.symplified.ai
     - '*.dev-pk.symplified.ai'
-    secretName: secret-devmy-tls-ai
+    secretName: secret-devpk-tls-ai
 nameOverride: ""
 nodeSelector: {}
 podAnnotations: {}

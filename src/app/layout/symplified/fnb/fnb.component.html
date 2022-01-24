@@ -1,5 +1,5 @@
 <ng-container *ngIf="(store && store.id !== null); else noStore">
-    <div class="w-full relative min-h-screen">
+    <div class="bg-card w-full relative min-h-screen">
 
         <ng-container *ngIf="notificationMessage && notificationMessage !== null">
             <div class="bg-primary flex items-center justify-center text-black font-semibold px-4 py-3 w-full relative">
@@ -214,7 +214,7 @@
                 </div>
             </div>
             <!-- Breadcrumbs -->
-            <div class="flex items-center w-full ">
+            <div class="flex items-center w-full">
                 <breadcrumb class="w-full"></breadcrumb>
             </div>
         </ng-template>
@@ -254,8 +254,8 @@
                                 </span>
                             </div>
                             <div class="flex flex-row items-center justify-between w-full sm:w-1/2 md:w-full text-md text-white pt-2">
-                                <span class="w-1/2 sm:w-auto md:min-w-20 text-gray-400 pr-1">Email:</span>  
-                                <span class="w-1/2 md:w-full flex flex-auto text-primary-400 items-center justify-end sm:justify-start">
+                                <span class="w-1/4 sm:w-auto md:min-w-20 text-gray-400 pr-1">Email:</span>  
+                                <span class="w-3/4 md:w-full flex flex-auto text-primary-400 items-center justify-end sm:justify-start">
                                     <mat-icon 
                                         class="icon-size-4 text-primary-400"
                                         [svgIcon]="'mat_solid:email'"></mat-icon>
@@ -264,25 +264,15 @@
                                 </span>
                             </div>
                         </div>
-                        <div class="flex flex-col w-full md:w-1/2 justify-between">
+                        <div class="flex flex-col flex-wrap w-full md:w-1/2 justify-between">
                             <p class="flex w-full text-sm text-white pt-2">
                                 <span class="min-w-20 text-gray-400">Location:</span>  
-                                <span class="flex flex-auto text-primary-400 items-end content-end text-right justify-end sm:justify-start">
-                                    <mat-icon 
-                                        class="icon-size-4 text-primary-400"
-                                        [svgIcon]="'mat_solid:location_on'"></mat-icon>
-                                    &nbsp;
-                                    {{ store.address }}
-                                </span>
-                            </p>
-                            <p class="flex text-sm text-white pt-1">
-                                <span class="min-w-20 text-gray-400">&nbsp;</span>  
-                                <span class="flex flex-auto text-primary-400 items-center justify-end sm:justify-start">
-                                    <mat-icon 
-                                        class="icon-size-4 text-primary-400 invisible"
-                                        [svgIcon]="'mat_solid:check_box_outline_blank'"></mat-icon>
+                                <mat-icon 
+                                    class="icon-size-5 text-primary-400"
+                                    [svgIcon]="'mat_solid:location_on'"></mat-icon>
                                 &nbsp;
-                                {{ store.city }}, {{ store.postcode }} {{ store.regionCountryStateId }}, {{ store.regionCountry.name }}
+                                <span class="flex flex-auto text-primary-400 text-right md:text-left items-end content-end justify-end sm:justify-start">
+                                    {{ store.address }} {{ store.city }}, {{ store.postcode }} {{ store.regionCountryStateId }}, {{ store.regionCountry.name }}
                                 </span>
                             </p>
                         </div>

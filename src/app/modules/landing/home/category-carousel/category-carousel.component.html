@@ -1,5 +1,5 @@
 <ng-container *ngIf="storeCategories.length > 0">
-    <carousel [cellsToShow]="carouselCellsToShow" class="flex w-full justify-center items-center" [arrowsOutside]="arrowsOutside">
+    <carousel [cellsToShow]="carouselCellsToShow" class="flex w-full justify-center items-center h-56" [arrowsOutside]="arrowsOutside">
         <ng-container *ngFor="let category of storeCategories">
             <div class="carousel-cell group">
                 <input
@@ -20,7 +20,7 @@
                             alt="Logo image">
                         <div class="rounded border-2 border-black group-hover:border-primary absolute top-0.5 bottom-0.5 left-0.5 right-0.5"></div>
                     </div>
-                    <p class="mt-2 font-bold text-3xl group-hover:text-primary">{{category.name}}</p>
+                    <p class="my-2 leading-none font-bold text-3xl group-hover:text-primary">{{category.name}}</p>
                 </label>
             </div>
             <!-- <div class="carousel-cell">
