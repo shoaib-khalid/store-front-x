@@ -195,6 +195,7 @@ export class FnbLayoutComponent implements OnDestroy
                         closeTime.setHours(Number(item.closeTime.split(":")[0]), Number(item.closeTime.split(":")[1]), 0);
 
                         if(todayDate >= openTime && todayDate < closeTime ) {
+                            // this mean it's open today but it's already past store opening hour
                             // console.info("We are OPEN today!");
 
                             // --------------------
@@ -236,7 +237,7 @@ export class FnbLayoutComponent implements OnDestroy
                                                 array.length = iteration + 1;
                                             }
                                         } else {
-                                            console.warn("Store close on " + object.day);
+                                            console.warn("Store currently snooze. Store close on " + object.day);
                                         }
                                     });
 
@@ -266,6 +267,9 @@ export class FnbLayoutComponent implements OnDestroy
                                     this.notificationMessage = "Sorry for the inconvenience, We are on break! We will be open at " + item.breakEndTime;
                                 }
                             }
+                        } else if (todayDate < openTime) {
+                            // this mean it's open today but it's before store opening hour (store not open yet)
+                            this.notificationMessage = "Sorry for the inconvenience, We are closed! We will be open at " + item.openTime;
                         } else {
 
                             // console.info("We are CLOSED for the day!");
@@ -279,6 +283,9 @@ export class FnbLayoutComponent implements OnDestroy
                             
                             let nextAvailableDay = dayAfterArray.concat(dayBeforeArray);                                
                             nextAvailableDay.forEach((object, iteration, array) => {
+
+                                console.log("object", object);
+                                
                                 // this mean store opened
                                 if (object.isOff === false) {
                                     let nextOpenTime = new Date();

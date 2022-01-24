@@ -164,9 +164,6 @@ export class LandingCheckoutComponent implements OnInit
                     }
                 });
 
-                console.log("storeTimings", this.storeTimings)
-
-
                 // -----------------------
                 // Service Charges
                 // -----------------------
@@ -743,7 +740,7 @@ export class LandingCheckoutComponent implements OnInit
                                                 array.length = iteration + 1;
                                             }
                                         } else {
-                                            console.warn("Store close on " + object.day);
+                                            console.warn("Store currently snooze. Store close on " + object.day);
                                         }
                                     });
 
@@ -773,6 +770,9 @@ export class LandingCheckoutComponent implements OnInit
                                     this.notificationMessage = "Sorry for the inconvenience, We are on break! We will be open at " + item.breakEndTime;
                                 }
                             }
+                        } else if (todayDate < openTime) {
+                            // this mean it's open today but it's before store opening hour (store not open yet)
+                            this.notificationMessage = "Sorry for the inconvenience, We are closed! We will be open at " + item.openTime;
                         } else {
 
                             // console.info("We are CLOSED for the day!");
