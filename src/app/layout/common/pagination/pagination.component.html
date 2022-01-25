@@ -1,0 +1,51 @@
+<ul class="flex flex-row items-center">       
+    <!-- Previous pagination  -->
+    <ng-container *ngIf="isFirstPage; else havePrevious">
+        <li class="bg-disabled h-10 w-10 flex justify-center items-center cursor-default rounded-full page-item disabled">
+            <mat-icon
+                [svgIcon]="'mat_solid:chevron_left'"></mat-icon>
+        </li>
+    </ng-container>
+
+    <ng-template #havePrevious>
+        <li class="bg-card group hover:bg-primary h-10 w-10 flex justify-center items-center cursor-pointer rounded-full page-item" (click)="goToPrev(currentPageIndex)">
+            <mat-icon
+                class="text-primary group-hover:text-white"
+                [svgIcon]="'mat_solid:chevron_left'"></mat-icon>
+        </li>
+    </ng-template>
+
+    <!-- Middle Level pagination -->
+    <ng-container 
+    *ngFor="let a of paginationArray; let index = index">
+        
+        <ng-container *ngIf="index == currentPageIndex; else notActive">
+            <li class="flex justify-center items-center bg-primary select-none page-item active h-10 w-10 cursor-pointer rounded mx-2" (click)="goToPage(index)">
+                <span class="p-2 text-white page-link">{{index + 1}}</span>
+            </li>
+        </ng-container>
+        
+        <ng-template #notActive>
+            <li class="flex justify-center items-center bg-card hover:bg-hover select-none page-item h-10 w-10 cursor-pointer rounded mx-2" (click)="goToPage(index)">
+                <span class="p-2 page-link">{{index + 1}}</span>
+            </li>
+        </ng-template>
+
+    </ng-container>
+
+    <!-- Next Pagination  -->
+    <ng-container *ngIf="isLastPage; else haveNext">
+        <li class="bg-disabled h-10 w-10 flex justify-center items-center cursor-default rounded-full page-item disabled">
+            <mat-icon
+                [svgIcon]="'mat_solid:chevron_right'"></mat-icon>
+        </li>
+    </ng-container>
+
+    <ng-template #haveNext>
+        <li class="bg-card group hover:bg-primary h-10 w-10 flex justify-center items-center cursor-pointer rounded-full page-item" (click)="goToNext(currentPageIndex)">
+            <mat-icon
+                class="text-primary group-hover:text-white"
+                [svgIcon]="'mat_solid:chevron_right'"></mat-icon>
+        </li>
+    </ng-template>
+</ul>

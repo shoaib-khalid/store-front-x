@@ -11,6 +11,7 @@ import { SharedModule } from 'app/shared/shared.module';
 import { LandingCatalogueComponent } from 'app/modules/landing/catalogue/catalogue.component';
 import { landingCatalogueRoutes } from 'app/modules/landing/catalogue/catalogue.routing';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { PaginationModule } from 'app/layout/common/pagination/pagination.module';
 
 @NgModule({
     declarations: [
@@ -26,6 +27,7 @@ import { MatPaginatorModule } from '@angular/material/paginator';
         MatTooltipModule,
         MatPaginatorModule,
         MatMenuModule,
+        PaginationModule,
         SharedModule
     ]
 })

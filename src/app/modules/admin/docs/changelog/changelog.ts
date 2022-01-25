@@ -9,6 +9,29 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v0.0.12
+        {
+            version    : 'v0.0.12',
+            releaseDate: 'Jan 25, 2022',
+            changes    : [
+                {
+                    type: 'Added',
+                    list: [
+                        '(Favicon) Dynamic favicon from storevertical types',
+                        '(StoreTitle) Dynamic store webapp title',
+                    ]
+                },
+                {
+                    type: 'Fix',
+                    list: [
+                        '(Footer) Fix footer version',
+                        '(LandingHomePage) Fix Category responsiveness',
+                        '(LandingProductPage) Remove product discount percentage & strikethrough price',
+                        '(LandingCataloguePage) Remove product discount percentage & strikethrough price'
+                    ]
+                }
+            ]
+        },
         // v0.0.11
         {
             version    : 'v0.0.11',

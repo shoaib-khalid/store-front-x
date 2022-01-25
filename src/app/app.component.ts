@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { StoresService } from './core/store/store.service';
+import { Store } from './core/store/store.types';
 
 @Component({
     selector   : 'app-root',
@@ -7,10 +10,46 @@ import { Component } from '@angular/core';
 })
 export class AppComponent
 {
+
+    store: Store = null;
+
+    favIcon16: HTMLLinkElement = document.querySelector('#appIcon16');
+    favIcon32: HTMLLinkElement = document.querySelector('#appIcon32');
+
     /**
      * Constructor
      */
-    constructor()
+    constructor(
+        private _changeDetectorRef: ChangeDetectorRef,
+        private _titleService: Title,
+        private _storesService: StoresService
+    )
     {
+    }
+
+    ngOnInit() {
+        // Get current store
+        this._storesService.store$
+            .subscribe((response: Store)=>{
+
+                this.store = response;
+                if (this.store) {
+                    this._titleService.setTitle(this.store.name);
+
+                    if(this.store.verticalCode === "FnB" || this.store.verticalCode === "E-Commerce") {
+                        this.favIcon16.href = 'assets/symplified/favicon/deliverin/favicon-16x16.png';
+                        this.favIcon32.href = 'assets/symplified/favicon/deliverin/favicon-32x32.png';
+                    } else if (this.store.verticalCode === "FnB_PK" || this.store.verticalCode === "ECommerce_PK") {
+                        this.favIcon16.href = 'assets/symplified/favicon/easydukan/favicon-16x16.png';
+                        this.favIcon32.href = 'assets/symplified/favicon/easydukan/favicon-32x32.png';
+                    } else {
+                        this.favIcon16.href = 'favicon-16x16.png';
+                        this.favIcon32.href = 'favicon-32x32.png';
+                    }
+                }
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
     }
 }
