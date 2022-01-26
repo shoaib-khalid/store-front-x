@@ -58,7 +58,9 @@ export class LandingProductDetailsComponent implements OnInit
     displayedProduct: any = {
         price: 0,
         itemCode: null,
-        sku: null
+        sku: null,
+        discountAmount:0,
+        discountedPrice:0,
     }
 
     categorySlug: string;
@@ -143,20 +145,30 @@ export class LandingProductDetailsComponent implements OnInit
                     // -----------------------
                     // get cheapest item price
                     // -----------------------
-                    this.selectedProductInventory = this.product.productInventories.reduce((r, e) => r.price < e.price ? r : e);    
+                    console.log('Product Inventories ::::',this.product.productInventories);
+                    this.selectedProductInventory = this.product.productInventories.reduce((r, e) => r.price < e.price ? r : e); 
+                    console.log('Select cheapest ::::',this.selectedProductInventory);
+                       
                     // set initial selectedProductInventoryItems to the cheapest item
                     this.selectedProductInventoryItems = this.selectedProductInventory.productInventoryItems;
     
-                    if (this.selectedProductInventoryItems) {
-                        this.displayedProduct.price = this.selectedProductInventory.price;
-                        this.displayedProduct.itemCode = this.selectedProductInventory.itemCode;
-                        this.displayedProduct.sku = this.selectedProductInventory.sku;
-                    } 
-                    else {
-                        this.displayedProduct.price = this.selectedProductInventory.price;
-                        this.displayedProduct.itemCode = this.selectedProductInventory.itemCode;
-                        this.displayedProduct.sku = this.selectedProductInventory.sku;
-                    }
+                    this.displayedProduct.price = this.selectedProductInventory.price;
+                    this.displayedProduct.itemCode = this.selectedProductInventory.itemCode;
+                    this.displayedProduct.sku = this.selectedProductInventory.sku;
+                    this.displayedProduct.discountAmount = this.selectedProductInventory.itemDiscount?this.selectedProductInventory.itemDiscount.discountAmount:null;
+                    this.displayedProduct.discountedPrice = this.selectedProductInventory.itemDiscount?this.selectedProductInventory.itemDiscount.discountedPrice:null;
+
+                    //Iman comment this code 
+                    // if (this.selectedProductInventoryItems) {
+                    //     this.displayedProduct.price = this.selectedProductInventory.price;
+                    //     this.displayedProduct.itemCode = this.selectedProductInventory.itemCode;
+                    //     this.displayedProduct.sku = this.selectedProductInventory.sku;
+                    // } 
+                    // else {
+                    //     this.displayedProduct.price = this.selectedProductInventory.price;
+                    //     this.displayedProduct.itemCode = this.selectedProductInventory.itemCode;
+                    //     this.displayedProduct.sku = this.selectedProductInventory.sku;
+                    // }
     
                     // ------------------
                     // Product Assets

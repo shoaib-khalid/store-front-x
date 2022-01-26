@@ -216,15 +216,17 @@
                                 <div class="flex flex-col p-3 h-60 bg-black bg-no-repeat bg-cover bg-center" 
                                     [style]="product.thumbnailUrl ? 'background-image: url(\'' + product.thumbnailUrl + '\');' : 'background-image: url(\'' + store.storeAsset.logoUrl + '\');' + 'background-size: cover;'"
                                 >
-                                    <div class="flex items-center justify-between">
+                                    <div *ngIf="product.productInventories[0].itemDiscount" class="flex items-center justify-end">
                                         <!-- Product discount -->
-                                        <!-- <ng-container>
-                                            <div
-                                                class="py-0.5 px-3 rounded text-xs font-semibold"
-                                                [ngClass]="'text-primary-100 bg-primary-800 dark:text-primary-50 dark:bg-primary-500'">
-                                                20% Off
-                                            </div>
-                                        </ng-container> -->
+                                        <div div class="flex items-center">
+                                            <ng-container>
+                                                <div
+                                                    class="py-2 px-3 rounded text-sm font-semibold"
+                                                    [ngClass]="'text-primary-100 bg-red-600'">
+                                                    {{product.productInventories[0].itemDiscount.discountAmount}}% Off
+                                                </div>
+                                            </ng-container>
+                                        </div>
                                         <!-- Badges -->
                                         <!-- <div class="flex items-center">
                                             <ng-container>
@@ -243,7 +245,13 @@
                                         <span class="text-gray-500" [innerHtml]="product.description"></span>
                                     </div>
                                     <!-- <div class="text-sm font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</div> -->
-                                    <div class="font-semibold text-primary text-xl">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</div>
+                                    <div *ngIf="product.productInventories[0].itemDiscount;else no_item_discount">
+                                        <p class="font-semibold text-primary text-2xl">{{product.productInventories[0].itemDiscount.discountedPrice | currency: store.regionCountry.currencySymbol}}</p>
+                                        <p style="text-decoration: line-through;">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p>
+                                    </div>
+                                    <ng-template #no_item_discount>
+                                        <p class="font-semibold text-primary text-2xl">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p>
+                                    </ng-template>
                                     <!-- Input Quantity -->
                                     <!-- <div class="mt-4">
                                         <div class="flex flex-row justify-between items-center custom-number-input h-10 w-full">
@@ -299,15 +307,15 @@
                                 <div class="h-full w-52 rounded-l-lg p-2 bg-black bg-no-repeat bg-cover bg-center" 
                                     [style]="product.thumbnailUrl ? 'background-image: url(\'' + product.thumbnailUrl + '\');' : 'background-image: url(\'' + store.storeAsset.logoUrl + '\');' + 'background-size: cover;'"
                                 >
-                                    <div class="flex items-center justify-between">
+                                    <div *ngIf="product.productInventories[0].itemDiscount" class="flex items-center justify-between">
                                         <!-- Product Discount -->
-                                        <!-- <ng-container>
+                                        <ng-container>
                                             <div
-                                                class="py-0.5 px-3 rounded text-xs font-semibold"
-                                                [ngClass]="'text-primary-100 bg-primary-800 dark:text-primary-50 dark:bg-primary-500'">
-                                                20% Off
+                                                class="py-2 px-3 rounded text-sm font-semibold"
+                                                [ngClass]="'text-primary-100 bg-red-600'">
+                                                {{product.productInventories[0].itemDiscount.discountAmount}}% Off
                                             </div>
-                                        </ng-container> -->
+                                        </ng-container>
                                         <!-- Badges -->
                                         <!-- <div class="flex items-center">
                                             <ng-container>
@@ -327,7 +335,13 @@
                                             <span class="text-gray-500" [innerHtml]="product.description"></span>
                                         </div>
                                         <!-- <p class="font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p> -->
-                                        <span class="text-xl font-semibold text-primary">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</span>
+                                        <div *ngIf="product.productInventories[0].itemDiscount;else no_item_discount">
+                                            <p class="font-semibold text-primary text-2xl">{{product.productInventories[0].itemDiscount.discountedPrice | currency: store.regionCountry.currencySymbol}}</p>
+                                            <p style="text-decoration: line-through;">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p>
+                                        </div>
+                                        <ng-template #no_item_discount>
+                                            <p class="font-semibold text-primary text-2xl">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p>
+                                        </ng-template>
                                     </div>
                                 </div>
                             </div>
