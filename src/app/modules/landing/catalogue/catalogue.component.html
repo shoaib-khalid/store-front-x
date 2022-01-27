@@ -204,134 +204,142 @@
             <!-- Products -->
             <div class="flex flex-col flex-wrap relative w-full md:px-4">
                 <ng-container *ngIf="products && products.length > 0; else noProduct">
-                    <!-- Grid -->
-                    <div *ngIf="productViewOrientation === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 sm:mb-10">
-                        <!-- Products -->
-                        <ng-container *ngFor="let product of products">
-                            <!-- Product -->
-                            <div class="flex flex-col h-120 shadow-lg border hover:border-2 hover:border-primary rounded-lg overflow-hidden bg-card cursor-pointer"
-                                [routerLink]="['/product/' + product.seoName]"
-                            >
-                                <!-- Product Header -->
-                                <div class="flex flex-col p-3 h-60 bg-black bg-no-repeat bg-cover bg-center" 
-                                    [style]="product.thumbnailUrl ? 'background-image: url(\'' + product.thumbnailUrl + '\');' : 'background-image: url(\'' + store.storeAsset.logoUrl + '\');' + 'background-size: cover;'"
+                    <div class="flex flex-col items-center">
+                        <!-- Grid -->
+                        <div *ngIf="productViewOrientation === 'grid'" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-8 sm:mb-10">
+                            <!-- Products -->
+                            <ng-container *ngFor="let product of products">
+                                <!-- Product -->
+                                <div class="flex flex-col h-120 shadow-lg border hover:border-2 hover:border-primary rounded-lg overflow-hidden bg-card cursor-pointer"
+                                    [routerLink]="['/product/' + product.seoName]"
                                 >
-                                    <div class="flex items-center justify-between">
-                                        <!-- Product discount -->
-                                        <!-- <ng-container>
-                                            <div
-                                                class="py-0.5 px-3 rounded text-xs font-semibold"
-                                                [ngClass]="'text-primary-100 bg-primary-800 dark:text-primary-50 dark:bg-primary-500'">
-                                                20% Off
-                                            </div>
-                                        </ng-container> -->
-                                        <!-- Badges -->
-                                        <!-- <div class="flex items-center">
-                                            <ng-container>
-                                                <mat-icon
-                                                    class="icon-size-5 text-green-600"
-                                                    [svgIcon]="'heroicons_solid:badge-check'"
-                                                    [matTooltip]="'You completed this course at least once'"></mat-icon>
-                                            </ng-container>
-                                        </div> -->
-                                    </div>                               
-                                </div>
-                                <!-- Product Footer -->
-                                <div class="flex flex-col px-4 mb-4 h-60 w-full">
-                                    <div class="mt-4 text-xl font-bold font-medium">{{product.name}}</div>
-                                    <div class="mt-2 mb-4 h-40 text-ellipsis overflow-hidden">
-                                        <span class="text-gray-500" [innerHtml]="product.description"></span>
+                                    <!-- Product Header -->
+                                    <div class="flex flex-col p-3 h-60 bg-black bg-no-repeat bg-cover bg-center" 
+                                        [style]="product.thumbnailUrl ? 'background-image: url(\'' + product.thumbnailUrl + '\');' : 'background-image: url(\'' + store.storeAsset.logoUrl + '\');' + 'background-size: cover;'"
+                                    >
+                                        <div class="flex items-center justify-between">
+                                            <!-- Product discount -->
+                                            <!-- <ng-container>
+                                                <div
+                                                    class="py-0.5 px-3 rounded text-xs font-semibold"
+                                                    [ngClass]="'text-primary-100 bg-primary-800 dark:text-primary-50 dark:bg-primary-500'">
+                                                    20% Off
+                                                </div>
+                                            </ng-container> -->
+                                            <!-- Badges -->
+                                            <!-- <div class="flex items-center">
+                                                <ng-container>
+                                                    <mat-icon
+                                                        class="icon-size-5 text-green-600"
+                                                        [svgIcon]="'heroicons_solid:badge-check'"
+                                                        [matTooltip]="'You completed this course at least once'"></mat-icon>
+                                                </ng-container>
+                                            </div> -->
+                                        </div>                               
                                     </div>
-                                    <!-- <div class="text-sm font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</div> -->
-                                    <div class="font-semibold text-primary text-xl">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</div>
-                                    <!-- Input Quantity -->
-                                    <!-- <div class="mt-4">
-                                        <div class="flex flex-row justify-between items-center custom-number-input h-10 w-full">
-                                            <div class="flex flex-row h-8 w-20 border rounded-lg relative bg-transparent mt-1">
-                                                <button (click)="decrement()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none">
-                                                    <span class="text-2xl font-thin">−</span>
-                                                </button>
-                                                <input [(ngModel)]="quantity"  type="number" class="outline-none focus:outline-none text-center w-full font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700  outline-none" name="custom-input-number" value="0"/>
-                                                <button (click)="increment()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer">
-                                                    <span class="text-2xl font-thin">+</span>
-                                                </button>
-                                            </div>
-                                            <p class="text-sm font-bold mr-4">Total: RM: 4.00</p>
-                                        </div>
-                                    </div> -->
-                                    <!-- Checkout and Confirm Button -->
-                                    <!-- <div class="flex flex-row justify-between py-4 text-right">
-                                        <input
-                                            id="cancel-add-item-btn"
-                                            type="button"
-                                            class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                            mat-button>
-                                        <label 
-                                            class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer border border-warn hover:bg-warn-500"
-                                            for="cancel-add-item-btn"
-                                            matRipple>
-                                            <span>Cancel</span>
-                                        </label>
-        
-                                        <input
-                                            id="confirm-add-item-btn"
-                                            type="button"
-                                            class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                            mat-button>
-                                        <label 
-                                            class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer bg-primary hover:bg-primary-700"
-                                            for="confirm-add-item-btn"
-                                            matRipple>
-                                            <span class="text-white">Confirm</span>
-                                        </label>
-                                    </div> -->
-                                </div>
-                            </div>
-                        </ng-container>
-                    </div>
-                    <!-- List -->
-                    <div *ngIf="productViewOrientation === 'list'" class="w-full mb-8 sm:mb-10">
-                        <ng-container *ngFor="let product of products">
-                            <div class="flex flex-row h-48 w-full bg-card shadow border hover:border-2 hover:border-primary rounded-lg justify-between items-center mb-4 cursor-pointer"
-                                [routerLink]="['/product/' + product.seoName]"
-                            >
-                                <!-- Image Thumbnail -->
-                                <div class="h-full w-52 rounded-l-lg p-2 bg-black bg-no-repeat bg-cover bg-center" 
-                                    [style]="product.thumbnailUrl ? 'background-image: url(\'' + product.thumbnailUrl + '\');' : 'background-image: url(\'' + store.storeAsset.logoUrl + '\');' + 'background-size: cover;'"
-                                >
-                                    <div class="flex items-center justify-between">
-                                        <!-- Product Discount -->
-                                        <!-- <ng-container>
-                                            <div
-                                                class="py-0.5 px-3 rounded text-xs font-semibold"
-                                                [ngClass]="'text-primary-100 bg-primary-800 dark:text-primary-50 dark:bg-primary-500'">
-                                                20% Off
-                                            </div>
-                                        </ng-container> -->
-                                        <!-- Badges -->
-                                        <!-- <div class="flex items-center">
-                                            <ng-container>
-                                                <mat-icon
-                                                    class="icon-size-5 text-green-600"
-                                                    [svgIcon]="'heroicons_solid:badge-check'"
-                                                    [matTooltip]="'You completed this course at least once'"></mat-icon>
-                                            </ng-container>
-                                        </div> -->
-                                    </div>  
-                                </div>
-                                <!-- List Body -->
-                                <div class="flex flex-row justify-between h-full w-full rounded-r-lg text-ellipsis overflow-hidden">
-                                    <div class="flex flex-col w-full p-6">
-                                        <span class="text-xl h-10 font-bold mb-0 text-ellipsis overflow-hidden">{{product.name}}</span>
-                                        <div class="mt-2 mb-4 h-20 text-ellipsis overflow-hidden">
+                                    <!-- Product Footer -->
+                                    <div class="flex flex-col px-4 mb-4 h-60 w-full">
+                                        <div class="mt-4 text-xl font-bold font-medium">{{product.name}}</div>
+                                        <div class="mt-2 mb-4 h-40 text-ellipsis overflow-hidden">
                                             <span class="text-gray-500" [innerHtml]="product.description"></span>
                                         </div>
-                                        <!-- <p class="font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p> -->
-                                        <span class="text-xl font-semibold text-primary">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</span>
+                                        <!-- <div class="text-sm font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</div> -->
+                                        <div class="font-semibold text-primary text-xl">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</div>
+                                        <!-- Input Quantity -->
+                                        <!-- <div class="mt-4">
+                                            <div class="flex flex-row justify-between items-center custom-number-input h-10 w-full">
+                                                <div class="flex flex-row h-8 w-20 border rounded-lg relative bg-transparent mt-1">
+                                                    <button (click)="decrement()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l cursor-pointer outline-none">
+                                                        <span class="text-2xl font-thin">−</span>
+                                                    </button>
+                                                    <input [(ngModel)]="quantity"  type="number" class="outline-none focus:outline-none text-center w-full font-semibold text-md hover:text-black focus:text-black  md:text-basecursor-default flex items-center text-gray-700  outline-none" name="custom-input-number" value="0"/>
+                                                    <button (click)="increment()" class="text-gray-600 hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r cursor-pointer">
+                                                        <span class="text-2xl font-thin">+</span>
+                                                    </button>
+                                                </div>
+                                                <p class="text-sm font-bold mr-4">Total: RM: 4.00</p>
+                                            </div>
+                                        </div> -->
+                                        <!-- Checkout and Confirm Button -->
+                                        <!-- <div class="flex flex-row justify-between py-4 text-right">
+                                            <input
+                                                id="cancel-add-item-btn"
+                                                type="button"
+                                                class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                                                mat-button>
+                                            <label 
+                                                class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer border border-warn hover:bg-warn-500"
+                                                for="cancel-add-item-btn"
+                                                matRipple>
+                                                <span>Cancel</span>
+                                            </label>
+            
+                                            <input
+                                                id="confirm-add-item-btn"
+                                                type="button"
+                                                class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                                                mat-button>
+                                            <label 
+                                                class="flex items-center justify-center py-2 px-4 rounded-lg cursor-pointer bg-primary hover:bg-primary-700"
+                                                for="confirm-add-item-btn"
+                                                matRipple>
+                                                <span class="text-white">Confirm</span>
+                                            </label>
+                                        </div> -->
                                     </div>
                                 </div>
-                            </div>
-                        </ng-container>
+                            </ng-container>
+                        </div>
+                        <!-- List -->
+                        <div *ngIf="productViewOrientation === 'list'" class="w-full mb-8 sm:mb-10">
+                            <ng-container *ngFor="let product of products">
+                                <div class="flex flex-row h-48 w-full bg-card shadow border hover:border-2 hover:border-primary rounded-lg justify-between items-center mb-4 cursor-pointer"
+                                    [routerLink]="['/product/' + product.seoName]"
+                                >
+                                    <!-- Image Thumbnail -->
+                                    <div class="h-full w-52 rounded-l-lg p-2 bg-black bg-no-repeat bg-cover bg-center" 
+                                        [style]="product.thumbnailUrl ? 'background-image: url(\'' + product.thumbnailUrl + '\');' : 'background-image: url(\'' + store.storeAsset.logoUrl + '\');' + 'background-size: cover;'"
+                                    >
+                                        <div class="flex items-center justify-between">
+                                            <!-- Product Discount -->
+                                            <!-- <ng-container>
+                                                <div
+                                                    class="py-0.5 px-3 rounded text-xs font-semibold"
+                                                    [ngClass]="'text-primary-100 bg-primary-800 dark:text-primary-50 dark:bg-primary-500'">
+                                                    20% Off
+                                                </div>
+                                            </ng-container> -->
+                                            <!-- Badges -->
+                                            <!-- <div class="flex items-center">
+                                                <ng-container>
+                                                    <mat-icon
+                                                        class="icon-size-5 text-green-600"
+                                                        [svgIcon]="'heroicons_solid:badge-check'"
+                                                        [matTooltip]="'You completed this course at least once'"></mat-icon>
+                                                </ng-container>
+                                            </div> -->
+                                        </div>  
+                                    </div>
+                                    <!-- List Body -->
+                                    <div class="flex flex-row justify-between h-full w-full rounded-r-lg text-ellipsis overflow-hidden">
+                                        <div class="flex flex-col w-full p-6">
+                                            <span class="text-xl h-10 font-bold mb-0 text-ellipsis overflow-hidden">{{product.name}}</span>
+                                            <div class="mt-2 mb-4 h-20 text-ellipsis overflow-hidden">
+                                                <span class="text-gray-500" [innerHtml]="product.description"></span>
+                                            </div>
+                                            <!-- <p class="font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p> -->
+                                            <span class="text-xl font-semibold text-primary">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </div>
+                        <pagination 
+                            [items]="items" 
+                            [itemLength]="pagination.length" 
+                            [initialPage]="pagination.page + 1"
+                            [pageSize]="pagination.size"
+                            (changePage)="onChangePage($event)"></pagination>
                     </div>
                 </ng-container>
                 <!-- No Products -->
@@ -346,7 +354,7 @@
                 </ng-template>
 
                 <div class="mb-12"></div>
-                <pagination></pagination>
+                
                 <!-- <mat-paginator
                     class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 sm:mx-4 z-10 rounded-lg shadow bg-gray-50 dark:bg-transparent"
                     [ngClass]="{'pointer-events-none': isLoading}"

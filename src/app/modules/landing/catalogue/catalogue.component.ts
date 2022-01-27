@@ -15,6 +15,7 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { fuseAnimations } from '@fuse/animations';
 import { MatIconRegistry } from "@angular/material/icon";
 import { DomSanitizer } from '@angular/platform-browser';
+import { PaginationModule } from 'app/layout/common/pagination/pagination.module';
 
 @Component({
     selector     : 'landing-catalogue',
@@ -75,6 +76,9 @@ export class LandingCatalogueComponent implements OnInit
 
     quantity: number = 0;
 
+    items = [];
+    pageOfItems: Array<any>;
+
     /**
      * Constructor
      */
@@ -86,6 +90,7 @@ export class LandingCatalogueComponent implements OnInit
         private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _domSanitizer: DomSanitizer,
         private _matIconRegistry: MatIconRegistry,
+        private _pagination: PaginationModule,
         private _router: Router,
         private _activatedRoute: ActivatedRoute
     )
@@ -140,7 +145,7 @@ export class LandingCatalogueComponent implements OnInit
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((response: Product[]) => {
                 this.products = response;
-
+                
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             })
@@ -335,5 +340,15 @@ export class LandingCatalogueComponent implements OnInit
     
     increment() {
         this.quantity ++;
+    }
+
+    onChangePage(pageOfItems: Array<any>) {
+        // update current page of items
+        this.pageOfItems = pageOfItems;
+
+        this._productsService.getProducts(this.pageOfItems['currentPage'] - 1, this.pageOfItems['pageSize'], 'name', this.sortName, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '')
+            .subscribe();
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
     }
 }

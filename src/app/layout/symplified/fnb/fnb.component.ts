@@ -283,8 +283,6 @@ export class FnbLayoutComponent implements OnDestroy
                             
                             let nextAvailableDay = dayAfterArray.concat(dayBeforeArray);                                
                             nextAvailableDay.forEach((object, iteration, array) => {
-
-                                console.log("object", object);
                                 
                                 // this mean store opened
                                 if (object.isOff === false) {

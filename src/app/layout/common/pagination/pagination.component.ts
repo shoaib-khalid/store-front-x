@@ -1,4 +1,8 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output, SimpleChanges, ViewEncapsulation } from '@angular/core';
+import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import paginate from 'jw-paginate';
 
 @Component({
     selector       : 'pagination',
@@ -9,22 +13,25 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnIni
 })
 export class PaginationComponent implements OnInit, OnDestroy
 {
-    currentPageIndex: number;
-    currentPage: number;
+    @Input() items: Array<any>;
+    @Input() itemLength = 0;
+    @Output() changePage = new EventEmitter<any>(true);
+    @Input() initialPage = 1;
+    @Input() pageSize = 10;
+    @Input() maxPages = 10;
 
-    previousPage: number;
-    nextPage: number;
+    pager: any = {};
+    
+    pageOfItems: Array<any>;
 
-    isLastPage: any;
-    isFirstPage: any;
-
-    paginationArray: any;
+    private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
      * Constructor
      */
     constructor(
-        private _changeDetectorRef: ChangeDetectorRef
+        private _changeDetectorRef: ChangeDetectorRef,
+        private _fuseMediaWatcherService: FuseMediaWatcherService
     )
     {
     }
@@ -38,15 +45,14 @@ export class PaginationComponent implements OnInit, OnDestroy
      */
     ngOnInit(): void
     {
-        this.paginationArray = new Array(10);
 
-        this.currentPageIndex = 0;
+        // set page if items array isn't empty
+        if (this.items && this.items.length) {
+            this.setPage(this.initialPage);
+        }
 
-        this.previousPage = 0;
-        this.nextPage = 9;
-
-        this.isFirstPage = true;
-        this.isLastPage = false;
+        
+        this.fuseMediaChanges(this.pageSize);
 
         // Mark for check
         this._changeDetectorRef.markForCheck();
@@ -63,37 +69,15 @@ export class PaginationComponent implements OnInit, OnDestroy
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
-    setPagination(length: number, pageIndex: number, pageSize: number, totalPages: number, pageSizeOptions: 5 | 10 | 25 | 100, showFirstLastButtons: boolean ) {
-        this.currentPageIndex = pageSize;
-        this.currentPage = pageIndex;
+    setPage(page: number) {
+        // get new pager object for specified page
+        this.pager = paginate(this.itemLength, page, this.pageSize, this.maxPages);        
 
+        // get new page of items from items array
+        var pageOfItems = this.items.slice(this.pager.startIndex, this.pager.endIndex + 1);
 
-        this.paginationArray = new Array(totalPages);
-    }
-
-    goToPrev(pageNo){
-
-        this.currentPageIndex = pageNo - 1;
-        this.checkPagination();
-
-        // this.getProduct(this.catId ,this.sortBy)
-        // alert(goToPrev)
-    }
-
-    goToNext(pageNo){
-        this.currentPageIndex = pageNo + 1;
-        this.checkPagination();
-
-        // this.getProduct(this.catId ,this.sortBy)
-        // alert(goToNext)
-    }
-
-    goToPage(pageNo){
-
-        this.currentPageIndex = pageNo;
-        this.checkPagination();
-
-        // this.getProduct(this.catId ,this.sortBy)
+        // call change page function in parent component
+        this.changePage.emit(this.pager);
     }
 
     /**
@@ -111,15 +95,30 @@ export class PaginationComponent implements OnInit, OnDestroy
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
 
-    checkPagination() {
-        
-        // disable first page if current page index less that 0
-        (this.currentPageIndex > this.previousPage) ? this.isFirstPage = false : this.isFirstPage = true;
+    fuseMediaChanges(pageSize: number) {
+        this._fuseMediaWatcherService.onMediaChange$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe(({matchingAliases}) => {               
 
-        // disable last page if current page index more that nextPage
-        (this.currentPageIndex < this.nextPage) ? this.isLastPage = false : this.isLastPage = true;
+                // Set the drawerMode and drawerOpened
+                if ( matchingAliases.includes('lg') ) {
+                    this.maxPages = 10;
+                } else if ( matchingAliases.includes('md') ) {
+                    this.maxPages = 7;
+                } else if ( matchingAliases.includes('sm') ) {
+                    this.maxPages = 5;
+                } else {
+                    this.maxPages = 2;
+                }
 
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
+                if(pageSize < this.maxPages) {
+                    this.maxPages = pageSize; 
+                }
+
+                this.setPage(this.pager.currentPage);
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
     }
 }

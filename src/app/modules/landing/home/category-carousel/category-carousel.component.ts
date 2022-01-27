@@ -84,10 +84,7 @@ export class CategoryCarouselComponent
 
         this._fuseMediaWatcherService.onMediaChange$
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe(({matchingAliases}) => {
-
-                console.log("matchingAliases", matchingAliases);
-                
+            .subscribe(({matchingAliases}) => {               
 
                 // Set the drawerMode and drawerOpened
                 if ( matchingAliases.includes('lg') ) {

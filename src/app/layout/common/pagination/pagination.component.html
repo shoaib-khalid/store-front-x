@@ -1,51 +1,118 @@
-<ul class="flex flex-row items-center">       
-    <!-- Previous pagination  -->
-    <ng-container *ngIf="isFirstPage; else havePrevious">
-        <li class="bg-disabled h-10 w-10 flex justify-center items-center cursor-default rounded-full page-item disabled">
-            <mat-icon
-                [svgIcon]="'mat_solid:chevron_left'"></mat-icon>
+<!-- <ul class="flex flex-row items-center">       
+    
+    <li 
+        class="bg-card h-10 w-10 flex justify-center items-center cursor-pointer rounded-full page-item" 
+        [ngClass]="isFirstPage ? 'bg-disabled cursor-default' : 'bg-card cursor-pointer group hover:bg-primary'"
+        (click)="isFirstPage ? '' : checkPagination('previous',currentPageIndex)">
+        <mat-icon
+            class="icon-size-4"
+            [ngClass]="isFirstPage ? '' : 'text-primary group-hover:text-white'"
+            [svgIcon]="'heroicons_outline:chevron-double-left'"></mat-icon>
+    </li>
+    
+    <li 
+        class="bg-card h-10 w-10 flex justify-center items-center cursor-pointer rounded-full page-item" 
+        [ngClass]="isFirstPage ? 'bg-disabled cursor-default' : 'bg-card cursor-pointer group hover:bg-primary'"
+        (click)="isFirstPage ? '' : checkPagination('previous',currentPageIndex)">
+        <mat-icon
+            class="icon-size-4"
+            [ngClass]="isFirstPage ? '' : 'text-primary group-hover:text-white'"
+            [svgIcon]="'heroicons_outline:chevron-left'"></mat-icon>
+    </li>
+
+    <ng-container *ngFor="let a of paginationDisplaySize; let index = index">
+        <li 
+            class="flex justify-center items-center select-none page-item active h-10 w-10 cursor-pointer rounded mx-2"
+            [ngClass]="index + paginationCurrentPage === currentPage ? 'bg-primary' : 'bg-card hover:bg-hover'" 
+            (click)="checkPagination(null,index)">
+            <span 
+                class="p-2"
+                [ngClass]="index + paginationCurrentPage === currentPage ? 'text-white' : ''"
+            >{{ index + paginationCurrentPage}}</span>
         </li>
     </ng-container>
 
-    <ng-template #havePrevious>
-        <li class="bg-card group hover:bg-primary h-10 w-10 flex justify-center items-center cursor-pointer rounded-full page-item" (click)="goToPrev(currentPageIndex)">
+    <li 
+        class="bg-card h-10 w-10 flex justify-center items-center cursor-pointer rounded-full page-item" 
+        [ngClass]="isLastPage ? 'bg-disabled cursor-default' : 'bg-card cursor-pointer group hover:bg-primary'"
+        (click)="isLastPage ? '' : checkPagination('next',currentPageIndex)">
+        <mat-icon
+            class="icon-size-4"
+            [ngClass]="isLastPage ? '' : 'text-primary group-hover:text-white'"
+            [svgIcon]="'heroicons_outline:chevron-right'"></mat-icon>
+    </li>
+
+    <li 
+        class="bg-card h-10 w-10 flex justify-center items-center cursor-pointer rounded-full page-item" 
+        [ngClass]="isLastPage ? 'bg-disabled cursor-default' : 'bg-card cursor-pointer group hover:bg-primary'"
+        (click)="isLastPage ? '' : checkPagination('next',currentPageIndex)">
+        <mat-icon
+            class="icon-size-4"
+            [ngClass]="isLastPage ? '' : 'text-primary group-hover:text-white'"
+            [svgIcon]="'heroicons_outline:chevron-double-right'"></mat-icon>
+    </li>
+</ul> -->
+
+<ul *ngIf="pager.pages && pager.pages.length" class="pagination flex flex-row items-center">
+    <li 
+        (click)="setPage(1)"
+        class="bg-card h-10 w-10 flex justify-center items-center cursor-pointer rounded-full page-item first-item" 
+        [ngClass]="pager.currentPage === 1 ? 'disabled bg-disabled cursor-default' : 'bg-card cursor-pointer group hover:bg-primary'"
+    >
+        <a class="page-link">
             <mat-icon
-                class="text-primary group-hover:text-white"
-                [svgIcon]="'mat_solid:chevron_left'"></mat-icon>
+                class="icon-size-4"
+                [ngClass]="pager.currentPage === 1 ? '' : 'text-primary group-hover:text-white'"
+                [svgIcon]="'heroicons_outline:chevron-double-left'"></mat-icon>
+        </a>
+    </li>
+    <li 
+        (click)="setPage(pager.currentPage - 1)"
+        class="bg-card h-10 w-10 flex justify-center items-center cursor-pointer rounded-full page-item previous-item" 
+        [ngClass]="pager.currentPage === 1 ? 'disabled bg-disabled cursor-default' : 'bg-card cursor-pointer group hover:bg-primary'"
+    >
+        <a class="page-link">
+            <mat-icon
+                class="icon-size-4"
+                [ngClass]="pager.currentPage === 1 ? '' : 'text-primary group-hover:text-white'"
+                [svgIcon]="'heroicons_outline:chevron-left'"></mat-icon>
+        </a>
+    </li>
+    <ng-container *ngFor="let page of pager.pages">
+        <li
+            (click)="setPage(page)"
+            class="flex justify-center items-center select-none active h-10 w-10 cursor-pointer rounded mx-2 page-item number-item"
+            [ngClass]="pager.currentPage === page ? 'active bg-primary' : 'bg-card hover:bg-hover'" 
+        >
+            <a 
+                class="p-2 page-link"
+                [ngClass]="pager.currentPage === page ? 'text-white' : ''"    
+            >{{page}}</a>
         </li>
-    </ng-template>
-
-    <!-- Middle Level pagination -->
-    <ng-container 
-    *ngFor="let a of paginationArray; let index = index">
-        
-        <ng-container *ngIf="index == currentPageIndex; else notActive">
-            <li class="flex justify-center items-center bg-primary select-none page-item active h-10 w-10 cursor-pointer rounded mx-2" (click)="goToPage(index)">
-                <span class="p-2 text-white page-link">{{index + 1}}</span>
-            </li>
-        </ng-container>
-        
-        <ng-template #notActive>
-            <li class="flex justify-center items-center bg-card hover:bg-hover select-none page-item h-10 w-10 cursor-pointer rounded mx-2" (click)="goToPage(index)">
-                <span class="p-2 page-link">{{index + 1}}</span>
-            </li>
-        </ng-template>
-
     </ng-container>
 
-    <!-- Next Pagination  -->
-    <ng-container *ngIf="isLastPage; else haveNext">
-        <li class="bg-disabled h-10 w-10 flex justify-center items-center cursor-default rounded-full page-item disabled">
+    <li 
+        (click)="setPage(pager.currentPage + 1)"
+        class="bg-card h-10 w-10 flex justify-center items-center cursor-pointer rounded-full page-item next-item" 
+        [ngClass]="pager.currentPage === pager.totalPages ? 'disabled bg-disabled cursor-default' : 'bg-card cursor-pointer group hover:bg-primary'"
+    >
+        <a class="page-link">
             <mat-icon
-                [svgIcon]="'mat_solid:chevron_right'"></mat-icon>
-        </li>
-    </ng-container>
-
-    <ng-template #haveNext>
-        <li class="bg-card group hover:bg-primary h-10 w-10 flex justify-center items-center cursor-pointer rounded-full page-item" (click)="goToNext(currentPageIndex)">
+                class="icon-size-4"
+                [ngClass]="pager.currentPage === pager.totalPages ? '' : 'text-primary group-hover:text-white'"
+                [svgIcon]="'heroicons_outline:chevron-right'"></mat-icon>
+        </a>
+    </li>
+    <li 
+        (click)="setPage(pager.totalPages)"
+        class="bg-card h-10 w-10 flex justify-center items-center cursor-pointer rounded-full page-item last-item" 
+        [ngClass]="pager.currentPage === pager.totalPages ? 'disabled bg-disabled cursor-default' : 'bg-card cursor-pointer group hover:bg-primary'"
+    >
+        <a class="page-link">
             <mat-icon
-                class="text-primary group-hover:text-white"
-                [svgIcon]="'mat_solid:chevron_right'"></mat-icon>
-        </li>
-    </ng-template>
+                class="icon-size-4"
+                [ngClass]="pager.currentPage === pager.totalPages ? '' : 'text-primary group-hover:text-white'"
+                [svgIcon]="'heroicons_outline:chevron-double-right'"></mat-icon>
+        </a>
+    </li>
 </ul>
