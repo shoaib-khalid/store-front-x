@@ -145,30 +145,25 @@ export class LandingProductDetailsComponent implements OnInit
                     // -----------------------
                     // get cheapest item price
                     // -----------------------
-                    console.log('Product Inventories ::::',this.product.productInventories);
                     this.selectedProductInventory = this.product.productInventories.reduce((r, e) => r.price < e.price ? r : e); 
-                    console.log('Select cheapest ::::',this.selectedProductInventory);
                        
                     // set initial selectedProductInventoryItems to the cheapest item
                     this.selectedProductInventoryItems = this.selectedProductInventory.productInventoryItems;
     
-                    this.displayedProduct.price = this.selectedProductInventory.price;
-                    this.displayedProduct.itemCode = this.selectedProductInventory.itemCode;
-                    this.displayedProduct.sku = this.selectedProductInventory.sku;
-                    this.displayedProduct.discountAmount = this.selectedProductInventory.itemDiscount?this.selectedProductInventory.itemDiscount.discountAmount:null;
-                    this.displayedProduct.discountedPrice = this.selectedProductInventory.itemDiscount?this.selectedProductInventory.itemDiscount.discountedPrice:null;
-
-                    //Iman comment this code 
-                    // if (this.selectedProductInventoryItems) {
-                    //     this.displayedProduct.price = this.selectedProductInventory.price;
-                    //     this.displayedProduct.itemCode = this.selectedProductInventory.itemCode;
-                    //     this.displayedProduct.sku = this.selectedProductInventory.sku;
-                    // } 
-                    // else {
-                    //     this.displayedProduct.price = this.selectedProductInventory.price;
-                    //     this.displayedProduct.itemCode = this.selectedProductInventory.itemCode;
-                    //     this.displayedProduct.sku = this.selectedProductInventory.sku;
-                    // }
+                    if (this.selectedProductInventoryItems) {
+                        this.displayedProduct.price = this.selectedProductInventory.price;
+                        this.displayedProduct.itemCode = this.selectedProductInventory.itemCode;
+                        this.displayedProduct.sku = this.selectedProductInventory.sku;
+                        this.displayedProduct.discountAmount = this.selectedProductInventory.itemDiscount?this.selectedProductInventory.itemDiscount.discountAmount:null;
+                        this.displayedProduct.discountedPrice = this.selectedProductInventory.itemDiscount?this.selectedProductInventory.itemDiscount.discountedPrice:null;
+                    } 
+                    else {
+                        this.displayedProduct.price = this.selectedProductInventory.price;
+                        this.displayedProduct.itemCode = this.selectedProductInventory.itemCode;
+                        this.displayedProduct.sku = this.selectedProductInventory.sku;
+                        this.displayedProduct.discountAmount = this.selectedProductInventory.itemDiscount?this.selectedProductInventory.itemDiscount.discountAmount:null;
+                        this.displayedProduct.discountedPrice = this.selectedProductInventory.itemDiscount?this.selectedProductInventory.itemDiscount.discountedPrice:null;
+                    }
     
                     // ------------------
                     // Product Assets
@@ -388,6 +383,8 @@ export class LandingProductDetailsComponent implements OnInit
                 this.displayedProduct.price = selectedProductInventory.price
                 this.displayedProduct.itemCode = selectedProductInventory.itemCode
                 this.displayedProduct.sku = selectedProductInventory.sku
+                this.displayedProduct.discountAmount = selectedProductInventory.itemDiscount.discountAmount;
+                this.displayedProduct.discountedPrice = selectedProductInventory.itemDiscount.discountedPrice;
 
                 // reorder image collection 
                 this.galleryImages = [];
