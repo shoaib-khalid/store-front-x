@@ -45,7 +45,7 @@
                                 </span> -->
                             </div>
                             <!-- Price -->
-                            <div *ngIf="displayedProduct.discountAmount>0;else no_item_discount" class="mb-2">
+                            <div *ngIf="displayedProduct.discountAmount>0;else noItemDiscount" class="mb-2">
                                 <p class="font-semibold items-center">Price: &nbsp; 
                                     <span style="text-decoration: line-through;" class="px-2">{{displayedProduct.price | currency: store.regionCountry.currencySymbol}}</span> 
                                     <span class="text-xl font-semibold text-primary px-2 ">{{displayedProduct.discountedPrice | currency: store.regionCountry.currencySymbol}}</span> 
@@ -54,7 +54,7 @@
                                 </p>
 
                             </div>
-                            <ng-template #no_item_discount>
+                            <ng-template #noItemDiscount>
                                 <p class="font-semibold">Price: &nbsp; <span class="text-xl font-semibold text-primary px-2 ">{{displayedProduct.price | currency: store.regionCountry.currencySymbol}}</span> </p>
                             </ng-template>
                             <!-- Details -->
