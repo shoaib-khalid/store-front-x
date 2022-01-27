@@ -142,10 +142,24 @@ export class LandingProductDetailsComponent implements OnInit
                             this.categorySlug = response.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '');
                         });
                     
-                    // -----------------------
-                    // get cheapest item price
-                    // -----------------------
-                    this.selectedProductInventory = this.product.productInventories.reduce((r, e) => r.price < e.price ? r : e); 
+                    
+                    //Ceck condition if the product inventory got itemDiscount or not
+                    const checkItemDiscount = this.product.productInventories.filter((x:any)=>x.itemDiscount);
+                    
+                    if(checkItemDiscount.length >0){
+
+                        //get most discount amount 
+                        this.selectedProductInventory = this.product.productInventories.reduce((r, e) => (<any>r).itemDiscount.discountAmount > (<any>e).itemDiscount.discountAmount ? r : e);
+
+                    }
+                    else{
+                        
+                        //get the cheapest price
+                        this.selectedProductInventory = this.product.productInventories.reduce((r, e) => r.price < e.price ? r : e);                         
+
+                    }
+                     
+
                        
                     // set initial selectedProductInventoryItems to the cheapest item
                     this.selectedProductInventoryItems = this.selectedProductInventory.productInventoryItems;
@@ -383,8 +397,8 @@ export class LandingProductDetailsComponent implements OnInit
                 this.displayedProduct.price = selectedProductInventory.price
                 this.displayedProduct.itemCode = selectedProductInventory.itemCode
                 this.displayedProduct.sku = selectedProductInventory.sku
-                this.displayedProduct.discountAmount = selectedProductInventory.itemDiscount.discountAmount;
-                this.displayedProduct.discountedPrice = selectedProductInventory.itemDiscount.discountedPrice;
+                this.displayedProduct.discountAmount = selectedProductInventory.itemDiscount?selectedProductInventory.itemDiscount.discountAmount:null;
+                this.displayedProduct.discountedPrice = selectedProductInventory.itemDiscount?selectedProductInventory.itemDiscount.discountedPrice:null;                
 
                 // reorder image collection 
                 this.galleryImages = [];

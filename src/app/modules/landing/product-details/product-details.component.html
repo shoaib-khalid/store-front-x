@@ -40,20 +40,22 @@
                             <!-- Title -->
                             <div class="items-center">
                                 <span class="mb-2 text-4xl font-semibold mt-5 sm:mt-10 md:mt-0 items-center">{{product.name}}</span>
-                                <span *ngIf="displayedProduct.discountAmount" class="mb-2 py-1 px-3 rounded text-sm font-semibold mx-2 items-center" [ngClass]="'text-primary-100 bg-red-600'">      
+                                <!-- <span *ngIf="displayedProduct.discountAmount>0" class="mb-2 py-1 px-3 rounded text-sm font-semibold mx-2 items-center" [ngClass]="'text-primary-100 bg-red-600'">      
                                     {{displayedProduct.discountAmount}}% Off
-                                </span>
+                                </span> -->
                             </div>
                             <!-- Price -->
-                            <div *ngIf="displayedProduct.discountAmount;else no_item_discount" class="mb-2">
+                            <div *ngIf="displayedProduct.discountAmount>0;else no_item_discount" class="mb-2">
                                 <p class="font-semibold items-center">Price: &nbsp; 
-                                    <span class="text-xl font-bold px-2">{{displayedProduct.discountedPrice | currency: store.regionCountry.currencySymbol}}</span> 
                                     <span style="text-decoration: line-through;" class="px-2">{{displayedProduct.price | currency: store.regionCountry.currencySymbol}}</span> 
+                                    <span class="text-xl font-semibold text-primary px-2 ">{{displayedProduct.discountedPrice | currency: store.regionCountry.currencySymbol}}</span> 
+                                    <span class="mb-2 py-1 px-3 rounded text-sm font-semibold mx-2 items-center" [ngClass]="'text-primary-100 bg-red-600'">{{displayedProduct.discountAmount}}% Off</span> 
+
                                 </p>
 
                             </div>
                             <ng-template #no_item_discount>
-                                <p class="font-semibold">Price: &nbsp; <span class="text-xl font-bold">{{displayedProduct.price | currency: store.regionCountry.currencySymbol}}</span> </p>
+                                <p class="font-semibold">Price: &nbsp; <span class="text-xl font-semibold text-primary px-2 ">{{displayedProduct.price | currency: store.regionCountry.currencySymbol}}</span> </p>
                             </ng-template>
                             <!-- Details -->
                             <div class="mb-2">
