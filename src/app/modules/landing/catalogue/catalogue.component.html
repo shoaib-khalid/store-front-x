@@ -245,11 +245,11 @@
                                         <span class="text-gray-500" [innerHtml]="product.description"></span>
                                     </div>
                                     <!-- <div class="text-sm font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</div> -->
-                                    <div *ngIf="product.productInventories[0].itemDiscount;else no_item_discount">
+                                    <div *ngIf="product.productInventories[0].itemDiscount;else noItemDiscountGrid">
                                         <p class="font-semibold text-primary text-2xl">{{product.productInventories[0].itemDiscount.discountedPrice | currency: store.regionCountry.currencySymbol}}</p>
                                         <p style="text-decoration: line-through;">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p>
                                     </div>
-                                    <ng-template #no_item_discount>
+                                    <ng-template #noItemDiscountGrid>
                                         <p class="font-semibold text-primary text-2xl">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p>
                                     </ng-template>
                                     <!-- Input Quantity -->
@@ -335,11 +335,11 @@
                                             <span class="text-gray-500" [innerHtml]="product.description"></span>
                                         </div>
                                         <!-- <p class="font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p> -->
-                                        <div *ngIf="product.productInventories[0].itemDiscount;else no_item_discount">
+                                        <div *ngIf="product.productInventories[0].itemDiscount;else noItemDiscountList">
                                             <p class="font-semibold text-primary text-2xl">{{product.productInventories[0].itemDiscount.discountedPrice | currency: store.regionCountry.currencySymbol}}</p>
                                             <p style="text-decoration: line-through;">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p>
                                         </div>
-                                        <ng-template #no_item_discount>
+                                        <ng-template #noItemDiscountList>
                                             <p class="font-semibold text-primary text-2xl">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p>
                                         </ng-template>
                                     </div>
