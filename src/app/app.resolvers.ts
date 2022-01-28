@@ -132,7 +132,6 @@ export class StoreResolver implements Resolve<any>
                     // -----------------------
 
                     if (this._cartService.cartId$) {
-                        console.log("masuk sini");
                         
                         this.cartId = this._cartService.cartId$;
                         if(this.cartId) {
@@ -140,7 +139,7 @@ export class StoreResolver implements Resolve<any>
                         }
                         
                     } else {
-                        console.log("masuk sini2");
+
                         let createCartBody = {
                             customerId: null, // later make a getter to get logged in user
                             storeId: this._storesService.storeId$,
