@@ -120,7 +120,7 @@ export class LandingCheckoutComponent implements OnInit
             country             : [''],
             regionCountryStateId: [''],
             specialInstruction  : [''],
-            saveMyInfo          : [false]
+            saveMyInfo          : [true]
         });
 
         // Set Payment Completion Status "Calculate Charges"

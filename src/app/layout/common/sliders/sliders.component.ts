@@ -53,20 +53,22 @@ export class SlidersComponent implements OnInit
 
                 if (this.storeDiscounts.length > 0) {
                     this.storeDiscounts.forEach(item => {
-                        this.discounts.push(...item.storeDiscountTierList.map(object => {
-                            return {
-                                discountName: item.discountName,
-                                discountType: item.discountType,
-                                startDate   : item.startDate,
-                                endDate     : item.endDate,
-                                maxDiscountAmount   : item.maxDiscountAmount,
-                                normalPriceItemOnly : item.normalPriceItemOnly,
-        
-                                calculationType       : object.calculationType,
-                                discountAmount        : object.discountAmount,
-                                startTotalSalesAmount : object.startTotalSalesAmount
-                            }
-                        }));
+                        if (item.storeDiscountTierList && item.storeDiscountTierList.length > 0 && item.discountType !== "ITEM") {                            
+                            this.discounts.push(...item.storeDiscountTierList.map(object => {
+                                return {
+                                    discountName: item.discountName,
+                                    discountType: item.discountType,
+                                    startDate   : item.startDate,
+                                    endDate     : item.endDate,
+                                    maxDiscountAmount   : item.maxDiscountAmount,
+                                    normalPriceItemOnly : item.normalPriceItemOnly,
+            
+                                    calculationType       : object.calculationType,
+                                    discountAmount        : object.discountAmount,
+                                    startTotalSalesAmount : object.startTotalSalesAmount
+                                }
+                            }));
+                        }
                     });                    
         
                     // Go to step

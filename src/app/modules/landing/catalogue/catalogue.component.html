@@ -68,16 +68,22 @@
                         </span>
                     </mat-select-trigger>
                     <ng-container>
-                        <mat-option [value]="'asc'">Ascending</mat-option>
-                        <mat-option [value]="'desc'">Descending</mat-option>
+                        <mat-option [value]="'recent'">Most Recent</mat-option>
+                        <mat-option [value]="'cheapest'">Price : Cheapest</mat-option>
+                        <mat-option [value]="'expensive'">Price : Most Expensive</mat-option>
+                        <mat-option [value]="'a-z'">Name : Ascending</mat-option>
+                        <mat-option [value]="'z-a'">Name : Descending</mat-option>
                     </ng-container>
                 </mat-select>
                 <!-- Sort for xs view -->
                 <div class="sm:hidden">
                     <mat-icon class="h-10 cursor-pointer" [matMenuTriggerFor]="sortMenu" [svgIcon]="'mat_solid:sort'"></mat-icon>
                     <mat-menu #sortMenu="matMenu">
-                        <mat-option (click)="sortInputControl.setValue('asc')">Ascending</mat-option>
-                        <mat-option (click)="sortInputControl.setValue('desc')">Descending</mat-option>
+                        <mat-option (click)="sortInputControl.setValue('recent')">Most Recent</mat-option>
+                        <mat-option (click)="sortInputControl.setValue('cheapest')">Price : Cheapest</mat-option>
+                        <mat-option (click)="sortInputControl.setValue('expensive')">Price : Most Expensive</mat-option>
+                        <mat-option (click)="sortInputControl.setValue('asc')">Name : Ascending</mat-option>
+                        <mat-option (click)="sortInputControl.setValue('desc')">Name : Descending</mat-option>
                     </mat-menu>
                 </div>
             </div>
@@ -217,16 +223,14 @@
                                     <div class="flex flex-col p-3 h-60 bg-black bg-no-repeat bg-cover bg-center" 
                                         [style]="product.thumbnailUrl ? 'background-image: url(\'' + product.thumbnailUrl + '\');' : 'background-image: url(\'' + store.storeAsset.logoUrl + '\');' + 'background-size: cover;'"
                                     >
-                                        <div *ngIf="product.productInventories[0].itemDiscount" class="flex items-center justify-end">
+                                        <div *ngIf="product.productInventories[0].itemDiscount" class="flex items-center justify-start">
                                             <!-- Product discount -->
                                             <div div class="flex items-center">
-                                                <ng-container>
-                                                    <div
-                                                        class="py-2 px-3 rounded text-sm font-semibold"
-                                                        [ngClass]="'text-primary-100 bg-red-600'">
-                                                        {{product.productInventories[0].itemDiscount.discountAmount}}% Off
-                                                    </div>
-                                                </ng-container>
+                                                <div
+                                                    class="py-1 px-2 rounded text-sm font-semibold"
+                                                    [ngClass]="'text-primary-100 bg-primary-600'">
+                                                    {{product.productInventories[0].itemDiscount.discountAmount}}% Off
+                                                </div>
                                             </div>
                                             <!-- Badges -->
                                             <!-- <div class="flex items-center">
@@ -301,11 +305,11 @@
                         <!-- List -->
                         <div *ngIf="productViewOrientation === 'list'" class="w-full mb-8 sm:mb-10">
                             <ng-container *ngFor="let product of products">
-                                <div class="flex flex-row h-48 w-full bg-card shadow border hover:border-2 hover:border-primary rounded-lg justify-between items-center mb-4 cursor-pointer"
+                                <div class="flex flex-wrap flex-row h-40 sm:h-48 w-full bg-card shadow border hover:border-2 hover:border-primary rounded-lg justify-between items-center mb-4 cursor-pointer"
                                     [routerLink]="['/product/' + product.seoName]"
                                 >
                                     <!-- Image Thumbnail -->
-                                    <div class="h-full w-52 rounded-l-lg p-2 bg-black bg-no-repeat bg-cover bg-center" 
+                                    <div class="h-full w-2/5 sm:w-2/6 max-w-52 rounded-l-lg p-2 bg-black bg-no-repeat bg-cover bg-center" 
                                         [style]="product.thumbnailUrl ? 'background-image: url(\'' + product.thumbnailUrl + '\');' : 'background-image: url(\'' + store.storeAsset.logoUrl + '\');' + 'background-size: cover;'"
                                     >
                                         <div *ngIf="product.productInventories[0].itemDiscount" class="flex items-center justify-between">
@@ -329,8 +333,8 @@
                                         </div>  
                                     </div>
                                     <!-- List Body -->
-                                    <div class="flex flex-row justify-between h-full w-full rounded-r-lg text-ellipsis overflow-hidden">
-                                        <div class="flex flex-col w-full p-6">
+                                    <div class="flex flex-row justify-between h-full w-3/5 sm:w-4/6 rounded-r-lg text-ellipsis overflow-hidden">
+                                        <div class="flex flex-col w-full p-3 md:p-6">
                                             <span class="text-xl h-10 font-bold mb-0 text-ellipsis overflow-hidden">{{product.name}}</span>
                                             <div class="mt-2 mb-4 h-20 text-ellipsis overflow-hidden">
                                                 <span class="text-gray-500" [innerHtml]="product.description"></span>
@@ -348,12 +352,14 @@
                                 </div>
                             </ng-container>
                         </div>
-                        <pagination 
-                            [items]="items" 
-                            [itemLength]="pagination.length" 
-                            [initialPage]="pagination.page + 1"
-                            [pageSize]="pagination.size"
-                            (changePage)="onChangePage($event)"></pagination>
+                        <div class="flex w-full items-center justify-center">
+                            <pagination 
+                                [items]="items" 
+                                [itemLength]="pagination.length" 
+                                [initialPage]="pagination.page + 1"
+                                [pageSize]="pagination.size"
+                                (changePage)="onChangePage($event)"></pagination>
+                        </div>
                     </div>
                 </ng-container>
                 <!-- No Products -->

@@ -64,7 +64,8 @@ export class LandingCatalogueComponent implements OnInit
     productViewOrientation: string = 'grid';
 
     sortInputControl: FormControl = new FormControl();
-    sortName: 'asc' | 'desc' | '' = 'asc';
+    sortName: string = "name";
+    sortOrder: 'asc' | 'desc' | '' = 'asc';
 
     searchInputControl: FormControl = new FormControl();
     searchName: string = "";
@@ -182,7 +183,7 @@ export class LandingCatalogueComponent implements OnInit
                     
                     this.isLoading = true;
                     
-                    return this._productsService.getProducts(0, 10, 'name', this.sortName, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '');
+                    return this._productsService.getProducts(0, 10, this.sortName, this.sortOrder, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '');
                 }),
                 map(() => {
                     this.isLoading = false;
@@ -196,11 +197,30 @@ export class LandingCatalogueComponent implements OnInit
                 debounceTime(300),
                 switchMap((query) => {
 
-                    this.sortName = query;
+                    if (query === "recent") {
+                        this.sortName = "created";
+                        this.sortOrder = "desc";
+                    } else if (query === "cheapest") {
+                        this.sortName = "price";
+                        this.sortOrder = "asc";
+                    } else if (query === "expensive") {
+                        this.sortName = "price";
+                        this.sortOrder = "desc";
+                    } else if (query === "a-z") {
+                        this.sortName = "name";
+                        this.sortOrder = "asc";
+                    } else if (query === "z-a") {
+                        this.sortName = "name";
+                        this.sortOrder = "desc";
+                    } else {
+                        // default to recent (same as recent)
+                        this.sortName = "created";
+                        this.sortOrder = "desc";
+                    }
                     
                     this.isLoading = true;
                     
-                    return this._productsService.getProducts(0, 10, 'name', this.sortName, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '');
+                    return this._productsService.getProducts(0, 10, this.sortName, this.sortOrder, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '');
                 }),
                 map(() => {
                     this.isLoading = false;
@@ -346,7 +366,7 @@ export class LandingCatalogueComponent implements OnInit
         // update current page of items
         this.pageOfItems = pageOfItems;
 
-        this._productsService.getProducts(this.pageOfItems['currentPage'] - 1, this.pageOfItems['pageSize'], 'name', this.sortName, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '')
+        this._productsService.getProducts(this.pageOfItems['currentPage'] - 1, this.pageOfItems['pageSize'], this.sortName, this.sortOrder, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '')
             .subscribe();
         // Mark for check
         this._changeDetectorRef.markForCheck();

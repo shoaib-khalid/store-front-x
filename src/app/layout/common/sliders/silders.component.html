@@ -1,4 +1,4 @@
-<mat-drawer-container [ngClass]="storeDiscounts.length > 0 ? 'block' : 'hidden'" class="w-full h-72 md:rounded-3xl mt-4 mb-8 shadow" style="background-image: url('https://symplified.it/store-assets/fnb_discount_banner.png'); background-size: cover;">
+<mat-drawer-container [ngClass]="discounts.length > 0 ? 'block' : 'hidden'" class="w-full h-72 md:rounded-3xl mt-4 mb-8 shadow" style="background-image: url('https://symplified.it/store-assets/fnb_discount_banner.png'); background-size: cover;">
     <!-- <img class="object-cover w-full h-full" src="assets/images/example/banner.png"> -->
     <mat-drawer class="h-full"
         #matDrawer>
@@ -14,7 +14,7 @@
                         <div class="prose prose-sm w-full h-full py-4 px-2 md:rounded-2xl text-white">
                             <h1 class="mb-0 text-white">{{discount.discountName}}</h1>
                             <span>{{discount.startDate | date: 'longDate'}} to {{discount.endDate | date: 'longDate'}}</span>
-                            <h2 class="mb-0 text-white flex items-center">
+                            <h2 class="mb-0 text-white flex items-end">
                                 <mat-icon
                                     *ngIf="discount.discountType === 'SHIPPING'"
                                     class="text-white icon-size-8 mr-2"
@@ -30,7 +30,10 @@
                                     class="text-white icon-size-7 mr-2"
                                     [svgIcon]="'feather:tag'"
                                 ></mat-icon>
-                                <span>{{discount.discountAmount}}% Off</span>
+                                <div class="flex flex-row items-end">
+                                    <span class="pr-2">{{discount.discountAmount}}% Off</span> 
+                                    <span class="text-sm pb-0.5" *ngIf="discount.maxDiscountAmount">(Capped at {{discount.maxDiscountAmount | currency: store.regionCountry.currencySymbol}})</span>
+                                </div>
                             </h2>
                             <ng-container *ngIf="discount.startTotalSalesAmount > 0; else noMinDiscountLimit">
                                 <p class="my-0">Total spend from {{discount.startTotalSalesAmount | currency: store.regionCountry.currencySymbol}}</p>
