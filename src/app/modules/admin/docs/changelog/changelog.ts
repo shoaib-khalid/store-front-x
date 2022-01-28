@@ -12,7 +12,7 @@ export class ChangelogComponent
         // v0.0.13
         {
             version    : 'v0.0.13',
-            releaseDate: 'Jan 25, 2022',
+            releaseDate: 'Jan 28, 2022',
             changes    : [
                 {
                     type: 'Added',
