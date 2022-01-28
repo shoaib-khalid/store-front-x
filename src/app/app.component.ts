@@ -37,11 +37,11 @@ export class AppComponent
                     this._titleService.setTitle(this.store.name);
 
                     if(this.store.verticalCode === "FnB" || this.store.verticalCode === "E-Commerce") {
-                        this.favIcon16.href = 'assets/symplified/favicon/deliverin/favicon-16x16.png';
-                        this.favIcon32.href = 'assets/symplified/favicon/deliverin/favicon-32x32.png';
+                        this.favIcon16.href = 'assets/branding/deliverin/favicon/favicon-16x16.png';
+                        this.favIcon32.href = 'assets/branding/deliverin/favicon/favicon-32x32.png';
                     } else if (this.store.verticalCode === "FnB_PK" || this.store.verticalCode === "ECommerce_PK") {
-                        this.favIcon16.href = 'assets/symplified/favicon/easydukan/favicon-16x16.png';
-                        this.favIcon32.href = 'assets/symplified/favicon/easydukan/favicon-32x32.png';
+                        this.favIcon16.href = 'assets/branding/easydukan/favicon/favicon-16x16.png';
+                        this.favIcon32.href = 'assets/branding/easydukan/favicon/favicon-32x32.png';
                     } else {
                         this.favIcon16.href = 'favicon-16x16.png';
                         this.favIcon32.href = 'favicon-32x32.png';

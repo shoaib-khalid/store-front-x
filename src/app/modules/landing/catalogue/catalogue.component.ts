@@ -97,9 +97,9 @@ export class LandingCatalogueComponent implements OnInit
     )
     {
         this._matIconRegistry
-            .addSvgIcon('search',this._domSanitizer.bypassSecurityTrustResourceUrl('assets/symplified/fnb/icons/search.svg'))
-            .addSvgIcon('block-view',this._domSanitizer.bypassSecurityTrustResourceUrl('assets/symplified/fnb/icons/block-view.svg'))
-            .addSvgIcon('list-view',this._domSanitizer.bypassSecurityTrustResourceUrl('assets/symplified/fnb/icons/list-view.svg'));
+            .addSvgIcon('search',this._domSanitizer.bypassSecurityTrustResourceUrl('assets/layouts/fnb/icons/search.svg'))
+            .addSvgIcon('block-view',this._domSanitizer.bypassSecurityTrustResourceUrl('assets/layouts/fnb/icons/block-view.svg'))
+            .addSvgIcon('list-view',this._domSanitizer.bypassSecurityTrustResourceUrl('assets/layouts/fnb/icons/list-view.svg'));
     }
 
     // -----------------------------------------------------------------------------------------------------
