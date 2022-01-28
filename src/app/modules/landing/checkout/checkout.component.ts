@@ -14,6 +14,7 @@ import { ChooseDeliveryAddressComponent } from './choose-delivery-address/choose
 import { CartDiscount, DeliveryProvider, Order, Payment } from './checkout.types';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
+import { ModalConfirmationDeleteItemComponent } from './modal-confirmation-delete-item/modal-confirmation-delete-item.component';
 
 @Component({
     selector     : 'landing-checkout',
@@ -264,9 +265,16 @@ export class LandingCheckoutComponent implements OnInit
     }
 
     deleteCartItem(cartItem: CartItem){
-        this._cartService.deleteCartItem(this._cartService.cartId$, cartItem.id)
-            .subscribe((response)=>{
-            });
+        
+        // this._cartService.deleteCartItem(this._cartService.cartId$, cartItem.id)
+        //     .subscribe((response)=>{                
+        //     });
+
+        //To make custom pop up, and we pass the details in paramter data
+        let dialogRef = this._dialog.open(ModalConfirmationDeleteItemComponent, { disableClose: true, data:{cartId:this._cartService.cartId$,itemId:cartItem.id}});
+        dialogRef.afterClosed().subscribe((result) => {
+            
+        });
     }
 
     allowPickupStore() {

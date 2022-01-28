@@ -1,0 +1,31 @@
+<div class="flex flex-col max-w-120 md:min-w-160 ">
+
+    <!-- Compose form -->
+    <div
+        class="flex flex-col flex-auto p-6 sm:p-8 overflow-y-auto"
+    >
+       
+
+        <!-- Actions -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-end mt-4 sm:mt-6">
+            <div class="order-last">
+                <!-- Send -->
+                <button
+                    class="hover:bg-gray-500 border border-gray-500"
+                    mat-flat-button
+                    (click)="cancelButton()"
+                    >
+                    Cancel
+                </button>
+                <span>&nbsp;&nbsp;</span>
+                <button
+                    mat-flat-button
+                    (click)="deleteButton()"
+
+                    >
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
