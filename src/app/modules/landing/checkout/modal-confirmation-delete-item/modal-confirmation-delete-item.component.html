@@ -9,9 +9,7 @@
         </button>
     </div>
     
-    <div
-        class="flex flex-col flex-auto overflow-y-auto"
-    >
+    <div class="flex flex-col flex-auto w-full px-6">
         
         <div class="flex flex-row items-center justify-center mt-6">
             <div class="rounded-full bg-primary w-24 h-24">
@@ -32,23 +30,21 @@
 
         </div>
         <!-- Actions -->
-        <div class="flex items-center justify-between mt-6 mb-6 mx-20">
+        <div class="flex flex-row w-full items-center justify-between mt-6 mb-6">
 
             <!-- Send -->
             <button
                 class=" p-3 px-6 border rounded border-primary-300 cursor-pointer"
                 (click)="cancelButton()"
                 >
-                <label>Cancel</label>
+                Cancel
             </button>
 
-            <span>&nbsp;&nbsp;</span>
-           
             <button
                 class="p-3 px-6 border rounded border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
                 (click)="deleteButton()"
                 >
-                <label>Delete</label>
+                Delete
             </button>
             
         </div>
