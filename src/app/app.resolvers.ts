@@ -134,7 +134,7 @@ export class StoreResolver implements Resolve<any>
                     if (this._cartService.cartId$) {
                         
                         this.cartId = this._cartService.cartId$;
-                        if(this.cartId) {
+                        if(this.cartId && this.cartId !== '') {
                             this.getCartItems(this.cartId);
                         }
                         
@@ -149,7 +149,7 @@ export class StoreResolver implements Resolve<any>
                                 // set cart id
                                 this.cartId = cart.id;
 
-                                if(this.cartId) {
+                                if(this.cartId && this.cartId !== '') {
                                     this.getCartItems(this.cartId);
                                 }
                             });
