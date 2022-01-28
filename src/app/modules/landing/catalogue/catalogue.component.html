@@ -220,15 +220,15 @@
                                     [routerLink]="['/product/' + product.seoName]"
                                 >
                                     <!-- Product Header -->
-                                    <div class="flex flex-col p-3 h-60 bg-black bg-no-repeat bg-cover bg-center" 
+                                    <div class="flex flex-col p-2 h-60 bg-black bg-no-repeat bg-cover bg-center" 
                                         [style]="product.thumbnailUrl ? 'background-image: url(\'' + product.thumbnailUrl + '\');' : 'background-image: url(\'' + store.storeAsset.logoUrl + '\');' + 'background-size: cover;'"
                                     >
                                         <div *ngIf="product.productInventories[0].itemDiscount" class="flex items-center justify-start">
                                             <!-- Product discount -->
                                             <div div class="flex items-center">
                                                 <div
-                                                    class="py-1 px-2 rounded text-sm font-semibold"
-                                                    [ngClass]="'text-primary-100 bg-primary-600'">
+                                                    class="py-1 px-2 rounded text-xs font-semibold"
+                                                    [ngClass]="'text-primary-100 bg-primary-700'">
                                                     {{product.productInventories[0].itemDiscount.discountAmount}}% Off
                                                 </div>
                                             </div>
@@ -316,8 +316,8 @@
                                             <!-- Product Discount -->
                                             <ng-container>
                                                 <div
-                                                    class="py-2 px-3 rounded text-sm font-semibold"
-                                                    [ngClass]="'text-primary-100 bg-red-600'">
+                                                    class="py-1 px-2 rounded text-xs text-sm font-semibold"
+                                                    [ngClass]="'text-primary-100 bg-primary-700'">
                                                     {{product.productInventories[0].itemDiscount.discountAmount}}% Off
                                                 </div>
                                             </ng-container>
