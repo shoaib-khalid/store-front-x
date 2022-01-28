@@ -132,9 +132,15 @@ export class StoreResolver implements Resolve<any>
                     // -----------------------
 
                     if (this._cartService.cartId$) {
+                        console.log("masuk sini");
+                        
                         this.cartId = this._cartService.cartId$;
-                        this.getCartItems(this.cartId);
+                        if(this.cartId) {
+                            this.getCartItems(this.cartId);
+                        }
+                        
                     } else {
+                        console.log("masuk sini2");
                         let createCartBody = {
                             customerId: null, // later make a getter to get logged in user
                             storeId: this._storesService.storeId$,
@@ -143,7 +149,10 @@ export class StoreResolver implements Resolve<any>
                         .subscribe((cart: Cart)=>{
                                 // set cart id
                                 this.cartId = cart.id;
-                                this.getCartItems(this.cartId);
+
+                                if(this.cartId) {
+                                    this.getCartItems(this.cartId);
+                                }
                             });
                     }
 
