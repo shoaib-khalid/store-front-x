@@ -133,12 +133,8 @@ export class StoreResolver implements Resolve<any>
 
                     if (this._cartService.cartId$) {
                         
-                        console.log("masuk", this.cartId );
-
                         this.cartId = this._cartService.cartId$;
-                        if(this.cartId && this.cartId !== '') {
-                            console.log("masuk ok", this.cartId );
-                            
+                        if(this.cartId && this.cartId !== '') {                            
                             this.getCartItems(this.cartId);
                         }
                         
@@ -154,7 +150,6 @@ export class StoreResolver implements Resolve<any>
                                 this.cartId = cart.id;
 
                                 if(this.cartId && this.cartId !== '') {
-                                    console.log("masuk2", this.cartId );
                                     this.getCartItems(this.cartId);
                                 }
                             });
@@ -182,15 +177,11 @@ export class StoreResolver implements Resolve<any>
         );
     }
 
-    getCartItems(cartId: string){
-
-        console.log("xxxasssadda");
-        
+    getCartItems(cartId: string){        
         if (cartId) {
             this._cartService.getCartItems(cartId)
                 .subscribe((response)=>{
                 });
         }
-
     }
 }
