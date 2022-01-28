@@ -141,6 +141,6 @@ export class CartItemsResolver implements Resolve<any>
 
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any>
     {
-        return this._storesService.storeId$ ? this._cartService.getCartItems(this._cartService.cartId$) : of(true);
+        return (this._storesService.storeId$ && this._cartService.cartId$) ? this._cartService.getCartItems(this._cartService.cartId$) : of(true);
     }
 }

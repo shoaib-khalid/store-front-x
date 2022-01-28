@@ -133,8 +133,12 @@ export class StoreResolver implements Resolve<any>
 
                     if (this._cartService.cartId$) {
                         
+                        console.log("masuk", this.cartId );
+
                         this.cartId = this._cartService.cartId$;
                         if(this.cartId && this.cartId !== '') {
+                            console.log("masuk ok", this.cartId );
+                            
                             this.getCartItems(this.cartId);
                         }
                         
@@ -150,6 +154,7 @@ export class StoreResolver implements Resolve<any>
                                 this.cartId = cart.id;
 
                                 if(this.cartId && this.cartId !== '') {
+                                    console.log("masuk2", this.cartId );
                                     this.getCartItems(this.cartId);
                                 }
                             });
@@ -164,7 +169,7 @@ export class StoreResolver implements Resolve<any>
                              
                         });
 
-                } if (this.url.subDomainName === "symplified" && state.url.indexOf("/payment-redirect") > -1) {
+                } else if (this.url.subDomainName === "symplified" && state.url.indexOf("/payment-redirect") > -1) {
                     // redirecting
                 } else {
                     // this._router.navigate(['home']);
@@ -178,9 +183,14 @@ export class StoreResolver implements Resolve<any>
     }
 
     getCartItems(cartId: string){
-        this._cartService.getCartItems(cartId)
-            .subscribe((response)=>{
 
-            });
+        console.log("xxxasssadda");
+        
+        if (cartId) {
+            this._cartService.getCartItems(cartId)
+                .subscribe((response)=>{
+                });
+        }
+
     }
 }
