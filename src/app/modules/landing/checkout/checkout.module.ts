@@ -13,11 +13,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { ChooseDeliveryAddressComponent } from './choose-delivery-address/choose-delivery-address.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
+import { ModalConfirmationDeleteItemComponent } from './modal-confirmation-delete-item/modal-confirmation-delete-item.component';
 
 @NgModule({
     declarations: [
         LandingCheckoutComponent,
-        ChooseDeliveryAddressComponent
+        ChooseDeliveryAddressComponent,
+        ModalConfirmationDeleteItemComponent
     ],
     imports     : [
         RouterModule.forChild(landingCheckoutRoutes),
