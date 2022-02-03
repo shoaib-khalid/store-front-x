@@ -7,7 +7,7 @@ import { DOCUMENT } from '@angular/common';
 
 @Component({
     selector     : 'landing-payment-redirect',
-    templateUrl  : './payment-redirect.component.html',
+    template     : ``,
     encapsulation: ViewEncapsulation.None,
     styles       : [``]
 })

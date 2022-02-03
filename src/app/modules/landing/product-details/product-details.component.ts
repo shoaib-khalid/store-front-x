@@ -260,6 +260,17 @@ export class LandingProductDetailsComponent implements OnInit
     
                         });
                     }
+
+                    // -----------------------
+                    // Create meta description for product
+                    // -----------------------
+
+                    if (this.product.description) {
+                        const meta = document.createElement('meta');
+                        meta.name = 'description';
+                        meta.content = this.product.description;
+                        document.head.appendChild(meta);
+                    }
                 }
             });
     }

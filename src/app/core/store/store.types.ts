@@ -17,6 +17,7 @@ export interface Store
     slug?: string;
     domain?: string;
     email?: string;
+    googleAnalyticId?: string;
     phoneNumber?: string;
     address?: string;
     postcode?: string;
