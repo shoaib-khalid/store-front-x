@@ -9,6 +9,25 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v0.0.15
+        {
+            version    : 'v0.0.15',
+            releaseDate: 'Feb 04, 2022',
+            changes    : [
+                {
+                    type: 'Added',
+                    list: [
+                        '(Favicon) Add DeliverIn FavIcon'
+                    ]
+                },
+                {
+                    type: 'Fix',
+                    list: [
+                        '(ProductLandingPage) Restrict number of items to be less than 3 digits. (maximum 999)',
+                    ]
+                }
+            ]
+        },
         // v0.0.14
         {
             version    : 'v0.0.14',

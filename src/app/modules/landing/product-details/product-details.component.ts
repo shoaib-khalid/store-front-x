@@ -40,7 +40,7 @@ export class LandingProductDetailsComponent implements OnInit
 
     quantity: number = 1;
     minQuantity: number = 1;
-    maxQuantity: number = 100;
+    maxQuantity: number = 999;
 
     specialInstruction: string;
 
