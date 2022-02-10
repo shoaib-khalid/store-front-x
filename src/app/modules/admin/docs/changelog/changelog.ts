@@ -9,6 +9,27 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v0.0.16
+        {
+            version    : 'v0.0.16',
+            releaseDate: 'Feb 10, 2022',
+            changes    : [
+                {
+                    type: 'Remove',
+                    list: [
+                        '(AllPages) Remove back button'
+                    ]
+                },
+                {
+                    type: 'Fix',
+                    list: [
+                        '(ProductLandingPage) Remove first meta data description',
+                        '(MobileView) Fix Mobile view to match figma',
+                        '(CatalogueLandingPage) Fix pagination when selecting other catagory'
+                    ]
+                }
+            ]
+        },
         // v0.0.15
         {
             version    : 'v0.0.15',

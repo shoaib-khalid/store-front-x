@@ -11,7 +11,7 @@ export const landingCatalogueRoutes: Route[] = [
     {
         path    : ':catalogue-slug',
         resolve  : {
-            products: ProductsResolver,
+            // products: ProductsResolver,
             categories: StoreCategoriesResolver
         },
         data: {

@@ -13,12 +13,15 @@ import paginate from 'jw-paginate';
 })
 export class PaginationComponent implements OnInit, OnDestroy
 {
-    @Input() items: Array<any>;
     @Input() itemLength = 0;
     @Output() changePage = new EventEmitter<any>(true);
     @Input() initialPage = 1;
     @Input() pageSize = 10;
     @Input() maxPages = 10;
+
+    @Input() set _itemLength(value: number) {
+        this.itemLength = value;
+    }
 
     pager: any = {};
     
@@ -46,12 +49,6 @@ export class PaginationComponent implements OnInit, OnDestroy
     ngOnInit(): void
     {
 
-        // set page if items array isn't empty
-        if (this.items && this.items.length) {
-            this.setPage(this.initialPage);
-        }
-
-        
         this.fuseMediaChanges(this.pageSize);
 
         // Mark for check
@@ -65,16 +62,19 @@ export class PaginationComponent implements OnInit, OnDestroy
     {
     }
 
+    ngOnChanges(){
+        if (this.itemLength) {
+            this.setPage(this.initialPage);
+        }
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
     setPage(page: number) {
         // get new pager object for specified page
-        this.pager = paginate(this.itemLength, page, this.pageSize, this.maxPages);        
-
-        // get new page of items from items array
-        var pageOfItems = this.items.slice(this.pager.startIndex, this.pager.endIndex + 1);
+        this.pager = paginate(this.itemLength, page, this.pageSize, this.maxPages);
 
         // call change page function in parent component
         this.changePage.emit(this.pager);

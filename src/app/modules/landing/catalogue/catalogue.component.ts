@@ -77,7 +77,6 @@ export class LandingCatalogueComponent implements OnInit
 
     quantity: number = 0;
 
-    items = [];
     pageOfItems: Array<any>;
 
     /**
@@ -114,28 +113,39 @@ export class LandingCatalogueComponent implements OnInit
             distinctUntilChanged(),
         ).subscribe(() => {
             this.catalogueSlug = this._activatedRoute.snapshot.paramMap.get('catalogue-slug');
-            
 
             let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === this.catalogueSlug);
             this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
-            
+ 
             // Mark for check
             this._changeDetectorRef.markForCheck();
         });
 
         // get initial store category
-        this.catalogueSlug = this._activatedRoute.snapshot.paramMap.get('catalogue-slug');
-
+        
         // Get the store info
         this._storesService.store$
-            .subscribe((response: Store) => {
-                this.store = response;
-            });
+        .subscribe((response: Store) => {
+            this.store = response;
 
+            // Mark for check
+            this._changeDetectorRef.markForCheck();
+        });
+        
         // Get the store categories
         this._storesService.storeCategories$
             .subscribe((response: StoreCategory[]) => {
+
+                
                 this.storeCategories = response;
+                
+                this.catalogueSlug = this.catalogueSlug ? this.catalogueSlug : this._activatedRoute.snapshot.paramMap.get('catalogue-slug');
+                
+                let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === this.catalogueSlug);
+                this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
+                
+                this._productsService.getProducts(0, 10, "name", "asc", "", 'ACTIVE', this.storeCategory ? this.storeCategory.id : '')
+                    .subscribe();
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
@@ -156,7 +166,7 @@ export class LandingCatalogueComponent implements OnInit
         this._productsService.pagination$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((pagination: ProductPagination) => {
-
+                
                 // Update the pagination
                 this.pagination = pagination;
 
@@ -350,8 +360,16 @@ export class LandingCatalogueComponent implements OnInit
             return;
         }
 
-        this._router.navigate(['catalogue/' + event.source.value]);
+        // this._productsService.getProducts(0, 10, "name", "asc", "", 'ACTIVE', this.storeCategory ? this.storeCategory.id : '')
+        //     .subscribe();
+
+        let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === event.source.value);
+        this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
+        this.catalogueSlug = event.source.value;
         
+        this._router.navigate(['catalogue/' + event.source.value]);
+
+
     }
 
     decrement() {
@@ -363,6 +381,7 @@ export class LandingCatalogueComponent implements OnInit
     }
 
     onChangePage(pageOfItems: Array<any>) {
+        
         // update current page of items
         this.pageOfItems = pageOfItems;
 

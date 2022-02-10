@@ -2,25 +2,7 @@
 
     <!-- Main menu -->
     <div class="flex flex-col items-center w-full h-auto my-5 px-5">
-        <!-- Back button & sort -->
-        <div class="flex flex-row items-center justify-between w-full max-w-256">
-            <input
-                id="go-back-button"
-                type="button"
-                class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                (click)="goToCatalogue()"
-                mat-button>
-            <label 
-                class="flex items-center justify-center h-10 pl-2 pr-4 border rounded border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
-                for="go-back-button"
-                matRipple>
-                <mat-icon
-                    class="sm:mr-1 text-white"
-                    [svgIcon]="'heroicons_outline:chevron-left'"></mat-icon>
-                <span class="hidden sm:block text-white">Back</span>
-            </label>
-        </div>
-        
+     
         <!-- Container -->
         <div class="flex flex-col md:flex-row justify-between mt-10 w-full md:max-w-256">
             
@@ -111,11 +93,11 @@
                             <div class="flex flex-row justify-between items-center">
                                 <span class="font-semibold">Quantity:</span> 
                                 <div class="flex flex-row h-8 w-20 rounded-lg relative bg-primary mt-1">
-                                    <button (click)="checkQuantity('decrement')" class="text-white hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l-lg cursor-pointer outline-none">
+                                    <button (click)="checkQuantity('decrement')" class="text-black hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l-lg cursor-pointer outline-none">
                                         <span class="text-2xl">−</span>
                                     </button>
-                                    <input [(ngModel)]="quantity" (change)="checkQuantity()" type="number" class="outline-none focus:outline-none text-center w-full font-semibold text-md text-white focus:text-white md:text-basecursor-default flex items-center outline-none" name="custom-input-number" value="0"/>
-                                    <button (click)="checkQuantity('increment')" class="text-white hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r-lg cursor-pointer">
+                                    <input [(ngModel)]="quantity" (change)="checkQuantity()" type="number" class="outline-none focus:outline-none text-center w-full font-semibold text-md text-black focus:text-black md:text-basecursor-default flex items-center outline-none" name="custom-input-number" value="0"/>
+                                    <button (click)="checkQuantity('increment')" class="text-black hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r-lg cursor-pointer">
                                         <span class="text-2xl">+</span>
                                     </button>
                                 </div>
@@ -149,10 +131,10 @@
                                     class="flex items-center justify-center h-10 px-2 border rounded border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
                                     for="add-to-cart-button"
                                     matRipple>
-                                    <span class="text-sm text-white">Add to Cart</span>
+                                    <span class="text-sm font-semibold text-black">Add to Cart</span>
                                     <mat-icon
-                                        class="hidden sm:block ml-1 text-white transform scale-75"
-                                        [svgIcon]="'heroicons_outline:shopping-cart'"></mat-icon>
+                                        class="hidden sm:block pl-1 text-black transform scale-75"
+                                        [svgIcon]="'heroicons_solid:shopping-cart'"></mat-icon>
                                 </label>
     
                                 <!-- Checkout -->
@@ -163,12 +145,12 @@
                                     [routerLink]="['/checkout']"
                                     mat-button>
                                 <label 
-                                    class="flex items-center justify-center h-10 px-2 border rounded border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
+                                    class="flex items-center justify-center h-10 px-2 border rounded border-green-300 bg-green-500 hover:border-green-500 cursor-pointer"
                                     for="go-checkout-button"
                                     matRipple>
-                                    <span class="text-sm text-white">Checkout</span>
+                                    <span class="text-sm font-semibold text-black">Checkout</span>
                                     <mat-icon
-                                        class="hidden sm:block ml-2 text-white transform scale-75"
+                                        class="hidden sm:block pl-1 text-black transform scale-75"
                                         [svgIcon]="'heroicons_solid:shopping-bag'"></mat-icon>
                                 </label>
                             </div>

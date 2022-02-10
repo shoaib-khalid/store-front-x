@@ -15,6 +15,7 @@ import { CartDiscount, DeliveryProvider, Order, Payment } from './checkout.types
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { ModalConfirmationDeleteItemComponent } from './modal-confirmation-delete-item/modal-confirmation-delete-item.component';
+import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 
 @Component({
     selector     : 'landing-checkout',
@@ -84,7 +85,10 @@ export class LandingCheckoutComponent implements OnInit
     minQuantity: number = 1;
     maxQuantity: number = 100;
 
+    currentScreenSize: string[] = [];
+
     isLoading: boolean = false;
+    isCalculating: boolean = false;
 
     /**
      * Constructor
@@ -96,6 +100,7 @@ export class LandingCheckoutComponent implements OnInit
         private _checkoutService: CheckoutService,
         private _changeDetectorRef: ChangeDetectorRef,
         private _fuseConfirmationService: FuseConfirmationService,
+        private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _datePipe: DatePipe,
         private _dialog: MatDialog,
         private _router: Router,
@@ -223,6 +228,16 @@ export class LandingCheckoutComponent implements OnInit
                     // Mark for check
                     this._changeDetectorRef.markForCheck();
                 });
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
+
+        this._fuseMediaWatcherService.onMediaChange$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe(({matchingAliases}) => {               
+
+                this.currentScreenSize = matchingAliases;                
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
@@ -368,6 +383,7 @@ export class LandingCheckoutComponent implements OnInit
     calculateCharges() {
 
         // Set Loading to true
+        this.isCalculating = true;
         this.isLoading = true;
 
         // Do nothing if the form is invalid
@@ -384,6 +400,7 @@ export class LandingCheckoutComponent implements OnInit
             });
         } catch (error) {
             // Set Loading to false
+            this.isCalculating = false;
             this.isLoading = false;
 
             return;
@@ -462,6 +479,7 @@ export class LandingCheckoutComponent implements OnInit
                     }
     
                     // Set Loading to false
+                    this.isCalculating = false;
                     this.isLoading = false;
                 });
         } else {
@@ -483,6 +501,7 @@ export class LandingCheckoutComponent implements OnInit
                 });
 
             // Set Loading to false
+            this.isCalculating = false;
             this.isLoading = false;
         }
     }
@@ -673,6 +692,14 @@ export class LandingCheckoutComponent implements OnInit
     
         document.body.appendChild(form);        
         form.submit();
+    }
+
+    scroll(){
+        window.scroll({ 
+            top: 0, 
+            left: 0, 
+            behavior: 'smooth' 
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------
