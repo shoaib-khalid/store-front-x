@@ -19,8 +19,8 @@ export class BreadcrumbComponent implements OnInit
         private _router: Router,
         private _activatedRoute: ActivatedRoute
     )
-    {
-        this.breadcrumbs = this.buildBreadCrumb(this._activatedRoute.root);
+    {        
+        this.breadcrumbs = this.buildBreadCrumb(this._activatedRoute.root);        
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ export class BreadcrumbComponent implements OnInit
     buildBreadCrumb(route: ActivatedRoute, url: string = '', breadcrumbs: IBreadCrumb[] = []): IBreadCrumb[] {
         //If no routeConfig is avalailable we are on the root path
         let label = route.routeConfig && route.routeConfig.data ? route.routeConfig.data.breadcrumb : '';
-        let path = route.routeConfig && route.routeConfig.data ? route.routeConfig.path : '';
+        let path = route.routeConfig && route.routeConfig.data ? route.routeConfig.path : '';        
 
         // If the route is dynamic route such as ':id', remove it
         const lastRoutePart = path.split('/').pop();

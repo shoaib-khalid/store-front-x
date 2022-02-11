@@ -369,7 +369,6 @@ export class LandingCatalogueComponent implements OnInit
         
         this._router.navigate(['catalogue/' + event.source.value]);
 
-
     }
 
     decrement() {
@@ -405,5 +404,10 @@ export class LandingCatalogueComponent implements OnInit
         } else {
             return false;
         }
+    }
+
+    viewProduct(productSeo: string)
+    {
+        this._router.navigate(['catalogue/' + productSeo]);
     }
 }

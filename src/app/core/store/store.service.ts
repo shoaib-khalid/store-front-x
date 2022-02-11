@@ -577,19 +577,21 @@ export class StoresService
             take(1),
             map((storeCategries) => {
 
-                // Find the storeCategory 
-                const storeCategory = storeCategries.find(item => item.id === id) || null;
-
-                // set this
-                this.storeControl.setValue(storeCategory);
-
-                this._logging.debug("Response from StoresService (getStoresById)",storeCategory);
-
-                // Update the storeCategory
-                this._storeCategory.next(storeCategory);
-
-                // Return the store
-                return storeCategory;
+                if (storeCategries) {
+                    // Find the storeCategory 
+                    const storeCategory = storeCategries.find(item => item.id === id) || null;
+    
+                    // set this
+                    this.storeControl.setValue(storeCategory);
+    
+                    this._logging.debug("Response from StoresService (getStoresById)",storeCategory);
+    
+                    // Update the storeCategory
+                    this._storeCategory.next(storeCategory);
+    
+                    // Return the store
+                    return storeCategory;
+                }
             }),
             switchMap((storeCategory) => {
 
