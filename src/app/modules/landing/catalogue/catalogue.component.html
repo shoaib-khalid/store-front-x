@@ -201,32 +201,40 @@
                             <!-- Products -->
                             <ng-container *ngFor="let product of products">
                                 <!-- Product -->
-                                <div class="flex flex-col h-120 shadow-lg border hover:border-2 hover:border-primary rounded-lg overflow-hidden bg-card cursor-pointer"
+                                <div class="flex flex-col h-120 shadow-lg border hover:border-2 rounded-lg overflow-hidden cursor-pointer"
+                                    [ngClass]="isProductOutOfStock(product.productInventories) ? 'bg-card hover:border-primary' : 'bg-gray-200 hover:border-gray-600'"
                                     [routerLink]="['/product/' + product.seoName]"
                                 >
                                     <!-- Product Header -->
-                                    <div class="flex flex-col p-2 h-60 bg-black bg-no-repeat bg-cover bg-center" 
+                                    <div class="relative flex flex-col p-2 h-60 bg-black bg-no-repeat bg-cover bg-center" 
                                         [style]="product.thumbnailUrl ? 'background-image: url(\'' + product.thumbnailUrl + '\');' : 'background-image: url(\'' + store.storeAsset.logoUrl + '\');' + 'background-size: cover;'"
                                     >
-                                        <div *ngIf="product.productInventories[0].itemDiscount" class="flex items-center justify-start">
-                                            <!-- Product discount -->
-                                            <div div class="flex items-center">
-                                                <div
-                                                    class="py-1 px-2 rounded text-xs font-semibold"
-                                                    [ngClass]="'text-primary-100 bg-primary-700'">
-                                                    {{product.productInventories[0].itemDiscount.discountAmount}}% Off
+                                        <ng-container *ngIf="product.productInventories.length > 0">
+                                            <div *ngIf="product.productInventories[0].itemDiscount" class="flex items-center justify-start">
+                                                <!-- Product discount -->
+                                                <div div class="flex items-center">
+                                                    <div
+                                                        class="py-1 px-2 rounded text-xs font-semibold"
+                                                        [ngClass]="'text-primary-100 bg-primary-700'">
+                                                        {{product.productInventories[0].itemDiscount.discountAmount}}% Off
+                                                    </div>
                                                 </div>
+                                                <!-- Badges -->
+                                                <!-- <div class="flex items-center">
+                                                    <ng-container>
+                                                        <mat-icon
+                                                            class="icon-size-5 text-green-600"
+                                                            [svgIcon]="'heroicons_solid:badge-check'"
+                                                            [matTooltip]="'You completed this course at least once'"></mat-icon>
+                                                    </ng-container>
+                                                </div> -->
                                             </div>
-                                            <!-- Badges -->
-                                            <!-- <div class="flex items-center">
-                                                <ng-container>
-                                                    <mat-icon
-                                                        class="icon-size-5 text-green-600"
-                                                        [svgIcon]="'heroicons_solid:badge-check'"
-                                                        [matTooltip]="'You completed this course at least once'"></mat-icon>
-                                                </ng-container>
-                                            </div> -->
-                                        </div>                               
+                                        </ng-container>
+                                        <ng-container *ngIf="isProductOutOfStock(product.productInventories) === false">
+                                            <div class="absolute w-full h-full bg-black opacity-70 top-0 bottom-0 left-0 right-0 flex items-center justify-center">
+                                                <p class="font-semibold text-white text-2xl">Out of Stock</p>
+                                            </div>
+                                        </ng-container>
                                     </div>
                                     <!-- Product Footer -->
                                     <div class="flex flex-col px-4 mb-4 h-60 w-full">
@@ -235,12 +243,12 @@
                                             <span class="text-gray-500" [innerHtml]="product.description"></span>
                                         </div>
                                         <!-- <div class="text-sm font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</div> -->
-                                        <div *ngIf="product.productInventories[0].itemDiscount;else noItemDiscountGrid">
+                                        <div *ngIf="product.productInventories.length > 0 && product.productInventories[0].itemDiscount;else noItemDiscountGrid">
                                             <p class="font-semibold text-primary text-2xl">{{product.productInventories[0].itemDiscount.discountedPrice | currency: store.regionCountry.currencySymbol}}</p>
                                             <p style="text-decoration: line-through;">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p>
                                         </div>
                                         <ng-template #noItemDiscountGrid>
-                                            <p class="font-semibold text-primary text-2xl">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p>
+                                            <p class="font-semibold text-primary text-2xl">{{ (product.productInventories.length > 0 ? product.productInventories[0].price : 0) | currency: store.regionCountry.currencySymbol}}</p>
                                         </ng-template>
                                         <!-- Input Quantity -->
                                         <!-- <div class="mt-4">
@@ -291,31 +299,40 @@
                         <div *ngIf="productViewOrientation === 'list'" class="w-full mb-8 sm:mb-10">
                             <ng-container *ngFor="let product of products">
                                 <div class="flex flex-wrap flex-row h-40 sm:h-48 w-full bg-card shadow border hover:border-2 hover:border-primary rounded-lg justify-between items-center mb-4 cursor-pointer"
+                                    [ngClass]="isProductOutOfStock(product.productInventories) ? 'bg-card hover:border-primary' : 'bg-gray-200 hover:border-gray-600'"
                                     [routerLink]="['/product/' + product.seoName]"
                                 >
                                     <!-- Image Thumbnail -->
-                                    <div class="h-full w-2/5 sm:w-2/6 max-w-52 rounded-l-lg p-2 bg-black bg-no-repeat bg-cover bg-center" 
+                                    <div class="relative h-full w-2/5 sm:w-2/6 max-w-52 rounded-l-lg p-2 bg-black bg-no-repeat bg-cover bg-center" 
                                         [style]="product.thumbnailUrl ? 'background-image: url(\'' + product.thumbnailUrl + '\');' : 'background-image: url(\'' + store.storeAsset.logoUrl + '\');' + 'background-size: cover;'"
                                     >
-                                        <div *ngIf="product.productInventories[0].itemDiscount" class="flex items-center justify-between">
-                                            <!-- Product Discount -->
-                                            <ng-container>
-                                                <div
-                                                    class="py-1 px-2 rounded text-xs text-sm font-semibold"
-                                                    [ngClass]="'text-primary-100 bg-primary-700'">
-                                                    {{product.productInventories[0].itemDiscount.discountAmount}}% Off
-                                                </div>
-                                            </ng-container>
-                                            <!-- Badges -->
-                                            <!-- <div class="flex items-center">
+                                        <ng-container *ngIf="product.productInventories.length > 0">
+                                            <div *ngIf="product.productInventories[0].itemDiscount" class="flex items-center justify-between">
+                                                <!-- Product Discount -->
                                                 <ng-container>
-                                                    <mat-icon
-                                                        class="icon-size-5 text-green-600"
-                                                        [svgIcon]="'heroicons_solid:badge-check'"
-                                                        [matTooltip]="'You completed this course at least once'"></mat-icon>
+                                                    <div
+                                                        class="py-1 px-2 rounded text-xs text-sm font-semibold"
+                                                        [ngClass]="'text-primary-100 bg-primary-700'">
+                                                        {{product.productInventories[0].itemDiscount.discountAmount}}% Off
+                                                    </div>
                                                 </ng-container>
-                                            </div> -->
-                                        </div>  
+                                                <!-- Badges -->
+                                                <!-- <div class="flex items-center">
+                                                    <ng-container>
+                                                        <mat-icon
+                                                            class="icon-size-5 text-green-600"
+                                                            [svgIcon]="'heroicons_solid:badge-check'"
+                                                            [matTooltip]="'You completed this course at least once'"></mat-icon>
+                                                    </ng-container>
+                                                </div> -->
+                                            </div>
+                                        </ng-container>
+
+                                        <ng-container *ngIf="isProductOutOfStock(product.productInventories) === false">
+                                            <div class="absolute rounded-l-lg w-full h-full bg-black opacity-70 top-0 bottom-0 left-0 right-0 flex items-center justify-center">
+                                                <p class="font-semibold text-white text-2xl">Out of Stock</p>
+                                            </div>
+                                        </ng-container>
                                     </div>
                                     <!-- List Body -->
                                     <div class="flex flex-row justify-between h-full w-3/5 sm:w-4/6 rounded-r-lg text-ellipsis overflow-hidden">
@@ -325,12 +342,12 @@
                                                 <span class="text-gray-500" [innerHtml]="product.description"></span>
                                             </div>
                                             <!-- <p class="font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p> -->
-                                            <div *ngIf="product.productInventories[0].itemDiscount;else noItemDiscountList">
+                                            <div *ngIf="product.productInventories.length > 0 && product.productInventories[0].itemDiscount;else noItemDiscountList">
                                                 <p class="font-semibold text-primary text-2xl">{{product.productInventories[0].itemDiscount.discountedPrice | currency: store.regionCountry.currencySymbol}}</p>
                                                 <p style="text-decoration: line-through;">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p>
                                             </div>
                                             <ng-template #noItemDiscountList>
-                                                <p class="font-semibold text-primary text-2xl">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p>
+                                                <p class="font-semibold text-primary text-2xl">{{ (product.productInventories.length > 0 ? product.productInventories[0].price : 0) | currency: store.regionCountry.currencySymbol}}</p>
                                             </ng-template>
                                         </div>
                                     </div>

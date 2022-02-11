@@ -3,7 +3,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ProductsService } from 'app/core/product/product.service';
 import { StoresService } from 'app/core/store/store.service';
 import { Store, StoreCategory } from 'app/core/store/store.types';
-import { Product, ProductPagination } from 'app/core/product/product.types';
+import { Product, ProductInventory, ProductPagination } from 'app/core/product/product.types';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
@@ -389,5 +389,21 @@ export class LandingCatalogueComponent implements OnInit
             .subscribe();
         // Mark for check
         this._changeDetectorRef.markForCheck();
+    }
+
+    isProductOutOfStock(productInventories: ProductInventory[]): boolean
+    {
+        if (productInventories.length > 0) {
+            let productInventoryQuantities = productInventories.map(item => item.quantity);
+            let totalProductInventoryQuantity = productInventoryQuantities.reduce((partialSum, a) => partialSum + a, 0);
+
+            if (totalProductInventoryQuantity > 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 }

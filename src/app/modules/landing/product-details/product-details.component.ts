@@ -135,7 +135,7 @@ export class LandingProductDetailsComponent implements OnInit
                 // Get category info by category id
                 // ----------------------------------
 
-                if (this.product) {
+                if (this.product && this.product.productInventories.length > 0) {
                     
                     this._storesService.getStoreCategoriesById(response.categoryId)
                         .subscribe((response: StoreCategory) => {
@@ -271,6 +271,13 @@ export class LandingProductDetailsComponent implements OnInit
                         meta.content = this.product.description;
                         document.head.appendChild(meta);
                     }
+                } else {
+                    // this means there is no data in product inventory, loading the default image
+                    this.galleryImages = [{
+                        small   : '' + this.store.storeAsset.logoUrl,
+                        medium  : '' + this.store.storeAsset.logoUrl,
+                        big     : '' + this.store.storeAsset.logoUrl
+                    }];
                 }
             });
     }
@@ -285,6 +292,34 @@ export class LandingProductDetailsComponent implements OnInit
     }
 
     addToCart() {
+
+        // Pre-check the product inventory
+        if (!this.selectedProductInventory) {
+            const confirmation = this._fuseConfirmationService.open({
+                "title": "Product Out of Stock",
+                "message": "Sorry, The product is currently out of stock",
+                "icon": {
+                  "show": true,
+                  "name": "heroicons_outline:exclamation",
+                  "color": "warn"
+                },
+                "actions": {
+                  "confirm": {
+                    "show": true,
+                    "label": "Ok",
+                    "color": "warn"
+                  },
+                  "cancel": {
+                    "show": false,
+                    "label": "Cancel"
+                  }
+                },
+                "dismissible": true
+              });
+
+            return false;
+        }
+
         const cartItemBody = {
             cartId: this._cartService.cartId$,
             itemCode: this.selectedProductInventory.itemCode,

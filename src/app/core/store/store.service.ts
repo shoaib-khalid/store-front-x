@@ -332,7 +332,7 @@ export class StoresService
 
                 if ( !store )
                 {
-                    return throwError('Could not found store with id of ' + id + '!');
+                    return throwError('(getStoresById) Could not found store with id of ' + id + '!');
                 }
 
                 return of(store);
@@ -595,7 +595,7 @@ export class StoresService
 
                 if ( !storeCategory )
                 {
-                    return throwError('Could not found store with id of ' + id + '!');
+                    return throwError('(getStoreCategoriesById) Could not found store with id of ' + id + '!');
                 }
 
                 return of(storeCategory);
