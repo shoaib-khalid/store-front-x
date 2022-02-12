@@ -40,7 +40,8 @@ export interface Store
     featured?: boolean;
     completed?: number;
     currentStep?: number;
-    storeAsset?: StoreAssets;
+    storeAsset?: StoreAsset;
+    storeAssets?: StoreAssets[];
 }
 
 export interface CreateStore
@@ -143,12 +144,22 @@ export interface StoreSelfDeliveryStateCharges
     storeId?: string;
 }
 
-export interface StoreAssets
+export interface StoreAsset
 {
     bannerMobileUrl?: string;
     bannerUrl?: string;
     logoUrl?: string;
     storeId?: string;
+}
+
+export interface StoreAssets
+{
+    assetDescription: string;
+    assetFile: string;
+    assetType: string;
+    assetUrl: string;
+    id: string;
+    storeId: string;
 }
 
 export interface StoreDiscount

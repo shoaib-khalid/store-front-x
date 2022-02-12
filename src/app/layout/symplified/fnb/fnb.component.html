@@ -117,16 +117,7 @@
                 </mat-drawer-container> -->
                 
                 <!-- Store Banner -->
-                <div class="absolute inset-0 text-white flex items-center justify-center text-5xl transition-all ease-in-out duration-1000 transform slide" 
-                    [ngClass]="(currentSlider.current === 1) ? currentSlider.active : (currentSlider.current === 2) ? currentSlider.previous : currentSlider.next"
-                >
-                    <ng-container *ngIf="store.storeAsset.bannerUrl;else noBanner">
-                        <img class="object-cover w-full h-full" [src]="store.storeAsset.bannerUrl">
-                    </ng-container>
-                    <ng-template #noBanner>
-                        <img class="object-cover w-full h-full" src="https://symplified.biz/store-assets/banner-fnb.png">
-                    </ng-template>
-                </div>
+                <banner-slider></banner-slider>
                 
                 <!-- Store Description -->
                 <div class="flex flex-row justify-center items-center sm:justify-start sm:items-start absolute h-full w-full max-w-256">

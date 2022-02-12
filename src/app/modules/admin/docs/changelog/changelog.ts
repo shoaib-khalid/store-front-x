@@ -9,6 +9,20 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v0.0.18
+        {
+            version    : 'v0.0.18',
+            releaseDate: 'Feb 12, 2022',
+            changes    : [
+                {
+                    type: 'Add',
+                    list: [
+                        '(DynamicFavicon) Load favicon from backend',
+                        '(MultipleBanner) Load banners from backend',
+                    ]
+                }
+            ]
+        },
         // v0.0.17
         {
             version    : 'v0.0.17',

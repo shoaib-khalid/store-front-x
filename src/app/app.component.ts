@@ -42,16 +42,23 @@ export class AppComponent
                     // Set Title
                     this._titleService.setTitle(this.store.name);
 
-                    // Set Favicon
-                    if(this.store.verticalCode === "FnB" || this.store.verticalCode === "E-Commerce") {
-                        this.favIcon16.href = 'assets/branding/deliverin/favicon/favicon-16x16.png';
-                        this.favIcon32.href = 'assets/branding/deliverin/favicon/favicon-32x32.png';
-                    } else if (this.store.verticalCode === "FnB_PK" || this.store.verticalCode === "ECommerce_PK") {
-                        this.favIcon16.href = 'assets/branding/easydukan/favicon/favicon-16x16.png';
-                        this.favIcon32.href = 'assets/branding/easydukan/favicon/favicon-32x32.png';
+                    let haveFaviconIndex = (this.store.storeAssets.length > 0) ? this.store.storeAssets.findIndex(item => item.assetType === "FaviconUrl") : -1;
+
+                    if (haveFaviconIndex > -1) {
+                        this.favIcon16.href = this.store.storeAssets[haveFaviconIndex].assetUrl;
+                        this.favIcon32.href = this.store.storeAssets[haveFaviconIndex].assetUrl;
                     } else {
-                        this.favIcon16.href = 'favicon-16x16.png';
-                        this.favIcon32.href = 'favicon-32x32.png';
+                        // Set Favicon
+                        if(this.store.verticalCode === "FnB" || this.store.verticalCode === "E-Commerce") {
+                            this.favIcon16.href = 'assets/branding/deliverin/favicon/favicon-16x16.png';
+                            this.favIcon32.href = 'assets/branding/deliverin/favicon/favicon-32x32.png';
+                        } else if (this.store.verticalCode === "FnB_PK" || this.store.verticalCode === "ECommerce_PK") {
+                            this.favIcon16.href = 'assets/branding/easydukan/favicon/favicon-16x16.png';
+                            this.favIcon32.href = 'assets/branding/easydukan/favicon/favicon-32x32.png';
+                        } else {
+                            this.favIcon16.href = 'favicon-16x16.png';
+                            this.favIcon32.href = 'favicon-32x32.png';
+                        }
                     }
 
                     // Set Google Analytic Code
