@@ -64,13 +64,13 @@ export class AppComponent
                     // Set Google Analytic Code
                     if (this.store.googleAnalyticId) {
 
+                        // Remove this later
                         // load google tag manager script
-                        const script = document.createElement('script');
-                        script.type = 'text/javascript';
-                        script.async = true;
-                        script.src = 'https://www.google-analytics.com/analytics.js';
-                        document.head.appendChild(script);
-                        
+                        // const script = document.createElement('script');
+                        // script.type = 'text/javascript';
+                        // script.async = true;
+                        // script.src = 'https://www.google-analytics.com/analytics.js';
+                        // document.head.appendChild(script);   
                         
                         // register google tag manager
                         const script2 = document.createElement('script');
