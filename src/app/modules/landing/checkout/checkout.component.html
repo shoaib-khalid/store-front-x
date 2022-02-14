@@ -351,7 +351,7 @@
                                                 <img
                                                     class="w-32"
                                                     [alt]="'Product thumbnail image of ' + cartItem.productName"
-                                                    [src]="cartItem.productInventory.product.thumbnailUrl ? cartItem.productInventory.product.thumbnailUrl : store.storeAsset.logoUrl">
+                                                    [src]="cartItem.productAsset ? cartItem.productAsset.url : cartItem.productInventory.product.thumbnailUrl ? cartItem.productInventory.product.thumbnailUrl : store.storeAsset.logoUrl">
                                                 <div
                                                     class="flex items-center justify-center w-full h-full text-xs font-semibold leading-none text-center uppercase">
                                                 </div>
@@ -459,7 +459,7 @@
                                                             matSuffix
                                                             class="w-1/3 max-h-10"
                                                             *ngIf="selectedDeliveryProvider && selectedDeliveryProvider.providerImage"
-                                                            [alt]="'Product thumbnail image'"
+                                                            [alt]="'Delivery provider image'"
                                                             [src]="selectedDeliveryProvider.providerImage">
                                                     </span>
                                                 </mat-select-trigger>
@@ -472,7 +472,7 @@
                                                                     matSuffix
                                                                     class="w-1/3 max-h-10"
                                                                     *ngIf="deliveryProvider.providerImage"
-                                                                    [alt]="'Product thumbnail image'"
+                                                                    [alt]="'Delivery provider image'"
                                                                     [src]="deliveryProvider.providerImage">
                                                             </div>
                                                         </mat-option>

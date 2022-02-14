@@ -26,6 +26,14 @@ export interface CartItem
     discountCalculationValue?: null,
     cartSubItem?: [];
     productInventory?: ProductInventory;
+    productAsset?: {
+        id: string;
+        isThumbnail: boolean;
+        itemCode: string;
+        name: string;
+        productId: string;
+        url: string;
+    }
     SKU?: string;
 }
 
