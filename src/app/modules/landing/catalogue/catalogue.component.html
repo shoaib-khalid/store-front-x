@@ -202,7 +202,7 @@
                             <ng-container *ngFor="let product of products">
                                 <!-- Product -->
                                 <div class="flex flex-col h-120 shadow-lg border hover:border-2 rounded-lg overflow-hidden cursor-pointer"
-                                    [ngClass]="isProductOutOfStock(product.productInventories) ? 'bg-card hover:border-primary' : 'bg-gray-200 hover:border-gray-600'"
+                                    [ngClass]="isProductOutOfStock(product) ? 'bg-card hover:border-primary' : 'bg-gray-200 hover:border-gray-600'"
                                     [routerLink]="['/catalogue/' + '/' + catalogueSlug + '/' + product.seoName]"
                                 >
                                     <!-- Product Header -->
@@ -230,7 +230,7 @@
                                                 </div> -->
                                             </div>
                                         </ng-container>
-                                        <ng-container *ngIf="isProductOutOfStock(product.productInventories) === false">
+                                        <ng-container *ngIf="isProductOutOfStock(product) === false">
                                             <div class="absolute w-full h-full bg-black opacity-70 top-0 bottom-0 left-0 right-0 flex items-center justify-center">
                                                 <p class="font-semibold text-white text-2xl">Out of Stock</p>
                                             </div>
@@ -299,7 +299,7 @@
                         <div *ngIf="productViewOrientation === 'list'" class="w-full mb-8 sm:mb-10">
                             <ng-container *ngFor="let product of products">
                                 <div class="flex flex-wrap flex-row h-40 sm:h-48 w-full bg-card shadow border hover:border-2 hover:border-primary rounded-lg justify-between items-center mb-4 cursor-pointer"
-                                    [ngClass]="isProductOutOfStock(product.productInventories) ? 'bg-card hover:border-primary' : 'bg-gray-200 hover:border-gray-600'"
+                                    [ngClass]="isProductOutOfStock(product) ? 'bg-card hover:border-primary' : 'bg-gray-200 hover:border-gray-600'"
                                     [routerLink]="['/product/' + product.seoName]"
                                 >
                                     <!-- Image Thumbnail -->
@@ -328,7 +328,7 @@
                                             </div>
                                         </ng-container>
 
-                                        <ng-container *ngIf="isProductOutOfStock(product.productInventories) === false">
+                                        <ng-container *ngIf="isProductOutOfStock(product) === false">
                                             <div class="absolute rounded-l-lg w-full h-full bg-black opacity-70 top-0 bottom-0 left-0 right-0 flex items-center justify-center">
                                                 <p class="font-semibold text-white text-2xl">Out of Stock</p>
                                             </div>

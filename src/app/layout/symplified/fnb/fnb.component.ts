@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { StoresService } from 'app/core/store/store.service';
-import { Store, StoreSnooze, StoreTiming } from 'app/core/store/store.types';
+import { Store, StoreAssets, StoreSnooze, StoreTiming } from 'app/core/store/store.types';
 import { Subject, Subscription } from 'rxjs';
 import { environment } from 'environments/environment';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
@@ -355,5 +355,14 @@ export class FnbLayoutComponent implements OnDestroy
 
     closeNotification(){
         this.notificationMessage = null;
+    }
+
+    displayStoreLogo(storeAssets: StoreAssets[]) {
+        let storeAssetsIndex = storeAssets.findIndex(item => item.assetType === 'LogoUrl');
+        if (storeAssetsIndex > -1) {
+            return storeAssets[storeAssetsIndex].assetUrl;
+        } else {
+            return 'assets/branding/symplified/logo/symplified.png'
+        }
     }
 }

@@ -390,19 +390,23 @@ export class LandingCatalogueComponent implements OnInit
         this._changeDetectorRef.markForCheck();
     }
 
-    isProductOutOfStock(productInventories: ProductInventory[]): boolean
+    isProductOutOfStock(product: Product): boolean
     {
-        if (productInventories.length > 0) {
-            let productInventoryQuantities = productInventories.map(item => item.quantity);
-            let totalProductInventoryQuantity = productInventoryQuantities.reduce((partialSum, a) => partialSum + a, 0);
-
-            if (totalProductInventoryQuantity > 0) {
-                return true;
+        if (product.allowOutOfStockPurchases === true) {
+            return true;
+        } else {
+            if (product.productInventories.length > 0) {
+                let productInventoryQuantities = product.productInventories.map(item => item.quantity);
+                let totalProductInventoryQuantity = productInventoryQuantities.reduce((partialSum, a) => partialSum + a, 0);
+    
+                if (totalProductInventoryQuantity > 0) {
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
                 return false;
             }
-        } else {
-            return false;
         }
     }
 
