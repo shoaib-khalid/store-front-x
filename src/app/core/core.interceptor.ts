@@ -57,6 +57,11 @@ export class CoreInterceptor implements HttpInterceptor
                     });
                 }
 
+                if ( error instanceof HttpErrorResponse && error.status === 0){
+                    // Reload the app
+                    location.reload();
+                }
+
                 return throwError(error);
             })
         );
