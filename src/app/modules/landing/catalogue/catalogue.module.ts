@@ -28,7 +28,7 @@ import { PaginationModule } from 'app/layout/common/pagination/pagination.module
         MatPaginatorModule,
         MatMenuModule,
         PaginationModule,
-        SharedModule
+        SharedModule,
     ]
 })
 export class LandingCatalogueModule
