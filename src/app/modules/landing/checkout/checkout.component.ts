@@ -90,6 +90,8 @@ export class LandingCheckoutComponent implements OnInit
     isLoading: boolean = false;
     isCalculating: boolean = false;
 
+    allowsStorePickup: boolean = false;
+
     /**
      * Constructor
      */
@@ -228,6 +230,15 @@ export class LandingCheckoutComponent implements OnInit
                     // Mark for check
                     this._changeDetectorRef.markForCheck();
                 });
+
+                // ---------------------------
+                // Get Store Delivery Details
+                // ---------------------------
+
+                this._storesService.getStoreDeliveryDetails(this.store.id)
+                    .subscribe(response => {
+                        this.allowsStorePickup = response.allowsStorePickup;
+                    });
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();

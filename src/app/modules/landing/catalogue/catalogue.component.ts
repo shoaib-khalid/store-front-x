@@ -54,7 +54,7 @@ export class LandingCatalogueComponent implements OnInit
     // @ViewChild(MatSort) private _sort: MatSort;
 
     pagination: ProductPagination;
-    products: Product[];
+    products: Product[] = [];
     productName: string = null;
 
     // product
@@ -143,8 +143,8 @@ export class LandingCatalogueComponent implements OnInit
                 
                 let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === this.catalogueSlug);
                 this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
-                
-                this._productsService.getProducts(0, 10, "name", "asc", "", 'ACTIVE', this.storeCategory ? this.storeCategory.id : '')
+                                
+                this._productsService.getProducts(0, 12, "name", "asc", "", 'ACTIVE', this.storeCategory ? this.storeCategory.id : '')
                     .subscribe();
 
                 // Mark for check
@@ -193,7 +193,9 @@ export class LandingCatalogueComponent implements OnInit
                     
                     this.isLoading = true;
                     
-                    return this._productsService.getProducts(0, 10, this.sortName, this.sortOrder, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '');
+                    if (this.products.length > 0) {
+                        return this._productsService.getProducts(0, 12, this.sortName, this.sortOrder, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '');
+                    }
                 }),
                 map(() => {
                     this.isLoading = false;
@@ -229,8 +231,8 @@ export class LandingCatalogueComponent implements OnInit
                     }
                     
                     this.isLoading = true;
-                    
-                    return this._productsService.getProducts(0, 10, this.sortName, this.sortOrder, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '');
+                                        
+                    return this._productsService.getProducts(0, 12, this.sortName, this.sortOrder, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '');
                 }),
                 map(() => {
                     this.isLoading = false;
@@ -306,10 +308,11 @@ export class LandingCatalogueComponent implements OnInit
                 merge(this._paginator.page).pipe(
                     switchMap(() => {
                         this.isLoading = true;
-                        if (this.productName != null)
+                        if (this.productName != null) {
                             return this._productsService.getProducts(this._paginator.pageIndex, this._paginator.pageSize, "name", "asc", this.productName, 'ACTIVE');
-                        else    
+                        } else {                            
                             return this._productsService.getProducts(this._paginator.pageIndex, this._paginator.pageSize, "name", "asc", '', 'ACTIVE');
+                        }    
 
                     }),
                     map(() => {
@@ -360,7 +363,7 @@ export class LandingCatalogueComponent implements OnInit
             return;
         }
 
-        // this._productsService.getProducts(0, 10, "name", "asc", "", 'ACTIVE', this.storeCategory ? this.storeCategory.id : '')
+        // this._productsService.getProducts(0, 12, "name", "asc", "", 'ACTIVE', this.storeCategory ? this.storeCategory.id : '')
         //     .subscribe();
 
         let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === event.source.value);
@@ -383,9 +386,11 @@ export class LandingCatalogueComponent implements OnInit
         
         // update current page of items
         this.pageOfItems = pageOfItems;
-
-        this._productsService.getProducts(this.pageOfItems['currentPage'] - 1, this.pageOfItems['pageSize'], this.sortName, this.sortOrder, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '')
-            .subscribe();
+        
+        if (this.pageOfItems['currentPage'] - 1 !== this.pagination.page) {            
+            this._productsService.getProducts(this.pageOfItems['currentPage'] - 1, this.pageOfItems['pageSize'], this.sortName, this.sortOrder, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '')
+                .subscribe();
+        }
         // Mark for check
         this._changeDetectorRef.markForCheck();
     }
