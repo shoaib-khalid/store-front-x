@@ -95,13 +95,17 @@ export class StoreResolver implements Resolve<any>
         //     this.url.domain = sanatiseUrl.split('.')[0] + ".symplified.ai"
         // } else {
             this.url.domain = sanatiseUrl;
-            this.url.domainName = sanatiseUrl.split('.').at(-1); 
+
+            let domainNameArr = sanatiseUrl.split('.');
+            domainNameArr.shift();
+
+            this.url.domainName = domainNameArr.join("."); 
             this.url.subDomainName = sanatiseUrl.split('.')[0];
             
             // hardcord localhost to cinema-online (for now)
             if (this.url.subDomainName.indexOf("localhost") > -1) {
                 this.url.domain = "cinema-online.symplified.ai"
-            } else if (this.url.domain.split('.').at(-1) === "test") {
+            } else if (this.url.domain.split('.').slice(-1)[0] === "test") {
                 // check for local development
                 this.url.domain = this.url.domain.split('.')[0] + ".deliverin.my";
             }
