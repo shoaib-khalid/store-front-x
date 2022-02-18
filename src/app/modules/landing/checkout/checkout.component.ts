@@ -780,9 +780,9 @@ export class LandingCheckoutComponent implements OnInit
 
                                             if(todayDate >= nextOpenTime){
                                                 let nextOpen = (iteration === 0) ? ("tommorow at " + object.openTime) : ("on " + object.day + " " + object.openTime);
-                                                // console.info("We will be open " + nextOpen);
-                                                this.notificationMessage = "Sorry for the inconvenience, We are closed! We will be open " + nextOpen;
-                                                nextStoreOpeningTime = "Store will be open " + nextOpen;
+                                                // console.info("We will open " + nextOpen);
+                                                this.notificationMessage = "Sorry for the inconvenience, We are closed! We will open " + nextOpen;
+                                                nextStoreOpeningTime = "Store will open " + nextOpen;
                                                 array.length = iteration + 1;
                                             }
                                         } else {
@@ -791,7 +791,7 @@ export class LandingCheckoutComponent implements OnInit
                                     });
 
                                 } else {
-                                    nextStoreOpeningTime = "Store will be open at " + this._datePipe.transform(storeSnooze.snoozeEndTime,'EEEE, h:mm a');
+                                    nextStoreOpeningTime = "Store will open at " + this._datePipe.transform(storeSnooze.snoozeEndTime,'EEEE, h:mm a');
                                 }                                
 
                                 if (storeSnooze.snoozeReason && storeSnooze.snoozeReason !== null) {
@@ -812,13 +812,13 @@ export class LandingCheckoutComponent implements OnInit
                                 breakEndTime.setHours(Number(item.breakEndTime.split(":")[0]), Number(item.breakEndTime.split(":")[1]), 0);
 
                                 if(todayDate >= breakStartTime && todayDate < breakEndTime ) {
-                                    // console.info("We are on BREAK! We will be open at " + item.breakEndTime);
-                                    this.notificationMessage = "Sorry for the inconvenience, We are on break! We will be open at " + item.breakEndTime;
+                                    // console.info("We are on BREAK! We will open at " + item.breakEndTime);
+                                    this.notificationMessage = "Sorry for the inconvenience, We are on break! We will open at " + item.breakEndTime;
                                 }
                             }
                         } else if (todayDate < openTime) {
                             // this mean it's open today but it's before store opening hour (store not open yet)
-                            this.notificationMessage = "Sorry for the inconvenience, We are closed! We will be open at " + item.openTime;
+                            this.notificationMessage = "Sorry for the inconvenience, We are closed! We will open at " + item.openTime;
                         } else {
 
                             // console.info("We are CLOSED for the day!");
@@ -842,8 +842,8 @@ export class LandingCheckoutComponent implements OnInit
 
                                     if(todayDate >= nextOpenTime){
                                         let nextOpen = (iteration === 0) ? ("tommorow at " + object.openTime) : ("on " + object.day + " " + object.openTime);
-                                        // console.info("We will be open " + nextOpen);
-                                        this.notificationMessage = "Sorry for the inconvenience, We are closed! We will be open " + nextOpen;
+                                        // console.info("We will open " + nextOpen);
+                                        this.notificationMessage = "Sorry for the inconvenience, We are closed! We will open " + nextOpen;
                                         array.length = iteration + 1;
                                     }
                                 } else {
@@ -876,8 +876,8 @@ export class LandingCheckoutComponent implements OnInit
                                   
                                 if(todayDate >= nextOpenTime){
                                     let nextOpen = (iteration === 0) ? ("tommorow at " + object.openTime) : ("on " + object.day + " " + object.openTime);
-                                    // console.info("We will be open " + nextOpen);
-                                    this.notificationMessage = "Sorry for the inconvenience, We are closed! We will be open " + nextOpen;
+                                    // console.info("We will open " + nextOpen);
+                                    this.notificationMessage = "Sorry for the inconvenience, We are closed! We will open " + nextOpen;
                                     array.length = iteration + 1;
                                 }
                             } else {

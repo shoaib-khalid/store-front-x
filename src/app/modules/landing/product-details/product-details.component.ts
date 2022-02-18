@@ -20,6 +20,10 @@ import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from 'ngx-gal
           -webkit-appearance: none;
           margin: 0;
         }
+
+        input[type='number'] {
+            -moz-appearance:textfield;
+        }
       
         .custom-number-input input:focus {
           outline: none !important;
