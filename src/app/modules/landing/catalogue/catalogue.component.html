@@ -240,8 +240,13 @@
                                         <!-- Product Footer -->
                                         <div class="flex flex-col px-4 mb-4 h-60 w-full">
                                             <div class="mt-4 text-xl font-bold font-medium">{{product.name}}</div>
-                                            <div class="mt-2 mb-4 h-40 text-ellipsis overflow-hidden">
-                                                <span class="text-gray-500" [innerHtml]="product.description"></span>
+                                            <div class="relative h-40">
+                                                <div 
+                                                    class="mt-2 mb-4 text-ellipsis overflow-hidden"
+                                                    [ngClass]="displaySeeMore(product.description) ? 'h-26' : 'h-auto'">
+                                                    <span class="text-gray-500" [innerHtml]="product.description"></span>
+                                                </div>
+                                                <span class="absolute text-gray-500 bottom-0 left-0" [ngClass]="displaySeeMore(product.description) ? 'block' : 'hidden'">...more</span>
                                             </div>
                                             <!-- <div class="text-sm font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</div> -->
                                             <div *ngIf="product.productInventories.length > 0 && product.productInventories[0].itemDiscount;else noItemDiscountGrid">

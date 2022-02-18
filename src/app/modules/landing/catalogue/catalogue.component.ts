@@ -143,9 +143,15 @@ export class LandingCatalogueComponent implements OnInit
                 
                 let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === this.catalogueSlug);
                 this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
-                                
+
+                // set loading to true
+                this.isLoading = true;
+
                 this._productsService.getProducts(0, 12, "name", "asc", "", 'ACTIVE', this.storeCategory ? this.storeCategory.id : '')
-                    .subscribe();
+                    .subscribe(()=>{
+                        // set loading to false
+                        this.isLoading = false;
+                    });
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
@@ -191,6 +197,7 @@ export class LandingCatalogueComponent implements OnInit
 
                     this.searchName = query;
                     
+                    // set loading to true
                     this.isLoading = true;
                     
                     if (this.products.length > 0) {
@@ -198,6 +205,7 @@ export class LandingCatalogueComponent implements OnInit
                     }
                 }),
                 map(() => {
+                    // set loading to false
                     this.isLoading = false;
                 })
             )
@@ -230,11 +238,13 @@ export class LandingCatalogueComponent implements OnInit
                         this.sortOrder = "desc";
                     }
                     
+                    // set loading to true
                     this.isLoading = true;
                                         
                     return this._productsService.getProducts(0, 12, this.sortName, this.sortOrder, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '');
                 }),
                 map(() => {
+                    // set loading to false
                     this.isLoading = false;
                 })
             ).subscribe();
@@ -307,6 +317,7 @@ export class LandingCatalogueComponent implements OnInit
                 // ).subscribe();
                 merge(this._paginator.page).pipe(
                     switchMap(() => {
+                        // set loading to true
                         this.isLoading = true;
                         if (this.productName != null) {
                             return this._productsService.getProducts(this._paginator.pageIndex, this._paginator.pageSize, "name", "asc", this.productName, 'ACTIVE');
@@ -316,6 +327,7 @@ export class LandingCatalogueComponent implements OnInit
 
                     }),
                     map(() => {
+                        // set loading to false
                         this.isLoading = false;
                     })
                 ).subscribe();
@@ -387,9 +399,15 @@ export class LandingCatalogueComponent implements OnInit
         // update current page of items
         this.pageOfItems = pageOfItems;
         
-        if (this.pageOfItems['currentPage'] - 1 !== this.pagination.page) {            
+        if (this.pageOfItems['currentPage'] - 1 !== this.pagination.page) {
+            // set loading to true
+            this.isLoading = true;
+
             this._productsService.getProducts(this.pageOfItems['currentPage'] - 1, this.pageOfItems['pageSize'], this.sortName, this.sortOrder, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '')
-                .subscribe();
+                .subscribe(()=>{
+                    // set loading to false
+                    this.isLoading = false;
+                });
         }
         // Mark for check
         this._changeDetectorRef.markForCheck();
@@ -418,5 +436,28 @@ export class LandingCatalogueComponent implements OnInit
     viewProduct(productSeo: string)
     {
         this._router.navigate(['catalogue/' + productSeo]);
+    }
+
+    /**
+     * 
+     * This function will return display see more based on height of 
+     * div container
+     * 
+     * @param productDescription 
+     * @returns 
+     */
+    displaySeeMore(productDescription){
+
+        var div = document.createElement("div")
+        // div.setAttribute("class","newDiv")
+        div.innerHTML = productDescription
+        div.style.width ="15rem";
+        document.body.appendChild(div)
+
+        if (div.offsetHeight > 130) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
