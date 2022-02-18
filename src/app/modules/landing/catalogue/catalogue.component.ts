@@ -449,14 +449,15 @@ export class LandingCatalogueComponent implements OnInit
     displaySeeMore(productDescription){
 
         var div = document.createElement("div")
-        // div.setAttribute("class","newDiv")
         div.innerHTML = productDescription
         div.style.width ="15rem";
         document.body.appendChild(div)
 
         if (div.offsetHeight > 130) {
+            div.setAttribute("class","hidden")
             return true;
         } else {
+            div.setAttribute("class","hidden")
             return false;
         }
     }
