@@ -4,6 +4,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { CartService } from 'app/core/cart/cart.service';
 
 @Injectable()
 export class CoreInterceptor implements HttpInterceptor
@@ -13,6 +14,7 @@ export class CoreInterceptor implements HttpInterceptor
      */
     constructor(
         private _fuseConfirmationService: FuseConfirmationService,
+        private _cartService: CartService
     )
     {
     }
@@ -55,6 +57,14 @@ export class CoreInterceptor implements HttpInterceptor
                             },
                         }
                     });
+                }
+
+                // This function is to remove cartId from local storage is got error 404 from backend cart item
+                let regex = new RegExp('carts\/(.*)\/items')
+                if ( error instanceof HttpErrorResponse && error.status === 404 && newReq.url.match(regex)) {
+                    this._cartService.cartId = '';
+                    // Reload the app
+                    location.reload();
                 }
 
                 if ( error instanceof HttpErrorResponse && error.status === 0){
