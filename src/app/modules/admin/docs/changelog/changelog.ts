@@ -9,6 +9,21 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v0.0.22
+        {
+            version    : 'v0.0.22',
+            releaseDate: 'Feb 18, 2022',
+            changes    : [
+                {
+                    type: 'Fix',
+                    list: [
+                        '(LandingCataloguePage) Fix description cut off',
+                        '(LandingCheckoutPage) Disable opening from SF store timings if store have no opening',
+                        '(LandingCataloguePage) Fix item image flickers'
+                    ]
+                }
+            ]
+        },
         // v0.0.21
         {
             version    : 'v0.0.21',
