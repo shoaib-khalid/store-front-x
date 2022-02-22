@@ -15,8 +15,8 @@
                     matRipple>
                     <div class="relative w-52 h-32 my-1.5 mx-3 rounded-lg border-2 border-black group-hover:border-primary">
                         <img
-                            class="object-fill rounded-lg"
-                            [src]="(category.thumbnailUrl && category.thumbnailUrl !== null) ? category.thumbnailUrl : store.storeAsset.logoUrl"
+                            class="object-fill h-max-52 w-max-32 rounded-lg"
+                            [src]="(category.thumbnailUrl && category.thumbnailUrl !== null) ? category.thumbnailUrl : displayStoreLogo(store.storeAssets)"
                             alt="Logo image">
                         <div class="rounded border-2 border-black group-hover:border-primary absolute top-0.5 bottom-0.5 left-0.5 right-0.5"></div>
                     </div>

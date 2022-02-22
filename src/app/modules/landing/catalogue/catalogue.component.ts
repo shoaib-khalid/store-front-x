@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } fr
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { ProductsService } from 'app/core/product/product.service';
 import { StoresService } from 'app/core/store/store.service';
-import { Store, StoreCategory } from 'app/core/store/store.types';
+import { Store, StoreAssets, StoreCategory } from 'app/core/store/store.types';
 import { Product, ProductInventory, ProductPagination } from 'app/core/product/product.types';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -459,6 +459,15 @@ export class LandingCatalogueComponent implements OnInit
         } else {
             div.setAttribute("class","hidden")
             return false;
+        }
+    }
+
+    displayStoreLogo(storeAssets: StoreAssets[]) {
+        let storeAssetsIndex = storeAssets.findIndex(item => item.assetType === 'LogoUrl');
+        if (storeAssetsIndex > -1) {
+            return storeAssets[storeAssetsIndex].assetUrl;
+        } else {
+            return 'assets/branding/symplified/logo/symplified.png'
         }
     }
 }
