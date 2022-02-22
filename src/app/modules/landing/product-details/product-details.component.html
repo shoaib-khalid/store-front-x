@@ -41,7 +41,7 @@
                             </ng-template>
                             <!-- Details -->
                             <div class="mb-2">
-                                <p class="font-semibold">Details:</p> <span class="text-sm font-normal" [innerHTML]="product.description"></span>
+                                <p class="mb-2 font-semibold">Details:</p> <span class="text-sm font-normal" [innerHTML]="product.description"></span>
                             </div>
                             <!-- Variants / Combo -->
                             <ng-container *ngIf="!product.isPackage; else comboProduct">
@@ -51,7 +51,7 @@
                                     *ngFor="let variant of product.productVariants; let i = index;"
                                     class="py-1">
                                     <label class="font-semibold" for="{{variant.name}}">{{variant.name | titlecase }} : </label>
-                                    <ul class="grid grid-cols-2">
+                                    <ul class="grid grid-cols-2 my-2">
                                         <li *ngFor="let option of variant.productVariantsAvailable; let i = index;" class="flex items-center">
                                             <input type="radio" 
                                                 id="{{variant.name + i}}" 
@@ -106,7 +106,7 @@
                             <!-- Special Instruction -->
                             <div class="w-full mt-2">
                                 <span class="font-semibold">Special Instruction:</span> 
-                                <mat-form-field class="fuse-mat-textarea w-full" floatLabel="always">
+                                <mat-form-field class="mt-2 fuse-mat-textarea w-full" floatLabel="always">
                                     <textarea
                                         matInput
                                         [(ngModel)]="specialInstruction"
@@ -115,6 +115,11 @@
                                         [rows]="5"
                                         matTextareaAutosize></textarea>
                                 </mat-form-field>
+                            </div>
+
+                            <div class="flex flex-row w-full justify-between mb-6">
+                                <p class="font-semibold">Sub Total:</p> 
+                                <span class="font-semibold text-2xl">{{displayedProduct.SubTotal | currency: store.regionCountry.currencySymbol}}</span>
                             </div>
     
                             <!-- Add to cart / checkoout -->
@@ -127,7 +132,7 @@
                                     (click)="addToCart()"
                                     mat-button>
                                 <label 
-                                    class="flex items-center justify-center h-10 px-2 border rounded border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
+                                    class="flex items-center justify-center w-5/12 sm:w-2/5 h-10 px-2 border rounded-lg border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
                                     for="add-to-cart-button"
                                     matRipple>
                                     <span class="text-sm font-semibold text-black">Add to Cart</span>
@@ -144,7 +149,7 @@
                                     [routerLink]="['/checkout']"
                                     mat-button>
                                 <label 
-                                    class="flex items-center justify-center h-10 px-2 border rounded border-green-300 bg-green-500 hover:border-green-500 cursor-pointer"
+                                    class="flex items-center justify-center w-5/12 sm:w-2/5 h-10 px-2 border rounded-lg border-green-300 bg-green-500 hover:border-green-500 cursor-pointer"
                                     for="go-checkout-button"
                                     matRipple>
                                     <span class="text-sm font-semibold text-black">Checkout</span>

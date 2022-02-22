@@ -65,6 +65,7 @@ export class LandingProductDetailsComponent implements OnInit
         sku: null,
         discountAmount:0,
         discountedPrice:0,
+        SubTotal:0
     }
 
     categorySlug: string;

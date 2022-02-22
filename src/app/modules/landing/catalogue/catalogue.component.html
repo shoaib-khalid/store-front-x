@@ -1,10 +1,73 @@
 <div class="relative flex flex-col items-center w-full h-full">
     <!-- Main menu -->
     <div class="flex flex-col items-center w-full h-auto my-5 px-5">
+        <!-- Search For xs view Mobile -->
+        <div class="sm:hidden w-full">
+            <mat-form-field class="w-full fuse-mat-emphasized-affix min-w-64">
+                <input
+                    matInput
+                    [formControl]="searchInputControl"
+                    [autocomplete]="'off'"
+                    [placeholder]="'Search products'">
+                <mat-icon
+                class="icon-size-4 text-primary"
+                matSuffix
+                [svgIcon]="'search'"></mat-icon>
+            </mat-form-field>
+        </div>
+        <!-- categories for xs view mobile -->
+        <div class="sm:hidden w-full pb-4 truncate ">
+            <div class="flex flex-nowrap overflow-x-scroll">
+                <div class="flex flex-wrap w-full items-center">
+                    <button
+                        class="text-black font-bold"
+                        [routerLink]="['/catalogue/' + 'all-products']"
+                        value="all-products"
+                        mat-flat-button
+                        [color]="'primary'">
+                        <span class="ml-2 mr-1">All Products</span>
+                    </button>
+                </div>
+                <div *ngFor="let category of storeCategories" class="justify-around pl-3">
+                    <button
+                        [id]="'categories-btn' + category.id"
+                        class="text-black font-bold"
+                        [routerLink]="['/catalogue/' + getCategorySlug(category.name)]"
+                        [value]="category.slug"
+                        mat-flat-button
+                        [color]="'primary'">
+                        <span class="ml-2 mr-1">{{category.name}}</span>
+                    </button>
+                </div>
+            </div>
+        </div>
         <!-- Sort -->
         <div class="flex flex-row items-center justify-end w-full max-w-280">
             <!-- View orientation -->
-            <div class="flex flex-row">
+            <div class="flex flex-row w-full sm:w-auto">
+
+                <!-- Sort for xs view -->
+                <div class="sm:hidden justify-start w-full py-2">
+                    <mat-select
+                        class="border border-gray-300 w-28 px-2 py-1 rounded text-sm"
+                        placeholder="Sort by name"
+                        [formControl]="sortInputControl"
+                        #sortSelector="matSelect"
+                        >
+                        <mat-select-trigger>
+                            <span class="flex items-center">
+                                <span>{{ sortSelector.triggerValue }}</span>
+                            </span>
+                        </mat-select-trigger>
+                        <ng-container>
+                            <mat-option [value]="'recent'">Most Recent</mat-option>
+                            <mat-option [value]="'cheapest'">Price : Cheapest</mat-option>
+                            <mat-option [value]="'expensive'">Price : Most Expensive</mat-option>
+                            <mat-option [value]="'a-z'">Name : Ascending</mat-option>
+                            <mat-option [value]="'z-a'">Name : Descending</mat-option>
+                        </ng-container>
+                    </mat-select>
+                </div>
 
                 <!-- Grid view -->
                 <input
@@ -31,7 +94,7 @@
                     (click)="productViewOrientation = 'list'"
                     mat-button>
                 <label 
-                    class="flex items-center justify-center h-10 px-1 cursor-pointer mr-2"
+                    class="flex items-center justify-center h-10 px-1 cursor-pointer sm:mr-2"
                     for="list-view-button"
                     matRipple>
                     <mat-icon
@@ -60,17 +123,6 @@
                         <mat-option [value]="'z-a'">Name : Descending</mat-option>
                     </ng-container>
                 </mat-select>
-                <!-- Sort for xs view -->
-                <div class="sm:hidden">
-                    <mat-icon class="h-10 cursor-pointer" [matMenuTriggerFor]="sortMenu" [svgIcon]="'mat_solid:sort'"></mat-icon>
-                    <mat-menu #sortMenu="matMenu">
-                        <mat-option (click)="sortInputControl.setValue('recent')">Most Recent</mat-option>
-                        <mat-option (click)="sortInputControl.setValue('cheapest')">Price : Cheapest</mat-option>
-                        <mat-option (click)="sortInputControl.setValue('expensive')">Price : Most Expensive</mat-option>
-                        <mat-option (click)="sortInputControl.setValue('asc')">Name : Ascending</mat-option>
-                        <mat-option (click)="sortInputControl.setValue('desc')">Name : Descending</mat-option>
-                    </mat-menu>
-                </div>
             </div>
         </div>
 
@@ -95,7 +147,7 @@
         <!-- Container -->
         <div class="flex flex-col md:flex-row justify-between mt-10 w-full max-w-280">
             <!-- Search & Filter -->
-            <div class="flex flex-col lg:pr-6">
+            <div class="hidden sm:block flex flex-col lg:pr-6">
                 <!-- Search -->
                 <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript min-w-64">
                     <mat-icon
@@ -250,11 +302,11 @@
                                             </div>
                                             <!-- <div class="text-sm font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</div> -->
                                             <div *ngIf="product.productInventories.length > 0 && product.productInventories[0].itemDiscount;else noItemDiscountGrid">
-                                                <p class="font-semibold text-primary text-2xl">{{product.productInventories[0].itemDiscount.discountedPrice | currency: store.regionCountry.currencySymbol}}</p>
+                                                <p class="font-semibold text-black hover:text-primary text-2xl">{{product.productInventories[0].itemDiscount.discountedPrice | currency: store.regionCountry.currencySymbol}}</p>
                                                 <p style="text-decoration: line-through;">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p>
                                             </div>
                                             <ng-template #noItemDiscountGrid>
-                                                <p class="font-semibold text-primary text-2xl">{{ (product.productInventories.length > 0 ? product.productInventories[0].price : 0) | currency: store.regionCountry.currencySymbol}}</p>
+                                                <p class="font-semibold text-black hover:text-primary text-2xl">{{ (product.productInventories.length > 0 ? product.productInventories[0].price : 0) | currency: store.regionCountry.currencySymbol}}</p>
                                             </ng-template>
                                             <!-- Input Quantity -->
                                             <!-- <div class="mt-4">
@@ -349,11 +401,11 @@
                                                 </div>
                                                 <!-- <p class="font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p> -->
                                                 <div *ngIf="product.productInventories.length > 0 && product.productInventories[0].itemDiscount;else noItemDiscountList">
-                                                    <p class="font-semibold text-primary text-2xl">{{product.productInventories[0].itemDiscount.discountedPrice | currency: store.regionCountry.currencySymbol}}</p>
+                                                    <p class="font-semibold text-black hover:text-primary text-2xl">{{product.productInventories[0].itemDiscount.discountedPrice | currency: store.regionCountry.currencySymbol}}</p>
                                                     <p style="text-decoration: line-through;">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p>
                                                 </div>
                                                 <ng-template #noItemDiscountList>
-                                                    <p class="font-semibold text-primary text-2xl">{{ (product.productInventories.length > 0 ? product.productInventories[0].price : 0) | currency: store.regionCountry.currencySymbol}}</p>
+                                                    <p class="font-semibold text-black hover:text-primary text-2xl">{{ (product.productInventories.length > 0 ? product.productInventories[0].price : 0) | currency: store.regionCountry.currencySymbol}}</p>
                                                 </ng-template>
                                             </div>
                                         </div>
