@@ -208,7 +208,7 @@
                                     >
                                         <!-- Product Header -->
                                         <div class="relative flex flex-col p-2 h-60 bg-black bg-no-repeat bg-cover bg-center" 
-                                            [style]="product.thumbnailUrl ? 'background-image: url(\'' + product.thumbnailUrl + '\');' : 'background-image: url(\'' + store.storeAsset.logoUrl + '\');' + 'background-size: cover;'"
+                                            [style]="product.thumbnailUrl ? 'background-image: url(\'' + product.thumbnailUrl + '\');' : 'background-image: url(\'' + displayStoreLogo(store.storeAssets) + '\');' + 'background-size: cover;'"
                                         >
                                             <ng-container *ngIf="product.productInventories.length > 0">
                                                 <div *ngIf="product.productInventories[0].itemDiscount" class="flex items-center justify-start">
@@ -310,7 +310,7 @@
                                     >
                                         <!-- Image Thumbnail -->
                                         <div class="relative h-full w-2/5 sm:w-2/6 max-w-52 rounded-l-lg p-2 bg-black bg-no-repeat bg-cover bg-center" 
-                                            [style]="product.thumbnailUrl ? 'background-image: url(\'' + product.thumbnailUrl + '\');' : 'background-image: url(\'' + store.storeAsset.logoUrl + '\');' + 'background-size: cover;'"
+                                            [style]="product.thumbnailUrl ? 'background-image: url(\'' + product.thumbnailUrl + '\');' : 'background-image: url(\'' + displayStoreLogo(store.storeAssets) + '\');' + 'background-size: cover;'"
                                         >
                                             <ng-container *ngIf="product.productInventories.length > 0">
                                                 <div *ngIf="product.productInventories[0].itemDiscount" class="flex items-center justify-between">

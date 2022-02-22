@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { StoresService } from 'app/core/store/store.service';
-import { Store, StoreCategory } from 'app/core/store/store.types';
+import { Store, StoreAssets, StoreCategory } from 'app/core/store/store.types';
 import { HostListener } from "@angular/core";
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { takeUntil } from 'rxjs/operators';
@@ -108,8 +108,7 @@ export class CategoryCarouselComponent
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
-            });   
-
+            });
     }
 
     /**
@@ -157,4 +156,13 @@ export class CategoryCarouselComponent
     //     // Mark for check
     //     this._changeDetectorRef.markForCheck();
     // }
+
+    displayStoreLogo(storeAssets: StoreAssets[]) {
+        let storeAssetsIndex = storeAssets.findIndex(item => item.assetType === 'LogoUrl');
+        if (storeAssetsIndex > -1) {
+            return storeAssets[storeAssetsIndex].assetUrl;
+        } else {
+            return 'assets/branding/symplified/logo/symplified.png'
+        }
+    }
 }
