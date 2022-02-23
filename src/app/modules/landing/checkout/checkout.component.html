@@ -15,9 +15,9 @@
                     <!-- Checkout form section -->
                     <div class="flex flex-col order-2 md:order-1 w-full mt-8 md:mt-0">
                         <!-- Store Pickup -->
-                        <div class="flex flex-col sm:flex-row justify-between items-center w-full">
-                            <h1 class="text-2xl font-bold">Contact Information</h1>
-                            <div *ngIf="allowsStorePickup" class="flex flex-row">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center w-full">
+                            <h1 class="text-2xl font-bold pb-2 sm:pb-0">Contact Information</h1>
+                            <div *ngIf="allowsStorePickup" class="flex flex-row w-full sm:w-auto justify-between">
                                 <p class="mr-4">I want to pick my order from store</p>
                                 <mat-slide-toggle
                                     [color]="'primary'"
@@ -105,7 +105,7 @@
                                         matInput
                                         (change)="checkCustomerInfo('phoneNumber', this.checkoutForm.get('phoneNumber').value)"
                                         [formControlName]="'phoneNumber'"
-                                        placeholder="Enter phone number"
+                                        placeholder="+60 12 345 6789"
                                         autocomplete="disabled"
                                         [required]="true"
                                         >
@@ -189,7 +189,7 @@
                                         matInput
                                         (change)="checkCustomerInfo('phoneNumber', this.checkoutForm.get('phoneNumber').value)"
                                         [formControlName]="'phoneNumber'"
-                                        placeholder="Enter phone number"
+                                        placeholder="+60 12 345 6789"
                                         autocomplete="disabled"
                                         [required]="true"
                                         >
@@ -229,7 +229,7 @@
                                     <input
                                         matInput
                                         [formControlName]="'postCode'"
-                                        placeholder="Enter postcode"
+                                        placeholder="XXXXXX"
                                         autocomplete="disabled"
                                         (input)="addressFormChanges()"
                                         (change)="addressFormChanges()"
@@ -262,7 +262,7 @@
                                 <input
                                     matInput
                                     [formControlName]="'address'"
-                                    placeholder="Enter address"
+                                    placeholder="House Number or Apartment No"
                                     autocomplete="disabled"
                                     (change)="addressFormChanges()"
                                     [required]="true">
@@ -270,8 +270,22 @@
                                     Required
                                 </mat-error>
                             </mat-form-field>
-    
-                            <mat-form-field *ngIf="checkoutForm.get('storePickup').value"
+                            
+                            <div class="mb-2" *ngIf="checkoutForm.get('storePickup').value">
+                                <mat-label class="font-medium text-gray-600">Store Address</mat-label>
+                                <fieldset [ngClass]="'bg-gray-100 text-gray-500'" class="flex flex-row mt-1 border border-solid border-gray-300 rounded-lg px-4 py-4">
+                                    <div class="w-1/2">
+                                        <span class="text-gray-500">{{store.address}} {{store.city}} {{store.postcode}} {{store.regionCountryStateId}} {{store.regionCountry.name}}</span>
+                                    </div>
+                                    <div class="flex flex-col w-1/2">
+                                        <span class="text-gray-500">Contact Us</span>
+                                        <span class="text-gray-500">Email: {{store.email}}</span>
+                                        <span class="text-gray-500">Phone no: {{store.phoneNumber}}</span>
+                                    </div>
+                                </fieldset>
+                            </div>
+
+                            <!-- <mat-form-field *ngIf="checkoutForm.get('storePickup').value"
                                 class="w-full" 
                                 floatLabel="always"
                             >
@@ -290,13 +304,13 @@
                                     matTextareaAutosize 
                                     readonly
                                     matInput></textarea>
-                            </mat-form-field>
+                            </mat-form-field> -->
                         </div>
                         <!-- Additional info & save future order -->
                         <div class="w-full">
                             <!-- Additional info -->
-                            <mat-label class="font-light">Additional Information</mat-label>
-                            <mat-form-field class="w-full" floatLabel="always">
+                            <mat-label class="text-gray-400 font-medium mb-2">Additional Information</mat-label>
+                            <mat-form-field class="w-full pt-2" floatLabel="always">
                                 <textarea
                                     matInput
                                     [formControlName]="'specialInstruction'"
@@ -313,7 +327,8 @@
                             <!-- Save future order -->
                             <mat-checkbox
                                 [formControlName]="'saveMyInfo'"
-                                class="font-semibold">
+                                color="primary"
+                                class="font-semibold pb-4">
                                 Save my information for future order
                             </mat-checkbox>
                         </div>
@@ -330,7 +345,7 @@
                             </ng-container>
                         </div>
                         <div class="mt-2 mb-4 text-center">
-                            <span>* Your cart item information saved for your future visit</span>
+                            <span class="text-primary">* Your cart item information will be saved for your future visit</span>
                         </div>
                     </div>
                 </ng-template>
