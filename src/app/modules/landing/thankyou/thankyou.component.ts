@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { StoresService } from 'app/core/store/store.service';
-import { Store } from 'app/core/store/store.types';
+import { Store, StoreAssets } from 'app/core/store/store.types';
 
 @Component({
     selector     : 'landing-thankyou',
@@ -37,5 +37,14 @@ export class LandingThankyouComponent
             .subscribe((response: Store) => {
                 this.store = response;
             });
+    }
+
+    displayStoreLogo(storeAssets: StoreAssets[]) {
+        let storeAssetsIndex = storeAssets.findIndex(item => item.assetType === 'LogoUrl');
+        if (storeAssetsIndex > -1) {
+            return storeAssets[storeAssetsIndex].assetUrl;
+        } else {
+            return 'assets/branding/symplified/logo/symplified.png'
+        }
     }
 }
