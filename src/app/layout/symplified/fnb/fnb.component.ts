@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { StoresService } from 'app/core/store/store.service';
-import { Store, StoreAssets, StoreSnooze, StoreTiming } from 'app/core/store/store.types';
+import { Store, StoreAssets, StoreCategory, StoreSnooze, StoreTiming } from 'app/core/store/store.types';
 import { Subject, Subscription } from 'rxjs';
 import { environment } from 'environments/environment';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
@@ -9,6 +9,7 @@ import { CartService } from 'app/core/cart/cart.service';
 import { CartItem } from 'app/core/cart/cart.types';
 import { NotificationService } from 'app/core/notification/notification.service';
 import { DatePipe } from '@angular/common';
+import { ProductsService } from 'app/core/product/product.service';
 
 @Component({
     selector     : 'fnb-layout',
@@ -20,6 +21,10 @@ export class FnbLayoutComponent implements OnDestroy
     public version: string = environment.appVersion;
     
     store: Store;
+    storeCategories: StoreCategory[];
+    storeCategory: StoreCategory;
+
+    catalogueSlug: string;
     
     cartItem: CartItem[];
     cartItemQuantity: number = 0;
@@ -27,7 +32,11 @@ export class FnbLayoutComponent implements OnDestroy
     storeSnooze: StoreSnooze = null;
     
     isHomePage: boolean = true;
-    
+
+    isLoading: boolean = false;
+
+    // isHamburgerMenuOpen: boolean = false;
+
     currentSlider = {
         active  : null,
         previous: null,
@@ -54,7 +63,8 @@ export class FnbLayoutComponent implements OnDestroy
         private _notificationService: NotificationService,
         private _changeDetectorRef: ChangeDetectorRef,
         private _router: Router,
-        private _activatedRoute: ActivatedRoute
+        private _activatedRoute: ActivatedRoute,
+        private _productsService: ProductsService
     )
     {
     }
@@ -128,6 +138,31 @@ export class FnbLayoutComponent implements OnDestroy
             this.isHomePage = this._router.url === "/home" ? true : false;
         });
 
+        // Get the store categories
+        this._storesService.storeCategories$
+            .subscribe((response: StoreCategory[]) => {
+
+                
+                this.storeCategories = response;
+                
+                this.catalogueSlug = this.catalogueSlug ? this.catalogueSlug : this._activatedRoute.snapshot.paramMap.get('catalogue-slug');
+                
+                let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === this.catalogueSlug);
+                this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
+
+                // set loading to true
+                this.isLoading = true;
+                
+                // this._productsService.getProducts(0, 12, "name", "asc", "", 'ACTIVE', this.storeCategory ? this.storeCategory.id : '')
+                //     .subscribe(()=>{
+                //         // set loading to false
+                //         this.isLoading = false;
+                //     });
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
+
         // this._notificationService.notification$
         //     .pipe(takeUntil(this._unsubscribeAll))
         //     .subscribe((response) => {
@@ -153,6 +188,7 @@ export class FnbLayoutComponent implements OnDestroy
         //             }
         //         }
         //     });
+        
     }
 
     /**
@@ -246,7 +282,6 @@ export class FnbLayoutComponent implements OnDestroy
                                 } else {
                                     // this works for safari & google crome
                                     let storeSnoozeEndTime = new Date(storeSnooze.snoozeEndTime.replace(/-/g, "/")).toISOString();
-                                    console.log("storeSnoozeEndTime", storeSnoozeEndTime);
                                     
                                     nextStoreOpeningTime = "Store will open at " + this._datePipe.transform(storeSnoozeEndTime,'EEEE, h:mm a');
                                 }                                
@@ -370,5 +405,9 @@ export class FnbLayoutComponent implements OnDestroy
         } else {
             return 'assets/branding/symplified/logo/symplified.png'
         }
+    }
+
+    getCategorySlug(categoryName: string) {
+        return categoryName.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '');
     }
 }

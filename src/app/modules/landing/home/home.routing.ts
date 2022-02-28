@@ -7,7 +7,7 @@ export const landingHomeRoutes: Route[] = [
         path     : '',
         component: LandingHomeComponent,
         resolve  : {
-            categories: StoreCategoriesResolver,
+            // categories: StoreCategoriesResolver,
             discounts: StoreDiscountsResolver
         }
     },

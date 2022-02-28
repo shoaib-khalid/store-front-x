@@ -108,7 +108,7 @@ export class ProductsResolver implements Resolve<any>
                     }
                 });
         }
-
+        
         return this._storesService.storeId$ ? this._productsService.getProducts(0, 12, 'name', 'asc', '', "ACTIVE" , this.storeCategory ? this.storeCategory.id : '') : of(true);
     }
 }
