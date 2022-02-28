@@ -73,7 +73,6 @@ export class HamburgerMenuComponent implements OnInit, OnDestroy
      */
     ngOnInit(): void
     {
-        console.log("mm",this.storeCategories);
         
         // Get the themes
         this._fuseTailwindService.tailwindConfig$

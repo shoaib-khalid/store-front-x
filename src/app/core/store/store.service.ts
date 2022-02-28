@@ -26,7 +26,7 @@ export class StoresService
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     private _currentStores: Store[] = [];
     public storeControl: FormControl = new FormControl();
-
+    public storeCategoryControl: FormControl = new FormControl();
 
     /**
      * Constructor
@@ -240,7 +240,7 @@ export class StoresService
     /**
      * Get the current logged in store data
      */
-     getStores(id: string = "", page: number = 0, size: number = 10, sort: string = 'name', order: 'asc' | 'desc' | '' = 'asc', search: string = '', category: string = ''): 
+    getStores(id: string = "", page: number = 0, size: number = 10, sort: string = 'name', order: 'asc' | 'desc' | '' = 'asc', search: string = '', category: string = ''): 
         Observable<{ pagination: StorePagination; stores: Store[] }>
     {
         let productService = this._apiServer.settings.apiServer.productService;
@@ -578,16 +578,17 @@ export class StoresService
             map((storeCategries) => {
 
                 if (storeCategries) {
+
                     // Find the storeCategory 
                     const storeCategory = storeCategries.find(item => item.id === id) || null;
-    
                     // set this
                     this.storeControl.setValue(storeCategory);
     
-                    this._logging.debug("Response from StoresService (getStoresById)",storeCategory);
+                    this._logging.debug("Response from StoresService (getStoresById)", storeCategory);
     
                     // Update the storeCategory
                     this._storeCategory.next(storeCategory);
+                    this.storeCategoryControl.setValue(storeCategory);
     
                     // Return the store
                     return storeCategory;

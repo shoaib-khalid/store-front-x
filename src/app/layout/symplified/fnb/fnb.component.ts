@@ -23,6 +23,8 @@ export class FnbLayoutComponent implements OnDestroy
     store: Store;
     storeCategories: StoreCategory[];
     storeCategory: StoreCategory;
+
+    catalogueSlug: string;
     
     cartItem: CartItem[];
     cartItemQuantity: number = 0;
@@ -30,6 +32,10 @@ export class FnbLayoutComponent implements OnDestroy
     storeSnooze: StoreSnooze = null;
     
     isHomePage: boolean = true;
+
+    isLoading: boolean = false;
+
+    // isHamburgerMenuOpen: boolean = false;
 
     currentSlider = {
         active  : null,
@@ -131,6 +137,31 @@ export class FnbLayoutComponent implements OnDestroy
         ).subscribe(() => {
             this.isHomePage = this._router.url === "/home" ? true : false;
         });
+
+        // Get the store categories
+        this._storesService.storeCategories$
+            .subscribe((response: StoreCategory[]) => {
+
+                
+                this.storeCategories = response;
+                
+                this.catalogueSlug = this.catalogueSlug ? this.catalogueSlug : this._activatedRoute.snapshot.paramMap.get('catalogue-slug');
+                
+                let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === this.catalogueSlug);
+                this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
+
+                // set loading to true
+                this.isLoading = true;
+                
+                // this._productsService.getProducts(0, 12, "name", "asc", "", 'ACTIVE', this.storeCategory ? this.storeCategory.id : '')
+                //     .subscribe(()=>{
+                //         // set loading to false
+                //         this.isLoading = false;
+                //     });
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
 
         // this._notificationService.notification$
         //     .pipe(takeUntil(this._unsubscribeAll))
@@ -251,7 +282,6 @@ export class FnbLayoutComponent implements OnDestroy
                                 } else {
                                     // this works for safari & google crome
                                     let storeSnoozeEndTime = new Date(storeSnooze.snoozeEndTime.replace(/-/g, "/")).toISOString();
-                                    console.log("storeSnoozeEndTime", storeSnoozeEndTime);
                                     
                                     nextStoreOpeningTime = "Store will open at " + this._datePipe.transform(storeSnoozeEndTime,'EEEE, h:mm a');
                                 }                                

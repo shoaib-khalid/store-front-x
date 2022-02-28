@@ -1,5 +1,7 @@
 <ng-container *ngIf="(store && store.id !== null); else noStore">
-    <div class="bg-card w-full relative min-h-screen">
+    <div class="bg-card w-full relative sm:h-auto overflow-hidden"
+        [ngClass]="isHomePage === true ? 'h-auto' : 'h-screen min-h-screen'"
+    >
 
         <!-- Notification -->
         <ng-container *ngIf="notificationMessage && notificationMessage !== null">
@@ -43,12 +45,14 @@
             </div>
         </ng-container>
     
-        <!-- Header / Breadcrumb -->
+        <!-- Header, Hamburger Menu, Breadcrumb -->
         <ng-template #normalHeader>
-            <!-- Header -->
-            <div class="flex flex-col items-center w-full h-28 bg-black px-5">
+            <!-- Header, Hamburger Menu, Logo -->
+            <div class="flex flex-col items-center w-full h-16 sm:h-28 bg-black px-5">
                 <div class="flex flex-row justify-between h-full w-full max-w-280">
+                    <!-- Hamburger Menu -->
                     <div class="flex flex-col justify-center items-center sm:hidden">
+                        <!-- Hamburger Menu Open -->
                         <input
                             id="burger-menu-button"
                             class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
@@ -56,27 +60,48 @@
                             (click)="hamburgerMenu.toggle()"
                             mat-icon-button>
                         <label 
-                            class="flex items-center justify-center w-10 h-10 cursor-pointer"
+                            *ngIf="!hamburgerMenu.opened"
+                            class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-hover cursor-pointer"
                             for="burger-menu-button"
                             matRipple>
                             <mat-icon
                                 class="text-primary"
                                 [svgIcon]="'mat_solid:menu'"></mat-icon>
                         </label>
+                        <!-- Hamburger Menu Close -->
+                        <input
+                            id="back-menu-button"
+                            class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                            type="button"
+                            (click)="hamburgerMenu.toggle()"
+                            mat-icon-button>
+                        <label 
+                            *ngIf="hamburgerMenu.opened"
+                            class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-hover cursor-pointer"
+                            for="back-menu-button"
+                            matRipple>
+                            <mat-icon
+                                class="text-primary"
+                                [svgIcon]="'arrow_back_ios'"></mat-icon>
+                        </label>
                     </div>
+                    <!-- Logo -->
                     <div class="flex flex-col justify-center text-white">
                         <img
-                            class="w-20 h-20 my-1.5 rounded-full cursor-pointer"
+                            class="w-14 h-14 sm:w-20 sm:h-20 my-0.5 sm:my-1.5 rounded-full cursor-pointer"
                             [routerLink]="'/'"
                             [src]="displayStoreLogo(store.storeAssets)"
                             alt="Logo image">
                     </div>
+                    <!-- Phonenumber, Cart Button -->
                     <div class="flex flex-col justify-center text-white">
                         <div class="flex flex-row w-auto">
+                            <!-- Phonenumber -->
                             <div class="hidden sm:block flex flex-col text-right">
                                 <p>Call Us!</p>
                                 <p>{{ store.phoneNumber}}</p>
                             </div>
+                            <!-- Cart Button -->
                             <div class="relative pl-8">
                                 <input
                                     id="shopping-cart-button"
@@ -110,21 +135,76 @@
             </div>
         </ng-template>
     
-        <!-- Wrapper -->
-        <div class="flex flex-col flex-auto w-full">
+        <!-- Content & Drawer -->
+        <div class="relative w-full">
             <!-- Content -->
-            <div class="flex flex-col flex-auto">
-                <!-- *ngIf="true" hack is required here for router-outlet to work correctly.
-                     Otherwise, layout changes won't be registered and the view won't be updated! -->
-                <router-outlet *ngIf="true"></router-outlet>
+            <div class="flex flex-col flex-auto w-full"
+                [ngClass]="isHomePage === true ? 'overflow-hidden h-auto' : 'sm:h-auto overflow-auto h-screen'"
+            >
+                <div class="flex flex-col flex-auto">
+                    <!-- *ngIf="true" hack is required here for router-outlet to work correctly.
+                        Otherwise, layout changes won't be registered and the view won't be updated! -->
+                    <router-outlet *ngIf="true"></router-outlet>
+                </div>
+                <!-- Footer Space -->
+                <div [ngClass]="isHomePage === true ? 'h-0 min-h-0' : 'h-52 min-h-52'">
+                    &nbsp;
+                </div>
             </div>
+        
+            <!-- Drawer -->
+            <fuse-drawer
+                class="absolute sm:hidden w-full h-full"
+                style="z-index: 99999 !important;"
+                fixed
+                [mode]="'over'"
+                [transparentOverlay]="true"
+                [name]="'hamburgerMenu'"
+                [position]="'left'"
+                #hamburgerMenu>
+    
+                <!-- Categories -->
+                <div class="flex flex-col w-full overflow-auto bg-card">
+                    <div class="flex flex-col">
+                        <!-- View All Product -->
+                        <div class="flex flex-col pt-4 px-4">
+                            <button
+                                class="text-black font-bold"
+                                [routerLink]="['/catalogue/' + 'all-products']"
+                                (click)="hamburgerMenu.close()"
+                                mat-flat-button
+                                [color]="'primary'">
+                                <span class="ml-2 mr-1">View All Product</span>
+                            </button>
+                        </div>
+                
+                        <!-- Choose Category -->
+                        <div class="font-semibold px-6 pt-4 pb-2">Choose Category</div>
+                
+                        <!-- Categories -->
+                        <ng-container *ngFor="let category of storeCategories">
+                            <div class="w-full border-b pl-9 py-4 cursor-pointer">
+                                <span 
+                                    class="ml-2 mr-1 text-lg font-semibold"
+                                    [routerLink]="['/catalogue/' + getCategorySlug(category.name)]"
+                                    (click)="hamburgerMenu.close()"
+                                    [routerLink]="['/catalogue/' + getCategorySlug(category.name)]"
+                                    >{{category.name}}
+                            </span>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </fuse-drawer>
+            
+            <!-- Footer Space -->
+            <div class="sm:h-0" [ngClass]="isHomePage === true ? 'h-0' : 'h-40'"></div>
         </div>
 
-        <!-- Footer Space -->
-        <div class="h-48"></div>
-        
         <!-- Footer -->
-        <div class="absolute inset-x-0 bottom-0 flex flex-col items-center w-full max-h-72 bg-black">
+        <div class="flex flex-col items-center w-full max-h-72 bg-black"
+            [ngClass]="isHomePage === true ? 'relative' : 'absolute inset-x-0 bottom-0'"
+        >
             <div class="flex flex-col h-full items-center w-full max-w-280">
                 <div class="flex flex-col w-full items-center px-2 sm:px-10 mb-2 text-white">
                     <!-- <img
@@ -177,123 +257,6 @@
         </div>
     </div>
 </ng-container>
-
-<fuse-drawer
-    class="sm:hidden w-screen min-w-screen sm:w-100 sm:min-w-100 z-999"
-    fixed
-    [mode]="'over'"
-    [name]="'hamburgerMenu'"
-    [position]="'left'"
-    #hamburgerMenu>
-
-    <div class="flex flex-col w-full overflow-auto bg-card">
-        <!-- Hamburger menu header -->
-        <div class="flex flex-row w-full justify-between items-center px-3 h-28 min-h-28 text-primary bg-black">
-            <button
-                class="items-center"
-                mat-icon-button
-                (click)="hamburgerMenu.close()">
-                <mat-icon
-                    class="icon-size-7 text-current"
-                    [svgIcon]="'arrow_back_ios'"></mat-icon>
-            </button>
-            <div><span class="text-xl">Categories</span></div>
-            <div class="relative">
-                <input
-                    id="hamburger-cart-button"
-                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                    type="button"
-                    [routerLink]="'/checkout'"
-                    (click)="hamburgerMenu.close()"
-                    mat-icon-button>
-                <ng-container *ngIf="cartItemQuantity > 0">
-                    <span class="absolute -top-1 -right-1 flex items-center justify-center h-3">
-                        <span class="flex items-center justify-center flex-shrink-0 min-w-4 h-4 px-1 ml-4 mt-2.5 rounded-full bg-white text-black text-xs font-medium">
-                            {{cartItemQuantity}}
-                        </span>
-                    </span>
-                </ng-container>
-                <label 
-                    class="flex items-center justify-center w-10 h-10 rounded-full cursor-pointer bg-primary hover:bg-primary-700"
-                    for="hamburger-cart-button"
-                    matRipple>
-                    <mat-icon
-                        class="text-black"
-                        [svgIcon]="'heroicons_solid:shopping-cart'"></mat-icon>
-                </label>
-            </div>
-        </div>
-
-        <div class="flex flex-col">
-            <!-- View All Product -->
-            <div class="flex flex-col pt-4 px-4">
-                <button
-                    class="text-black font-bold"
-                    [routerLink]="['/catalogue/' + 'all-products']"
-                    (click)="hamburgerMenu.close()"
-                    mat-flat-button
-                    [color]="'primary'">
-                    <span class="ml-2 mr-1">View All Product</span>
-                </button>
-            </div>
-    
-            <!-- Choose Category -->
-            <div class="font-semibold px-6 pt-4 pb-2">Choose Category</div>
-    
-            <!-- Categories -->
-            <ng-container *ngFor="let category of storeCategories">
-                <div class="w-full border-b pl-9 py-4">
-                    <span 
-                        class="ml-2 mr-1 text-lg font-semibold"
-                        [routerLink]="['/catalogue/' + getCategorySlug(category.name)]"
-                        (click)="hamburgerMenu.close()"
-                        [routerLink]="['/catalogue/' + getCategorySlug(category.name)]"
-                        >{{category.name}}
-                </span>
-                </div>
-            </ng-container>
-        </div>
-
-        <div class="flex flex-row w-full justify-between items-center px-3 h-32 min-h-32 text-primary bg-black">
-            <div class="flex flex-col md:flex-row w-full justify-between">
-                <div class="flex flex-col sm:flex-row md:flex-col w-full md:w-1/2">
-                    <div class="flex flex-row items-center justify-between w-full sm:w-1/2 text-md text-white pt-2 pb-2 border-b">
-                        <span class="w-1/2 sm:w-auto md:min-w-20 text-gray-400 pr-1">Contact Us:</span>  
-                        <span class="w-1/2 flex sm:w-auto flex-auto text-primary-400 items-center justify-end sm:justify-start">
-                            <mat-icon 
-                                class="icon-size-4 text-primary-400"
-                                [svgIcon]="'heroicons_solid:phone'"></mat-icon>
-                            &nbsp;
-                            {{ store.phoneNumber}}
-                        </span>
-                    </div>
-                    <div class="flex flex-row items-center justify-between w-full sm:w-1/2 md:w-full text-md text-white pt-2">
-                        <span class="w-1/4 sm:w-auto md:min-w-20 text-gray-400 pr-1">Email:</span>  
-                        <span class="w-3/4 md:w-full flex flex-auto text-primary-400 items-center justify-end sm:justify-start">
-                            <mat-icon 
-                                class="icon-size-4 text-primary-400"
-                                [svgIcon]="'mat_solid:email'"></mat-icon>
-                            &nbsp;
-                            {{ store.email}}
-                        </span>
-                    </div>
-                </div>
-                <div class="flex flex-col flex-wrap w-full md:w-1/2 justify-between">
-                    <p class="flex w-full text-sm text-white pt-2">
-                        <span class="min-w-20 text-gray-400">Location:</span>  
-                        <mat-icon 
-                            class="icon-size-5 text-primary-400"
-                            [svgIcon]="'mat_solid:location_on'"></mat-icon>
-                        &nbsp;
-                        <span class="flex flex-auto text-primary-400 text-right md:text-left items-end content-end justify-end sm:justify-start">
-                            {{ store.address }} {{ store.city }}, {{ store.postcode }} {{ store.regionCountryStateId }}, {{ store.regionCountry.name }}
-                        </span>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</fuse-drawer>
 
 <ng-template #noStore>
     <error-404></error-404>

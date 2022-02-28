@@ -106,79 +106,59 @@ export class LandingCatalogueComponent implements OnInit
     // -----------------------------------------------------------------------------------------------------
 
     ngOnInit(): void {
-
-        // Get the store slug name in url path
-        this._router.events.pipe(
-            filter((event) => event instanceof NavigationEnd),
-            distinctUntilChanged(),
-        ).subscribe(() => {
-            this.catalogueSlug = this._activatedRoute.snapshot.paramMap.get('catalogue-slug');
-
-            let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === this.catalogueSlug);
-            this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
- 
-            // Mark for check
-            this._changeDetectorRef.markForCheck();
-        });
-
-        // get initial store category
         
+        // set loading to true
+        this.isLoading = true;
+
         // Get the store info
         this._storesService.store$
         .subscribe((response: Store) => {
             this.store = response;
 
-            // Mark for check
-            this._changeDetectorRef.markForCheck();
-        });
-        
-        // Get the store categories
-        this._storesService.storeCategories$
-            .subscribe((response: StoreCategory[]) => {
-
+            // Get the store categories
+            this._storesService.storeCategories$
+                .subscribe((response: StoreCategory[]) => {
+                    this.storeCategories = response;
                 
-                this.storeCategories = response;
-                
-                this.catalogueSlug = this.catalogueSlug ? this.catalogueSlug : this._activatedRoute.snapshot.paramMap.get('catalogue-slug');
-                
-                let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === this.catalogueSlug);
-                this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
+                    this.catalogueSlug = this.catalogueSlug ? this.catalogueSlug : this._activatedRoute.snapshot.paramMap.get('catalogue-slug');
+                    let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === this.catalogueSlug);
+                    this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
 
-                // set loading to true
-                this.isLoading = true;
-
-                this._productsService.getProducts(0, 12, "name", "asc", "", 'ACTIVE', this.storeCategory ? this.storeCategory.id : '')
+                    this._productsService.getProducts(0, 12, "name", "asc", "", 'ACTIVE', this.storeCategory ? this.storeCategory.id : '')
                     .subscribe(()=>{
                         // set loading to false
                         this.isLoading = false;
+
+                        // Get the products
+                        this._productsService.products$
+                            .pipe(takeUntil(this._unsubscribeAll))
+                            .subscribe((response: Product[]) => {
+                                this.products = response;
+                                
+                                // Mark for check
+                                this._changeDetectorRef.markForCheck();
+                            });
+
+                        // Get the products pagination
+                        this._productsService.pagination$
+                            .pipe(takeUntil(this._unsubscribeAll))
+                            .subscribe((pagination: ProductPagination) => {
+                                
+                                // Update the pagination
+                                this.pagination = pagination;
+
+                                // Mark for check
+                                this._changeDetectorRef.markForCheck();
+                            });
                     });
+                    
+                    // Mark for check
+                    this._changeDetectorRef.markForCheck();
+                });
 
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
-    
-        // // Get the products
-        this._productsService.products$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((response: Product[]) => {
-                this.products = response;
-                
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            })
-
-
-        // Get the products pagination
-        this._productsService.pagination$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((pagination: ProductPagination) => {
-                
-                // Update the pagination
-                this.pagination = pagination;
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
+            // Mark for check
+            this._changeDetectorRef.markForCheck();
+        });
 
         // Get cart
         this._cartService.cart$
@@ -240,7 +220,7 @@ export class LandingCatalogueComponent implements OnInit
                     
                     // set loading to true
                     this.isLoading = true;
-                                        
+
                     return this._productsService.getProducts(0, 12, this.sortName, this.sortOrder, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '');
                 }),
                 map(() => {
@@ -275,67 +255,6 @@ export class LandingCatalogueComponent implements OnInit
     }
 
     /**
-     * After view init
-     */
-    ngAfterViewInit(): void
-    {
-        setTimeout(() => {
-            // if ( this._sort && this._paginator )
-            if ( this._paginator )
-            {
-                // Set the initial sort
-                // this._sort.sort({
-                //     id          : 'startDate',
-                //     start       : 'asc',
-                //     disableClear: true
-                // });
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-
-                // If the user changes the sort order...
-                // this._sort.sortChange
-                //     .pipe(takeUntil(this._unsubscribeAll))
-                //     .subscribe(() => {
-                //         // Reset back to the first page
-                //         this._paginator.pageIndex = 0;
-                //     });
-
-                // Get discounts if sort or page changes
-                // merge(this._sort.sortChange, this._paginator.page).pipe(
-                //     switchMap(() => {
-                //         this.isLoading = true;
-                //         if (this.productName != null)
-                //             return this._productsService.getProducts(this._paginator.pageIndex, this._paginator.pageSize, this._sort.active, this._sort.direction, this.productName, '');
-                //         else    
-                //             return this._productsService.getProducts(this._paginator.pageIndex, this._paginator.pageSize, this._sort.active, this._sort.direction, '', '');
-
-                //     }),
-                //     map(() => {
-                //         this.isLoading = false;
-                //     })
-                // ).subscribe();
-                merge(this._paginator.page).pipe(
-                    switchMap(() => {
-                        // set loading to true
-                        this.isLoading = true;
-                        if (this.productName != null) {
-                            return this._productsService.getProducts(this._paginator.pageIndex, this._paginator.pageSize, "name", "asc", this.productName, 'ACTIVE');
-                        } else {                            
-                            return this._productsService.getProducts(this._paginator.pageIndex, this._paginator.pageSize, "name", "asc", '', 'ACTIVE');
-                        }    
-
-                    }),
-                    map(() => {
-                        // set loading to false
-                        this.isLoading = false;
-                    })
-                ).subscribe();
-            }
-        }, 0);
-    }
-
-    /**
      * On destroy
      */
     ngOnDestroy(): void
@@ -345,25 +264,30 @@ export class LandingCatalogueComponent implements OnInit
         this._unsubscribeAll.complete();
     }
 
+    reload(){
+        this._router.routeReuseStrategy.shouldReuseRoute = () => false;
+        this._router.onSameUrlNavigation = 'reload';
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
-    chooseCategory(id: string = null) {
+    // chooseCategory(id: string = null) {
 
-        if (id){
-            let index = this.storeCategories.findIndex(item => item.id === id);
-            if (index > -1) {
-                let slug = this.storeCategories[index].name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '');
-                this._router.navigate(['/catalogue/' + slug]);
-            } else {
-                console.error("Invalid category: Category not found");
-            }
-        } else {
-            this._router.navigate(['/catalogue/all-products']);
-        }
+    //     if (id){
+    //         let index = this.storeCategories.findIndex(item => item.id === id);
+    //         if (index > -1) {
+    //             let slug = this.storeCategories[index].name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '');
+    //             this._router.navigate(['/catalogue/' + slug]);
+    //         } else {
+    //             console.error("Invalid category: Category not found");
+    //         }
+    //     } else {
+    //         this._router.navigate(['/catalogue/all-products']);
+    //     }
 
-    }
+    // }
 
     getCategorySlug(categoryName: string) {
         return categoryName.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '');
@@ -375,15 +299,20 @@ export class LandingCatalogueComponent implements OnInit
             return;
         }
 
-        // this._productsService.getProducts(0, 12, "name", "asc", "", 'ACTIVE', this.storeCategory ? this.storeCategory.id : '')
-        //     .subscribe();
-
         let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === event.source.value);
         this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
         this.catalogueSlug = event.source.value;
         
         this._router.navigate(['catalogue/' + event.source.value]);
 
+        // Unsubscribe from all subscriptions
+        this._unsubscribeAll.next();
+        this._unsubscribeAll.complete();
+
+        this.reload();
+
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
     }
 
     decrement() {
