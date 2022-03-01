@@ -6,7 +6,9 @@ import { SharedModule } from 'app/shared/shared.module';
 import { LandingCheckoutComponent } from 'app/modules/landing/checkout/checkout.component';
 import { landingCheckoutRoutes } from 'app/modules/landing/checkout/checkout.routing';
 import { MatInputModule } from '@angular/material/input';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSelectModule } from '@angular/material/select';
@@ -30,7 +32,9 @@ import { ModalConfirmationDeleteItemComponent } from './modal-confirmation-delet
         MatInputModule,
         MatSelectModule,
         MatSlideToggleModule,
+        MatTooltipModule,
         MatDialogModule,
+        MatRadioModule,
         SharedModule
     ],
     providers   : [

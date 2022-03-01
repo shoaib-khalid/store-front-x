@@ -19,8 +19,19 @@ export interface DeliveryDetails
     deliveryState: string;
 }
 
+export interface DeliveryProviderGroup
+{
+    providerId: string;
+    deliveryProviders: DeliveryProvider[];
+}
+
 export interface DeliveryProvider
 {
+    deliveryPeriod: {
+        id: string;
+        description: string;
+        name: string;
+    };
     deliveryType: string;
     isError: boolean;
     message?: string;

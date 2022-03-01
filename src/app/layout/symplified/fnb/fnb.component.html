@@ -213,7 +213,9 @@
                         alt="Logo image"> -->
                     <div class="w-full border-t mt-12 border-gray-600"></div>
                     <div class="flex flex-col md:flex-row w-full justify-between">
-                        <div class="flex flex-col sm:flex-row md:flex-col w-full md:w-1/2">
+                        <!-- this is a hack [ngClass]="store.displayAddress ? 'md:flex-col md:w-1/2' : 'md:flex-row md:w-full'" -->
+                        <div class="flex flex-col sm:flex-row w-full"
+                            [ngClass]="store.displayAddress ? 'md:flex-col md:w-1/2' : 'md:flex-row md:w-full'">
                             <div class="flex flex-row items-center justify-between w-full sm:w-1/2 text-md text-white pt-2">
                                 <span class="w-1/2 sm:w-auto md:min-w-20 text-gray-400 pr-1">Contact Us:</span>  
                                 <span class="w-1/2 flex sm:w-auto flex-auto text-primary-400 items-center justify-end sm:justify-start">
@@ -224,7 +226,9 @@
                                     {{ store.phoneNumber}}
                                 </span>
                             </div>
-                            <div class="flex flex-row items-center justify-between w-full sm:w-1/2 md:w-full text-md text-white pt-2">
+                            <!-- this is a hack [ngClass]="store.displayAddress ? 'md:w-full' : 'md:w-1/2'"  -->
+                            <div class="flex flex-row items-center justify-between w-full sm:w-1/2 text-md text-white pt-2"
+                                [ngClass]="store.displayAddress ? 'md:w-full' : 'md:w-1/2'">
                                 <span class="w-1/4 sm:w-auto md:min-w-20 text-gray-400 pr-1">Email:</span>  
                                 <span class="w-3/4 md:w-full flex flex-auto text-primary-400 items-center justify-end sm:justify-start">
                                     <mat-icon 
@@ -235,8 +239,7 @@
                                 </span>
                             </div>
                         </div>
-                        <!-- Temporary Hide -->
-                        <!-- <div class="flex flex-col flex-wrap w-full md:w-1/2 justify-between">
+                        <div *ngIf="store.displayAddress" class="flex flex-col flex-wrap w-full md:w-1/2 justify-between">
                             <p class="flex w-full text-sm text-white pt-2">
                                 <span class="min-w-20 text-gray-400">Location:</span>  
                                 <mat-icon 
@@ -244,10 +247,10 @@
                                     [svgIcon]="'mat_solid:location_on'"></mat-icon>
                                 &nbsp;
                                 <span class="flex flex-auto text-primary-400 text-right md:text-left items-end content-end justify-end sm:justify-start">
-                                    {{ store.address }} {{ store.city }}, {{ store.postcode }} {{ store.regionCountryStateId }}, {{ store.regionCountry.name }}
+                                    {{ store.displayAddress }}
                                 </span>
                             </p>
-                        </div> -->
+                        </div>
                     </div>
                     <div class="flex flex-wrap w-full justify-center pt-4">
                         <span class="text-sm font-medium text-secondary text-xs">SYMplified &copy; {{currentYear}} . Version-FNB01-001-{{version}}</span>

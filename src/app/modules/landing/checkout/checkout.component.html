@@ -3,6 +3,7 @@
     <!-- Main menu -->
     <div class="flex flex-col items-center w-full h-auto my-5 px-5">
         
+        <!-- ahmad.miqdaad@kalsym.com -->
         <!-- Container -->
         <div class="flex flex-col md:flex-row justify-between pt-5 sm:mt-10 w-full md:max-w-280 lg:pr-10">
             <!-- Contact information part -->
@@ -123,7 +124,7 @@
                                     <mat-select 
                                         [formControlName]="'state'"
                                         [required]="true"
-                                        [placeholder]="'Select State'"
+                                        [placeholder]="'Select state'"
                                         (selectionChange)="checkoutForm.get('state').patchValue($event.value);"
                                         #stateSelector="matSelect">
                                         <mat-select-trigger>
@@ -229,7 +230,7 @@
                                     <input
                                         matInput
                                         [formControlName]="'postCode'"
-                                        placeholder="XXXXXX"
+                                        placeholder="Enter postcode"
                                         autocomplete="disabled"
                                         (input)="addressFormChanges()"
                                         (change)="addressFormChanges()"
@@ -262,7 +263,7 @@
                                 <input
                                     matInput
                                     [formControlName]="'address'"
-                                    placeholder="House Number or Apartment No"
+                                    placeholder="Enter address"
                                     autocomplete="disabled"
                                     (change)="addressFormChanges()"
                                     [required]="true">
@@ -306,20 +307,20 @@
                                     matInput></textarea>
                             </mat-form-field> -->
                         </div>
+                        
                         <!-- Additional info & save future order -->
                         <div class="w-full">
                             <!-- Additional info -->
-                            <mat-label class="text-gray-400 font-medium mb-2">Additional Information</mat-label>
                             <mat-form-field class="w-full pt-2" floatLabel="always">
                                 <textarea
                                     matInput
                                     [formControlName]="'specialInstruction'"
-                                    placeholder="Leave us a not e.g Pickup/delivery time or instruction"
+                                    placeholder="Tell us when you prefer this order delivered or any special request you may have"
                                     [rows]="5"
                                     maxlength="100"
                                     autocomplete="disabled"
                                     matTextareaAutosize></textarea>
-                                <mat-label>Order Notes (Optional)</mat-label>
+                                <mat-label>Delivery schedule / instruction</mat-label>
                                 <input
                                     matInput
                                     >
@@ -351,7 +352,7 @@
                 </ng-template>
 
                 <!-- Cart summary section -->
-                <div class="flex flex-col order-1 md:order-2 sm:min-w-100 md:pl-10">
+                <div #checkoutContainer class="flex flex-col order-1 md:order-2 sm:min-w-100 md:pl-10">
                     <!-- Cart Summary -->
                     <div class="relative flex flex-col border border-gray-300 rounded-lg px-5 py-2">
                         <h1 class="text-xl font-bold py-2">Cart Summary</h1>
@@ -457,7 +458,9 @@
                                     <p class="font-semibold text-gray-500">Service Charges ({{paymentDetails.storeServiceChargePercentage | number}}%)</p> 
                                     <span class="font-semibold">{{paymentDetails.storeServiceCharge | currency: store.regionCountry.currencySymbol}}</span>
                                 </div>
+
                                 <!-- Delivery Section -->
+                                <!-- Delivery Providers -->
                                 <ng-container *ngIf="deliveryProviders.length > 0 && checkoutForm.get('storePickup').value === false">
                                     <div class="flex flex-row w-full mt-2">
                                         <mat-form-field class="w-full rounded text-sm">
@@ -468,29 +471,64 @@
                                                 #deliveryProviderSelector="matSelect"
                                                 >
                                                 <mat-select-trigger>
-                                                    <span class="flex items-center justify-between w-full">
-                                                        <span>{{ deliveryProviderSelector.triggerValue }}</span>
-                                                        <img
-                                                            matSuffix
-                                                            class="w-1/3 max-h-10"
-                                                            *ngIf="selectedDeliveryProvider && selectedDeliveryProvider.providerImage"
-                                                            [alt]="'Delivery provider image'"
-                                                            [src]="selectedDeliveryProvider.providerImage">
-                                                    </span>
+                                                     <!-- For all vertical except E-Commerce MYS -->
+                                                    <ng-container *ngIf="store.verticalCode !== 'E-Commerce'">
+                                                        <span class="flex items-center justify-between w-full">
+                                                            <span>{{ deliveryProviderSelector.triggerValue }}</span>
+                                                            <img
+                                                                matSuffix
+                                                                class="w-1/3 max-h-10"
+                                                                *ngIf="selectedDeliveryProvider && selectedDeliveryProvider.providerImage"
+                                                                [alt]="'Delivery provider image'"
+                                                                [src]="selectedDeliveryProvider.providerImage">
+                                                        </span>
+                                                    </ng-container>
+                                                    <!-- For vertical E-Commerce MYS -->
+                                                    <ng-container *ngIf="store.verticalCode === 'E-Commerce'">
+                                                        <span class="flex items-center justify-between w-full">
+                                                            <span>{{ deliveryProviderSelector.triggerValue }}</span>
+                                                            <img
+                                                                matSuffix
+                                                                class="w-1/3 max-h-10"
+                                                                *ngIf="selectedDeliveryProvidersGroup && selectedDeliveryProvidersGroup.deliveryProviders[0].providerImage"
+                                                                [alt]="'Delivery provider image'"
+                                                                [src]="selectedDeliveryProvidersGroup.deliveryProviders[0].providerImage">
+                                                        </span>
+                                                    </ng-container>
                                                 </mat-select-trigger>
-                                                <ng-container *ngFor="let deliveryProvider of deliveryProviders">
+                                                <!-- For all vertical except E-Commerce MYS -->
+                                                <ng-container *ngIf="store.verticalCode !== 'E-Commerce'">
+                                                    <ng-container *ngFor="let deliveryProvider of deliveryProviders">
+                                                            <mat-option 
+                                                                [value]="deliveryProvider.providerId">
+                                                                <div class="flex flex-row justify-between">
+                                                                    <span class="w-2/3">{{deliveryProvider.providerName}}</span>
+                                                                    <img
+                                                                        matSuffix
+                                                                        class="w-1/3 max-h-10"
+                                                                        *ngIf="deliveryProvider.providerImage"
+                                                                        [alt]="'Delivery provider image'"
+                                                                        [src]="deliveryProvider.providerImage">
+                                                                </div>
+                                                            </mat-option>
+                                                    </ng-container>
+                                                </ng-container>
+                                                <!-- For vertical E-Commerce MYS -->
+                                                <ng-container *ngIf="store.verticalCode === 'E-Commerce'">
+                                                    <ng-container *ngFor="let deliveryProviderGroup of deliveryProvidersGroup">
                                                         <mat-option 
-                                                            [value]="deliveryProvider.providerId">
-                                                            <div class="flex flex-row justify-between">
-                                                                <span class="w-2/3">{{deliveryProvider.providerName}}</span>
+                                                            [value]="deliveryProviderGroup.providerId">
+                                                            <div class="flex flex-row items-center justify-between">
+                                                                <span class="w-2/3">{{deliveryProviderGroup.deliveryProviders[0].providerName}}</span>
                                                                 <img
                                                                     matSuffix
-                                                                    class="w-1/3 max-h-10"
-                                                                    *ngIf="deliveryProvider.providerImage"
+                                                                    class="w-24 h-8"
+                                                                    *ngIf="deliveryProviderGroup.deliveryProviders[0].providerImage"
                                                                     [alt]="'Delivery provider image'"
-                                                                    [src]="deliveryProvider.providerImage">
+                                                                    [src]="deliveryProviderGroup.deliveryProviders[0].providerImage">
                                                             </div>
                                                         </mat-option>
+                                                    </ng-container>
                                                 </ng-container>
                                             </mat-select>
                                             <mat-error *ngIf="checkoutForm.get('deliveryProviderId').hasError('required')">
@@ -499,6 +537,28 @@
                                         </mat-form-field>
                                     </div>
                                 </ng-container>
+                                
+                                <!-- Delivery Periods -->
+                                <ng-container *ngIf="store.verticalCode === 'E-Commerce' && selectedDeliveryProvidersGroup">
+                                    <mat-radio-group class="grid grid-cols-2 mb-2 w-full">
+                                        <ng-container *ngFor="let deliveryPartner of selectedDeliveryProvidersGroup.deliveryProviders">
+                                            <ng-container *ngIf="deliveryPartner.isError === false">
+                                                <div class="flex flex-row">
+                                                    <mat-radio-button [checked]="checkedDeliveryRefId === deliveryPartner.refId" (change)="changeDeliveryProvider($event.value,'group')" [value]="deliveryPartner.refId">{{deliveryPartner.deliveryPeriod.name}}</mat-radio-button>
+                                                    <mat-icon
+                                                        [matTooltip]="deliveryPartner.deliveryPeriod.description"
+                                                        class="flex flex-wrap transform scale-75"
+                                                        [svgIcon]="'heroicons_solid:question-mark-circle'">
+                                                    </mat-icon>
+                                                </div>
+                                            </ng-container>
+                                        </ng-container>
+                                        <!-- <mat-error *ngIf="editStoreForm.get('deliveryPartner').hasError('required')">
+                                            Required at least 1
+                                        </mat-error> -->
+                                    </mat-radio-group>
+                                </ng-container>
+
                                 <div class="flex flex-row w-full justify-between py-1">
                                     <span class="font-semibold text-gray-500">Delivery Charges</span> 
                                     <span class="font-semibold">{{paymentDetails.deliveryCharges | currency: store.regionCountry.currencySymbol}}</span>
@@ -524,7 +584,7 @@
                                 <span class="font-semibold">{{paymentDetails.cartGrandTotal | currency: store.regionCountry.currencySymbol}}</span>
                             </div>
                         </div>
-                        <!-- Calculate price button -->
+                        <!-- Pay now / Calculate price button -->
                         <ng-container *ngIf="!notificationMessage && (paymentCompletionStatus.id !== 'CALCULATE_CHARGES' || currentScreenSize.includes('md') === true)">
                             <button
                                 [disabled]="isLoading" 
@@ -543,14 +603,19 @@
                     </div>
                 </div>
 
+                <!-- Spacer for small screen / store closed -->
+                <div *ngIf="notificationMessage" class="block sm:hidden h-18 min-h-18 order-3">
+                    &nbsp;
+                </div>
+
                 <!-- Calculate price button -->
                 <ng-container *ngIf="!notificationMessage && paymentCompletionStatus.id === 'CALCULATE_CHARGES' && currentScreenSize.includes('md') === false">
                     <button
                         [disabled]="isLoading" 
                         class="order-3 my-2 w-auto font-semibold mt-4 p-2 rounded"
                         [ngClass]="isLoading ? 'cursor-wait bg-gray-200' : 'bg-green-500'"
-                        (click)="executeAction(paymentCompletionStatus.id)"
-                        (click)="scroll()"
+                        (click)="executeAction(paymentCompletionStatus.id, checkoutContainer)"
+                        (click)="scrollToTop(checkoutContainer)"
                     >
                         <span>
                             {{ paymentCompletionStatus.label }}

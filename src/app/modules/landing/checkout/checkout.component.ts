@@ -1,17 +1,19 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, NgForm, ValidationErrors, Validators } from '@angular/forms';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
+import { DOCUMENT } from '@angular/common'; 
 import { CartService } from 'app/core/cart/cart.service';
 import { CartItem } from 'app/core/cart/cart.types';
 import { StoresService } from 'app/core/store/store.service';
 import { Store, StoreSnooze, StoreTiming } from 'app/core/store/store.types';
-import { of, Subject, Subscription, timer } from 'rxjs';
+import { of, Subject, Subscription, timer, interval as observableInterval } from 'rxjs';
+import { takeWhile, scan, tap } from "rxjs/operators";
 import { map, switchMap, takeUntil, debounceTime, filter, distinctUntilChanged } from 'rxjs/operators';
 import { CheckoutService } from './checkout.service';
 import { CheckoutValidationService } from './checkout.validation.service';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ChooseDeliveryAddressComponent } from './choose-delivery-address/choose-delivery-address.component';
-import { CartDiscount, DeliveryProvider, Order, Payment } from './checkout.types';
+import { CartDiscount, DeliveryProvider, DeliveryProviderGroup, Order, Payment } from './checkout.types';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { ModalConfirmationDeleteItemComponent } from './modal-confirmation-delete-item/modal-confirmation-delete-item.component';
@@ -22,29 +24,33 @@ import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
     templateUrl  : './checkout.component.html',
     styles       : [
         `
-        /** Custom input number **/
-        input[type='number']::-webkit-inner-spin-button,
-        input[type='number']::-webkit-outer-spin-button {
-          -webkit-appearance: none;
-          margin: 0;
-        }
-      
-        .custom-number-input input:focus {
-          outline: none !important;
-        }
-      
-        .custom-number-input button:focus {
-          outline: none !important;
-        }
+            /** Custom input number **/
+            input[type='number']::-webkit-inner-spin-button,
+            input[type='number']::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+            }
+        
+            .custom-number-input input:focus {
+            outline: none !important;
+            }
+        
+            .custom-number-input button:focus {
+            outline: none !important;
+            }
+
+            ::ng-deep .mat-radio-button .mat-radio-ripple{
+                display: none;
+            }
         `
-    ],
-    encapsulation: ViewEncapsulation.None
+    ]
 })
 export class LandingCheckoutComponent implements OnInit
 {
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     @ViewChild('checkoutNgForm') signInNgForm: NgForm;
+    @ViewChild('checkoutContainer') checkoutContainer: ElementRef;
     
     checkoutForm: FormGroup;
     store: Store;
@@ -77,8 +83,13 @@ export class LandingCheckoutComponent implements OnInit
 
     paymentCompletionStatus: {id: "CALCULATE_CHARGES", label: "Calculate Charges"} | {id: "PLACE_ORDER", label: "Place Order"} | {id: "ONLINE_PAY", label: "Pay Now"};
 
+    deliveryProvidersGroup: DeliveryProviderGroup[] = [];
+    selectedDeliveryProvidersGroup: DeliveryProviderGroup;
+    
     deliveryProviders: DeliveryProvider[] = [];
     selectedDeliveryProvider: DeliveryProvider;
+
+    checkedDeliveryRefId: string = null;
 
     regionCountryStates: any;
 
@@ -106,6 +117,7 @@ export class LandingCheckoutComponent implements OnInit
         private _datePipe: DatePipe,
         private _dialog: MatDialog,
         private _router: Router,
+        @Inject(DOCUMENT) document: Document
     )
     {
     }
@@ -243,6 +255,10 @@ export class LandingCheckoutComponent implements OnInit
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
+
+        // ----------------------
+        // Fuse Media Watcher
+        // ----------------------
 
         this._fuseMediaWatcherService.onMediaChange$
             .pipe(takeUntil(this._unsubscribeAll))
@@ -386,7 +402,7 @@ export class LandingCheckoutComponent implements OnInit
             })
     }
 
-    executeAction(paymentCompletionStatusId){
+    executeAction(paymentCompletionStatusId) {
         if (paymentCompletionStatusId === "CALCULATE_CHARGES") {
             this.calculateCharges();
         } else if (paymentCompletionStatusId === "PLACE_ORDER") {
@@ -492,6 +508,28 @@ export class LandingCheckoutComponent implements OnInit
                             }
                         }
                     } else {
+                        // sort and categoried the delivery providers
+                        deliveryProviderResponse.forEach(item => {
+                            if (this.deliveryProvidersGroup.length < 1) {
+                                this.deliveryProvidersGroup.push({
+                                    providerId: item.providerId,
+                                    deliveryProviders: [item]
+                                })
+                            } else {
+                                // find the same providerId
+                                let index = this.deliveryProvidersGroup.findIndex(element => element.providerId === item.providerId);
+
+                                if (index > -1) {
+                                    this.deliveryProvidersGroup[index].deliveryProviders.push(item);
+                                } else {
+                                    this.deliveryProvidersGroup.push({
+                                        providerId: item.providerId,
+                                        deliveryProviders: [item]
+                                    })
+                                }
+                            }
+                        });
+                                                
                         // load all delivery provider in mat-select without default provider
                         this.deliveryProviders = deliveryProviderResponse;
                     }
@@ -524,28 +562,80 @@ export class LandingCheckoutComponent implements OnInit
         }
     }
 
-    changeDeliveryProvider(deliveryProviderId: string) {
+    /**
+     * 
+     * @param deliveryProviderId 
+     * @param deliveryProviderGroupType 
+     */
+    changeDeliveryProvider(deliveryProviderId: string, deliveryProviderGroupType: string = null) {
 
-        this.checkoutForm.get('deliveryProviderId').patchValue(deliveryProviderId);
+        // let getDeliveryProvider: boolean = true;
 
-        let index = this.deliveryProviders.findIndex(item => item.providerId === deliveryProviderId);
+        if (this.store.verticalCode === 'E-Commerce') {
+            if (deliveryProviderGroupType === null) {
+                this.selectedDeliveryProvidersGroup = this.deliveryProvidersGroup.find(item => item.providerId === deliveryProviderId);
+                // this is only to set the selectedDeliveryProvidersGroup,
+                // not getting the price yet
+
+                // find delivery with no error
+                let index = this.selectedDeliveryProvidersGroup.deliveryProviders.findIndex(item => item.isError === false);
+
+                if (index > -1) {
+                    this.checkedDeliveryRefId = this.selectedDeliveryProvidersGroup.deliveryProviders[index].refId;
+                } else {
+
+                    let confirmation = this.displayError(this.selectedDeliveryProvidersGroup.deliveryProviders[0].providerName + " error: " + this.selectedDeliveryProvidersGroup.deliveryProviders[0].message);
+                        
+                    confirmation.afterClosed().subscribe((result) => {
+                        // reset selectedDeliveryProvider
+                        this.selectedDeliveryProvider = null;
+                        this.checkoutForm.get('deliveryProviderId').patchValue(null);
+    
+                        // Set Payment Completion Status "Calculate Charges"
+                        this.paymentCompletionStatus = { id:"CALCULATE_CHARGES", label: "Calculate Charges" };
+                    });
+
+                    return;
+                }
+            } 
+        } 
+
+        // Old flow
+
+        // -------------------------------
+        // Get selected delivery provider
+        // -------------------------------
+
+        let index = -1;
+        if(deliveryProviderGroupType === 'group') { // for group, we'll search based on refId
+            index = this.deliveryProviders.findIndex(item => item.refId === deliveryProviderId && item.isError === false );                
+        } else {
+            index = this.deliveryProviders.findIndex(item => item.providerId === deliveryProviderId);
+        }
         
         if (index > -1) {
+
+            this.checkoutForm.get('deliveryProviderId').patchValue(this.deliveryProviders[index].providerId);
 
             // set selected delivery provider
             this.selectedDeliveryProvider = this.deliveryProviders[index];
 
             if (this.selectedDeliveryProvider.isError === true) {
-                let confirmation = this.displayError(this.selectedDeliveryProvider.providerName + " error: " + this.selectedDeliveryProvider.message);
 
-                confirmation.afterClosed().subscribe((result) => {
-                    // reset selectedDeliveryProvider
-                    this.selectedDeliveryProvider = null;
-                    this.checkoutForm.get('deliveryProviderId').patchValue(null);
-
-                    // Set Payment Completion Status "Calculate Charges"
-                    this.paymentCompletionStatus = { id:"CALCULATE_CHARGES", label: "Calculate Charges" };
-                });
+                // for deliveryProviderGroupType === group ... no need to popup since
+                // we don't show the radio button for user to select 
+                if (deliveryProviderGroupType === null) {
+                    let confirmation = this.displayError(this.selectedDeliveryProvider.providerName + " error: " + this.selectedDeliveryProvider.message);
+                    
+                    confirmation.afterClosed().subscribe((result) => {
+                        // reset selectedDeliveryProvider
+                        this.selectedDeliveryProvider = null;
+                        this.checkoutForm.get('deliveryProviderId').patchValue(null);
+    
+                        // Set Payment Completion Status "Calculate Charges"
+                        this.paymentCompletionStatus = { id:"CALCULATE_CHARGES", label: "Calculate Charges" };
+                    });
+                }
 
             } else {
 
@@ -572,6 +662,10 @@ export class LandingCheckoutComponent implements OnInit
         } else {
             console.error("Invalid Delivery Provider");
         }
+
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
+
     }
 
     onlinePay(){
@@ -712,12 +806,33 @@ export class LandingCheckoutComponent implements OnInit
         form.submit();
     }
 
-    scroll(){
-        window.scroll({ 
-            top: 0, 
-            left: 0, 
-            behavior: 'smooth' 
-        });
+    scrollToTop(el) {
+        var to = 0;
+        var duration = 1000;
+        var start = el.scrollTop,
+            change = to - start,
+            currentTime = 0,
+            increment = 20;
+    
+        var easeInOutQuad = function(t, b, c, d) {
+            t /= d / 2;
+            if (t < 1) 
+                return c / 2 * t * t + b;
+            t--;
+            return -c / 2 * (t * (t - 2) - 1) + b;
+        }
+    
+        var animateScroll = function() {        
+            currentTime += increment;
+            var val = easeInOutQuad(currentTime, start, change, duration);
+    
+            el.scrollTop = val;
+            if(currentTime < duration) {
+                setTimeout(animateScroll, increment);
+                el.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start' });
+            }
+        }
+        animateScroll();    
     }
 
     // -----------------------------------------------------------------------------------------------------

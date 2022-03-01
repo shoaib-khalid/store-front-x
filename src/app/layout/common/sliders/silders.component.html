@@ -31,7 +31,8 @@
                                     [svgIcon]="'feather:tag'"
                                 ></mat-icon>
                                 <div class="flex flex-row items-end">
-                                    <span class="pr-2">{{discount.discountAmount}}% Off</span> 
+                                    <span *ngIf="discount.calculationType === 'PERCENT'" class="pr-2">{{discount.discountAmount}}% Off</span> 
+                                    <span *ngIf="discount.calculationType === 'FIX'" class="pr-2">{{store.regionCountry.currencySymbol + " " + discount.discountAmount}} Off</span> 
                                     <span class="text-sm pb-0.5" *ngIf="discount.maxDiscountAmount">(Capped at {{discount.maxDiscountAmount | currency: store.regionCountry.currencySymbol}})</span>
                                 </div>
                             </h2>
