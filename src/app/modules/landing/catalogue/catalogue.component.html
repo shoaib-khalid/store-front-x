@@ -262,7 +262,7 @@
                                         <!-- Products -->
                                         <ng-container *ngFor="let product of products">
                                             <!-- Product -->
-                                            <div class="flex flex-col h-120 w-full lg:w-60 shadow-lg border hover:border-2 rounded-lg overflow-hidden cursor-pointer"
+                                            <div class="flex flex-col h-120 w-full lg:w-60 shadow-lg border group hover:border-2 rounded-lg overflow-hidden cursor-pointer"
                                                 [ngClass]="isProductOutOfStock(product) ? 'bg-card hover:border-primary' : 'bg-gray-200 hover:border-gray-600'"
                                                 [routerLink]="['/catalogue/' + '/' + catalogueSlug + '/' + product.seoName]"
                                             >
@@ -299,7 +299,7 @@
                                                 </div>
                                                 <!-- Product Footer -->
                                                 <div class="flex flex-col px-4 mb-4 h-60 w-full">
-                                                    <div class="mt-4 text-xl font-bold font-medium">{{product.name}}</div>
+                                                    <div class="mt-4 sm:text-xl font-bold font-medium">{{product.name}}</div>
                                                     <div class="relative h-40">
                                                         <div 
                                                             class="mt-2 mb-4 text-ellipsis overflow-hidden"
@@ -310,11 +310,11 @@
                                                     </div>
                                                     <!-- <div class="text-sm font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</div> -->
                                                     <div *ngIf="product.productInventories.length > 0 && product.productInventories[0].itemDiscount;else noItemDiscountGrid">
-                                                        <p class="font-semibold text-black hover:text-primary text-2xl">{{product.productInventories[0].itemDiscount.discountedPrice | currency: store.regionCountry.currencySymbol}}</p>
-                                                        <p style="text-decoration: line-through;">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p>
+                                                        <p class="line-through text-sm">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p>
+                                                        <p class="font-semibold text-black text-2xl" [ngClass]="isProductOutOfStock(product) === false ? 'group-hover:text-black' : 'group-hover:text-primary'">{{product.productInventories[0].itemDiscount.discountedPrice | currency: store.regionCountry.currencySymbol}}</p>
                                                     </div>
                                                     <ng-template #noItemDiscountGrid>
-                                                        <p class="font-semibold text-black hover:text-primary text-2xl">{{ (product.productInventories.length > 0 ? product.productInventories[0].price : 0) | currency: store.regionCountry.currencySymbol}}</p>
+                                                        <p class="font-semibold text-black text-2xl" [ngClass]="isProductOutOfStock(product) === false ? 'group-hover:text-black' : 'group-hover:text-primary'">{{ (product.productInventories.length > 0 ? product.productInventories[0].price : 0) | currency: store.regionCountry.currencySymbol}}</p>
                                                     </ng-template>
                                                     <!-- Input Quantity -->
                                                     <!-- <div class="mt-4">
