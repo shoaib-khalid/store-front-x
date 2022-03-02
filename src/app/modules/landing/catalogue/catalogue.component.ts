@@ -312,7 +312,7 @@ export class LandingCatalogueComponent implements OnInit
         return categoryName.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '');
     }
 
-    changeCatalogue(value) {
+    changeCatalogue(value, event = null) {
 
         // find if categoty exists
         let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === value);
