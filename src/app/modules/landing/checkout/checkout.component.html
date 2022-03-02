@@ -540,23 +540,26 @@
                                 
                                 <!-- Delivery Periods -->
                                 <ng-container *ngIf="store.verticalCode === 'E-Commerce' && selectedDeliveryProvidersGroup">
-                                    <mat-radio-group class="grid grid-cols-2 mb-2 w-full">
-                                        <ng-container *ngFor="let deliveryPartner of selectedDeliveryProvidersGroup.deliveryProviders">
-                                            <ng-container *ngIf="deliveryPartner.isError === false">
-                                                <div class="flex flex-row">
-                                                    <mat-radio-button [checked]="checkedDeliveryRefId === deliveryPartner.refId" (change)="changeDeliveryProvider($event.value,'group')" [value]="deliveryPartner.refId">{{deliveryPartner.deliveryPeriod.name}}</mat-radio-button>
-                                                    <mat-icon
-                                                        [matTooltip]="deliveryPartner.deliveryPeriod.description"
-                                                        class="flex flex-wrap transform scale-75"
-                                                        [svgIcon]="'heroicons_solid:question-mark-circle'">
-                                                    </mat-icon>
-                                                </div>
+                                    <fieldset class="flex flex-row border border-gray-300 rounded-lg w-full p-2 mb-2">
+                                        <legend class="px-2 mx-2 text-sm text-gray-400">Delivery service</legend>
+                                        <mat-radio-group class="grid grid-cols-2 mb-2 w-full">
+                                            <ng-container *ngFor="let deliveryPartner of selectedDeliveryProvidersGroup.deliveryProviders">
+                                                <ng-container *ngIf="deliveryPartner.isError === false">
+                                                    <div class="flex flex-row">
+                                                        <mat-radio-button [checked]="checkedDeliveryRefId === deliveryPartner.refId" (change)="changeDeliveryProvider($event.value,'group')" [value]="deliveryPartner.refId">{{deliveryPartner.deliveryPeriod.name}}</mat-radio-button>
+                                                        <mat-icon
+                                                            [matTooltip]="deliveryPartner.deliveryPeriod.description"
+                                                            class="flex flex-wrap transform scale-75"
+                                                            [svgIcon]="'heroicons_solid:question-mark-circle'">
+                                                        </mat-icon>
+                                                    </div>
+                                                </ng-container>
                                             </ng-container>
-                                        </ng-container>
-                                        <!-- <mat-error *ngIf="editStoreForm.get('deliveryPartner').hasError('required')">
-                                            Required at least 1
-                                        </mat-error> -->
-                                    </mat-radio-group>
+                                            <!-- <mat-error *ngIf="editStoreForm.get('deliveryPartner').hasError('required')">
+                                                Required at least 1
+                                            </mat-error> -->
+                                        </mat-radio-group>
+                                    </fieldset>
                                 </ng-container>
 
                                 <div class="flex flex-row w-full justify-between py-1">

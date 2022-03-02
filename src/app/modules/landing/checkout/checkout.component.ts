@@ -363,6 +363,9 @@ export class LandingCheckoutComponent implements OnInit
 
     addressFormChanges() {
 
+        // set selectedDeliveryProvidersGroup to null
+        this.selectedDeliveryProvidersGroup = null;
+
         // Set back delivery charges & grand total to 0
         this.paymentDetails.deliveryCharges = 0;
         this.paymentDetails.deliveryDiscount = 0;
@@ -376,6 +379,9 @@ export class LandingCheckoutComponent implements OnInit
 
         // Set Payment Completion Status "Calculate Charges"
         this.paymentCompletionStatus = { id:"CALCULATE_CHARGES", label: "Calculate Charges" };
+
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
     }
 
     checkCustomerInfo(type: string, data: string) {
@@ -509,6 +515,7 @@ export class LandingCheckoutComponent implements OnInit
                         }
                     } else {
                         // sort and categoried the delivery providers
+                        this.deliveryProvidersGroup = [];
                         deliveryProviderResponse.forEach(item => {
                             if (this.deliveryProvidersGroup.length < 1) {
                                 this.deliveryProvidersGroup.push({
@@ -569,10 +576,9 @@ export class LandingCheckoutComponent implements OnInit
      */
     changeDeliveryProvider(deliveryProviderId: string, deliveryProviderGroupType: string = null) {
 
-        // let getDeliveryProvider: boolean = true;
-
         if (this.store.verticalCode === 'E-Commerce') {
             if (deliveryProviderGroupType === null) {
+                
                 this.selectedDeliveryProvidersGroup = this.deliveryProvidersGroup.find(item => item.providerId === deliveryProviderId);
                 // this is only to set the selectedDeliveryProvidersGroup,
                 // not getting the price yet
@@ -606,6 +612,9 @@ export class LandingCheckoutComponent implements OnInit
         // Get selected delivery provider
         // -------------------------------
 
+        console.log("deliveryProviderGroupType", deliveryProviderGroupType);
+        
+
         let index = -1;
         if(deliveryProviderGroupType === 'group') { // for group, we'll search based on refId
             index = this.deliveryProviders.findIndex(item => item.refId === deliveryProviderId && item.isError === false );                
@@ -622,9 +631,9 @@ export class LandingCheckoutComponent implements OnInit
 
             if (this.selectedDeliveryProvider.isError === true) {
 
-                // for deliveryProviderGroupType === group ... no need to popup since
+                // for this.store.verticalCode !== 'E-Commerce or deliveryProviderGroupType === group ... no need to popup since
                 // we don't show the radio button for user to select 
-                if (deliveryProviderGroupType === null) {
+                if (this.store.verticalCode !== 'E-Commerce') {
                     let confirmation = this.displayError(this.selectedDeliveryProvider.providerName + " error: " + this.selectedDeliveryProvider.message);
                     
                     confirmation.afterClosed().subscribe((result) => {
