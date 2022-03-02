@@ -325,6 +325,42 @@ export class LandingProductDetailsComponent implements OnInit
             return false;
         }
 
+        // Precheck for combo
+        if (this.product.isPackage) {
+            let BreakException = {};
+            try {
+                this.combos.forEach(item => {
+                    if (item.totalAllow !== this.selectedCombo[item.id].length) {
+                        const confirmation = this._fuseConfirmationService.open({
+                            "title": "Incomplete Product Combo selection",
+                            "message": 'You need to select ' + item.totalAllow + ' item of <b>"' + item.title + '"</b>',
+                            "icon": {
+                              "show": true,
+                              "name": "heroicons_outline:exclamation",
+                              "color": "warn"
+                            },
+                            "actions": {
+                              "confirm": {
+                                "show": true,
+                                "label": "Ok",
+                                "color": "warn"
+                              },
+                              "cancel": {
+                                "show": false,
+                                "label": "Cancel"
+                              }
+                            },
+                            "dismissible": true
+                          });
+                          throw BreakException;
+                    }                 
+                });
+            } catch (error) {
+                // console.error(error);
+                return;
+            }
+        }
+
         const cartItemBody = {
             cartId: this._cartService.cartId$,
             itemCode: this.selectedProductInventory.itemCode,

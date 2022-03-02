@@ -9,6 +9,22 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v0.0.25
+        {
+            version    : 'v0.0.25',
+            releaseDate: 'Mar 02, 2022',
+            changes    : [
+                {
+                    type: 'Fix',
+                    list: [
+                        '(LandingCataloguePage) Fix responsive for mobile',
+                        '(LandingHomePage) Fix discount tier banner price sort (sort from lower tier)',
+                        '(LandingHomePage) Fix fixed discount tier (remove % and change with currency for fix discount)',
+                        '(LandingProductPage) Block add to cart for combo if selection not complete'
+                    ]
+                }
+            ]
+        },
         // v0.0.24
         {
             version    : 'v0.0.24',
