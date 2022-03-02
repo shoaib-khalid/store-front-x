@@ -22,6 +22,12 @@ export class ChangelogComponent
                         '(LandingHomePage) Fix fixed discount tier (remove % and change with currency for fix discount)',
                         '(LandingProductPage) Block add to cart for combo if selection not complete'
                     ]
+                },
+                {
+                    type: 'Added',
+                    list: [
+                        '(LandingCheckoutPage) Add delviery period for E-Commerce (MYS)',
+                    ]
                 }
             ]
         },
