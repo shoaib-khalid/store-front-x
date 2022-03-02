@@ -410,4 +410,26 @@ export class FnbLayoutComponent implements OnDestroy
     getCategorySlug(categoryName: string) {
         return categoryName.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '');
     }
+
+    changeCatalogue(value, event = null) {
+
+        // find if categoty exists
+        let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === value);
+        // since all-product is not a real category, it will set to null
+        this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
+        // catalogue slug will be use in url
+        this.catalogueSlug = value;
+        
+        this._router.navigate(['catalogue/' + value]);
+
+        this.reload();
+
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
+    }
+
+    reload(){
+        this._router.routeReuseStrategy.shouldReuseRoute = () => false;
+        this._router.onSameUrlNavigation = 'reload';
+    }
 }

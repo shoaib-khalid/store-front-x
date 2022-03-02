@@ -15,7 +15,6 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { fuseAnimations } from '@fuse/animations';
 import { MatIconRegistry } from "@angular/material/icon";
 import { DomSanitizer } from '@angular/platform-browser';
-import { PaginationModule } from 'app/layout/common/pagination/pagination.module';
 
 @Component({
     selector     : 'landing-catalogue',
@@ -90,7 +89,6 @@ export class LandingCatalogueComponent implements OnInit
         private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _domSanitizer: DomSanitizer,
         private _matIconRegistry: MatIconRegistry,
-        private _pagination: PaginationModule,
         private _router: Router,
         private _activatedRoute: ActivatedRoute
     )
@@ -110,55 +108,51 @@ export class LandingCatalogueComponent implements OnInit
         // set loading to true
         this.isLoading = true;
 
+        // Get the products
+        this.products$ = this._productsService.products$;
+
+        // Get the products pagination
+        this._productsService.pagination$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((pagination: ProductPagination) => {
+                
+                // Update the pagination
+                this.pagination = pagination;                
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
+
         // Get the store info
         this._storesService.store$
-        .subscribe((response: Store) => {
-            this.store = response;
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((response: Store) => {
+                this.store = response;
 
-            // Get the store categories
-            this._storesService.storeCategories$
-                .subscribe((response: StoreCategory[]) => {
-                    this.storeCategories = response;
-                
-                    this.catalogueSlug = this.catalogueSlug ? this.catalogueSlug : this._activatedRoute.snapshot.paramMap.get('catalogue-slug');
-                    let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === this.catalogueSlug);
-                    this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
-
-                    this._productsService.getProducts(0, 12, "name", "asc", "", 'ACTIVE', this.storeCategory ? this.storeCategory.id : '')
-                    .subscribe(()=>{
-                        // set loading to false
-                        this.isLoading = false;
-
-                        // Get the products
-                        this._productsService.products$
-                            .pipe(takeUntil(this._unsubscribeAll))
-                            .subscribe((response: Product[]) => {
-                                this.products = response;
-                                
-                                // Mark for check
-                                this._changeDetectorRef.markForCheck();
-                            });
-
-                        // Get the products pagination
-                        this._productsService.pagination$
-                            .pipe(takeUntil(this._unsubscribeAll))
-                            .subscribe((pagination: ProductPagination) => {
-                                
-                                // Update the pagination
-                                this.pagination = pagination;
-
-                                // Mark for check
-                                this._changeDetectorRef.markForCheck();
-                            });
-                    });
+                // Get the store categories
+                this._storesService.storeCategories$
+                    .pipe(takeUntil(this._unsubscribeAll))
+                    .subscribe((response: StoreCategory[]) => {
+                        this.storeCategories = response;
                     
-                    // Mark for check
-                    this._changeDetectorRef.markForCheck();
-                });
+                        this.catalogueSlug = this.catalogueSlug ? this.catalogueSlug : this._activatedRoute.snapshot.paramMap.get('catalogue-slug');
+                        let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === this.catalogueSlug);
+                        this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
 
-            // Mark for check
-            this._changeDetectorRef.markForCheck();
-        });
+                        this._productsService.getProducts(0, 12, "name", "asc", "", 'ACTIVE', this.storeCategory ? this.storeCategory.id : '')
+                            .pipe(takeUntil(this._unsubscribeAll))
+                            .subscribe(()=>{
+                                // set loading to false
+                                this.isLoading = false;
+                            });
+                        
+                        // Mark for check
+                        this._changeDetectorRef.markForCheck();
+                    });
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
 
         // Get cart
         this._cartService.cart$
@@ -264,6 +258,31 @@ export class LandingCatalogueComponent implements OnInit
         this._unsubscribeAll.complete();
     }
 
+    /**
+     * After view init
+     */
+    ngAfterViewInit(): void
+    {
+        setTimeout(() => {
+            if (this._paginator )
+            {
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+
+                // Get products if sort or page changes
+                merge(this._paginator.page).pipe(
+                    switchMap(() => {
+                        this.isLoading = true;
+                        return this._productsService.getProducts(0, 12, this.sortName, this.sortOrder, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '');
+                    }),
+                    map(() => {
+                        this.isLoading = false;
+                    })
+                ).subscribe();
+            }
+        }, 0);
+    }
+
     reload(){
         this._router.routeReuseStrategy.shouldReuseRoute = () => false;
         this._router.onSameUrlNavigation = 'reload';
@@ -293,21 +312,16 @@ export class LandingCatalogueComponent implements OnInit
         return categoryName.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '');
     }
 
-    changeCatalogue(event) {
+    changeCatalogue(value) {
 
-        if (event.checked === false) {
-            return;
-        }
-
-        let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === event.source.value);
+        // find if categoty exists
+        let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === value);
+        // since all-product is not a real category, it will set to null
         this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
-        this.catalogueSlug = event.source.value;
+        // catalogue slug will be use in url
+        this.catalogueSlug = value;
         
-        this._router.navigate(['catalogue/' + event.source.value]);
-
-        // Unsubscribe from all subscriptions
-        this._unsubscribeAll.next();
-        this._unsubscribeAll.complete();
+        this._router.navigate(['catalogue/' + value]);
 
         this.reload();
 

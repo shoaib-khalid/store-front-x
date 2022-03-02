@@ -167,31 +167,35 @@
                 <div class="flex flex-col w-full overflow-auto bg-card">
                     <div class="flex flex-col">
                         <!-- View All Product -->
-                        <div class="flex flex-col pt-4 px-4">
-                            <button
-                                class="text-black font-bold"
-                                [routerLink]="['/catalogue/' + 'all-products']"
-                                (click)="hamburgerMenu.close()"
-                                mat-flat-button
-                                [color]="'primary'">
-                                <span class="ml-2 mr-1">View All Product</span>
-                            </button>
-                        </div>
-                
+                        <input 
+                            [id]="'categories-btn-all-product'" 
+                            type="button" 
+                            class="w-0 h-0 invisible"
+                            (click)="changeCatalogue('')">
+                        <label
+                            class="text-black shadow text-center m-4 p-2.5 bg-primary rounded-full cursor-pointer"
+                            [for]="'categories-btn-all-product'"
+                        >
+                            <span class="">View All Product</span>
+                        </label>
+
                         <!-- Choose Category -->
                         <div class="font-semibold px-6 pt-4 pb-2">Choose Category</div>
-                
+
                         <!-- Categories -->
                         <ng-container *ngFor="let category of storeCategories">
-                            <div class="w-full border-b pl-9 py-4 cursor-pointer">
-                                <span 
-                                    class="ml-2 mr-1 text-lg font-semibold"
-                                    [routerLink]="['/catalogue/' + getCategorySlug(category.name)]"
-                                    (click)="hamburgerMenu.close()"
-                                    [routerLink]="['/catalogue/' + getCategorySlug(category.name)]"
-                                    >{{category.name}}
-                            </span>
-                            </div>
+                            <input 
+                                [id]="'categories-btn-' + category.id" 
+                                [value]="getCategorySlug(category.name)"
+                                type="button" 
+                                class="w-0 h-0 invisible"
+                                (click)="changeCatalogue($event.target.value, $event)">
+                            <label
+                                class="flex flex-row w-full h-full text-lg font-semibold cursor-pointer border-b pl-9 py-4 "
+                                [for]="'categories-btn-' + category.id"
+                            >
+                                <span class="">{{category.name}}</span>
+                            </label>
                         </ng-container>
                     </div>
                 </div>
