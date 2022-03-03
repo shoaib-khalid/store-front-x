@@ -310,6 +310,12 @@ export class LandingCheckoutComponent implements OnInit
         if (!((cartItem.quantity === quantity) && (quantity === this.minQuantity || quantity === this.maxQuantity))) {
             this._cartService.putCartItem(this._cartService.cartId$, cartItemBody, cartItem.id)
                 .subscribe((response)=>{
+
+                    // recheck the getDiscountOfCart
+                    this._checkoutService.getDiscountOfCart(this._cartService.cartId$, this.selectedDeliveryProvider.refId, this.selectedDeliveryProvider.deliveryType)
+                        .subscribe((response)=>{
+                            this.paymentDetails = {...this.paymentDetails, ...response};
+                        });
                 });
         }
     }
@@ -499,10 +505,12 @@ export class LandingCheckoutComponent implements OnInit
                                 this.checkoutForm.get('deliveryProviderId').patchValue(null);
                             });
                         } else {
+
+                            // get getDiscountOfCart
                             this._checkoutService.getDiscountOfCart(this._cartService.cartId$, this.selectedDeliveryProvider.refId, this.selectedDeliveryProvider.deliveryType)
-                            .subscribe((response)=>{
-                                this.paymentDetails = {...this.paymentDetails, ...response};
-                            });
+                                .subscribe((response)=>{
+                                    this.paymentDetails = {...this.paymentDetails, ...response};
+                                });
         
                             // set price (this is based on delivery service api getPrice)
                             this.paymentDetails.deliveryCharges = this.selectedDeliveryProvider.price;
