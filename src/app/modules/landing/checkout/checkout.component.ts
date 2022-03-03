@@ -126,6 +126,7 @@ export class LandingCheckoutComponent implements OnInit
         // Create the support form
         this.checkoutForm = this._formBuilder.group({
             // Main Store Section
+            id                  : ['undefined'],
             fullName            : ['', Validators.required],
             // firstName           : ['', Validators.required],
             // lastName            : ['', Validators.required],
@@ -393,6 +394,7 @@ export class LandingCheckoutComponent implements OnInit
                     let dialogRef = this._dialog.open(ChooseDeliveryAddressComponent, { disableClose: true, data: response });
                     dialogRef.afterClosed().subscribe((result) => {
                         if (result.isAddress === true) {
+                            this.checkoutForm.get('id').patchValue(response.id);
                             this.checkoutForm.get('fullName').patchValue(response.name);
                             if (type === "phoneNumber") this.checkoutForm.get('email').patchValue(response.email);
                             if (type === "email") this.checkoutForm.get('phoneNumber').patchValue(response.phoneNumber);
@@ -457,7 +459,7 @@ export class LandingCheckoutComponent implements OnInit
 
             const deliveryChargesBody = {
                 cartId: this._cartService.cartId$,
-                customerId: "undefined", // need to fix later when have customer login
+                customerId: this.checkoutForm.get("id").value,
                 delivery: {
                     deliveryAddress: this.checkoutForm.get('address').value,
                     deliveryCity: this.checkoutForm.get('city').value,
@@ -612,9 +614,6 @@ export class LandingCheckoutComponent implements OnInit
         // Get selected delivery provider
         // -------------------------------
 
-        console.log("deliveryProviderGroupType", deliveryProviderGroupType);
-        
-
         let index = -1;
         if(deliveryProviderGroupType === 'group') { // for group, we'll search based on refId
             index = this.deliveryProviders.findIndex(item => item.refId === deliveryProviderId && item.isError === false );                
@@ -684,7 +683,7 @@ export class LandingCheckoutComponent implements OnInit
 
         const orderBody = {
             cartId: this._cartService.cartId$,
-            customerId: "undefined", // .. check this, this supposedly have values, idk where
+            customerId: this.checkoutForm.get("id").value, 
             customerNotes: this.checkoutForm.get("specialInstruction").value,
             orderPaymentDetails: {
                 accountName: this.checkoutForm.get('fullName').value, // ni mace saloh
@@ -715,7 +714,7 @@ export class LandingCheckoutComponent implements OnInit
 
                 const paymentBody = {
                     // callbackUrl: "https://bon-appetit.symplified.ai/thankyou",
-                    customerId: "undefined",
+                    customerId: this.checkoutForm.get("id").value,
                     customerName: this.checkoutForm.get('fullName').value,
                     // paymentAmount: this.paymentDetails.cartGrandTotal.toFixed(2),
                     productCode: "parcel", // 
@@ -758,7 +757,7 @@ export class LandingCheckoutComponent implements OnInit
 
         const orderBody = {
             cartId: this._cartService.cartId$,
-            customerId: "undefined", // .. check this, this supposedly have values, idk where
+            customerId: this.checkoutForm.get("id").value, 
             customerNotes: this.checkoutForm.get("specialInstruction").value,
             orderPaymentDetails: {
                 accountName: this.checkoutForm.get('fullName').value, // ni mace saloh
