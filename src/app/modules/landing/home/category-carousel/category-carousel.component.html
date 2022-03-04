@@ -13,14 +13,14 @@
                     class="flex flex-col items-center justify-center cursor-pointer"
                     [for]="'category-button' + category.id"
                     matRipple>
-                    <div class="relative w-52 h-32 my-1.5 mx-3 rounded-lg border-2 border-black group-hover:border-primary">
+                    <div class="relative w-44 sm:w-52 h-28 sm:h-36 my-1.5 mx-3 rounded-lg border-2 border-black group-hover:border-primary">
                         <img
                             class="object-cover h-max-52 w-max-32 rounded-lg"
                             [src]="(category.thumbnailUrl && category.thumbnailUrl !== null) ? category.thumbnailUrl : displayStoreLogo(store.storeAssets)"
                             alt="Logo image">
                         <div class="rounded border-2 border-black group-hover:border-primary absolute top-0.5 bottom-0.5 left-0.5 right-0.5"></div>
                     </div>
-                    <p class="my-2 leading-none font-bold text-3xl group-hover:text-primary">{{category.name}}</p>
+                    <p class="my-2 leading-none font-bold text-xl sm:text-3xl group-hover:text-primary">{{category.name}}</p>
                 </label>
             </div>
             <!-- <div class="carousel-cell">

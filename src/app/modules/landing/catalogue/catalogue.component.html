@@ -39,7 +39,8 @@
                         class="w-0 h-0 invisible"
                         (click)="changeCatalogue($event.target.value, $event)">
                     <label
-                        class="text-black font-bold p-3 bg-primary rounded-full cursor-pointer"
+                        class="font-bold p-3 rounded-full cursor-pointer"
+                        [ngClass]="storeCategory.id === category.id ? 'bg-black text-primary' :'bg-primary text-black'"
                         [for]="'categories-btn-' + category.id"
                     >
                         <span class="">{{category.name}}</span>

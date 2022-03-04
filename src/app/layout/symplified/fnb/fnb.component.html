@@ -146,9 +146,65 @@
                         Otherwise, layout changes won't be registered and the view won't be updated! -->
                     <router-outlet *ngIf="true"></router-outlet>
                 </div>
+
+                <!-- Footer -->
+                <div class="block sm:hidden flex flex-col items-center w-full max-h-72 bg-black">
+                    <div class="flex flex-col h-full items-center w-full max-w-280">
+                        <div class="flex flex-col w-full items-center px-2 sm:px-10 mb-2 text-white">
+                            <!-- <img
+                                class="w-20 sm:w-30 sm:h-30 lg:h-40 lg:w-40 h-20  my-1.5 rounded-full"
+                                [src]="displayStoreLogo(store.storeAssets)"
+                                alt="Logo image"> -->
+                            <div class="w-full border-t mt-4 sm:mt-12 border-gray-600"></div>
+                            <div class="flex flex-col md:flex-row w-full justify-between">
+                                <!-- this is a hack [ngClass]="store.displayAddress ? 'md:flex-col md:w-1/2' : 'md:flex-row md:w-full'" -->
+                                <div class="flex flex-col sm:flex-row w-full"
+                                    [ngClass]="store.displayAddress ? 'md:flex-col md:w-1/2' : 'md:flex-row md:w-full'">
+                                    <div class="flex flex-row items-center justify-between w-full sm:w-1/2 text-md text-white pt-2">
+                                        <span class="w-1/2 sm:w-auto md:min-w-20 text-gray-400 pr-1">Contact Us XXXS:</span>  
+                                        <span class="w-1/2 flex sm:w-auto flex-auto text-primary-400 items-center justify-end sm:justify-start">
+                                            <mat-icon 
+                                                class="icon-size-4 text-primary-400"
+                                                [svgIcon]="'heroicons_solid:phone'"></mat-icon>
+                                            &nbsp;
+                                            {{ store.phoneNumber}}
+                                        </span>
+                                    </div>
+                                    <!-- this is a hack [ngClass]="store.displayAddress ? 'md:w-full' : 'md:w-1/2'"  -->
+                                    <div class="flex flex-row items-center justify-between w-full sm:w-1/2 text-md text-white pt-2"
+                                        [ngClass]="store.displayAddress ? 'md:w-full' : 'md:w-1/2'">
+                                        <span class="w-1/4 sm:w-auto md:min-w-20 text-gray-400 pr-1">Email:</span>  
+                                        <span class="w-3/4 md:w-full flex flex-auto text-primary-400 items-center justify-end sm:justify-start">
+                                            <mat-icon 
+                                                class="icon-size-4 text-primary-400"
+                                                [svgIcon]="'mat_solid:email'"></mat-icon>
+                                            &nbsp;
+                                            {{ store.email}}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div *ngIf="store.displayAddress" class="flex flex-col flex-wrap w-full md:w-1/2 justify-between">
+                                    <p class="flex w-full text-sm text-white pt-2">
+                                        <span class="min-w-20 text-gray-400">Location:</span>  
+                                        <mat-icon 
+                                            class="icon-size-5 text-primary-400"
+                                            [svgIcon]="'mat_solid:location_on'"></mat-icon>
+                                        &nbsp;
+                                        <span class="flex flex-auto text-primary-400 text-right md:text-left items-end content-end justify-end sm:justify-start">
+                                            {{ store.displayAddress }}
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap w-full justify-center pt-4">
+                                <span class="text-sm font-medium text-secondary text-xs">SYMplified &copy; {{currentYear}} . Version-FNB01-001-{{version}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Footer Space -->
-                <div [ngClass]="isHomePage === true ? 'h-0 min-h-0' : 'h-52 min-h-52'">
-                    &nbsp;
+                <div class="sm:h-40 sm:min-h-40">
                 </div>
             </div>
         
@@ -180,7 +236,7 @@
                         </label>
 
                         <!-- Choose Category -->
-                        <div class="font-semibold px-6 pt-4 pb-2">Choose Category</div>
+                        <div class="font-semibold px-6 pt-4 pb-2">Choose Category x</div>
 
                         <!-- Categories -->
                         <ng-container *ngFor="let category of storeCategories">
@@ -192,6 +248,7 @@
                                 (click)="changeCatalogue($event.target.value, $event)">
                             <label
                                 class="flex flex-row w-full h-full text-lg font-semibold cursor-pointer border-b pl-9 py-4 "
+                                [ngClass]="(storeCategory && storeCategory.id === category.id) ? 'bg-primary text-black' :''"
                                 [for]="'categories-btn-' + category.id"
                             >
                                 <span class="">{{category.name}}</span>
@@ -206,7 +263,7 @@
         </div>
 
         <!-- Footer -->
-        <div class="flex flex-col items-center w-full max-h-72 bg-black"
+        <div class="hidden sm:block flex flex-col items-center w-full max-h-72 bg-black"
             [ngClass]="isHomePage === true ? 'relative' : 'absolute inset-x-0 bottom-0'"
         >
             <div class="flex flex-col h-full items-center w-full max-w-280">
