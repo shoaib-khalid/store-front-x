@@ -25,7 +25,9 @@
                         class="w-0 h-0 invisible"
                         (click)="changeCatalogue('')">
                     <label
-                        class="text-black font-bold p-2.5 bg-primary rounded-full cursor-pointer"
+                        class="font-bold p-2.5 rounded-full cursor-pointer"
+                        [ngClass]="{'bg-black text-primary' : !storeCategory,
+                                    'bg-primary text-black' : storeCategory}"
                         [for]="'categories-btn-all-product'"
                     >
                         <span class="">All Products</span>
@@ -40,7 +42,11 @@
                         (click)="changeCatalogue($event.target.value, $event)">
                     <label
                         class="font-bold p-3 rounded-full cursor-pointer"
-                        [ngClass]="storeCategory.id === category.id ? 'bg-black text-primary' :'bg-primary text-black'"
+                        [ngClass]="{
+                                    'bg-amber-500 text-black' : !storeCategory,
+                                    'bg-black text-primary' : (storeCategory && storeCategory.id === category.id),
+                                    'bg-primary text-black' : (storeCategory && storeCategory.id !== category.id)      
+                                    }"
                         [for]="'categories-btn-' + category.id"
                     >
                         <span class="">{{category.name}}</span>
