@@ -237,6 +237,7 @@ export class LandingCatalogueComponent implements OnInit
                 else
                 {
                     this.collapseCategory = true;
+                    this.productViewOrientation = 'list';
                 }
 
                 // Mark for check
