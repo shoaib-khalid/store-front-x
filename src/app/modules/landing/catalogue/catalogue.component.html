@@ -2,7 +2,7 @@
     <!-- Main menu -->
     <div class="flex flex-col items-center w-full h-auto my-5 px-5">
         <!-- Search For xs view Mobile -->
-        <div class="sm:hidden w-full">
+        <ng-container *ngIf="!currentScreenSize.includes('md')">
             <mat-form-field class="w-full fuse-mat-emphasized-affix min-w-64">
                 <input
                     matInput
@@ -14,9 +14,9 @@
                 matSuffix
                 [svgIcon]="'search'"></mat-icon>
             </mat-form-field>
-        </div>
+        </ng-container>
         <!-- categories for xs view mobile -->
-        <div class="sm:hidden w-full truncate ">
+        <div class="md:hidden w-full truncate ">
             <div class="flex flex-nowrap items-center overflow-x-scroll">
                 <div class="flex flex-wrap items-center p-0.5">
                     <input 
@@ -55,33 +55,28 @@
             </div>
         </div>
         <!-- Sort -->
-        <div class="flex flex-row items-center justify-end w-full max-w-280">
-            <!-- View orientation -->
-            <div class="flex flex-row w-full sm:w-auto">
+        <div class="flex flex-row items-center justify-between md:justify-end mt-2 md:mt-0 w-full max-w-280">
+            <mat-select
+                class="order-1 md:order-2 border border-gray-300 w-40 p-2 rounded text-sm"
+                placeholder="Sort by name"
+                [formControl]="sortInputControl"
+                #sortSelector="matSelect"
+                >
+                <mat-select-trigger>
+                    <span class="flex items-center">
+                        <span>{{ sortSelector.triggerValue }}</span>
+                    </span>
+                </mat-select-trigger>
+                <ng-container>
+                    <mat-option [value]="'recent'">Most Recent</mat-option>
+                    <mat-option [value]="'cheapest'">Price : Cheapest</mat-option>
+                    <mat-option [value]="'expensive'">Price : Most Expensive</mat-option>
+                    <mat-option [value]="'a-z'">Name : Ascending</mat-option>
+                    <mat-option [value]="'z-a'">Name : Descending</mat-option>
+                </ng-container>
+            </mat-select>
 
-                <!-- Sort for xs view -->
-                <div class="sm:hidden justify-start w-full py-2">
-                    <mat-select
-                        class="border border-gray-300 w-28 px-2 py-1 rounded text-sm"
-                        placeholder="Sort by name"
-                        [formControl]="sortInputControl"
-                        #sortSelector="matSelect"
-                        >
-                        <mat-select-trigger>
-                            <span class="flex items-center">
-                                <span>{{ sortSelector.triggerValue }}</span>
-                            </span>
-                        </mat-select-trigger>
-                        <ng-container>
-                            <mat-option [value]="'recent'">Most Recent</mat-option>
-                            <mat-option [value]="'cheapest'">Price : Cheapest</mat-option>
-                            <mat-option [value]="'expensive'">Price : Most Expensive</mat-option>
-                            <mat-option [value]="'a-z'">Name : Ascending</mat-option>
-                            <mat-option [value]="'z-a'">Name : Descending</mat-option>
-                        </ng-container>
-                    </mat-select>
-                </div>
-
+            <div class="flex flex-row order-2 sm:order-1">
                 <!-- Grid view -->
                 <input
                     id="grid-view-button"
@@ -90,13 +85,13 @@
                     (click)="productViewOrientation = 'grid'"
                     mat-button>
                 <label 
-                class="flex items-center justify-center h-10 px-1 cursor-pointer mr-1"
-                for="grid-view-button"
-                matRipple>
-                <mat-icon
-                    [ngClass]="productViewOrientation === 'grid' ? 'text-black dark:text-white' : 'text-gray'"
-                    class="icon-size-4"
-                    [svgIcon]="'block-view'"></mat-icon>
+                    class="flex items-center justify-center h-10 px-1 cursor-pointer mr-1"
+                    for="grid-view-button"
+                    matRipple>
+                    <mat-icon
+                        [ngClass]="productViewOrientation === 'grid' ? 'text-black dark:text-white' : 'text-gray'"
+                        class="icon-size-4"
+                        [svgIcon]="'block-view'"></mat-icon>
                 </label>
 
                 <!-- List view -->
@@ -115,147 +110,110 @@
                         class="icon-size-4"
                         [svgIcon]="'list-view'"></mat-icon>
                 </label>
-
-                <!-- Sort -->
-                <mat-select
-                    class="hidden sm:block border border-gray-300 w-40 px-2 pt-3 rounded text-sm"
-                    placeholder="Sort by name"
-                    [formControl]="sortInputControl"
-                    #sortSelector="matSelect"
-                    >
-                    <mat-select-trigger>
-                        <span class="flex items-center">
-                            <span>{{ sortSelector.triggerValue }}</span>
-                        </span>
-                    </mat-select-trigger>
-                    <ng-container>
-                        <mat-option [value]="'recent'">Most Recent</mat-option>
-                        <mat-option [value]="'cheapest'">Price : Cheapest</mat-option>
-                        <mat-option [value]="'expensive'">Price : Most Expensive</mat-option>
-                        <mat-option [value]="'a-z'">Name : Ascending</mat-option>
-                        <mat-option [value]="'z-a'">Name : Descending</mat-option>
-                    </ng-container>
-                </mat-select>
             </div>
         </div>
 
-        <!-- Catalogue Navigation -->
-        <!-- <div class="flex flex-row items-center justify-between w-full max-w-280 mt-8 overflow-y-hidden overflow-x-auto bg-card bg-opacity-25 dark:bg-opacity-100 rounded-lg py-2 shadow">
-            <ul class="flex flex-auto items-center justify-around">
-                <li class="mr-6">
-                    <a (click)="chooseCategory()" class="text-black hover:text-primary hover:text-lg hover:underline cursor-pointer">
-                        <span class="truncate font-medium dark:text-white">All Products</span>
-                    </a>
-                </li>
-                <ng-container *ngFor="let category of storeCategories">
-                    <li class="mr-6">
-                        <a (click)="chooseCategory(category.id)" class="text-black hover:text-primary hover:text-lg hover:underline cursor-pointer">
-                            <span class="truncate font-medium dark:text-white" [value]="category.slug">{{category.name}}</span>
-                        </a>
-                    </li>
-                </ng-container>
-            </ul>
-        </div> -->
-
         <!-- Container -->
-        <div class="flex flex-col md:flex-row justify-between mt-10 w-full max-w-280">
+        <div class="flex flex-col md:flex-row justify-between mt-4 w-full max-w-280">
             <!-- Search & Filter -->
-            <div class="hidden sm:block flex flex-col lg:pr-6">
-                <!-- Search -->
-                <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript min-w-64">
-                    <mat-icon
-                        class="icon-size-4 text-primary"
-                        matPrefix
-                        [svgIcon]="'search'"></mat-icon>
-                    <input
-                        matInput
-                        [formControl]="searchInputControl"
-                        [autocomplete]="'off'"
-                        [placeholder]="'Search products'">
-                </mat-form-field>
-
-                <!-- Filter -->
-                <div class="flex flex-col mt-2 border border-gray-300 rounded-lg py-2 px-4 mb-4">
-                    <!-- Price -->
-                    <div class="flex flex-col">
-                        <!-- <div class="flex flex-row items-center justify-between w-full">
-                            <h3>Price</h3>
-                            <input
-                                id="filter-product-button"
-                                type="button"
-                                class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                mat-button>
-                            <label 
-                                class="flex items-center justify-center h-10 px-1.5 cursor-pointer mr-2"
-                                for="filter-product-button"
-                                matRipple>
-                                <mat-icon
-                                    class="icon-size-5"
-                                    [svgIcon]="'heroicons_outline:filter'"></mat-icon>
-                            </label>
-                        </div> -->
-                        <!-- Price Range Input -->
-                        <!-- <div class="flex flex-row w-full px-2 mt-2">
-                            <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript w-1/2">
+            <ng-container *ngIf="currentScreenSize.includes('md')">
+                <div class="flex flex-col lg:pr-6">
+                    <!-- Search for large screen -->
+                    <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript min-w-64">
+                        <mat-icon
+                            class="icon-size-4 text-primary"
+                            matPrefix
+                            [svgIcon]="'search'"></mat-icon>
+                        <input
+                            matInput
+                            [formControl]="searchInputControl"
+                            [autocomplete]="'off'"
+                            [placeholder]="'Search products'">
+                    </mat-form-field>
+    
+                    <!-- Filter -->
+                    <div class="flex flex-col mt-2 border border-gray-300 rounded-lg py-2 px-4 mb-4">
+                        <!-- Price -->
+                        <div class="flex flex-col">
+                            <!-- <div class="flex flex-row items-center justify-between w-full">
+                                <h3>Price</h3>
                                 <input
-                                    matInput
-                                    [autocomplete]="'off'"
-                                    [placeholder]="'Min price'">
-                            </mat-form-field>
-                            <span class="p-2">-</span>
-                            <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript w-1/2">
-                                <input
-                                    matInput
-                                    [autocomplete]="'off'"
-                                    [placeholder]="'Max price'">
-                            </mat-form-field>
-                        </div> -->
-                    </div>
-                    <div class="flex flex-col">
-                        <div class="flex flex-row items-center justify-between cursor-pointer w-full"
-                            (click)="collapseCategory = !collapseCategory">
-                            <h3 class="font-semibold">Categories</h3>
-                            <input
-                                id="collapse-category-button"
-                                type="button"
-                                (click)="collapseCategory = !collapseCategory"
-                                class="h-0 w-0 opacity-0 invisible pointer-events-none"
-                                mat-button>
-                            <label 
-                                class="flex items-center justify-center cursor-pointer h-10"
-                                for="collapse-category-button"
-                                matRipple>
-                                <mat-icon
-                                    class="icon-size-5"
-                                    [svgIcon]="collapseCategory ? 'heroicons_outline:chevron-up' : 'heroicons_outline:chevron-down'"></mat-icon>
-                            </label>
+                                    id="filter-product-button"
+                                    type="button"
+                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                                    mat-button>
+                                <label 
+                                    class="flex items-center justify-center h-10 px-1.5 cursor-pointer mr-2"
+                                    for="filter-product-button"
+                                    matRipple>
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="'heroicons_outline:filter'"></mat-icon>
+                                </label>
+                            </div> -->
+                            <!-- Price Range Input -->
+                            <!-- <div class="flex flex-row w-full px-2 mt-2">
+                                <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript w-1/2">
+                                    <input
+                                        matInput
+                                        [autocomplete]="'off'"
+                                        [placeholder]="'Min price'">
+                                </mat-form-field>
+                                <span class="p-2">-</span>
+                                <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript w-1/2">
+                                    <input
+                                        matInput
+                                        [autocomplete]="'off'"
+                                        [placeholder]="'Max price'">
+                                </mat-form-field>
+                            </div> -->
                         </div>
-                        <div @expandCollapse *ngIf="!collapseCategory">
-                            <div class="border-t w-full"></div>
-                            <mat-checkbox
-                                [checked]="catalogueSlug === 'all-products' ? true : false"
-                                value="all-products"
-                                [disabled]="catalogueSlug === 'all-products' ? true : false"
-                                (change)="changeCatalogue($event.source.value)"
-                                class="flex items-center h-10 min-h-10 px-4"
-                                [color]="'primary'">
-                                All Products
-                            </mat-checkbox>
-                            <ng-container *ngFor="let category of storeCategories">
+                        <div class="flex flex-col">
+                            <div class="flex flex-row items-center justify-between cursor-pointer w-full"
+                                (click)="collapseCategory = !collapseCategory">
+                                <h3 class="font-semibold">Categories</h3>
+                                <input
+                                    id="collapse-category-button"
+                                    type="button"
+                                    (click)="collapseCategory = !collapseCategory"
+                                    class="h-0 w-0 opacity-0 invisible pointer-events-none"
+                                    mat-button>
+                                <label 
+                                    class="flex items-center justify-center cursor-pointer h-10"
+                                    for="collapse-category-button"
+                                    matRipple>
+                                    <mat-icon
+                                        class="icon-size-5"
+                                        [svgIcon]="collapseCategory ? 'heroicons_outline:chevron-up' : 'heroicons_outline:chevron-down'"></mat-icon>
+                                </label>
+                            </div>
+                            <div @expandCollapse *ngIf="!collapseCategory">
+                                <div class="border-t w-full"></div>
                                 <mat-checkbox
-                                    [checked]="catalogueSlug === getCategorySlug(category.name) ? true : false"
-                                    [value]="getCategorySlug(category.name)"
-                                    [disabled]="catalogueSlug === getCategorySlug(category.name) ? true : false"
+                                    [checked]="catalogueSlug === 'all-products' ? true : false"
+                                    value="all-products"
+                                    [disabled]="catalogueSlug === 'all-products' ? true : false"
                                     (change)="changeCatalogue($event.source.value)"
                                     class="flex items-center h-10 min-h-10 px-4"
                                     [color]="'primary'">
-                                    {{category.name}}
+                                    All Products
                                 </mat-checkbox>
-                            </ng-container>
+                                <ng-container *ngFor="let category of storeCategories">
+                                    <mat-checkbox
+                                        [checked]="catalogueSlug === getCategorySlug(category.name) ? true : false"
+                                        [value]="getCategorySlug(category.name)"
+                                        [disabled]="catalogueSlug === getCategorySlug(category.name) ? true : false"
+                                        (change)="changeCatalogue($event.source.value)"
+                                        class="flex items-center h-10 min-h-10 px-4"
+                                        [color]="'primary'">
+                                        {{category.name}}
+                                    </mat-checkbox>
+                                </ng-container>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </ng-container>
 
             <!-- Products -->
             <div class="flex flex-col md:flex-wrap relative w-full md:px-4">
@@ -375,7 +333,7 @@
                                 <div class="flex flex-col items-center">
                                     <div  class="w-full mb-8 sm:mb-10">
                                         <ng-container *ngFor="let product of products">
-                                            <div class="flex flex-wrap flex-row h-40 sm:h-48 mb-4 w-full bg-card shadow border hover:border-2 hover:border-primary rounded-lg justify-between items-center cursor-pointer"
+                                            <div class="flex flex-wrap flex-row h-40 sm:h-48 mb-4 w-full bg-card shadow border group hover:border-2 rounded-lg justify-between items-center cursor-pointer"
                                                 [ngClass]="isProductOutOfStock(product) ? 'bg-card hover:border-primary' : 'bg-gray-200 hover:border-gray-600'"
                                                 [routerLink]="['/product/' + product.seoName]"
                                             >
@@ -420,11 +378,11 @@
                                                         </div>
                                                         <!-- <p class="font-semibold line-through">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p> -->
                                                         <div *ngIf="product.productInventories.length > 0 && product.productInventories[0].itemDiscount;else noItemDiscountList">
-                                                            <p class="font-semibold text-black hover:text-primary text-2xl">{{product.productInventories[0].itemDiscount.discountedPrice | currency: store.regionCountry.currencySymbol}}</p>
+                                                            <p class="font-semibold text-2xl" [ngClass]="isProductOutOfStock(product) === false ? 'group-hover:text-black' : 'group-hover:text-primary'">{{product.productInventories[0].itemDiscount.discountedPrice | currency: store.regionCountry.currencySymbol}}</p>
                                                             <p style="text-decoration: line-through;">{{product.productInventories[0].price | currency: store.regionCountry.currencySymbol}}</p>
                                                         </div>
                                                         <ng-template #noItemDiscountList>
-                                                            <p class="font-semibold text-black hover:text-primary text-2xl">{{ (product.productInventories.length > 0 ? product.productInventories[0].price : 0) | currency: store.regionCountry.currencySymbol}}</p>
+                                                            <p class="font-semibold text-2xl" [ngClass]="isProductOutOfStock(product) === false ? 'group-hover:text-black' : 'group-hover:text-primary'">{{ (product.productInventories.length > 0 ? product.productInventories[0].price : 0) | currency: store.regionCountry.currencySymbol}}</p>
                                                         </ng-template>
                                                     </div>
                                                 </div>

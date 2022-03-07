@@ -78,6 +78,8 @@ export class LandingCatalogueComponent implements OnInit
 
     pageOfItems: Array<any>;
 
+    currentScreenSize: string[] = [];
+
     /**
      * Constructor
      */
@@ -169,14 +171,15 @@ export class LandingCatalogueComponent implements OnInit
                 debounceTime(300),
                 switchMap((query) => {
 
+                    console.log("query", query);
+                    
+
                     this.searchName = query;
                     
                     // set loading to true
                     this.isLoading = true;
                     
-                    if (this.products.length > 0) {
-                        return this._productsService.getProducts(0, 12, this.sortName, this.sortOrder, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '');
-                    }
+                    return this._productsService.getProducts(0, 12, this.sortName, this.sortOrder, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '');
                 }),
                 map(() => {
                     // set loading to false
@@ -228,6 +231,8 @@ export class LandingCatalogueComponent implements OnInit
         this._fuseMediaWatcherService.onMediaChange$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(({matchingAliases}) => {
+
+                this.currentScreenSize = matchingAliases;
 
                 // Set the drawerMode and drawerOpened
                 if ( matchingAliases.includes('sm') )

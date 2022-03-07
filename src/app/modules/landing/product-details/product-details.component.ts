@@ -32,9 +32,13 @@ import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from 'ngx-gal
         .custom-number-input button:focus {
           outline: none !important;
         }
+
+        ngx-gallery {
+            position: relative;
+            z-index: 10;
+        }
         `
-    ],
-    encapsulation: ViewEncapsulation.None
+    ]
 })
 export class LandingProductDetailsComponent implements OnInit
 { 

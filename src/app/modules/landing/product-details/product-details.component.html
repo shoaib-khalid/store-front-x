@@ -32,9 +32,7 @@
                                     <span style="text-decoration: line-through;" class="px-2">{{displayedProduct.price | currency: store.regionCountry.currencySymbol}}</span> 
                                     <span class="text-xl font-semibold text-primary px-2 ">{{displayedProduct.discountedPrice | currency: store.regionCountry.currencySymbol}}</span> 
                                     <span class="mb-2 py-1 px-3 rounded text-sm font-semibold mx-2 items-center" [ngClass]="'text-primary-100 bg-red-600'">{{displayedProduct.discountAmount}}% Off</span> 
-
                                 </p>
-
                             </div>
                             <ng-template #noItemDiscount>
                                 <p class="font-semibold">Price: &nbsp; <span class="text-xl font-semibold text-primary px-2 ">{{displayedProduct.price | currency: store.regionCountry.currencySymbol}}</span> </p>
@@ -119,7 +117,12 @@
 
                             <div class="flex flex-row w-full justify-between mb-6">
                                 <p class="font-semibold">Sub Total:</p> 
-                                <span class="font-semibold text-2xl">{{displayedProduct.SubTotal | currency: store.regionCountry.currencySymbol}}</span>
+                                <ng-container *ngIf="displayedProduct.discountAmount>0;else noItemDiscountSubTotal">
+                                    <span class="text-xl font-semibold px-2 ">{{(displayedProduct.discountedPrice * quantity) | currency: store.regionCountry.currencySymbol}}</span>
+                                </ng-container>
+                                <ng-template #noItemDiscountSubTotal>
+                                    <span class="text-xl font-semibold px-2 ">{{(displayedProduct.price * quantity) | currency: store.regionCountry.currencySymbol}}</span>
+                                </ng-template>
                             </div>
     
                             <!-- Add to cart / checkoout -->
