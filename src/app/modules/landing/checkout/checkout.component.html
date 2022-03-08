@@ -316,14 +316,12 @@
                                     matInput
                                     [formControlName]="'specialInstruction'"
                                     placeholder="Tell us when you prefer this order delivered or any special request you may have"
-                                    [rows]="5"
+                                    [rows]="full"
                                     maxlength="100"
+                                    class="h-20"
                                     autocomplete="disabled"
                                     matTextareaAutosize></textarea>
-                                <mat-label>Delivery schedule / instruction</mat-label>
-                                <input
-                                    matInput
-                                    >
+                                <mat-label>Delivery schedule / instruction</mat-label>  
                             </mat-form-field>
                             <!-- Save future order -->
                             <mat-checkbox
