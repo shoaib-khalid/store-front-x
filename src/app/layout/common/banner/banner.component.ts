@@ -13,6 +13,7 @@ export class BannerComponent implements OnInit
     imageCollection:any = [];
     galleryOptions: NgxGalleryOptions[] = [];
     galleryImages: NgxGalleryImage[] = [];
+    mobileGalleryImages: NgxGalleryImage[] = [];
 
     store: Store = null;
     
@@ -38,8 +39,8 @@ export class BannerComponent implements OnInit
         // set galleryOptions
         this.galleryOptions = [
             {
-                width: '350px',
-                height: '350px',
+                width: '1440x',
+                height: '563px',
                 imageAnimation: NgxGalleryAnimation.Slide,
                 imageArrowsAutoHide: true, 
                 imageBullets: true,
@@ -51,8 +52,8 @@ export class BannerComponent implements OnInit
             // max-width 767 Mobile configuration
             {
                 breakpoint: 767,
-                width: '350px',
-                height: '350px',
+                width: '375px',
+                height: '362px',
                 imageAutoPlay: true,
                 imageBullets: true,
                 imageAutoPlayInterval: 5000,
@@ -67,9 +68,16 @@ export class BannerComponent implements OnInit
 
                 if(this.store.storeAssets.length > 0) {
                     this.galleryImages = [];
+                    this.mobileGalleryImages = [];
                     this.store.storeAssets.forEach(item => {
                         if (item.assetType === "BannerDesktopUrl") {
                             this.galleryImages.push({
+                                small   : '' + item.assetUrl,
+                                medium  : '' + item.assetUrl,
+                                big     : '' + item.assetUrl
+                            });
+                        } else if (item.assetType === "BannerMobileUrl") {
+                            this.mobileGalleryImages.push({
                                 small   : '' + item.assetUrl,
                                 medium  : '' + item.assetUrl,
                                 big     : '' + item.assetUrl
@@ -78,6 +86,13 @@ export class BannerComponent implements OnInit
                     });
                 } else {
                     this.galleryImages = [
+                        {
+                            small   : '' + 'https://symplified.biz/store-assets/banner-fnb.png',
+                            medium  : '' + 'https://symplified.biz/store-assets/banner-fnb.png',
+                            big     : '' + 'https://symplified.biz/store-assets/banner-fnb.png'
+                        }
+                    ];
+                    this.mobileGalleryImages = [
                         {
                             small   : '' + 'https://symplified.biz/store-assets/banner-fnb.png',
                             medium  : '' + 'https://symplified.biz/store-assets/banner-fnb.png',
