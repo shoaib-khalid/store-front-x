@@ -370,6 +370,13 @@ export class LandingCheckoutComponent implements OnInit
 
     addressFormChanges() {
 
+        if(this.checkoutForm.get('storePickup').value){
+            this.checkoutForm.get('state').setErrors(null);
+            this.checkoutForm.get('city').setErrors(null);
+            this.checkoutForm.get('postCode').setErrors(null);
+            this.checkoutForm.get('address').setErrors(null);
+        }
+
         // set selectedDeliveryProvidersGroup to null
         this.selectedDeliveryProvidersGroup = null;
 
@@ -1030,4 +1037,12 @@ export class LandingCheckoutComponent implements OnInit
             this.notificationMessage = "Sorry for the inconvenience, We are closed!";
         }
     }
+
+    // checkPickupOrder(){
+    //     if
+    //     this.checkoutForm.get('state').setErrors({required: false});
+    //     this.checkoutForm.get('city').setErrors({required: false});
+    //     this.checkoutForm.get('postCode').setErrors({required: false});
+    //     this.checkoutForm.get('address').setErrors({required: false});
+    // }
 }

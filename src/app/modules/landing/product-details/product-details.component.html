@@ -20,7 +20,7 @@
                         <!-- Product Details -->
                         <div class="flex flex-col w-full md:w-1/2">
                             <!-- Title -->
-                            <div class="items-center">
+                            <div class="items-center pb-2">
                                 <span class="mb-2 text-4xl font-semibold mt-5 sm:mt-10 md:mt-0 items-center">{{product.name}}</span>
                                 <!-- <span *ngIf="displayedProduct.discountAmount>0" class="mb-2 py-1 px-3 rounded text-sm font-semibold mx-2 items-center" [ngClass]="'text-primary-100 bg-red-600'">      
                                     {{displayedProduct.discountAmount}}% Off
@@ -38,7 +38,7 @@
                                 <p class="font-semibold">Price: &nbsp; <span class="text-xl font-semibold text-primary px-2 ">{{displayedProduct.price | currency: store.regionCountry.currencySymbol}}</span> </p>
                             </ng-template>
                             <!-- Details -->
-                            <div class="mb-2">
+                            <div class="mb-2 pt-4">
                                 <p class="mb-2 font-semibold">Details:</p> <span class="text-sm font-normal" [innerHTML]="product.description"></span>
                             </div>
                             <!-- Variants / Combo -->
@@ -51,7 +51,8 @@
                                     <label class="font-semibold" for="{{variant.name}}">{{variant.name | titlecase }} : </label>
                                     <ul class="grid grid-cols-2 my-2">
                                         <li *ngFor="let option of variant.productVariantsAvailable; let i = index;" class="flex items-center">
-                                            <input type="radio" 
+                                            <input type="radio"
+                                                class=""
                                                 id="{{variant.name + i}}" 
                                                 value="{{option.value}}" 
                                                 name="{{variant.name}}" 
