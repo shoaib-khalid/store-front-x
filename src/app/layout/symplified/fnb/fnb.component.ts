@@ -98,7 +98,7 @@ export class FnbLayoutComponent implements OnDestroy
                     .subscribe((response: StoreSnooze) => {
                         this.storeSnooze = response;
                         
-                        if (this.store) {
+                        if (this.store && this.storeSnooze) {
                             // check store timings
                             this.checkStoreTiming(this.store.storeTiming, this.storeSnooze);
                         }
@@ -144,20 +144,23 @@ export class FnbLayoutComponent implements OnDestroy
 
                 
                 this.storeCategories = response;
-                
-                this.catalogueSlug = this.catalogueSlug ? this.catalogueSlug : this._activatedRoute.snapshot.paramMap.get('catalogue-slug');
-                
-                let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === this.catalogueSlug);
-                this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
 
-                // set loading to true
-                this.isLoading = true;
+                if (this.storeCategories && this.storeCategories.length > 0) {
+                    this.catalogueSlug = this.catalogueSlug ? this.catalogueSlug : this._activatedRoute.snapshot.paramMap.get('catalogue-slug');
+                    
+                    let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === this.catalogueSlug);
+                    this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
+    
+                    // set loading to true
+                    this.isLoading = true;
+                    
+                    // this._productsService.getProducts(0, 12, "name", "asc", "", 'ACTIVE', this.storeCategory ? this.storeCategory.id : '')
+                    //     .subscribe(()=>{
+                    //         // set loading to false
+                    //         this.isLoading = false;
+                    //     });
+                }
                 
-                // this._productsService.getProducts(0, 12, "name", "asc", "", 'ACTIVE', this.storeCategory ? this.storeCategory.id : '')
-                //     .subscribe(()=>{
-                //         // set loading to false
-                //         this.isLoading = false;
-                //     });
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();

@@ -1,4 +1,4 @@
-<ng-container *ngIf="storeCategories.length > 0">
+<ng-container *ngIf="storeCategories && storeCategories.length > 0">
     <carousel [cellsToShow]="carouselCellsToShow" class="flex w-full justify-center items-center h-56" [arrowsOutside]="arrowsOutside">
         <ng-container *ngFor="let category of storeCategories">
             <div class="carousel-cell group">

@@ -60,8 +60,7 @@ export const appRoutes: Route[] = [
             layout: 'fnb'
         },
         resolve    : {
-            storeInfo: StoreResolver,
-            storeCategory: StoreCategoriesResolver
+            storeInfo: StoreResolver
         },
         children   : [
             {path: 'home', resolve: { cartItems: CartItemsResolver }, loadChildren: () => import('app/modules/landing/home/home.module').then(m => m.LandingHomeModule)},

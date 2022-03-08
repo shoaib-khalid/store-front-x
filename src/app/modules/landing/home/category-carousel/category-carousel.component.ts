@@ -68,7 +68,10 @@ export class CategoryCarouselComponent
         // Get store categories data
         this._storesService.storeCategories$
             .subscribe((response) => {
-                this.storeCategories = response;
+                
+                if (response) {
+                    this.storeCategories = response;                    
+                }
 
                 // this.storeCategories.forEach(item => {
                 //     this.images.push({

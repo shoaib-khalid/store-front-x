@@ -132,6 +132,15 @@ export class StoreResolver implements Resolve<any>
                 if (this._storesService.storeId$ && this._storesService.storeId$ !== null) {
 
                     // -----------------------
+                    // Get Store Category
+                    // -----------------------
+
+                    this._storesService.getStoreCategories()
+                        .subscribe(()=>{
+
+                        });
+
+                    // -----------------------
                     // check if cart id exists
                     // -----------------------
 
