@@ -9,6 +9,27 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v0.0.29
+        {
+            version    : 'v0.0.29',
+            releaseDate: 'Mar 07, 2022',
+            changes    : [
+                {
+                    type: 'Fix',
+                    list: [
+                        '(LandingHomePage) Fix category not showing for first time when opening SF',
+                        '(LandingCataloguePage) Fix unable to place order for store pickup bug'
+
+                    ]
+                },
+                {
+                    type: 'Added',
+                    list: [
+                        '(LandingHomePage) Use small banner from MP when the screen size on mobile view',
+                    ]
+                },
+            ]
+        },
         // v0.0.28
         {
             version    : 'v0.0.28',
