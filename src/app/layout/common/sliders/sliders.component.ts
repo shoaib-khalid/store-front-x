@@ -47,7 +47,6 @@ export class SlidersComponent implements OnInit
             this.store = response;
         })
         
-        console.log("store", this.store);
         // Get the discounts
         this._storesService.storeDiscounts$
             .subscribe((response: StoreDiscount[]) => {
