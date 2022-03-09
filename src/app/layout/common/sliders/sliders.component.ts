@@ -5,7 +5,7 @@ import { DOCUMENT } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, Subscription } from 'rxjs';
 import { StoresService } from 'app/core/store/store.service';
-import { Store, StoreDiscount } from 'app/core/store/store.types';
+import { Store, StoreAssets, StoreDiscount } from 'app/core/store/store.types';
 
 @Component({
     selector     : 'sliders',
@@ -23,6 +23,7 @@ export class SlidersComponent implements OnInit
 
     discounts: any[] = [];
     storeDiscounts: StoreDiscount[];
+    // storeDiscountBanner: StoreAssets[];
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -42,10 +43,11 @@ export class SlidersComponent implements OnInit
 
         // Get the store
         this._storesService.store$
-            .subscribe((response: Store) => {
-                this.store = response;
-            })
-
+        .subscribe((response: Store) => {
+            this.store = response;
+        })
+        
+        console.log("store", this.store);
         // Get the discounts
         this._storesService.storeDiscounts$
             .subscribe((response: StoreDiscount[]) => {
@@ -204,5 +206,14 @@ export class SlidersComponent implements OnInit
                 });
             }
         });
+    }
+
+    displayDiscountBanner(storeAssets: StoreAssets[]) {
+        let storeAssetsIndex = storeAssets.findIndex(item => item.assetType === 'DiscountBannerUrl');
+        if (storeAssetsIndex > -1) {
+            return storeAssets[storeAssetsIndex].assetUrl;
+        } else {
+            return 'assets/branding/symplified/logo/symplified.png'
+        }
     }
 }
