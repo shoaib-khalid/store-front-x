@@ -69,6 +69,8 @@ export class CategoryCarouselComponent
         this._storesService.storeCategories$
             .subscribe((response) => {
                 
+                console.log("response",response);
+                
                 if (response) {
                     this.storeCategories = response;                    
                 }

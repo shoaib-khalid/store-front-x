@@ -546,16 +546,21 @@ export class StoresService
     // Store Categories Section
     // ---------------------------
 
-    getStoreCategories(): Observable<any>
+    getStoreCategories(name: string="", id: string = "", page: number = 0, size: number = 30, sort: string = 'name', order: 'asc' | 'desc' | '' = 'asc'): Observable<any>
     {
         let productService = this._apiServer.settings.apiServer.productService;
         //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
         let accessToken = "accessToken";
 
-        const header = {  
+        const header = {
             headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
             params: {
-                storeId: this.storeId$
+                name        : '' + name,
+                storeId     : this.storeId$,
+                page        : '' + page,
+                pageSize    : '' + size,
+                sortByCol   : '' + sort,
+                sortingOrder: '' + order.toUpperCase(),
             }
         };
 
