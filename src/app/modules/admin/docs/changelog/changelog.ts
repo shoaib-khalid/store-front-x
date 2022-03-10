@@ -9,6 +9,20 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v0.0.31
+        {
+            version    : 'v0.0.31',
+            releaseDate: 'Mar 09, 2022',
+            changes    : [
+                {
+                    type: 'Fix',
+                    list: [
+                        '(LandingHomePage) Fix categories carousel',
+                    ]
+                }
+              
+            ]
+        },
         // v0.0.30
         {
             version    : 'v0.0.30',
