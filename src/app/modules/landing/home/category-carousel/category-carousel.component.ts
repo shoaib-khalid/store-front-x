@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { StoresService } from 'app/core/store/store.service';
 import { Store, StoreAssets, StoreCategory } from 'app/core/store/store.types';
@@ -6,6 +6,41 @@ import { HostListener } from "@angular/core";
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+// import Swiper core and required modules
+import SwiperCore, { Pagination, Navigation, Swiper, EffectCards, EffectCoverflow } from "swiper";
+import { SwiperComponent } from 'swiper/angular';
+
+SwiperCore.use([Pagination, Navigation, EffectCoverflow]);
+
+// const swiper = new Swiper('.swiper', {
+//     navigation: {
+//       nextEl: '.swiper-button-next',
+//       prevEl: '.swiper-button-prev',
+//     },
+//     // Default parameters
+//     slidesPerView: 3,
+//     spaceBetween: 100,
+//     slidesPerGroup: 1,
+//     // Responsive breakpoints
+//     breakpoints: {
+//     //   // when window width is >= 320px
+//     //   320: {
+//     //     slidesPerView: 2,
+//     //     spaceBetween: 20
+//     //   },
+//     //   // when window width is >= 480px
+//     //   480: {
+//     //     slidesPerView: 3,
+//     //     spaceBetween: 30
+//     //   },
+//       // when window width is >= 640px
+//       640: {
+//         slidesPerView: 4,
+//         spaceBetween: 0,
+//         slidesPerGroup: 1
+//       }
+//     }
+//   });
 
 @Component({
     selector     : 'category-carousel',
@@ -14,10 +49,54 @@ import { Subject } from 'rxjs';
     styles       : [
         /* language=SCSS */
         `
-        `]
+        @import "swiper/css";
+        @import "swiper/css/pagination";
+        @import "swiper/css/navigation";
+        @import "swiper/css/effect-cards";
+
+        .swiper {
+            width: 100%;
+            height: 100%;
+          }
+          
+          .swiper-slide {
+            text-align: center;
+            font-size: 18px;
+            background: #fff;
+          
+            /* Center slide text vertically */
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            -webkit-justify-content: center;
+            justify-content: center;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            -webkit-align-items: center;
+            align-items: center;
+          }
+          
+          .swiper-slide img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+          
+        `],
+
+    // styleUrls    : ['./category-carousel.component.scss'],
 })
 export class CategoryCarouselComponent
 {    
+
+    @ViewChild('pickerPanelOrigin', {read: ElementRef}) private _pickerPanelOrigin: ElementRef;
+    @ViewChild('trackId') private trackId: ElementRef<any>;
+    @ViewChild(SwiperComponent) swiper: SwiperComponent;
+    
     store: Store;
     storeCategories: StoreCategory[] = [];
 
@@ -31,6 +110,12 @@ export class CategoryCarouselComponent
 
     arrowsOutside: boolean = false;
 
+    //Swiper
+    swiperSlidesPerView: number = 4;
+    swiperSpaceBetween: number = 0;
+    swiperSlidesPerGroup: number = 4;
+    swiperEffect: string = '';
+
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     
     /**
@@ -41,9 +126,10 @@ export class CategoryCarouselComponent
         private _changeDetectorRef: ChangeDetectorRef,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _router: Router,
+        private _elementRef: ElementRef<HTMLElement>,
     )
     {
-        // this.onResize();
+        
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -98,12 +184,32 @@ export class CategoryCarouselComponent
                 } else if ( matchingAliases.includes('md') ) {
                     this.arrowsOutside = true;
                     this.carouselCellsToShow = 3;
+
+                    //Swiper
+                    this.swiperSlidesPerView = 4;
+                    this.swiperSpaceBetween = 0;
+                    this.swiperSlidesPerGroup = 4;
+                    this.swiperEffect = '';
+
                 } else if ( matchingAliases.includes('sm') ) {
                     this.arrowsOutside = true;
                     this.carouselCellsToShow = 2;
+
+                    //Swiper
+                    this.swiperSlidesPerView = 3;
+                    this.swiperSpaceBetween = 100;
+                    this.swiperSlidesPerGroup = 1;
+                    this.swiperEffect = 'coverflow';
+                    
                 } else {
                     this.arrowsOutside = false;
                     this.carouselCellsToShow = 1;
+
+                    //Swiper
+                    this.swiperSlidesPerView = 3;
+                    this.swiperSpaceBetween = 100;
+                    this.swiperSlidesPerGroup = 1;
+                    this.swiperEffect = 'coverflow';
                 }
 
                 // if storeCategories is smaller , only show storeCategories.length as carouselCellsToShow
@@ -121,6 +227,7 @@ export class CategoryCarouselComponent
      */
     ngAfterViewInit(): void
     {
+
         setTimeout(() => {
             
         });
@@ -138,6 +245,13 @@ export class CategoryCarouselComponent
         } else {
             console.error("Invalid category: Category not found");
         }
+    }
+
+    swipePrev() {
+        this.swiper.swiperRef.slidePrev();
+    }
+    swipeNext() {
+        this.swiper.swiperRef.slideNext();
     }
 
     // -----------------------------------------------------------------------------------------------------
