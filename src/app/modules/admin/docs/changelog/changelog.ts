@@ -9,9 +9,23 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v0.0.33
+        {
+            version    : 'v0.0.33',
+            releaseDate: 'Mar 11, 2022',
+            changes    : [
+                {
+                    type: 'Fix',
+                    list: [
+                        '(LandingCheckoutPage) Fix senangpay hash issue'
+                    ]
+                }
+              
+            ]
+        },
         // v0.0.32
         {
-            version    : 'v0.0.31',
+            version    : 'v0.0.32',
             releaseDate: 'Mar 11, 2022',
             changes    : [
                 {
