@@ -819,7 +819,7 @@ export class LandingCheckoutComponent implements OnInit
                 let hiddenField = document.createElement('input');
                 hiddenField.setAttribute('type', 'hidden');
                 hiddenField.setAttribute('name', key);
-                hiddenField.setAttribute('value', params[key]);
+                hiddenField.setAttribute('value', encodeURI(params[key]));
     
                 form.appendChild(hiddenField);
             }
