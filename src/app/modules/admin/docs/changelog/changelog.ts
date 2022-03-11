@@ -9,10 +9,26 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v0.0.32
+        {
+            version    : 'v0.0.31',
+            releaseDate: 'Mar 11, 2022',
+            changes    : [
+                {
+                    type: 'Fix',
+                    list: [
+                        '(LandingHomePage) Fix categories carousel shows duplicate categories',
+                        '(LandingHomePage) Some UI tweaks',
+                        '(LandingHomePage) Change default discount banner image',
+                    ]
+                }
+              
+            ]
+        },
         // v0.0.31
         {
             version    : 'v0.0.31',
-            releaseDate: 'Mar 09, 2022',
+            releaseDate: 'Mar 10, 2022',
             changes    : [
                 {
                     type: 'Fix',
