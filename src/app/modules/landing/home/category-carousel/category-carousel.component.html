@@ -29,7 +29,7 @@
           [spaceBetween]="swiperSpaceBetween"
           [loop]="true"
           [slidesPerGroup]="swiperSlidesPerGroup"
-          [loopFillGroupWithBlank]="true"
+          [centeredSlides]="swiperCenteredSlides"
           [effect]="swiperEffect"
           [coverflowEffect]="{
             rotate: 0,
@@ -63,7 +63,7 @@
 
                           </div>
                       </div>
-                      <p class="my-2 leading-none font-bold text-md sm:text-3xl group-hover:text-primary truncate">{{category.name}}</p>
+                      <p class="my-2 mx-2 leading-none font-semibold text-md sm:text-lg group-hover:text-primary break-word">{{category.name}}</p>
                   </label>
               </div>
               <!-- <div class="carousel-cell">

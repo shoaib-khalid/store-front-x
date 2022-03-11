@@ -1,13 +1,12 @@
-import { ChangeDetectorRef, Component, ElementRef, TemplateRef, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { StoresService } from 'app/core/store/store.service';
 import { Store, StoreAssets, StoreCategory } from 'app/core/store/store.types';
-import { HostListener } from "@angular/core";
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 // import Swiper core and required modules
-import SwiperCore, { Pagination, Navigation, Swiper, EffectCards, EffectCoverflow } from "swiper";
+import SwiperCore, { Pagination, Navigation, EffectCoverflow } from "swiper";
 import { SwiperComponent } from 'swiper/angular';
 
 SwiperCore.use([Pagination, Navigation, EffectCoverflow]);
@@ -105,16 +104,16 @@ export class CategoryCarouselComponent
     screenHeight: number;
     screenWidth: number;
 
-    carouselCellsToShow: number = 1;
-    carouselArrowsOutside: boolean = true;
-
-    arrowsOutside: boolean = false;
+    // carouselCellsToShow: number = 1;
+    // carouselArrowsOutside: boolean = true;
 
     //Swiper
     swiperSlidesPerView: number = 4;
     swiperSpaceBetween: number = 0;
     swiperSlidesPerGroup: number = 4;
     swiperEffect: string = '';
+    swiperCenteredSlides: boolean = false;
+    itsMobile: boolean = false;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     
@@ -126,7 +125,6 @@ export class CategoryCarouselComponent
         private _changeDetectorRef: ChangeDetectorRef,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _router: Router,
-        private _elementRef: ElementRef<HTMLElement>,
     )
     {
         
@@ -155,8 +153,6 @@ export class CategoryCarouselComponent
         this._storesService.storeCategories$
             .subscribe((response) => {
                 
-                console.log("response",response);
-                
                 if (response) {
                     this.storeCategories = response;                    
                 }
@@ -179,11 +175,11 @@ export class CategoryCarouselComponent
 
                 // Set the drawerMode and drawerOpened
                 if ( matchingAliases.includes('lg') ) {
-                    this.arrowsOutside = true;
-                    this.carouselCellsToShow = 4;
+                    // this.arrowsOutside = true;
+                    // this.carouselCellsToShow = 4;
                 } else if ( matchingAliases.includes('md') ) {
-                    this.arrowsOutside = true;
-                    this.carouselCellsToShow = 3;
+                    // this.arrowsOutside = true;
+                    // this.carouselCellsToShow = 3;
 
                     //Swiper
                     this.swiperSlidesPerView = 4;
@@ -192,8 +188,8 @@ export class CategoryCarouselComponent
                     this.swiperEffect = '';
 
                 } else if ( matchingAliases.includes('sm') ) {
-                    this.arrowsOutside = true;
-                    this.carouselCellsToShow = 2;
+                    // this.arrowsOutside = true;
+                    // this.carouselCellsToShow = 2;
 
                     //Swiper
                     this.swiperSlidesPerView = 3;
@@ -202,19 +198,25 @@ export class CategoryCarouselComponent
                     this.swiperEffect = 'coverflow';
                     
                 } else {
-                    this.arrowsOutside = false;
-                    this.carouselCellsToShow = 1;
+                    // this.arrowsOutside = false;
+                    // this.carouselCellsToShow = 1;
 
                     //Swiper
                     this.swiperSlidesPerView = 3;
                     this.swiperSpaceBetween = 100;
                     this.swiperSlidesPerGroup = 1;
                     this.swiperEffect = 'coverflow';
+
+                    this.itsMobile = true;
                 }
 
-                // if storeCategories is smaller , only show storeCategories.length as carouselCellsToShow
-                if (this.carouselCellsToShow > this.storeCategories.length) {
-                    this.carouselCellsToShow = this.storeCategories.length;
+                if ((this.swiperSlidesPerView > this.storeCategories.length) && this.itsMobile) {
+                    this.swiperSlidesPerView = this.storeCategories.length;
+                    this.swiperCenteredSlides = true;
+                }
+                else if (this.swiperSlidesPerView > this.storeCategories.length)
+                {
+                    this.swiperSlidesPerView = this.storeCategories.length;
                 }
 
                 // Mark for check
