@@ -72,6 +72,7 @@ export interface Payment
     };
     paymentLink: string;
     providerId: string;
+    sysTransactionId: string;
 }
 
 export interface Order
