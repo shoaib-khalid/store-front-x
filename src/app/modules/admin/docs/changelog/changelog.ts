@@ -9,6 +9,26 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v0.0.34
+        {
+            version    : 'v0.0.34',
+            releaseDate: 'Mar 14, 2022',
+            changes    : [
+                {
+                    type: 'Fix',
+                    list: [
+                        '(Header) Fix header UI to match Figma design'
+                    ]
+                },
+                {
+                    type: 'Added',
+                    list: [
+                        '(AnalyticService) Send front end data to back end'
+                    ]
+                }
+              
+            ]
+        },
         // v0.0.33
         {
             version    : 'v0.0.33',
