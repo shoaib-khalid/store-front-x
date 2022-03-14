@@ -495,13 +495,34 @@ export class LandingCheckoutComponent implements OnInit
                         this.displayError("No available delivery provider");
                         console.error("No available delivery provider")
                     } else if(deliveryProviderResponse.length === 1){
-    
+
                         // load the delivery providers
                         this.deliveryProviders = deliveryProviderResponse;
+
+                        // load the delivery providers group (for E-Commerce)
+                        this.deliveryProvidersGroup = [];
+                        this.deliveryProvidersGroup.push({
+                            providerId: deliveryProviderResponse[0].providerId,
+                            deliveryProviders: [deliveryProviderResponse[0]]
+                        });
                         
+                        console.log("deliveryProvidersGroup", this.deliveryProvidersGroup );
+
                         // if there's 1 delivery provider, load the delivery provider to mat-select
                         this.checkoutForm.get('deliveryProviderId').patchValue(this.deliveryProviders[0].providerId);
+
+                        // load selected delivery provider
                         this.selectedDeliveryProvider = this.deliveryProviders[0];
+
+                        // load selected delivery provider group
+                        this.selectedDeliveryProvidersGroup = this.deliveryProvidersGroup[0];
+
+                        // find delivery with no error
+                        let index = this.selectedDeliveryProvidersGroup.deliveryProviders.findIndex(item => item.isError === false);
+
+                        if (index > -1) {
+                            this.checkedDeliveryRefId = this.selectedDeliveryProvidersGroup.deliveryProviders[index].refId;
+                        }
     
                         if (this.selectedDeliveryProvider.isError === true) {
                             let confirmation = this.displayError(this.selectedDeliveryProvider.providerName + " error: " + this.selectedDeliveryProvider.message);
@@ -561,6 +582,10 @@ export class LandingCheckoutComponent implements OnInit
                     // Set Loading to false
                     this.isCalculating = false;
                     this.isLoading = false;
+
+                    // Mark for check
+                    this._changeDetectorRef.markForCheck();
+
                 });
         } else {
             // Get discount for store pickup    
