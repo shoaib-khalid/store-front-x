@@ -35,6 +35,9 @@ import { DomSanitizer } from '@angular/platform-browser';
         .custom-number-input button:focus {
           outline: none !important;
         }
+
+    
+
         `
     ],
     encapsulation: ViewEncapsulation.None,
