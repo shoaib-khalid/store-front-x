@@ -2,7 +2,7 @@ import { Route } from '@angular/router';
 import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
-import { InitialDataResolver, StoreResolver } from 'app/app.resolvers';
+import { InitialDataResolver, LandingDataResolver, StoreResolver } from 'app/app.resolvers';
 import { CartItemsResolver, StoreCategoriesResolver } from './modules/landing/landing.resolver';
 
 // @formatter:off
@@ -60,7 +60,8 @@ export const appRoutes: Route[] = [
             layout: 'fnb'
         },
         resolve    : {
-            storeInfo: StoreResolver
+            storeInfo: StoreResolver,
+            ipAdressInfo: LandingDataResolver
         },
         children   : [
             {path: 'home', resolve: { cartItems: CartItemsResolver }, loadChildren: () => import('app/modules/landing/home/home.module').then(m => m.LandingHomeModule)},

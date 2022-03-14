@@ -13,6 +13,7 @@ import { PlatformLocation } from '@angular/common';
 import { CartService } from 'app/core/cart/cart.service';
 import { Cart } from 'app/core/cart/cart.types';
 import { NotificationService } from './core/notification/notification.service';
+import { IpAddressService } from './core/ip-address/ip-address.service';
 
 @Injectable({
     providedIn: 'root'
@@ -196,5 +197,38 @@ export class StoreResolver implements Resolve<any>
                 .subscribe((response)=>{
                 });
         }
+    }
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class LandingDataResolver implements Resolve<any>
+{
+    /**
+     * Constructor
+     */
+    constructor(
+        private _ipAddressService: IpAddressService
+    )
+    {
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Public methods
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Use this resolver to resolve initial mock-api for the application
+     *
+     * @param route
+     * @param state
+     */
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any>
+    {
+        // Fork join multiple API endpoint calls to wait all of them to finish
+        return forkJoin([
+            this._ipAddressService.getIPAddress()
+        ]);
     }
 }

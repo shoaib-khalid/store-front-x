@@ -41,10 +41,17 @@ export class AppComponent
     }
 
     ngOnInit() {
+
         console.log("navigator",navigator.userAgent);
-        this._ipAddressService.getIPAddress().subscribe((res:any)=>{  
-            this.ipAddress = res.ip_addr;  
-        }); 
+        this._ipAddressService.ipAdressInfo$
+            .subscribe((response:any)=>{
+                if (response) {
+                    this.ipAddress = response.ip_addr;
+
+                    // Mark for check
+                    this._changeDetectorRef.markForCheck();
+                }
+            }); 
         
         // Get current store
         this._storesService.store$
@@ -141,7 +148,7 @@ export class AppComponent
                         storeId     : _storeId
                     }
                     if(event instanceof RoutesRecognized) {
-                        console.log("event",event.url);
+                        // console.log("event",event.url);
                         this._analyticService.postActivity(activityBody).subscribe((response) => {
                         });            
                     }
