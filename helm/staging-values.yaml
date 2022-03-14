@@ -18,7 +18,8 @@ configProdJson:
               "orderService"        : "https://api.symplified.it/order-service/v1",
               "reportService"       : "https://api.symplified.it/report-service/v1",
               "deliveryService"     : "https://api.symplified.it/delivery-service/v1",
-              "paymentService"      : "https://api.symplified.it/payment-service/v1"
+              "paymentService"      : "https://api.symplified.it/payment-service/v1",
+              "analyticService"     : "https://api.symplified.it/analytic-service/v1"
           },
           "storeFrontDomain"        : ".symplified.ai",
           "logging": 0

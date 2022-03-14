@@ -15,6 +15,7 @@ import { appRoutes } from 'app/app.routing';
 import { AppConfig } from 'app/config/service.config';
 import * as Hammer from 'hammerjs';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG, HammerModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
 
 const routerConfig: ExtraOptions = {
     preloadingStrategy       : PreloadAllModules,
@@ -51,6 +52,8 @@ export class MyHammerConfig extends HammerGestureConfig {
 
         // Hammer Module
         HammerModule,
+
+        HttpClientModule,
 
         // 3rd party modules that require global configuration via forRoot
         MarkdownModule.forRoot({})

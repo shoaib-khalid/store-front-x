@@ -32,6 +32,9 @@ export class LandingThankyouComponent
         this.paymentType = this._activatedRoute.snapshot.paramMap.get('payment-type');
         this.completionStatus = this._activatedRoute.snapshot.paramMap.get('completion-status');
 
+        // console.log("this.completionStatus",this.completionStatus);
+        
+
         // Get the store info
         this._storesService.store$
             .subscribe((response: Store) => {

@@ -9,7 +9,7 @@ import { CoreInterceptor } from './core.interceptor';
     imports: [
         AuthModule,
         IconsModule,
-        TranslocoCoreModule
+        TranslocoCoreModule,
     ],
     providers:[
         {
