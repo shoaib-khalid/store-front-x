@@ -34,7 +34,7 @@ export class AppComponent
         private _storesService: StoresService,
         private _analyticService: AnalyticService,
         private _deviceService: DeviceDetectorService,
-        private _IpService: IpAddressService
+        private _ipAddressService: IpAddressService
     )
     {
     
@@ -42,8 +42,8 @@ export class AppComponent
 
     ngOnInit() {
         console.log("navigator",navigator.userAgent);
-        this._IpService.getIPAddress().subscribe((res:any)=>{  
-            this.ipAddress = res.ip;  
+        this._ipAddressService.getIPAddress().subscribe((res:any)=>{  
+            this.ipAddress = res.ip_addr;  
         }); 
         
         // Get current store
