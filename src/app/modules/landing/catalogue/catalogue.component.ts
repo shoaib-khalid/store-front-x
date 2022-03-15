@@ -36,7 +36,19 @@ import { DomSanitizer } from '@angular/platform-browser';
           outline: none !important;
         }
 
-    
+        /** Custom mat-checkbox theme **/
+
+        body.light .mat-checkbox-disabled.mat-checkbox-checked .mat-checkbox-background {
+            background-color: var(--fuse-primary);
+        }
+        
+        body.light .mat-checkbox-disabled .mat-checkbox-label {
+            color: black;
+        }
+
+        body.light .mat-checkbox-frame {
+            border-color: var(--fuse-primary);
+        }
 
         `
     ],
