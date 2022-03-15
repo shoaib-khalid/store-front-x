@@ -10,6 +10,7 @@ import { DatePipe } from '@angular/common';
 import { BannerModule } from 'app/layout/common/banner/banner.module';
 import { FuseDrawerModule } from '@fuse/components/drawer';
 import { MatButtonModule } from '@angular/material/button';
+import { FuseLoadingBarModule } from '@fuse/components/loading-bar';
 
 @NgModule({
     declarations: [
@@ -24,7 +25,8 @@ import { MatButtonModule } from '@angular/material/button';
         FuseAlertModule,
         BannerModule,
         FuseDrawerModule,
-        MatButtonModule
+        MatButtonModule,
+        FuseLoadingBarModule
     ],
     exports     : [
         FnbLayoutComponent,
