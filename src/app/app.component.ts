@@ -1,11 +1,13 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { NavigationEnd, NavigationStart, Router, RoutesRecognized } from '@angular/router';
+import { NavigationEnd, Router, RoutesRecognized } from '@angular/router';
 import { AnalyticService } from './core/analytic/analytic.service';
 import { StoresService } from './core/store/store.service';
 import { Store } from './core/store/store.types';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { IpAddressService } from './core/ip-address/ip-address.service';
+import { CartService } from './core/cart/cart.service';
+
 
 declare let gtag: Function;
 
@@ -34,7 +36,8 @@ export class AppComponent
         private _storesService: StoresService,
         private _analyticService: AnalyticService,
         private _deviceService: DeviceDetectorService,
-        private _ipAddressService: IpAddressService
+        private _ipAddressService: IpAddressService,
+        private _cartService: CartService,
     )
     {
     
@@ -132,8 +135,9 @@ export class AppComponent
                     //get ip address info
                     var _IpService = this.ipAddress;
                     
-                    // console.log("_sessionId");
-                                 
+                    //get session id by get cart id
+                    var _sessionId = this._cartService.cartId$ 
+
                     const activityBody = 
                     {
                         browserType : _deviceBrowser,
@@ -143,14 +147,13 @@ export class AppComponent
                         errorType   : "string",
                         ip          : _IpService,
                         os          : _deviceOs,
-                        pageVisited : event["url"],
-                        sessionId   : "string",
+                        pageVisited : event["urlAfterRedirects"],
+                        sessionId   : _sessionId,
                         storeId     : _storeId
                     }
                     if(event instanceof RoutesRecognized) {
-                        // console.log("event",event.url);
                         this._analyticService.postActivity(activityBody).subscribe((response) => {
-                        });            
+                        });           
                     }
                     // NavigationEnd
                     // NavigationCancel
@@ -162,5 +165,7 @@ export class AppComponent
             // Mark for check
             this._changeDetectorRef.markForCheck();
         });
+        
     }
+
 }

@@ -145,6 +145,27 @@ export class CartService
         );
     }
 
+    deleteCartbyId(cartId: string):  Observable<any>
+    {
+        let orderService = this._apiServer.settings.apiServer.orderService;
+        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
+        let accessToken = "accessToken";
+
+        const header = {  
+            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`)
+        };
+
+        return this._httpClient.delete<any>(orderService + '/carts/' + cartId, header)
+            .pipe(
+                map((response) => {
+                    this._logging.debug("Response from StoresService (deleteCart)",response);
+
+                    return response["data"];
+                })
+            );
+    }
+
+
     // -------------
     // Cart Items
     // -------------
