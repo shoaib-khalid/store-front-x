@@ -194,10 +194,7 @@ export class LandingCatalogueComponent implements OnInit
             .pipe(
                 takeUntil(this._unsubscribeAll),
                 debounceTime(300),
-                switchMap((query) => {
-
-                    console.log("query", query);
-                    
+                switchMap((query) => {                    
 
                     this.searchName = query;
                     
