@@ -98,19 +98,19 @@ export class ProductsService
      * Getter for access token
      */
  
-     get accessToken(): string
-     {
-         return localStorage.getItem('accessToken') ?? '';
-     }
+    get accessToken(): string
+    {
+        return localStorage.getItem('accessToken') ?? '';
+    }
 
     /**
      * Getter for storeId
      */
  
-     get storeId$(): string
-     {
-         return localStorage.getItem('storeId') ?? '';
-     }
+    get storeId$(): string
+    {
+        return localStorage.getItem('storeId') ?? '';
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods

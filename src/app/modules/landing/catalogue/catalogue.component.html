@@ -396,7 +396,8 @@
                                     [itemLength]="pagination.length" 
                                     [initialPage]="pagination.page + 1"
                                     [pageSize]="pagination.size"
-                                    (changePage)="onChangePage($event)"></pagination>
+                                    (changePage)="onChangePage($event)"
+                                    #productPaginator></pagination>
                             </div>
                         </ng-container>
                     </ng-container>
