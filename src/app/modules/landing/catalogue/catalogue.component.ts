@@ -15,6 +15,7 @@ import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { fuseAnimations } from '@fuse/animations';
 import { MatIconRegistry } from "@angular/material/icon";
 import { DomSanitizer } from '@angular/platform-browser';
+import { CatalogueService } from './catalogue.service';
 
 @Component({
     selector     : 'landing-catalogue',
@@ -64,12 +65,14 @@ export class LandingCatalogueComponent implements OnInit
 
     catalogueSlug: string;
 
-    @ViewChild(MatPaginator) private _paginator: MatPaginator;
+    @ViewChild("productPaginator", {read: MatPaginator}) private _paginator: MatPaginator;
     // @ViewChild(MatSort) private _sort: MatSort;
 
     pagination: ProductPagination;
     products: Product[] = [];
     productName: string = null;
+
+    oldPaginationIndex: number = 0;
 
     // product
     products$: Observable<Product[]>;
@@ -102,6 +105,7 @@ export class LandingCatalogueComponent implements OnInit
         private _storesService: StoresService,
         private _productsService: ProductsService,
         private _cartService: CartService,
+        private _catalogueService: CatalogueService,
         private _changeDetectorRef: ChangeDetectorRef,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _domSanitizer: DomSanitizer,
@@ -155,8 +159,14 @@ export class LandingCatalogueComponent implements OnInit
                         this.catalogueSlug = this.catalogueSlug ? this.catalogueSlug : this._activatedRoute.snapshot.paramMap.get('catalogue-slug');
                         let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === this.catalogueSlug);
                         this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
+                     
+                        // we'll get the previous url, any url split by / that have length more than 3 will considered product page
+                        // after user click back from product page , we'll maintain it's previous pagination 
+                        if (this._catalogueService.getPreviousUrl() && this._catalogueService.getPreviousUrl().split("/").length > 3) {                            
+                            this.oldPaginationIndex = this.pagination ? this.pagination.page : 0;
+                        }
 
-                        this._productsService.getProducts(0, 12, "name", "asc", "", 'ACTIVE', this.storeCategory ? this.storeCategory.id : '')
+                        this._productsService.getProducts(this.oldPaginationIndex, 12, "name", "asc", "", 'ACTIVE', this.storeCategory ? this.storeCategory.id : '')
                             .pipe(takeUntil(this._unsubscribeAll))
                             .subscribe(()=>{
                                 // set loading to false
@@ -285,22 +295,26 @@ export class LandingCatalogueComponent implements OnInit
     ngAfterViewInit(): void
     {
         setTimeout(() => {
-            if (this._paginator )
-            {
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
+            // if (this._paginator )
+            // {
 
-                // Get products if sort or page changes
-                merge(this._paginator.page).pipe(
-                    switchMap(() => {
-                        this.isLoading = true;
-                        return this._productsService.getProducts(0, 12, this.sortName, this.sortOrder, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '');
-                    }),
-                    map(() => {
-                        this.isLoading = false;
-                    })
-                ).subscribe();
-            }
+            //     console.log("this._paginator", this._paginator);
+                
+
+            //     // Mark for check
+            //     this._changeDetectorRef.markForCheck();
+
+            //     // Get products if sort or page changes
+            //     merge(this._paginator.page).pipe(
+            //         switchMap(() => {
+            //             this.isLoading = true;
+            //             return this._productsService.getProducts(0, 12, this.sortName, this.sortOrder, this.searchName, "ACTIVE" , this.storeCategory ? this.storeCategory.id : '');
+            //         }),
+            //         map(() => {
+            //             this.isLoading = false;
+            //         })
+            //     ).subscribe();
+            // }
         }, 0);
     }
 
