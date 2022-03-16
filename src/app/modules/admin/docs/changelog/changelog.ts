@@ -9,6 +9,21 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v0.0.36
+        {
+            version    : 'v0.0.36',
+            releaseDate: 'Mar 16, 2022',
+            changes    : [
+                {
+                    type: 'Fix',
+                    list: [
+                        '(LandingProductPage) Fix default image if there\'s no product image uploaded by merchant',
+                        '(LandingCataloguePage) Maintain page pagination after user click "back" from product page',
+                        '(LandingCataloguePage) Set default background to white if the image uploaded by merchant is transparent'
+                    ]
+                }
+            ]
+        },
         // v0.0.35
         {
             version    : 'v0.0.35',
