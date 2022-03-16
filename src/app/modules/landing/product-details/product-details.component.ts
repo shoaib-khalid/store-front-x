@@ -214,14 +214,18 @@ export class LandingProductDetailsComponent implements OnInit
                     });
             
                     // set to galerry images
-                    this.galleryImages = this.imageCollection
+                    this.galleryImages = this.imageCollection                    
 
                     if (this.galleryImages.length < 1) {
-                        this.galleryImages = [{
-                            small   : '' + this.store.storeAsset.logoUrl,
-                            medium  : '' + this.store.storeAsset.logoUrl,
-                            big     : '' + this.store.storeAsset.logoUrl
-                        }];
+                        this.store.storeAssets.forEach(item => {
+                            if(item.assetType === "LogoUrl") {
+                                this.galleryImages = [{
+                                    small   : '' + item.assetUrl,
+                                    medium  : '' + item.assetUrl,
+                                    big     : '' + item.assetUrl
+                                }];
+                            }
+                        });
                     }
     
                     // -----------------------
