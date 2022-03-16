@@ -1,19 +1,22 @@
 <div class="flex flex-col sm:flex-row items-center md:items-start sm:justify-center md:justify-start flex-auto min-w-0">
     <div class="md:flex md:items-center md:justify-end w-full sm:w-auto md:h-full md:w-1/2 py-8 px-4 sm:p-12 md:p-16 sm:rounded-2xl md:rounded-none sm:shadow md:shadow-none sm:bg-card">
-        <div class="w-full max-w-80 sm:w-80 mx-auto sm:mx-0">
+        <div class="w-full max-w-80 sm:w-80 mx-auto sm:mx-0 bg-blue">
             <!-- Logo -->
-            <div class="w-12">
-                <img src="assets/images/logo/logo.svg">
+            <div  class="grid justify-items-center">
+                <div class="w-2/3">
+                    <img src="assets/branding/deliverin/logo/DeliverIn-Original.svg">
+                </div>
             </div>
-
             <!-- Title -->
-            <div class="mt-8 text-4xl font-extrabold tracking-tight leading-tight">Sign in</div>
-            <div class="flex items-baseline mt-0.5 font-medium">
-                <div>Don't have an account?</div>
-                <a
-                    class="ml-1 text-primary-500 hover:underline"
-                    [routerLink]="['/sign-up']">Sign up
-                </a>
+            <div class="grid justify-items-center mt-8 text-3xl font-bold tracking-tight leading-tight">Sign in</div>
+            <div class="flex items-center mt-4 font-medium text-gray-500">
+                <div>
+                    <p class="text-center">
+                        Stay signed in with your account to make searching easier
+                    </p>
+                   
+                </div>
+               
             </div>
 
             <!-- Alert -->
@@ -34,12 +37,13 @@
                 #signInNgForm="ngForm">
 
                 <!-- Email field -->
-                <mat-form-field class="w-full">
-                    <mat-label>Email address</mat-label>
+                <mat-form-field class="w-full" floatLabel="always">
+                    <mat-icon svgIcon="mat_outline:email" class="text-gray-300"></mat-icon>
                     <input
                         id="email"
                         matInput
-                        [formControlName]="'email'">
+                        [formControlName]="'email'"
+                        placeholder="Email" class="px-2" >
                     <mat-error *ngIf="signInForm.get('email').hasError('required')">
                         Email address is required
                     </mat-error>
@@ -50,12 +54,14 @@
 
                 <!-- Password field -->
                 <mat-form-field class="w-full">
-                    <mat-label>Password</mat-label>
+                    <mat-icon svgIcon="mat_outline:lock" class="text-gray-300"></mat-icon>
                     <input
                         id="password"
                         matInput
                         type="password"
                         [formControlName]="'password'"
+                        placeholder="Password"
+                        class="px-2"
                         #passwordField>
                     <button
                         mat-icon-button
@@ -65,11 +71,13 @@
                         <mat-icon
                             class="icon-size-5"
                             *ngIf="passwordField.type === 'password'"
-                            [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+                            [svgIcon]="'mat_outline:visibility'"
+                            class="text-gray-300"></mat-icon>
                         <mat-icon
                             class="icon-size-5"
                             *ngIf="passwordField.type === 'text'"
-                            [svgIcon]="'heroicons_solid:eye-off'"></mat-icon>
+                            [svgIcon]="'mat_outline:visibility_off'"
+                            class="text-gray-300"></mat-icon>
                     </button>
                     <mat-error>
                         Password is required
@@ -81,17 +89,20 @@
                     <mat-checkbox
                         [color]="'primary'"
                         [formControlName]="'rememberMe'">
-                        Remember me
+                        <p class="text-gray-400">
+                            Remember me
+                        </p>
+                       
                     </mat-checkbox>
                     <a
-                        class="text-md font-medium text-primary-500 hover:underline"
+                        class="text-md font-medium hover:underline"
                         [routerLink]="['/forgot-password']">Forgot password?
                     </a>
                 </div>
 
                 <!-- Submit button -->
                 <button
-                    class="fuse-mat-button-large w-full mt-6"
+                    class="w-full mt-6 font-semibold p-2 rounded h-10"
                     mat-flat-button
                     [color]="'primary'"
                     [disabled]="signInForm.disabled"
@@ -108,36 +119,30 @@
                 <!-- Separator -->
                 <div class="flex items-center mt-8">
                     <div class="flex-auto mt-px border-t"></div>
-                    <div class="mx-2 text-secondary">Or continue with</div>
+                    <div class="mx-2 text-secondary text-gray-400">Or continue with</div>
                     <div class="flex-auto mt-px border-t"></div>
                 </div>
 
                 <!-- Single sign-on buttons -->
-                <div class="flex items-center mt-8 space-x-4">
-                    <button
-                        class="flex-auto"
-                        type="button"
-                        mat-stroked-button>
-                        <mat-icon
-                            class="icon-size-5"
-                            [svgIcon]="'feather:facebook'"></mat-icon>
-                    </button>
-                    <button
-                        class="flex-auto"
-                        type="button"
-                        mat-stroked-button>
-                        <mat-icon
-                            class="icon-size-5"
-                            [svgIcon]="'feather:twitter'"></mat-icon>
-                    </button>
-                    <button
-                        class="flex-auto"
-                        type="button"
-                        mat-stroked-button>
-                        <mat-icon
-                            class="icon-size-5"
-                            [svgIcon]="'feather:github'"></mat-icon>
-                    </button>
+                <div class="grid justify-items-center mt-8 space-x-4">
+            
+                    <div class="flex justify-center">
+                        
+                        <div class="mr-2">
+                            <button mat-fab color="">
+                                <img src = "assets/social-media/google-svgrepo.svg" style="width: 25px;height: 25px;" />
+                            </button>
+                        </div>
+    
+                        <div class="mr-2">
+                            <button mat-fab color="">
+                                
+                                <img src = "assets/social-media/facebook-svgrepo.svg" style="width: 25px;height: 25px;" />
+        
+                            </button>
+                        </div>
+                    </div>
+
                 </div>
             </form>
         </div>
