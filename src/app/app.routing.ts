@@ -3,7 +3,7 @@ import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
 import { InitialDataResolver, LandingDataResolver, StoreResolver } from 'app/app.resolvers';
-import { CartItemsResolver, StoreCategoriesResolver } from './modules/landing/landing.resolver';
+import { CartItemsResolver, ProductsResolver, StoreCategoriesResolver } from './modules/landing/landing.resolver';
 
 // @formatter:off
 // tslint:disable:max-line-length
@@ -60,6 +60,7 @@ export const appRoutes: Route[] = [
             layout: 'fnb'
         },
         resolve    : {
+            products: ProductsResolver,
             storeInfo: StoreResolver,
             ipAdressInfo: LandingDataResolver
         },
