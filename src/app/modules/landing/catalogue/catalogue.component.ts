@@ -154,24 +154,30 @@ export class LandingCatalogueComponent implements OnInit
                 this._storesService.storeCategories$
                     .pipe(takeUntil(this._unsubscribeAll))
                     .subscribe((response: StoreCategory[]) => {
-                        this.storeCategories = response;
-                    
-                        this.catalogueSlug = this.catalogueSlug ? this.catalogueSlug : this._activatedRoute.snapshot.paramMap.get('catalogue-slug');
-                        let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === this.catalogueSlug);
-                        this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
-                     
-                        // we'll get the previous url, any url split by / that have length more than 3 will considered product page
-                        // after user click back from product page , we'll maintain it's previous pagination 
-                        if (this._catalogueService.getPreviousUrl() && this._catalogueService.getPreviousUrl().split("/").length > 3) {                            
-                            this.oldPaginationIndex = this.pagination ? this.pagination.page : 0;
-                        }
 
-                        this._productsService.getProducts(this.oldPaginationIndex, 12, "name", "asc", "", 'ACTIVE', this.storeCategory ? this.storeCategory.id : '')
-                            .pipe(takeUntil(this._unsubscribeAll))
-                            .subscribe(()=>{
-                                // set loading to false
-                                this.isLoading = false;
-                            });
+                        if (response) {
+                            this.storeCategories = response;
+                        
+                            this.catalogueSlug = this.catalogueSlug ? this.catalogueSlug : this._activatedRoute.snapshot.paramMap.get('catalogue-slug');
+                            let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === this.catalogueSlug);
+                            this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
+                         
+                            // we'll get the previous url, any url split by / that have length more than 3 will considered product page
+                            // after user click back from product page , we'll maintain it's previous pagination 
+                            if (this._catalogueService.getPreviousUrl() && this._catalogueService.getPreviousUrl().split("/").length > 3) {                            
+                                this.oldPaginationIndex = this.pagination ? this.pagination.page : 0;
+                            }
+    
+                            this._productsService.getProducts(this.oldPaginationIndex, 12, "name", "asc", "", 'ACTIVE', this.storeCategory ? this.storeCategory.id : '')
+                                .pipe(takeUntil(this._unsubscribeAll))
+                                .subscribe(()=>{
+                                    // set loading to false
+                                    this.isLoading = false;
+
+                                    // Mark for check
+                                    this._changeDetectorRef.markForCheck();
+                                });
+                        }
                         
                         // Mark for check
                         this._changeDetectorRef.markForCheck();
