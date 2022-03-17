@@ -494,7 +494,7 @@ export class LandingCheckoutComponent implements OnInit
                         // if there's no delivery provider, display error
                         this.displayError("No available delivery provider");
                         console.error("No available delivery provider")
-                    } else if(deliveryProviderResponse.length === 1){
+                    } else if(deliveryProviderResponse.length === 1) {
 
                         // load the delivery providers
                         this.deliveryProviders = deliveryProviderResponse;
@@ -574,6 +574,9 @@ export class LandingCheckoutComponent implements OnInit
                                 }
                             }
                         });
+
+                        console.log("this.deliveryProvidersGroup", this.deliveryProvidersGroup);
+                        
                                                 
                         // load all delivery provider in mat-select without default provider
                         this.deliveryProviders = deliveryProviderResponse;
@@ -628,8 +631,12 @@ export class LandingCheckoutComponent implements OnInit
                 // find delivery with no error
                 let index = this.selectedDeliveryProvidersGroup.deliveryProviders.findIndex(item => item.isError === false);
 
-                if (index > -1) {
+                if (index > -1) {                    
                     this.checkedDeliveryRefId = this.selectedDeliveryProvidersGroup.deliveryProviders[index].refId;
+
+                    // this to allow first selected delivery service calculate its price
+                    deliveryProviderId = this.checkedDeliveryRefId;
+                    deliveryProviderGroupType = "group"
                 } else {
 
                     let confirmation = this.displayError(this.selectedDeliveryProvidersGroup.deliveryProviders[0].providerName + " error: " + this.selectedDeliveryProvidersGroup.deliveryProviders[0].message);
@@ -646,7 +653,7 @@ export class LandingCheckoutComponent implements OnInit
                     return;
                 }
             } 
-        } 
+        }
 
         // Old flow
 
@@ -655,8 +662,8 @@ export class LandingCheckoutComponent implements OnInit
         // -------------------------------
 
         let index = -1;
-        if(deliveryProviderGroupType === 'group') { // for group, we'll search based on refId
-            index = this.deliveryProviders.findIndex(item => item.refId === deliveryProviderId && item.isError === false );                
+        if(deliveryProviderGroupType === 'group') { // for group, we'll search based on refId            
+            index = this.deliveryProviders.findIndex(item => item.refId === deliveryProviderId && item.isError === false);            
         } else {
             index = this.deliveryProviders.findIndex(item => item.providerId === deliveryProviderId);
         }
