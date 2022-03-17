@@ -18,7 +18,8 @@ export class ChangelogComponent
                     type: 'Fix',
                     list: [
                         '(LandingCataloguePage) Fix product not showing when customer open catalogue directly on first time',
-                        '(LandingCheckoutPage) Fix default image for at checkout item, if the store does not have product image'
+                        '(LandingCheckoutPage) Fix default image for at checkout item, if the store does not have product image',
+                        '(LandingCheckoutPage) Fix address popup UI responsiveness for mobile'
                     ]
                 }
             ]
