@@ -13,7 +13,7 @@ export interface Customer
     username: string;
     name: string;
     email: string;
-    phoneNumber: number;
+    phoneNumber?: number;
     locked: boolean;
     deactivated: boolean;
     created: string;
@@ -35,4 +35,10 @@ export interface CustomerAddress
     phoneNumber: string;
     postCode: string;
     state: string;
+}
+
+export enum UserRole {
+    Admin = 'SUPER_USER',
+    Merchant = 'STORE_OWNER',
+    Customer ='CUSTOMER'
 }

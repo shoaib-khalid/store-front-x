@@ -4,6 +4,7 @@ import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
 import { InitialDataResolver, StoreResolver } from 'app/app.resolvers';
 import { CartItemsResolver, StoreCategoriesResolver } from './modules/landing/landing.resolver';
+import { UserRole } from './core/user/user.types';
 
 // @formatter:off
 // tslint:disable:max-line-length
@@ -17,7 +18,8 @@ export const appRoutes: Route[] = [
     // After the user signs in, the sign in page will redirect the user to the 'signed-in-redirect'
     // path. Below is another redirection for that path to redirect the user to the desired
     // location. This is a small convenience to keep all main routes together here on this file.
-    {path: 'signed-in-redirect', pathMatch : 'full', redirectTo: 'example'},
+    
+    {path: 'signed-in-redirect', pathMatch : 'full', redirectTo: '/buyer/buyerexample'},
 
     // Auth routes for guests
     {
@@ -69,6 +71,24 @@ export const appRoutes: Route[] = [
             {path: 'checkout', resolve: { cartItems: CartItemsResolver }, data: { breadcrumb: 'Checkout' }, loadChildren: () => import('app/modules/landing/checkout/checkout.module').then(m => m.LandingCheckoutModule)},
             {path: 'thankyou', resolve: { cartItems: CartItemsResolver }, data: { breadcrumb: 'Thankyou' }, loadChildren: () => import('app/modules/landing/thankyou/thankyou.module').then(m => m.LandingThankyouModule)},
             {path: 'payment-redirect', resolve: { cartItems: CartItemsResolver }, data: { layout: 'empty', breadcrumb: 'Payment Redirect' }, loadChildren: () => import('app/modules/landing/payment-redirect/payment-redirect.module').then(m => m.LandingPaymentRedirectModule)}
+        ]
+    },
+
+    // Buyer routes
+    {
+        path       : '',
+        canActivate: [AuthGuard],
+        canActivateChild: [AuthGuard],
+        component  : LayoutComponent,
+        data: {
+            layout: 'empty',
+            roles: [UserRole.Customer]
+        },
+        resolve    : {
+            initialData: InitialDataResolver,
+        },
+        children   : [
+            {path: '', loadChildren: () => import('app/modules/buyer/buyer.module').then(m => m.BuyerModule)},
         ]
     },
 

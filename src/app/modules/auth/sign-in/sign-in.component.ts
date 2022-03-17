@@ -9,16 +9,6 @@ import { AuthService } from 'app/core/auth/auth.service';
     selector     : 'auth-sign-in',
     templateUrl  : './sign-in.component.html',
     encapsulation: ViewEncapsulation.None,
-    styles         : [
-        /* language=SCSS */
-        `
-        .mat-checkbox-frame {
-            border-color: red; 
-          }
-            
-
-        `
-    ],
     animations   : fuseAnimations
 })
 export class AuthSignInComponent implements OnInit
@@ -31,6 +21,10 @@ export class AuthSignInComponent implements OnInit
     };
     signInForm: FormGroup;
     showAlert: boolean = false;
+    
+    //to be display the text
+    titleText:string ='Sign In';
+    descriptionText:string ='Stay signed in with your account to make searching easier';
 
     /**
      * Constructor
@@ -55,10 +49,13 @@ export class AuthSignInComponent implements OnInit
     {
         // Create the form
         this.signInForm = this._formBuilder.group({
-            email     : ['', [Validators.required, Validators.email]],
+            username     : ['', [Validators.required, Validators.email]],
             password  : ['', Validators.required],
             rememberMe: ['']
         });
+
+        // We need to check first the location before we proceed to send the payload
+        // this.signInForm.disable();
     }
 
     // -----------------------------------------------------------------------------------------------------

@@ -18,6 +18,8 @@ export class AuthSignOutComponent implements OnInit, OnDestroy
     };
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
+    //to be display the text
+    titleText:string ='You have signed out!';
     /**
      * Constructor
      */

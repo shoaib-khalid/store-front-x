@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { User } from 'app/core/user/user.types';
+import { Customer, User } from 'app/core/user/user.types';
 
 @Injectable({
     providedIn: 'root'
@@ -10,6 +10,7 @@ import { User } from 'app/core/user/user.types';
 export class UserService
 {
     private _user: ReplaySubject<User> = new ReplaySubject<User>(1);
+    private _customer: BehaviorSubject<Customer | null> = new BehaviorSubject(null);
 
     /**
      * Constructor
@@ -37,6 +38,22 @@ export class UserService
     {
         return this._user.asObservable();
     }
+
+        /**
+     * Setter & getter for user
+     *
+     * @param value
+     */
+        set customer(value: Customer)
+        {
+            // Store the value
+            this._customer.next(value);
+        }
+    
+        get customer$(): Observable<Customer>
+        {
+            return this._customer.asObservable();
+        }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods

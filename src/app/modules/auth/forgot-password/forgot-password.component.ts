@@ -22,6 +22,11 @@ export class AuthForgotPasswordComponent implements OnInit
     forgotPasswordForm: FormGroup;
     showAlert: boolean = false;
 
+    //to be display the text
+    titleText:string ='Forgot password?';
+    descriptionText:string ='Please enter the email address to retrieve reset link';
+
+
     /**
      * Constructor
      */
