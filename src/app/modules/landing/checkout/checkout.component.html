@@ -97,7 +97,7 @@
                                     </mat-error>
                                 </mat-form-field>
                             </div>
-                            <!-- Phoonenumber & State -->
+                            <!-- Phone number & State -->
                             <div class="w-full flex flex-col sm:flex-row mb-4 sm:mb-0">
                                 <!--Phone Number -->
                                 <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
@@ -365,7 +365,7 @@
                                                 <img
                                                     class="w-32"
                                                     [alt]="'Product thumbnail image of ' + cartItem.productName"
-                                                    [src]="cartItem.productAsset ? cartItem.productAsset.url : cartItem.productInventory.product.thumbnailUrl ? cartItem.productInventory.product.thumbnailUrl : store.storeAsset.logoUrl">
+                                                    [src]="cartItem.productAsset ? cartItem.productAsset.url : cartItem.productInventory.product.thumbnailUrl ? cartItem.productInventory.product.thumbnailUrl : displayStoreLogo(store.storeAssets)">
                                                 <div
                                                     class="flex items-center justify-center w-full h-full text-xs font-semibold leading-none text-center uppercase">
                                                 </div>

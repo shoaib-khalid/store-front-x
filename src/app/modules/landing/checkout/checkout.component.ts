@@ -5,7 +5,7 @@ import { DOCUMENT } from '@angular/common';
 import { CartService } from 'app/core/cart/cart.service';
 import { CartItem } from 'app/core/cart/cart.types';
 import { StoresService } from 'app/core/store/store.service';
-import { Store, StoreSnooze, StoreTiming } from 'app/core/store/store.types';
+import { Store, StoreAssets, StoreSnooze, StoreTiming } from 'app/core/store/store.types';
 import { of, Subject, Subscription, timer, interval as observableInterval } from 'rxjs';
 import { takeWhile, scan, tap } from "rxjs/operators";
 import { map, switchMap, takeUntil, debounceTime, filter, distinctUntilChanged } from 'rxjs/operators';
@@ -217,7 +217,7 @@ export class LandingCheckoutComponent implements OnInit
 
                 // Get store states
                 this._storesService.getStoreRegionCountryState(this.store.regionCountry.id)
-                    .subscribe((response)=>{
+                    .subscribe((response)=>{                        
 
                         this.regionCountryStates = response;
 
@@ -1060,6 +1060,15 @@ export class LandingCheckoutComponent implements OnInit
         } else {
             // this indicate that store closed for all days
             this.notificationMessage = "Sorry for the inconvenience, We are closed!";
+        }
+    }
+
+    displayStoreLogo(storeAssets: StoreAssets[]) {
+        let storeAssetsIndex = storeAssets.findIndex(item => item.assetType === 'LogoUrl');
+        if (storeAssetsIndex > -1) {
+            return storeAssets[storeAssetsIndex].assetUrl;
+        } else {
+            return 'assets/branding/symplified/logo/symplified.png'
         }
     }
 
