@@ -11,7 +11,7 @@ export const buyerRoutes: Route[] = [
             // canActivate: [BuyerAuthGuard],
             // canActivateChild: [BuyerAuthGuard],
             children   : [
-                {path: 'buyerexample', loadChildren: () => import('app/modules/buyer/example/example.module').then(m => m.ExampleModule)},
+                {path: 'homepage', loadChildren: () => import('app/modules/buyer/homepage/homepage.module').then(m => m.HomePageModule)},
             ]
         },
         {

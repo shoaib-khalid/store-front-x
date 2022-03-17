@@ -1,22 +1,22 @@
 import { NgModule } from '@angular/core';
 import { Route, RouterModule } from '@angular/router';
-import { ExampleComponent } from 'app/modules/admin/example/example.component';
+import { HomePageComponent } from './homepage.component';
 
 const exampleRoutes: Route[] = [
     {
         path     : '',
-        component: ExampleComponent
+        component: HomePageComponent
     }
 ];
 
 @NgModule({
     declarations: [
-        ExampleComponent
+        HomePageComponent
     ],
     imports     : [
         RouterModule.forChild(exampleRoutes)
     ]
 })
-export class ExampleModule
+export class HomePageModule
 {
 }

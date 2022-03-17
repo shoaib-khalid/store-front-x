@@ -19,7 +19,7 @@ export const appRoutes: Route[] = [
     // path. Below is another redirection for that path to redirect the user to the desired
     // location. This is a small convenience to keep all main routes together here on this file.
     
-    {path: 'signed-in-redirect', pathMatch : 'full', redirectTo: '/buyer/buyerexample'},
+    {path: 'signed-in-redirect', pathMatch : 'full', redirectTo: '/buyer/homepage'},
 
     // Auth routes for guests
     {
@@ -81,7 +81,7 @@ export const appRoutes: Route[] = [
         canActivateChild: [AuthGuard],
         component  : LayoutComponent,
         data: {
-            layout: 'empty',
+            layout: 'classy',
             roles: [UserRole.Customer]
         },
         resolve    : {
