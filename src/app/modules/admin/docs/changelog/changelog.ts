@@ -9,6 +9,20 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v0.0.37
+        {
+            version    : 'v0.0.37',
+            releaseDate: 'Mar 17, 2022',
+            changes    : [
+                {
+                    type: 'Fix',
+                    list: [
+                        '(LandingCataloguePage) Fix product not showing when customer open catalogue directly on first time',
+                        '(LandingCheckoutPage) Fix default image for at checkout item, if the store does not have product image'
+                    ]
+                }
+            ]
+        },
         // v0.0.36
         {
             version    : 'v0.0.36',
