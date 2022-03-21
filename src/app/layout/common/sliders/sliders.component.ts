@@ -212,7 +212,7 @@ export class SlidersComponent implements OnInit
         if (storeAssetsIndex > -1) {
             return storeAssets[storeAssetsIndex].assetUrl;
         } else {
-            return 'https://symplified.it/store-assets/fnb_discount_banner.png'
+            return 'assets/branding/symplified/discount-banner/discount-banner.png'
         }
     }
 }
