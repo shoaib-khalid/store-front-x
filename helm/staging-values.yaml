@@ -79,11 +79,11 @@ ingress:
   - hosts:
     - dev-my.symplified.ai
     - '*.dev-my.symplified.ai'
-    secretName: secret-devmy-tls-ai
+    secretName: secret-tls-ai
   - hosts:
     - dev-pk.symplified.ai
     - '*.dev-pk.symplified.ai'
-    secretName: secret-devpk-tls-ai
+    secretName: secret-tls-ai
 nameOverride: ""
 nodeSelector: {}
 podAnnotations: {}
