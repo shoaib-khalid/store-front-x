@@ -1,20 +1,32 @@
-<div class="flex flex-col flex-auto items-center sm:justify-center min-w-0">
-    <div class="w-full sm:w-auto py-8 px-4 sm:p-12 sm:rounded-2xl sm:shadow sm:bg-card">
-        <div class="w-full max-w-80 sm:w-80 mx-auto sm:mx-0">
-            <!-- Logo , Title , Description-->
-            <app-shared-logo [titleText]="titleText"></app-shared-logo>
+<div class="flex flex-col sm:flex-row items-center md:items-start sm:justify-center md:justify-start flex-auto min-w-0 bg-gradient-to-r from-cyan-500 to-blue-500">
+    <div class="w-auto h-full md:w-1/2 flex flex-col items-center justify-center pt-4">
+        <div class="py-8 px-4 sm:p-12 md:p-16 rounded-2xl sm:shadow md:shadow-none bg-card">
+            <div class="w-full max-w-80 sm:w-80 mx-auto sm:mx-0">
+                <!-- Logo , Title , Description-->
+                <app-shared-logo [titleText]="titleText"></app-shared-logo>
 
-            <!-- Title -->
-            <div class="flex justify-center mt-0.5 font-medium">
-                <!-- Redirect countdown -->
-                <ng-container *ngIf="countdown > 0">
-                    Redirecting in {{countdown | i18nPlural: countdownMapping }}
-                </ng-container>
+                <!-- Title -->
+                <div class="flex justify-center mt-0.5 font-medium">
+                    <!-- Redirect countdown -->
+                    <ng-container *ngIf="countdown > 0">
+                        Redirecting in {{countdown | i18nPlural: countdownMapping }}
+                    </ng-container>
 
-                <!-- Redirect message -->
-                <ng-container *ngIf="countdown === 0">
-                    You are now being redirected!
-                </ng-container>
+                    <!-- Redirect message -->
+                    <ng-container *ngIf="countdown === 0">
+                        You are now being redirected!
+                    </ng-container>
+                </div>
+            </div>
+
+            <!-- Sign-up -->
+            <div class="flex flex-row mt-4 mb-4 sm:mt-8 sm:mb-0 w-full justify-center">
+                <div>Don't have an account?</div>
+                <a
+                    class="ml-1 text-primary-500 hover:underline"
+                    [routerLink]="['/sign-up']"
+                    >Sign up
+                </a>
             </div>
 
             <!-- Form footer -->

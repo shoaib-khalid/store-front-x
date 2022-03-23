@@ -33,9 +33,10 @@ export class CoreInterceptor implements HttpInterceptor
         // Response
         return next.handle(newReq).pipe(
             catchError((error) => {
+
                 // Catch "401 Unauthorized" responses
                 // Ignore intercept for login () clients/authenticate                
-                if ( error instanceof HttpErrorResponse && !(error.status === 401 && newReq.url.indexOf("clients/authenticate") > -1))
+                if ( error instanceof HttpErrorResponse && !(error.status === 401 && newReq.url.indexOf("customers/authenticate") > -1)  && !(error.status === 409) && !(error.status === 417))
                 {
                     // Show a error message
                     
