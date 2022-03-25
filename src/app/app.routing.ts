@@ -19,7 +19,7 @@ export const appRoutes: Route[] = [
     // path. Below is another redirection for that path to redirect the user to the desired
     // location. This is a small convenience to keep all main routes together here on this file.
     
-    {path: 'signed-in-redirect', pathMatch : 'full', redirectTo: '/buyer/homepage'},
+    {path: 'signed-in-redirect', pathMatch : 'full', redirectTo: '/buyer/homepage', },
 
     // Auth routes for guests
     {
@@ -67,6 +67,8 @@ export const appRoutes: Route[] = [
         children   : [
             {path: 'home', resolve: { cartItems: CartItemsResolver }, loadChildren: () => import('app/modules/landing/home/home.module').then(m => m.LandingHomeModule)},
             {path: 'catalogue', resolve: { cartItems: CartItemsResolver }, data: { breadcrumb: 'Catalogue' }, loadChildren: () => import('app/modules/landing/catalogue/catalogue.module').then(m => m.LandingCatalogueModule)},
+            {path: 'order', resolve: { cartItems: CartItemsResolver }, data: { breadcrumb: 'Order' }, loadChildren: () => import('app/modules/landing/order-details/order-details.module').then(m => m.OrderDetailsModule)},
+
             {path: 'product', resolve: { cartItems: CartItemsResolver }, data: { breadcrumb: 'Product' }, loadChildren: () => import('app/modules/landing/product-details/product-details.module').then(m => m.LandingProductDetailsModule)},
             {path: 'checkout', resolve: { cartItems: CartItemsResolver }, data: { breadcrumb: 'Checkout' }, loadChildren: () => import('app/modules/landing/checkout/checkout.module').then(m => m.LandingCheckoutModule)},
             {path: 'thankyou', resolve: { cartItems: CartItemsResolver }, data: { breadcrumb: 'Thankyou' }, loadChildren: () => import('app/modules/landing/thankyou/thankyou.module').then(m => m.LandingThankyouModule)},

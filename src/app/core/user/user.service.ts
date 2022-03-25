@@ -40,27 +40,27 @@ export class UserService
         return this._user.asObservable();
     }
 
-        /**
-     * Setter & getter for user
-     *
-     * @param value
-     */
-        set customer(value: Customer)
-        {
-            // Store the value
-            this._customer.next(value);
-        }
-    
-        get customer$(): Observable<Customer>
-        {
-            return this._customer.asObservable();
-        }
+    /**
+    * Setter & getter for user
+    *
+    * @param value
+    */
+    set customer(value: Customer)
+    {
+        // Store the value
+        this._customer.next(value);
+    }
 
-                /**
-     * Setter & getter for user
-     *
-     * @param value
-     */
+    get customer$(): Observable<Customer>
+    {
+        return this._customer.asObservable();
+    }
+
+    /**
+    * Setter & getter for user
+    *
+    * @param value
+    */
     set client(value: Client)
     {
         // Store the value
@@ -71,8 +71,23 @@ export class UserService
     {
         return this._client.asObservable();
     }
-         
 
+    /**
+    * Setter & getter for user
+    *
+    * @param value
+    */
+    set customerId(value: string)
+    {
+        // Store the value
+        localStorage.setItem('customerId', value);
+    }
+
+    get customerId$(): string
+    {
+        return localStorage.getItem('customerId') ?? '';
+    }
+         
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
@@ -101,5 +116,9 @@ export class UserService
                 this._user.next(response);
             })
         );
+    }
+
+    getCustomerId(){
+
     }
 }

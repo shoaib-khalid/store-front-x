@@ -1,0 +1,382 @@
+<div class="relative flex flex-col items-center w-full h-full">
+    <!-- Main menu -->
+    <div class="flex flex-col items-center w-full h-auto my-5 px-5">
+        <!-- Search For xs view Mobile -->
+        <ng-container *ngIf="!currentScreenSize.includes('md')">
+            <mat-form-field class="w-full fuse-mat-emphasized-affix min-w-64">
+                <input
+                    matInput
+                    [autocomplete]="'off'"
+                    [placeholder]="'Search for products, shops etc.'">
+                <mat-icon
+                class="icon-size-6 text-primary"
+                matSuffix
+                [svgIcon]="'mat_solid:search'"></mat-icon>
+            </mat-form-field>
+        </ng-container>
+        <!-- categories for xs view mobile -->
+        <div class="md:hidden w-full truncate ">
+            <div class="flex flex-nowrap items-center sm:justify-evenly overflow-x-scroll sm:overflow-x-hidden">
+                <div class="flex flex-wrap items-center p-1">
+                    <input 
+                        [id]="'all-progress-btn'" 
+                        type="button" 
+                        class="w-0 h-0 invisible">
+                    <label
+                        class="font-bold p-2.5 bg-primary w-26 rounded-full cursor-pointer"
+                        [for]="'all-progress-btn'"
+                    >
+                        <span class="pl-8">All</span>
+                    </label>
+                </div>
+                <div class="flex flex-wrap items-center p-1">
+                    <input 
+                        [id]="'to-pay-btn'" 
+                        type="button" 
+                        class="w-0 h-0 invisible">
+                    <label
+                        class="font-bold p-2.5 bg-primary w-26 rounded-full cursor-pointer"
+                        [for]="'to-pay-btn'"
+                    >
+                        <span class="pl-5">To Pay</span>
+                    </label>
+                </div>
+                <div class="flex flex-wrap items-center p-1">
+                    <input 
+                        [id]="'to-ship-btn'" 
+                        type="button" 
+                        class="w-0 h-0 invisible">
+                    <label
+                        class="font-bold p-2.5 bg-primary w-26 rounded-full cursor-pointer"
+                        [for]="'to-ship-btn'"
+                    >
+                        <span class="pl-4">To Ship</span>
+                    </label>
+                </div>
+                <div class="flex flex-wrap items-center p-1">
+                    <input 
+                        [id]="'shipping-btn'" 
+                        type="button" 
+                        class="w-0 h-0 invisible">
+                    <label
+                        class="font-bold p-2.5 bg-primary w-26 rounded-full cursor-pointer"
+                        [for]="'shipping-btn'"
+                    >
+                        <span class="pl-3">Shipping</span>
+                    </label>
+                </div>
+                <div class="flex flex-wrap items-center p-1">
+                    <input 
+                        [id]="'shipping-btn'" 
+                        type="button" 
+                        class="w-0 h-0 invisible">
+                    <label
+                        class="font-bold p-2.5 bg-primary w-26 rounded-full cursor-pointer"
+                        [for]="'shipping-btn'"
+                    >
+                        <span class="pl-3">Completed</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Container -->
+        <div class="flex flex-col md:flex-row justify-between mt-4 w-full max-w-280">
+            <!-- Search & Filter -->
+            <ng-container *ngIf="currentScreenSize.includes('md')">
+                <div class="flex flex-col pr-6">
+                    <!-- Search for large screen -->
+                    <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript min-w-64">
+                        <mat-icon
+                            class="icon-size-4 text-primary"
+                            matPrefix
+                            [svgIcon]="'search'"></mat-icon>
+                        <input
+                            matInput
+                            [autocomplete]="'off'"
+                            [placeholder]="'Search products'">
+                    </mat-form-field>
+    
+                    <!-- Filter -->
+                    <div class="flex flex-col mt-2 border border-gray-300 rounded-lg py-2 px-4 mb-4">
+                        <div class="flex flex-col">
+                            <div class="m-3 items-center w-full">
+                                <h3 class="font-semibold">Progress</h3>
+                            </div>
+                            <div>
+                                <div class="border-t w-full"></div>
+                                <mat-checkbox
+                                    class="flex items-center h-10 min-h-10 px-4"
+                                    [color]="'primary'">
+                                    All
+                                </mat-checkbox>
+                                <mat-checkbox
+                                    class="flex items-center h-10 min-h-10 px-4"
+                                    [color]="'primary'">
+                                    To Pay
+                                </mat-checkbox>
+                                <mat-checkbox
+                                    class="flex items-center h-10 min-h-10 px-4"
+                                    [color]="'primary'">
+                                    To Ship
+                                </mat-checkbox>
+                                <mat-checkbox
+                                    class="flex items-center h-10 min-h-10 px-4"
+                                    [color]="'primary'">
+                                    Shipping
+                                </mat-checkbox>
+                                <mat-checkbox
+                                    class="flex items-center h-10 min-h-10 px-4"
+                                    [color]="'primary'">
+                                    Completed
+                                </mat-checkbox>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+
+            <!-- Order Details -->
+            <div class="flex flex-col w-full">
+                <ng-container *ngIf="(orders$ | async) as orders">
+                    <ng-container *ngIf="orders.length > 0; else noOrder">
+                        <div class="container mx-auto w-full">
+                            <div class="w-full">
+                                <!-- orders -->
+                                <ng-container *ngFor="let orderDetails of orders">
+                                    <!-- Order Header -->
+                                    <div class="w-full border border-gray-300 rounded-lg py-2 px-4 mb-4">
+                                        <div class="flex flex-col w-full">
+                                            <div class="flex flex-row my-3 items-center justify-between w-full">
+                                                <div class="flex flex-row">
+                                                    <mat-icon class="text-primary" svgIcon="mat_solid:storefront"></mat-icon>
+                                                    <div class="flex flex-col pl-2">
+                                                        <h3 class="font-semibold text-xl">{{orderDetails.store.name}}</h3>
+                                                        <h3 class="text-gray-400 text-sm">Order ID : {{orderDetails.invoiceId}}</h3>
+                                                        <h3 class="text-gray-400 text-sm">Order Placed : {{orderDetails.created}}</h3>
+                                                    </div>
+                                                </div>
+                                                <button class="flex flex-row m-2 justify-center w-30 border border-primary p-2 rounded">
+                                                    <mat-icon 
+                                                        *ngIf="orderDetails.completionStatus === 'BEING_PREPARED'" 
+                                                        class="text-green-500" 
+                                                        svgIcon="feather:codesandbox">
+                                                    </mat-icon>
+                                                    <mat-icon 
+                                                        *ngIf="orderDetails.completionStatus === 'BEING_DELIVERED'" 
+                                                        class="text-green-500" 
+                                                        svgIcon="local_shipping">
+                                                    </mat-icon>
+                                                    <mat-icon 
+                                                        *ngIf="orderDetails.completionStatus === 'DELIVERED_TO_CUSTOMER' || orderDetails.completionStatus === 'RECEIVED_AT_STORE'"
+                                                        class="text-green-500" 
+                                                        svgIcon="heroicons_solid:check-circle">
+                                                    </mat-icon>
+
+                                                    <span *ngIf="orderDetails.completionStatus === 'BEING_PREPARED'" class="font-semibold items-center pl-2">To Ship</span>
+                                                    <span *ngIf="orderDetails.completionStatus === 'BEING_DELIVERED'" class="font-semibold items-center pl-2">Shipping</span>
+                                                    <span *ngIf="orderDetails.completionStatus === 'DELIVERED_TO_CUSTOMER' || orderDetails.completionStatus === 'RECEIVED_AT_STORE'" 
+                                                        class="font-semibold items-center pl-2">Delivered
+                                                    </span>
+
+                                                </button>
+                                            </div>
+                                            <div>
+                                                <div class="border-t w-full"></div>
+                                                <ng-container>
+                                                    <div class="flex flex-row justify-between w-full py-2">
+                                                        <div class="w-full">
+                                                            <div class="w-16 h-16 mr-4 rounded border">
+                                                                <img
+                                                                    class="w-32"
+                                                                    src="https://www.aiobot.com/wp-content/uploads/2017/07/Yeezy-yYellow.jpg">
+                                                                <div
+                                                                    class="flex items-center justify-center w-full h-full text-xs font-semibold leading-none text-center uppercase">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="w-full">
+                                                            <h3 class="font-bold">Adidas Yezzy</h3>
+                                                            <h3 class="text-gray-400">Color: Yellow, Size: L</h3>
+                                                        </div>
+                                                        <div class="w-full">
+                                                            <h3 class="text-gray-400">x2</h3>
+                                                        </div>
+                                                        <div>
+                                                            <h3 style="text-decoration: line-through;" class="font-bold">19.44</h3>
+                                                            <h3 class="font-bold text-primary">16.20</h3>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex flex-row justify-between w-full py-2">
+                                                        <div class="w-full">
+                                                            <div class="w-16 h-16 mr-4 rounded border">
+                                                                <img
+                                                                    class="w-32"
+                                                                    src="https://m.media-amazon.com/images/I/610hf2KpCLL._AC_UL1500_.jpg">
+                                                                <div
+                                                                    class="flex items-center justify-center w-full h-full text-xs font-semibold leading-none text-center uppercase">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="w-full">
+                                                            <h3 class="font-bold">Adidas Yezzy</h3>
+                                                            <h3 class="text-gray-400">Color: Yellow, Size: L</h3>
+                                                        </div>
+                                                        <div class="w-full">
+                                                            <h3 class="text-gray-400">x2</h3>
+                                                        </div>
+                                                        <div>
+                                                            <h3 style="text-decoration: line-through;" class="font-bold">19.44</h3>
+                                                            <h3 class="font-bold text-primary">16.20</h3>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex flex-row justify-between w-full py-2">
+                                                        <div class="w-full">
+                                                            <div class="w-16 h-16 mr-4 rounded border">
+                                                                <img
+                                                                    class="w-32"
+                                                                    src="https://www.aiobot.com/wp-content/uploads/2017/07/Yeezy-yYellow.jpg">
+                                                                <div
+                                                                    class="flex items-center justify-center w-full h-full text-xs font-semibold leading-none text-center uppercase">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="w-full">
+                                                            <h3 class="font-bold">Adidas Yezzy</h3>
+                                                            <h3 class="text-gray-400">Color: Yellow, Size: L</h3>
+                                                        </div>
+                                                        <div class="w-full">
+                                                            <h3 class="text-gray-400">x2</h3>
+                                                        </div>
+                                                        <div>
+                                                            <h3 style="text-decoration: line-through;" class="font-bold">19.44</h3>
+                                                            <h3 class="font-bold text-primary">16.20</h3>
+                                                        </div>
+                                                    </div>
+                                                </ng-container>
+                                                <div class="border-b w-full"></div>
+                                                
+                                                <div class="flex flex-row justify-between w-full py-2">
+                                                    <!-- Order Details Button -->
+                                                    <div class="w-24">
+                                                        <input
+                                                            id="order-details-button"
+                                                            type="button"
+                                                            class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                                                            mat-button>
+                                                        <label 
+                                                            class="flex items-center justify-center h-10 px-2 border rounded-lg border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
+                                                            for="add-to-cart-button"
+                                                            matRipple>
+                                                            <span class="text-sm font-semibold text-black">Order Details</span>
+                                                        </label>
+                                                    </div>
+                                                    <div class="flex flex-row w-44 justify-between mb-6">
+                                                        <p class="items-center font-semibold text-gray-400">Total Order(3):</p> 
+                                                        <h3 class="w-fulltext-lg font-semibold">RM 48.60</h3>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </ng-container>    
+                </ng-container>
+
+                <!-- For to pay if there's an item in cart -->
+
+                <ng-container *ngIf="cartItems.length > 0">
+                    <div class="w-full">
+                        <!-- Order Header -->
+                        <div class="w-full border border-gray-300 rounded-lg py-2 px-4 mb-4">
+                            <div class="flex flex-col w-full">
+                                <div class="flex flex-row my-3 items-center justify-between w-full">
+                                    <div class="flex flex-row">
+                                        <mat-icon class="text-primary" svgIcon="mat_solid:storefront"></mat-icon>
+                                        <div class="flex flex-col pl-2">
+                                            <h3 class="font-semibold text-xl">Cinema Online</h3>
+                                            <!-- <h3 class="text-gray-400 text-sm">Order ID : {{orderDetails.invoiceId}}</h3> -->
+                                            <!-- <h3 class="text-gray-400 text-sm">Order Placed : {{orderDetails.created}}</h3> -->
+                                        </div>
+                                    </div>
+                                    <button class="flex flex-row m-2 justify-center w-30 border border-primary p-2 rounded">
+                                        <mat-icon 
+                                            class="text-green-500" 
+                                            svgIcon="heroicons_outline:cash">
+                                        </mat-icon>
+    
+                                        <span class="font-semibold items-center pl-2">To Pay</span>
+                                    </button>
+                                </div>
+                                <div>
+                                    <div class="border-t w-full"></div>
+                                    <ng-container *ngFor="let cartItem of cartItems">
+                                        <div class="flex flex-row justify-between w-full py-2">
+                                            <div class="w-full">
+                                                <div class="relative flex flex-0 items-center justify-center w-16 h-16 mr-4 rounded overflow-hidden border">
+                                                    <img
+                                                        class="w-32"
+                                                        [alt]="'Product thumbnail image of ' + cartItem.productName"
+                                                        [src]="cartItem.productAsset ? cartItem.productAsset.url : cartItem.productInventory.product.thumbnailUrl ? cartItem.productInventory.product.thumbnailUrl : ''">
+                                                    <div
+                                                        class="flex items-center justify-center w-full h-full text-xs font-semibold leading-none text-center uppercase">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="w-full">
+                                                <h3 class="font-bold">{{cartItem.productName}}</h3>
+                                                <h3 class="text-gray-400">Color: Yellow, Size: L</h3>
+                                            </div>
+                                            <div class="w-full">
+                                                <h3 class="text-gray-400">x2</h3>
+                                            </div>
+                                            <div class="w-full">
+                                                <h3 style="text-decoration: line-through;" class="font-bold">19.44</h3>
+                                                <h3 class="w-full font-bold text-primary">{{cartItem.productPrice | currency: store.regionCountry.currencySymbol}} x {{cartItem.quantity}}</h3>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                    <div class="border-b w-full"></div>
+                                    
+                                    <div class="flex flex-row justify-between w-full py-2">
+                                        <!-- Order Details Button -->
+                                        <div class="w-24">
+                                            <input
+                                                id="order-details-button"
+                                                type="button"
+                                                class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                                                mat-button>
+                                            <label 
+                                                class="flex items-center justify-center h-10 px-2 border rounded-lg border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
+                                                for="add-to-cart-button"
+                                                matRipple>
+                                                <span class="text-sm font-semibold text-black">Order Details</span>
+                                            </label>
+                                        </div>
+                                        <div class="flex flex-row w-44 justify-between mb-6">
+                                            <p class="items-center font-semibold text-gray-400">Total Order(3):</p> 
+                                            <h3 class="w-fulltext-lg font-semibold">RM 48.60</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+  
+                
+                <!-- <mat-paginator
+                    class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 sm:mx-4 z-10 rounded-lg shadow bg-gray-50 dark:bg-transparent"
+                    [ngClass]="{'pointer-events-none': isLoading}"
+                    [length]="pagination.length"
+                    [pageIndex]="pagination.page"
+                    [pageSize]="pagination.size"
+                    [pageSizeOptions]="[5, 10, 25, 100]"
+                    [showFirstLastButtons]="true"></mat-paginator> -->
+            </div>
+        </div>
+        
+    </div>
+</div>

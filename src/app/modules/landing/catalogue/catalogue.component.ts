@@ -105,13 +105,16 @@ export class LandingCatalogueComponent implements OnInit
     // @ Lifecycle hooks
     // -----------------------------------------------------------------------------------------------------
 
-    ngOnInit(): void {
+    ngOnInit(): void {       
         
         // set loading to true
         this.isLoading = true;
 
         // Get the products
         this.products$ = this._productsService.products$;
+
+        console.log("tinguk", this.products$);
+
 
         // Get the products pagination
         this._productsService.pagination$
@@ -155,7 +158,7 @@ export class LandingCatalogueComponent implements OnInit
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
-
+            
         // Get cart
         this._cartService.cart$
             .pipe(takeUntil(this._unsubscribeAll))
