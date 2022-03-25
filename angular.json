@@ -1,6 +1,9 @@
 {
     "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
     "version": 1,
+    "cli": {
+        "defaultCollection": "@angular-eslint/schematics"
+    },
     "newProjectRoot": "projects",
     "projects": {
         "fuse": {
@@ -88,7 +91,7 @@
                             "namedChunks": true
                         }
                     },
-                    "defaultConfiguration": "development"
+                    "defaultConfiguration": "production"
                 },
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
@@ -119,10 +122,10 @@
                         "assets": [
                             "src/favicon-16x16.png",
                             "src/favicon-32x32.png",
-                            "src/assets"                        ],
+                            "src/assets"
+                        ],
                         "styles": [
-                            "src/styles/styles.scss",
-                            "./node_modules/font-awesome/css/font-awesome.css"
+                            "src/styles/styles.scss"
                         ],
                         "scripts": []
                     }
@@ -139,9 +142,5 @@
             }
         }
     },
-    "defaultProject": "fuse",
-    "cli": {
-      "analytics": false,
-        "defaultCollection": "@angular-eslint/schematics"
-    }
+    "defaultProject": "fuse"
 }

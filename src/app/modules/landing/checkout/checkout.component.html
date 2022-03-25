@@ -315,7 +315,7 @@
                                 <textarea
                                     matInput
                                     [formControlName]="'specialInstruction'"
-                                    placeholder="Tell us when you prefer this order delivered or any special request you may have"
+                                    placeholder="Tell us when you prefer this order to be delivered or any special request you may have"
                                     [rows]="full"
                                     maxlength="100"
                                     class="h-20"
@@ -328,7 +328,7 @@
                                 [formControlName]="'saveMyInfo'"
                                 color="primary"
                                 class="font-semibold pb-4">
-                                Save my information for future order
+                                Save my information for future orders
                             </mat-checkbox>
                         </div>
                     </div>
@@ -399,7 +399,7 @@
                                                         <h1 *ngIf="cartItem.specialInstruction" class="text-xs mt-1 text-gray-500 truncate max-w-32 sm:max-w-full md:max-w-32">Instruction: {{cartItem.specialInstruction}}</h1>
                                                     </div>
                                                     <div class="flex flex-row h-6 w-14 rounded-lg relative border border-primary mt-1">
-                                                        <button (click)="updateQuantity(cartItem, cartItem.quantity, 'decrement')" type="button" class="text-gray-700 h-full w-14 rounded-l-lg cursor-pointer outline-none">
+                                                        <button (click)="updateQuantity(cartItem, cartItem.quantity, 'decrement')" type="button" class="pb-[0.1rem] text-gray-700 h-full w-14 rounded-l-lg cursor-pointer outline-none">
                                                             <span class="text-xl">−</span>
                                                         </button>
                                                         <input 
@@ -408,7 +408,7 @@
                                                             (change)="updateQuantity(cartItem, $event.target.value)"
                                                             type="number" 
                                                             [value]="cartItem.quantity"/>
-                                                        <button (click)="updateQuantity(cartItem, cartItem.quantity, 'increment')" type="button" class="text-gray-700 items-center h-full w-14 rounded-r-lg cursor-pointer">
+                                                        <button (click)="updateQuantity(cartItem, cartItem.quantity, 'increment')" type="button" class="pb-[0.1rem] text-gray-700 items-center h-full w-14 rounded-r-lg cursor-pointer">
                                                             <span class="text-xl">+</span>
                                                         </button>
                                                     </div>

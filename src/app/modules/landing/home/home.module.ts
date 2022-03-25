@@ -1,9 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from 'app/shared/shared.module';
-
 import { SlidersModule } from 'app/layout/common/sliders/sliders.module';
-
 import { IvyCarouselModule } from 'angular-responsive-carousel';
 import { CategoryCarouselComponent } from './category-carousel/category-carousel.component'
 import { SwiperModule } from 'swiper/angular';
