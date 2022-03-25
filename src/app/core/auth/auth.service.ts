@@ -1,31 +1,31 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpErrorResponse} from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/core/user/user.service';
+import { StoresService } from 'app/core/store/store.service';
 import { AppConfig } from 'app/config/service.config';
-import { LogService } from '../logging/log.service';
-import { JwtService } from '../jwt/jwt.service';
-import { Client, Customer } from '../user/user.types';
+import { JwtService } from 'app/core/jwt/jwt.service';
+import { LogService } from 'app/core/logging/log.service'
 
 @Injectable()
 export class AuthService
 {
     private _authenticated: boolean = false;
 
-
     /**
      * Constructor
      */
     constructor(
         private _httpClient: HttpClient,
-        private _apiServer: AppConfig,
-        private _logging: LogService,
-        private _jwt: JwtService,
         private _userService: UserService,
+        private _storesService: StoresService,
+        private _apiServer: AppConfig,
+        private _jwt: JwtService,
+        private _logging: LogService
     )
-    {
+    {        
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -58,35 +58,13 @@ export class AuthService
         return localStorage.getItem('refreshToken') ?? '';
     }
 
-    get userService():string
+    /**
+     * Getter for public access token
+     */
+    get publicToken(): string
     {
-        return this._apiServer.settings.apiServer.userService;
+        return "Bearer accessToken";
     }
-
-    get userServiceCustomer():string
-    {
-        //later chnage to customers
-        // return this.userService+ '/customers/';
-        return this.userService+ '/clients/';
-
-    }
-
-    get access(): string
-    {
-        return 'accessToken';
-    }
-
-    get httpHeaderOptions() {
-        return {
-          headers: new HttpHeaders().set("Authorization", `Bearer ${this.access}`),
-        };
-    }
-
-    get storeId$(): string
-    {
-         return localStorage.getItem('storeId') ?? '';
-    }
-    
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
@@ -99,8 +77,12 @@ export class AuthService
      */
     forgotPassword(email: string): Observable<any>
     {
-      
-        return this._httpClient.get(this.userServiceCustomer + email + '/password_reset', this.httpHeaderOptions).pipe(
+        let userService = this._apiServer.settings.apiServer.userService;
+        const header = {
+            headers: new HttpHeaders().set("Authorization", this.publicToken)
+        };
+
+        return this._httpClient.get(userService + '/customers/' + email + '/password_reset', header).pipe(
             switchMap(async (response: any) => {
 
                 this._logging.debug("Response from UserService (password_reset)",response);
@@ -116,7 +98,12 @@ export class AuthService
      */
     resetPassword(id: string, code, body): Observable<any>
     {
-        return this._httpClient.put(this.userServiceCustomer + id + '/password/' + code + '/reset' , body ,  this.httpHeaderOptions).pipe(
+        let userService = this._apiServer.settings.apiServer.userService;
+        const header = {
+            headers: new HttpHeaders().set("Authorization", this.publicToken)
+        };
+
+        return this._httpClient.put(userService + '/customers/' + id + '/password/' + code + '/reset' , body ,  header).pipe(
             switchMap(async (response: any) => {
 
                 this._logging.debug("Response from UserService (password_reset_id)",response);
@@ -138,10 +125,15 @@ export class AuthService
             return throwError('User is already logged in.');
         }
 
-        return this._httpClient.post(this.userServiceCustomer + 'authenticate', credentials, this.httpHeaderOptions).pipe(
+        let userService = this._apiServer.settings.apiServer.userService;
+        const header = {
+            headers: new HttpHeaders().set("Authorization", this.publicToken)
+        };
+        
+        return this._httpClient.post(userService + '/customers/authenticate', credentials, header).pipe(
             switchMap(async (response: any) => {
 
-                this._logging.debug("Response from UserService (Customers Authenticate)",response);
+                this._logging.debug("Response from UserService (/customers/authenticate)",response);
 
                 /**
                  * 
@@ -178,14 +170,23 @@ export class AuthService
                 let token = this._jwt.generate({ alg: "HS256", typ: "JWT"},jwtPayload,response.data.session.accessToken);
 
                 // get user info
-                let userData: any = await this._httpClient.get(this.userServiceCustomer + response.data.session.ownerId, header).toPromise();
+                let userData: any = await this._httpClient.get(userService + "/customers/" + response.data.session.ownerId, header).toPromise();
                 
-                // LATER CHANGE THIS
-                // =============CUSTOMER
-                // let user : Customer = userData.data;
-                // ========== CLIENT
-                let user : Client = userData.data;
-
+                // Store the user on the user service
+                let user = {
+                    "id": userData.data.id,
+                    "name": userData.data.name,
+                    "username": userData.data.username,
+                    "locked": userData.data.locked,
+                    "deactivated": userData.data.deactivated,
+                    "created": userData.data.created,
+                    "updated": userData.data.updated,
+                    "roleId": userData.data.roleId,
+                    "email": userData.data.email,
+                    "avatar": "assets/images/logo/logo_default_bg.jpg",
+                    "status": "online",
+                    "role": userData.data.roleId
+                };
 
                 this._userService.client = user;
 
@@ -225,17 +226,22 @@ export class AuthService
      */
     signInUsingToken(): Observable<any>
     {
-    
-        return this._httpClient.post(this.userServiceCustomer + 'session/refresh',
+        // Renew token
+        let userService = this._apiServer.settings.apiServer.userService;
+        const header = {
+            headers: new HttpHeaders().set("Authorization", this.publicToken)
+        };
+        
+        return this._httpClient.post(userService + '/customers/session/refresh',
             this.refreshToken
-        ,this.httpHeaderOptions).pipe(
+        ,header).pipe(
             catchError(() =>
                 // Return false
                 of(false)
             ),
             switchMap(async (response: any) => {
 
-                this._logging.debug("Response from UserService (/clients/session/refresh)",response);
+                this._logging.debug("Response from UserService (/customers/session/refresh)",response);
 
                 /**
                  * 
@@ -272,14 +278,23 @@ export class AuthService
                 let token = this._jwt.generate({ alg: "HS256", typ: "JWT"},jwtPayload,response.data.session.accessToken);
 
                 // get user info
-                let userData: any = await this._httpClient.get(this.userServiceCustomer + response.data.session.ownerId, header).toPromise();
+                let userData: any = await this._httpClient.get(userService + "/customers/" + response.data.session.ownerId, header).toPromise();
                                 
                 // Store the user on the user service
-                // LATER CHANGE THIS
-                // =============CUSTOMER
-                // let user : Customer = userData.data;
-                // ========== CLIENT
-                let user : Client = userData.data;
+                let user = {
+                    "id": userData.data.id,
+                    "name": userData.data.name,
+                    "username": userData.data.username,
+                    "locked": userData.data.locked,
+                    "deactivated": userData.data.deactivated,
+                    "created": userData.data.created,
+                    "updated": userData.data.updated,
+                    "roleId": userData.data.roleId,
+                    "email": userData.data.email,
+                    "avatar": "assets/images/logo/logo_default_bg.jpg",
+                    "status": "online",
+                    "role": userData.data.roleId
+                };
 
                 this._userService.client = user;
 
@@ -314,6 +329,7 @@ export class AuthService
         // Remove the access token from the local storage
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
+        localStorage.removeItem('storeId');
 
         // Set the authenticated flag to false
         this._authenticated = false;
@@ -325,24 +341,28 @@ export class AuthService
     /**
      * Sign up
      *
-     * @param customer
+     * @param user
      */
-    signUp(customer: { name: string; email: string; password: string; username: string }): Observable<any>
+    signUp(user: { name: string; email: string; password: string; username: string;countryId: string }): Observable<any>
     {
+        let userService = this._apiServer.settings.apiServer.userService;
+        const header: any = {
+            headers: new HttpHeaders().set("Authorization", `Bearer accessToken`)
+        };
         const body = {
             "deactivated": true,
-            "email": customer.email,
+            "email": user.email,
             "locked": true,
-            "name": customer.name,
-            "username":customer.username,
-            "password": customer.password,
-            "roleId": "CUSTOMER",
-            "storeId":this.storeId$,
-        };
+            "name": user.name,
+            "username": user.username,
+            "password": user.password,
+            "roleId": "STORE_OWNER",
+            "countryId":user.countryId
+          };
         
-        return this._httpClient.post(this.userServiceCustomer + 'register', body, this.httpHeaderOptions).pipe(
+        return this._httpClient.post(userService + '/customers/register', body, header).pipe(
             map((response, error) => {
-                this._logging.debug("Response from AuthService (signUp for customer)",response);
+                this._logging.debug("Response from AuthService (signUp)",response);
 
                 return response;
             },
@@ -352,7 +372,6 @@ export class AuthService
             )
         );
     }
- 
 
     /**
      * Unlock session

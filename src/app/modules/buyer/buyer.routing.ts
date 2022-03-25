@@ -5,7 +5,6 @@ import { Route } from '@angular/router';
 
 export const buyerRoutes: Route[] = [
         // Buyer routes
-
         {
             path       : 'buyer',
             // canActivate: [BuyerAuthGuard],
