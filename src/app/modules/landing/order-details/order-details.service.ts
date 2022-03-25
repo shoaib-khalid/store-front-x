@@ -81,5 +81,31 @@ export class OrderDetailsService
             })
         );
     }
+
+    
+    getOrdersWithDetails( customerId: string = "151c0fb8-5f43-4e7d-8a9e-457929ec08fa", page: number = 0, size: number = 20): Observable<Customer>
+    {
+        let orderService = this._apiServer.settings.apiServer.orderService;
+        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
+        let accessToken = "accessToken";
+
+        const header = {
+            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            params: {
+                customerId : '' + customerId,
+                page       : '' + page,
+                pageSize   : '' + size,
+            }
+        };
+
+        return this._httpClient.get<any>(orderService + '/orders/details' , header)
+        .pipe(
+            tap((response) => {
+                this._logging.debug("Response from orderService (getOrders)",response);
+
+                this._orders.next(response["data"].content);
+            })
+        );
+    }
     
 }

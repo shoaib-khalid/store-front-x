@@ -4,7 +4,7 @@ import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { CartService } from 'app/core/cart/cart.service';
 import { CartItem } from 'app/core/cart/cart.types';
 import { StoresService } from 'app/core/store/store.service';
-import { Store } from 'app/core/store/store.types';
+import { Store, StoreAssets } from 'app/core/store/store.types';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { CheckoutService } from '../checkout/checkout.service';
@@ -157,5 +157,12 @@ export class OrderDetailsComponent implements OnInit
         // Mark for check
         this._changeDetectorRef.markForCheck(); 
     }
-    
+    displayStoreLogo(storeAssets: StoreAssets[]) {
+        let storeAssetsIndex = storeAssets.findIndex(item => item.assetType === 'LogoUrl');
+        if (storeAssetsIndex > -1) {
+            return storeAssets[storeAssetsIndex].assetUrl;
+        } else {
+            return 'assets/branding/symplified/logo/symplified.png'
+        }
+    }
 }

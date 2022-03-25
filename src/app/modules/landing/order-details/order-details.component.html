@@ -319,7 +319,7 @@
                                                     <img
                                                         class="w-32"
                                                         [alt]="'Product thumbnail image of ' + cartItem.productName"
-                                                        [src]="cartItem.productAsset ? cartItem.productAsset.url : cartItem.productInventory.product.thumbnailUrl ? cartItem.productInventory.product.thumbnailUrl : ''">
+                                                        [src]="cartItem.productAsset ? cartItem.productAsset.url : cartItem.productInventory.product.thumbnailUrl ? cartItem.productInventory.product.thumbnailUrl : displayStoreLogo(store.storeAssets)">
                                                     <div
                                                         class="flex items-center justify-center w-full h-full text-xs font-semibold leading-none text-center uppercase">
                                                     </div>
@@ -327,14 +327,18 @@
                                             </div>
                                             <div class="w-full">
                                                 <h3 class="font-bold">{{cartItem.productName}}</h3>
-                                                <h3 class="text-gray-400">Color: Yellow, Size: L</h3>
+                                                <ng-container *ngIf="cartItem.productInventory.productInventoryItems.length > 0">
+                                                    <ng-container *ngFor="let variant of cartItem.productInventory.productInventoryItems">
+                                                        <span class="text-gray-400">{{variant.productVariantAvailable.value}}</span>
+                                                    </ng-container>
+                                                </ng-container>
                                             </div>
-                                            <div class="w-full">
-                                                <h3 class="text-gray-400">x2</h3>
+                                            <div class="items-center justify-center">
+                                                <h3 class="text-gray-400">x{{cartItem.quantity}}</h3>
                                             </div>
-                                            <div class="w-full">
+                                            <div class="items-end w-full flex flex-col">
                                                 <h3 style="text-decoration: line-through;" class="font-bold">19.44</h3>
-                                                <h3 class="w-full font-bold text-primary">{{cartItem.productPrice | currency: store.regionCountry.currencySymbol}} x {{cartItem.quantity}}</h3>
+                                                <h3 class="font-bold text-primary">{{cartItem.productPrice | currency: store.regionCountry.currencySymbol}}</h3>
                                             </div>
                                         </div>
                                     </ng-container>
