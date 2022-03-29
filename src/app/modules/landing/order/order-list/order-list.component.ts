@@ -1,5 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { CartService } from 'app/core/cart/cart.service';
 import { CartItem } from 'app/core/cart/cart.types';
@@ -7,25 +9,33 @@ import { StoresService } from 'app/core/store/store.service';
 import { Store, StoreAssets } from 'app/core/store/store.types';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { CheckoutService } from '../checkout/checkout.service';
-import { CartDiscount } from '../checkout/checkout.types';
-import { OrderDetailsService } from './order-details.service';
-import { Order } from './order-details.type';
+import { CheckoutService } from '../../checkout/checkout.service';
+import { CartDiscount } from '../../checkout/checkout.types';
+import { OrderDetailsComponent } from '../order-details/order-details.component';
+import { OrderInvoiceComponent } from '../order-invoice/order-invoice.component';
+
+import { OrderListService } from './order-list.service';
+import { Order, OrderDetails, OrderItemWithDetails } from './order-list.type';
 
 @Component({
-    selector     : 'order-details',
-    templateUrl  : './order-details.component.html',
+    selector     : 'order-list',
+    templateUrl  : './order-list.component.html',
     encapsulation: ViewEncapsulation.None
 })
-export class OrderDetailsComponent implements OnInit
+export class OrderListComponent implements OnInit
 {
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     currentScreenSize: string[] = [];
 
-    orders$: Observable<Order[]>;
+    ordersDetails$: Observable<OrderDetails[]>;
+
     store: Store;
     cartItems: CartItem[] = [];
+    orderList: OrderItemWithDetails[] = [];
+
+    orderProgress: any;
+    orderSlug: string;
 
     regionCountryStates: any;
 
@@ -52,10 +62,13 @@ export class OrderDetailsComponent implements OnInit
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
-        private _orderSevice: OrderDetailsService,
+        private _orderSevice: OrderListService,
         private _cartService: CartService,
         private _storesService: StoresService,
         private _checkoutService: CheckoutService,
+        private _router: Router,
+        public _dialog: MatDialog,
+        private _activatedRoute: ActivatedRoute
 
     )
     {
@@ -63,10 +76,26 @@ export class OrderDetailsComponent implements OnInit
 
     ngOnInit() :void {
 
-        this.orders$ = this._orderSevice.orders$;
-        
-        console.log("thisssifmf",this.orders$);
-        
+        this.orderProgress = [
+            {
+                name: "toPay",
+            },
+            {
+                name: "toShip"
+            },
+            {
+                name: "shipping"
+            },
+            {
+                name: "completed"
+            }
+        ]
+
+        this.orderSlug = this.orderSlug ? this.orderSlug : this._activatedRoute.snapshot.paramMap.get('order-slug');
+        this.orderProgress.findIndex(item => item.name === this.orderSlug);
+
+        this.ordersDetails$ = this._orderSevice.ordersDetails$;
+                
         // Subscribe to media changes
         this._fuseMediaWatcherService.onMediaChange$
         .pipe(takeUntil(this._unsubscribeAll))
@@ -78,15 +107,14 @@ export class OrderDetailsComponent implements OnInit
             this._changeDetectorRef.markForCheck();
         });
 
-        this._orderSevice.getOrders().subscribe((response) =>{});
-
+        this._orderSevice.getOrdersWithDetails().subscribe((response) =>{});
+        
         // --------------
         // Get store
         // --------------
         this._storesService.store$
         .subscribe((response: Store) => {
             this.store = response;
-
 
             // -----------------------
             // Service Charges
@@ -146,17 +174,54 @@ export class OrderDetailsComponent implements OnInit
 
             // Mark for check
             this._changeDetectorRef.markForCheck();
-        });
-
-        // this._orderSevice.orders$
-        // .pipe(takeUntil(this._unsubscribeAll))
-        // .subscribe((response: Order) => {            
-        //     console.log("response sini:::", response);
-        // });
+        });        
 
         // Mark for check
         this._changeDetectorRef.markForCheck(); 
     }
+
+    changeOrderDetails(value, event = null) {
+
+        // find if categoty exists
+        this.orderProgress.findIndex(item => item.name === value);
+        // since all-product is not a real category, it will set to null
+        // catalogue slug will be use in url
+        
+        this.orderProgress = value;
+        
+        this._router.navigate(['order/' + value]);
+
+        this.reload();
+
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
+    }
+
+    reload(){
+        this._router.routeReuseStrategy.shouldReuseRoute = () => false;
+        this._router.onSameUrlNavigation = 'reload';
+    }
+
+    openDetailsDialog(orderId){
+        
+        // Open the dialog
+        const dialogRef = this._dialog.open(OrderDetailsComponent, { data: orderId});
+        
+        dialogRef.afterClosed()
+        .subscribe((result) => {
+        });
+    } 
+
+    viewDetails(orderId){
+        // this._router.navigateByUrl('/orders/'+orderId)
+        const dialogRef = this._dialog.open(OrderInvoiceComponent, { panelClass: 'order-invoice-custom-dialog-class', data: orderId });
+        
+        dialogRef.afterClosed()
+        .subscribe((result) => {
+        });
+        
+    }
+    
     displayStoreLogo(storeAssets: StoreAssets[]) {
         let storeAssetsIndex = storeAssets.findIndex(item => item.assetType === 'LogoUrl');
         if (storeAssetsIndex > -1) {

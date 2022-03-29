@@ -67,7 +67,7 @@ export const appRoutes: Route[] = [
         children   : [
             {path: 'home', resolve: { cartItems: CartItemsResolver }, loadChildren: () => import('app/modules/landing/home/home.module').then(m => m.LandingHomeModule)},
             {path: 'catalogue', resolve: { cartItems: CartItemsResolver }, data: { breadcrumb: 'Catalogue' }, loadChildren: () => import('app/modules/landing/catalogue/catalogue.module').then(m => m.LandingCatalogueModule)},
-            {path: 'order', resolve: { cartItems: CartItemsResolver }, data: { breadcrumb: 'Order' }, loadChildren: () => import('app/modules/landing/order-details/order-details.module').then(m => m.OrderDetailsModule)},
+            {path: 'order', resolve: { cartItems: CartItemsResolver }, data: { breadcrumb: 'Order' }, loadChildren: () => import('app/modules/landing/order/order.module').then(m => m.OrderModule)},
 
             {path: 'product', resolve: { cartItems: CartItemsResolver }, data: { breadcrumb: 'Product' }, loadChildren: () => import('app/modules/landing/product-details/product-details.module').then(m => m.LandingProductDetailsModule)},
             {path: 'checkout', resolve: { cartItems: CartItemsResolver }, data: { breadcrumb: 'Checkout' }, loadChildren: () => import('app/modules/landing/checkout/checkout.module').then(m => m.LandingCheckoutModule)},

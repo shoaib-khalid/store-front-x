@@ -2,8 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { SharedModule } from 'app/shared/shared.module';
 
-import { orderDetailsRoutes } from './order-details.routing';
-import { OrderDetailsComponent } from './order-details.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
@@ -13,14 +11,21 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { PaginationModule } from 'app/layout/common/pagination/pagination.module';
+import { OrderListComponent } from './order-list/order-list.component';
+import { orderRoutes } from './order.routing';
+import { OrderDetailsComponent } from './order-details/order-details.component';
+import { OrderInvoiceComponent } from './order-invoice/order-invoice.component';
+
 
 
 @NgModule({
     declarations: [
+        OrderListComponent,
         OrderDetailsComponent,
+        OrderInvoiceComponent
     ],
     imports     : [
-        RouterModule.forChild(orderDetailsRoutes),
+        RouterModule.forChild(orderRoutes),
         MatButtonModule,
         MatIconModule,
         MatSelectModule,
@@ -34,6 +39,6 @@ import { PaginationModule } from 'app/layout/common/pagination/pagination.module
 
     ]
 })
-export class OrderDetailsModule 
+export class OrderModule 
 {
 }

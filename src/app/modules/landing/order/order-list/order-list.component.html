@@ -74,7 +74,7 @@
                         class="font-bold p-2.5 bg-primary w-26 rounded-full cursor-pointer"
                         [for]="'shipping-btn'"
                     >
-                        <span class="pl-3">Completed</span>
+                        <span class="pl-1">Completed</span>
                     </label>
                 </div>
             </div>
@@ -106,28 +106,50 @@
                             <div>
                                 <div class="border-t w-full"></div>
                                 <mat-checkbox
+                                    [checked]="orderSlug === 'all-progress' ? true : false"
+                                    [disabled]="orderSlug === 'all-progress' ? true : false"
                                     class="flex items-center h-10 min-h-10 px-4"
-                                    [color]="'primary'">
+                                    [color]="'primary'"
+                                    value="all-progress"
+                                    (change)="changeOrderDetails($event.source.value)" 
+                                    >
                                     All
                                 </mat-checkbox>
                                 <mat-checkbox
+                                    [checked]="orderSlug === 'to-pay' ? true : false"
+                                    [disabled]="orderSlug === 'to-pay' ? true : false"
                                     class="flex items-center h-10 min-h-10 px-4"
-                                    [color]="'primary'">
+                                    [color]="'primary'"
+                                    value="to-pay"
+                                    (change)="changeOrderDetails($event.source.value)" 
+                                    >
                                     To Pay
                                 </mat-checkbox>
                                 <mat-checkbox
+                                    [checked]="orderSlug === 'to-ship' ? true : false"
+                                    [disabled]="orderSlug === 'to-ship' ? true : false"
                                     class="flex items-center h-10 min-h-10 px-4"
-                                    [color]="'primary'">
+                                    [color]="'primary'"
+                                    value="to-ship"
+                                    (change)="changeOrderDetails($event.source.value)">
                                     To Ship
                                 </mat-checkbox>
                                 <mat-checkbox
+                                    [checked]="orderSlug === 'shipping' ? true : false"
+                                    [disabled]="orderSlug === 'shipping' ? true : false"
                                     class="flex items-center h-10 min-h-10 px-4"
-                                    [color]="'primary'">
+                                    [color]="'primary'"
+                                    value="shipping"
+                                    (change)="changeOrderDetails($event.source.value)">
                                     Shipping
                                 </mat-checkbox>
                                 <mat-checkbox
+                                    [checked]="orderSlug === 'completed' ? true : false"
+                                    [disabled]="orderSlug === 'completed' ? true : false"
                                     class="flex items-center h-10 min-h-10 px-4"
-                                    [color]="'primary'">
+                                    [color]="'primary'"
+                                    value="completed"
+                                    (change)="changeOrderDetails($event.source.value)">
                                     Completed
                                 </mat-checkbox>
                             </div>
@@ -138,12 +160,12 @@
 
             <!-- Order Details -->
             <div class="flex flex-col w-full">
-                <ng-container *ngIf="(orders$ | async) as orders">
-                    <ng-container *ngIf="orders.length > 0; else noOrder">
+                <ng-container *ngIf="(ordersDetails$ | async) as ordersDetails">
+                    <ng-container *ngIf="ordersDetails.length > 0; else noOrder">
                         <div class="container mx-auto w-full">
                             <div class="w-full">
                                 <!-- orders -->
-                                <ng-container *ngFor="let orderDetails of orders">
+                                <ng-container *ngFor="let orderDetails of ordersDetails">
                                     <!-- Order Header -->
                                     <div class="w-full border border-gray-300 rounded-lg py-2 px-4 mb-4">
                                         <div class="flex flex-col w-full">
@@ -156,14 +178,15 @@
                                                         <h3 class="text-gray-400 text-sm">Order Placed : {{orderDetails.created}}</h3>
                                                     </div>
                                                 </div>
-                                                <button class="flex flex-row m-2 justify-center w-30 border border-primary p-2 rounded">
+                                                <button class="flex flex-row m-2 justify-center w-32 border border-primary p-2 rounded">
+                                                    <!-- Progress Status Icon -->
                                                     <mat-icon 
-                                                        *ngIf="orderDetails.completionStatus === 'BEING_PREPARED'" 
+                                                        *ngIf="orderDetails.completionStatus === 'BEING_PREPARED' || orderDetails.completionStatus === 'PAYMENT_CONFIRMED'" 
                                                         class="text-green-500" 
                                                         svgIcon="feather:codesandbox">
                                                     </mat-icon>
                                                     <mat-icon 
-                                                        *ngIf="orderDetails.completionStatus === 'BEING_DELIVERED'" 
+                                                        *ngIf="orderDetails.completionStatus === 'BEING_DELIVERED' || orderDetails.completionStatus === 'AWAITING_PICKUP'" 
                                                         class="text-green-500" 
                                                         svgIcon="local_shipping">
                                                     </mat-icon>
@@ -173,9 +196,17 @@
                                                         svgIcon="heroicons_solid:check-circle">
                                                     </mat-icon>
 
-                                                    <span *ngIf="orderDetails.completionStatus === 'BEING_PREPARED'" class="font-semibold items-center pl-2">To Ship</span>
-                                                    <span *ngIf="orderDetails.completionStatus === 'BEING_DELIVERED'" class="font-semibold items-center pl-2">Shipping</span>
-                                                    <span *ngIf="orderDetails.completionStatus === 'DELIVERED_TO_CUSTOMER' || orderDetails.completionStatus === 'RECEIVED_AT_STORE'" 
+                                                    <!-- Progress Status -->
+                                                    <span 
+                                                        *ngIf="orderDetails.completionStatus === 'BEING_PREPARED' || orderDetails.completionStatus === 'PAYMENT_CONFIRMED'" 
+                                                        class="font-semibold items-center pl-2">To Ship
+                                                    </span>
+                                                    <span 
+                                                        *ngIf="orderDetails.completionStatus === 'BEING_DELIVERED' || orderDetails.completionStatus === 'AWAITING_PICKUP'" 
+                                                        class="font-semibold items-center pl-2">Shipping
+                                                    </span>
+                                                    <span 
+                                                        *ngIf="orderDetails.completionStatus === 'DELIVERED_TO_CUSTOMER' || orderDetails.completionStatus === 'RECEIVED_AT_STORE'" 
                                                         class="font-semibold items-center pl-2">Delivered
                                                     </span>
 
@@ -183,31 +214,32 @@
                                             </div>
                                             <div>
                                                 <div class="border-t w-full"></div>
-                                                <ng-container>
+                                                <ng-container *ngFor="let orderItemDetail of orderDetails.orderItemWithDetails">
                                                     <div class="flex flex-row justify-between w-full py-2">
                                                         <div class="w-full">
-                                                            <div class="w-16 h-16 mr-4 rounded border">
+                                                            <div class="relative flex flex-0 items-center justify-center w-16 h-16 mr-4 rounded overflow-hidden border">
                                                                 <img
-                                                                    class="w-32"
-                                                                    src="https://www.aiobot.com/wp-content/uploads/2017/07/Yeezy-yYellow.jpg">
+                                                                class="w-32"
+                                                                [alt]="'Product thumbnail image of ' + orderItemDetail.productName"
+                                                                [src]="orderItemDetail.itemAssetDetails ? orderItemDetail.itemAssetDetails.url : displayStoreLogo(store.storeAssets)">
                                                                 <div
                                                                     class="flex items-center justify-center w-full h-full text-xs font-semibold leading-none text-center uppercase">
                                                                 </div>
                                                             </div>
                                                         </div>
                                                         <div class="w-full">
-                                                            <h3 class="font-bold">Adidas Yezzy</h3>
-                                                            <h3 class="text-gray-400">Color: Yellow, Size: L</h3>
+                                                            <h3 class="font-bold">{{orderItemDetail.productName}}</h3>
+                                                            <h3 class="text-gray-400">{{orderItemDetail.productVariant}}</h3>
                                                         </div>
-                                                        <div class="w-full">
-                                                            <h3 class="text-gray-400">x2</h3>
+                                                        <div class="items-center justify-center">
+                                                            <h3 class="text-gray-400">x{{orderItemDetail.quantity}}</h3>
                                                         </div>
-                                                        <div>
+                                                        <div class="items-end w-full flex flex-col">
                                                             <h3 style="text-decoration: line-through;" class="font-bold">19.44</h3>
-                                                            <h3 class="font-bold text-primary">16.20</h3>
+                                                            <h3 class="font-bold text-primary">{{orderItemDetail.productPrice | currency: store.regionCountry.currencySymbol}}</h3>
                                                         </div>
                                                     </div>
-                                                    <div class="flex flex-row justify-between w-full py-2">
+                                                    <!-- <div class="flex flex-row justify-between w-full py-2">
                                                         <div class="w-full">
                                                             <div class="w-16 h-16 mr-4 rounded border">
                                                                 <img
@@ -229,51 +261,48 @@
                                                             <h3 style="text-decoration: line-through;" class="font-bold">19.44</h3>
                                                             <h3 class="font-bold text-primary">16.20</h3>
                                                         </div>
-                                                    </div>
-                                                    <div class="flex flex-row justify-between w-full py-2">
-                                                        <div class="w-full">
-                                                            <div class="w-16 h-16 mr-4 rounded border">
-                                                                <img
-                                                                    class="w-32"
-                                                                    src="https://www.aiobot.com/wp-content/uploads/2017/07/Yeezy-yYellow.jpg">
-                                                                <div
-                                                                    class="flex items-center justify-center w-full h-full text-xs font-semibold leading-none text-center uppercase">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="w-full">
-                                                            <h3 class="font-bold">Adidas Yezzy</h3>
-                                                            <h3 class="text-gray-400">Color: Yellow, Size: L</h3>
-                                                        </div>
-                                                        <div class="w-full">
-                                                            <h3 class="text-gray-400">x2</h3>
-                                                        </div>
-                                                        <div>
-                                                            <h3 style="text-decoration: line-through;" class="font-bold">19.44</h3>
-                                                            <h3 class="font-bold text-primary">16.20</h3>
-                                                        </div>
-                                                    </div>
+                                                    </div> -->
                                                 </ng-container>
+                                                <!-- border -->
                                                 <div class="border-b w-full"></div>
                                                 
                                                 <div class="flex flex-row justify-between w-full py-2">
                                                     <!-- Order Details Button -->
-                                                    <div class="w-24">
-                                                        <input
-                                                            id="order-details-button"
-                                                            type="button"
-                                                            class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                                            mat-button>
-                                                        <label 
-                                                            class="flex items-center justify-center h-10 px-2 border rounded-lg border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
-                                                            for="add-to-cart-button"
-                                                            matRipple>
-                                                            <span class="text-sm font-semibold text-black">Order Details</span>
-                                                        </label>
+                                                    <div class="flex flex-row">
+                                                        <div class="w-24">
+                                                            <input
+                                                                id="order-list-button"
+                                                                type="button"
+                                                                class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                                                                mat-button
+                                                                >
+                                                            <label 
+                                                                (click)="openDetailsDialog(orderDetails.id)"
+                                                                class="flex items-center justify-center h-10 px-2 border rounded-lg border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
+                                                                for="add-to-cart-button"
+                                                                matRipple>
+                                                                <span class="text-sm font-semibold text-black">Order Details</span>
+                                                            </label>
+                                                        </div>
+                                                        <div class="w-20 pl-2">
+                                                            <input
+                                                                id="order-list-button"
+                                                                type="button"
+                                                                class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                                                                mat-button
+                                                                >
+                                                            <label 
+                                                                (click)="viewDetails(orderDetails.id)"
+                                                                class="flex items-center justify-center h-10 w-10 rounded-full bg-primary hover:border-primary-500 cursor-pointer"
+                                                                for="add-to-cart-button"
+                                                                matRipple>
+                                                                <mat-icon class="text-black" svgIcon="mat_outline:receipt_long"></mat-icon>
+                                                            </label>
+                                                        </div>
                                                     </div>
                                                     <div class="flex flex-row w-44 justify-between mb-6">
                                                         <p class="items-center font-semibold text-gray-400">Total Order(3):</p> 
-                                                        <h3 class="w-fulltext-lg font-semibold">RM 48.60</h3>
+                                                        <h3 class="w-fulltext-lg font-semibold">{{orderDetails.total | currency: store.regionCountry.currencySymbol}}</h3>
                                                     </div>
                                                 </div>
                                             </div>
@@ -348,7 +377,7 @@
                                         <!-- Order Details Button -->
                                         <div class="w-24">
                                             <input
-                                                id="order-details-button"
+                                                id="order-list-button"
                                                 type="button"
                                                 class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
                                                 mat-button>
@@ -370,7 +399,6 @@
                     </div>
                 </ng-container>
   
-                
                 <!-- <mat-paginator
                     class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 sm:mx-4 z-10 rounded-lg shadow bg-gray-50 dark:bg-transparent"
                     [ngClass]="{'pointer-events-none': isLoading}"
