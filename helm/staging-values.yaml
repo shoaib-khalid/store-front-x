@@ -21,7 +21,9 @@ configProdJson:
               "paymentService"      : "https://api.symplified.it/payment-service/v1",
               "analyticService"     : "https://api.symplified.it/analytic-service/v1"
           },
-          "storeFrontDomain"        : ".symplified.ai",
+          "storeFrontDomain"          : ".dev-my.symplified.ai",
+          "merchantPortalDomain"      : "merchant.symplified.it",
+          "marketplaceDomain"         : "customer.dev-my.symplified.ai",
           "logging": 0
       }
   volumeMount:

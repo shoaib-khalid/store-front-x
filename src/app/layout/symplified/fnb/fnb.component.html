@@ -132,7 +132,7 @@
                                     </div>
                                     <!-- Login/SignUp -->
                                     <div *ngIf="!user" class="flex flex-row pl-8 items-center">
-                                        <span class="cursor-pointer">Sign In</span>
+                                        <span (click)="customerLogin()" class="cursor-pointer">Sign In</span>
                                         <span> &nbsp; | &nbsp; </span>
                                         <span class="cursor-pointer">Sign Up</span>
                                     </div>

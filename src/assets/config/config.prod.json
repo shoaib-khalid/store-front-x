@@ -12,6 +12,8 @@
         "paymentService"        : "https://api.symplified.biz/payment-service/v1",
         "analyticService"       : "https://api.symplified.biz/analytic-service/v1"
     },
-    "storeFrontDomain"          : ".symplified.store",
+    "storeFrontDomain"          : ".deliverin.my",
+    "merchantPortalDomain"      : "merchant.symplified.biz",
+    "marketplaceDomain"         : "customer.deliverin.my",
     "logging": 0
 }

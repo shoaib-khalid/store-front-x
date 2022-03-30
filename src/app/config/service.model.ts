@@ -14,5 +14,7 @@ export interface IAppConfig {
 
     };
     storeFrontDomain:string;
+    merchantPortalDomain:string;
+    marketplaceDomain:string;
     logging: number;
 }
