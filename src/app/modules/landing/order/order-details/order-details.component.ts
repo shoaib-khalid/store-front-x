@@ -15,7 +15,16 @@ import { OrderListService } from '../order-list/order-list.service';
 @Component({
     selector     : 'app-order-details',
     templateUrl  : './order-details.component.html',
-    encapsulation: ViewEncapsulation.None
+    styles: [
+      `
+      /* to remove visible container when window dialog is opened  */
+      ::ng-deep .order-invoice-custom-dialog-class {
+        mat-dialog-container {
+          padding: 0 !important;
+        }
+      }
+      `
+    ]
 })
 export class OrderDetailsComponent implements OnInit
 {

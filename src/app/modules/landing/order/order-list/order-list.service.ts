@@ -8,7 +8,7 @@ import { LogService } from 'app/core/logging/log.service';
 import { StoresService } from 'app/core/store/store.service';
 import { Customer } from 'app/core/user/user.types';
 import { UserService } from 'app/core/user/user.service';
-import { DeliveryRiderDetails, Order, OrderDetails, OrderItem, OrderItemWithDetails } from './order-list.type';
+import { DeliveryRiderDetails, Order, OrderDetails, OrderItem, OrderPagination } from './order-list.type';
 
 @Injectable({
     providedIn: 'root'
@@ -17,10 +17,9 @@ export class OrderListService
 {
     private _order: BehaviorSubject<Order | null> = new BehaviorSubject(null);
     private _orderItems: BehaviorSubject<OrderItem[] | null> = new BehaviorSubject(null);
-
     private _orders: BehaviorSubject<Order[] | null> = new BehaviorSubject(null);
     private _ordersDetails: BehaviorSubject<OrderDetails[] | null> = new BehaviorSubject(null);
-
+    private _pagination: BehaviorSubject<OrderPagination | null> = new BehaviorSubject(null);
 
 
     // private _cart: ReplaySubject<Cart> = new ReplaySubject<Cart>(1);
@@ -88,7 +87,15 @@ export class OrderListService
     get accessToken(): string
     {
         return localStorage.getItem('accessToken') ?? '';
-    } 
+    }
+    
+    /**
+    * Getter for pagination
+    */
+    get pagination$(): Observable<OrderPagination>
+    {
+        return this._pagination.asObservable();
+    }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
@@ -97,7 +104,8 @@ export class OrderListService
     /**
      * Get the Orders Info
      */
-    getOrders( customerId: string = "151c0fb8-5f43-4e7d-8a9e-457929ec08fa", page: number = 0, size: number = 20): Observable<Order>
+    getOrders( customerId: string = "151c0fb8-5f43-4e7d-8a9e-457929ec08fa", page: number = 0, size: number = 3): 
+    Observable<{ pagination: OrderPagination; orders: Order[] }>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
         //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
@@ -117,13 +125,24 @@ export class OrderListService
             tap((response) => {
                 this._logging.debug("Response from orderService (getOrders)",response);
 
+                let _pagination = {
+                    length: response.data.totalElements,
+                    size: response.data.size,
+                    page: response.data.number,
+                    lastPage: response.data.totalPages,
+                    startIndex: response.data.pageable.offset,
+                    endIndex: response.data.pageable.offset + response.data.numberOfElements - 1
+                }
+                this._pagination.next(_pagination);                
+
                 this._orders.next(response["data"].content);
             })
         );
     }
 
     
-    getOrdersWithDetails( customerId: string = "151c0fb8-5f43-4e7d-8a9e-457929ec08fa", page: number = 0, size: number = 20): Observable<OrderDetails>
+    getOrdersWithDetails( customerId: string = "151c0fb8-5f43-4e7d-8a9e-457929ec08fa", page: number = 0, size: number = 3): 
+    Observable<{ pagination: OrderPagination; orders: Order[] }>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
         //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
@@ -141,7 +160,17 @@ export class OrderListService
         return this._httpClient.get<any>(orderService + '/orders/details' , header)
         .pipe(
             tap((response) => {
-                this._logging.debug("Response from orderService (getOrders)",response);
+                this._logging.debug("Response from orderService (getOrdersWithDetails)",response);
+
+                let _pagination = {
+                    length: response.data.totalElements,
+                    size: response.data.size,
+                    page: response.data.number,
+                    lastPage: response.data.totalPages,
+                    startIndex: response.data.pageable.offset,
+                    endIndex: response.data.pageable.offset + response.data.numberOfElements - 1
+                }
+                this._pagination.next(_pagination);  
 
                 this._ordersDetails.next(response["data"].content);
             })

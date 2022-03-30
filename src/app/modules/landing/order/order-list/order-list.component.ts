@@ -1,21 +1,21 @@
-import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { CartService } from 'app/core/cart/cart.service';
 import { CartItem } from 'app/core/cart/cart.types';
 import { StoresService } from 'app/core/store/store.service';
 import { Store, StoreAssets } from 'app/core/store/store.types';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { merge, Observable, Subject } from 'rxjs';
+import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { CheckoutService } from '../../checkout/checkout.service';
 import { CartDiscount } from '../../checkout/checkout.types';
 import { OrderDetailsComponent } from '../order-details/order-details.component';
 import { OrderInvoiceComponent } from '../order-invoice/order-invoice.component';
-
 import { OrderListService } from './order-list.service';
-import { Order, OrderDetails, OrderItemWithDetails } from './order-list.type';
+import { OrderDetails, OrderItemWithDetails, OrderPagination } from './order-list.type';
 
 @Component({
     selector     : 'order-list',
@@ -24,16 +24,19 @@ import { Order, OrderDetails, OrderItemWithDetails } from './order-list.type';
 })
 export class OrderListComponent implements OnInit
 {
+    @ViewChild(MatPaginator) private _paginator: MatPaginator;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     currentScreenSize: string[] = [];
-
-    ordersDetails$: Observable<OrderDetails[]>;
+    pageOfItems: Array<any>;
+    pagination: OrderPagination;
+    isLoading: boolean = false;
 
     store: Store;
     cartItems: CartItem[] = [];
+    
+    ordersDetails$: Observable<OrderDetails[]>;
     orderList: OrderItemWithDetails[] = [];
-
     orderProgress: any;
     orderSlug: string;
 
@@ -62,7 +65,7 @@ export class OrderListComponent implements OnInit
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
-        private _orderSevice: OrderListService,
+        private _orderService: OrderListService,
         private _cartService: CartService,
         private _storesService: StoresService,
         private _checkoutService: CheckoutService,
@@ -88,13 +91,16 @@ export class OrderListComponent implements OnInit
             },
             {
                 name: "completed"
+            },
+            {
+                name: "cancelled"
             }
         ]
 
         this.orderSlug = this.orderSlug ? this.orderSlug : this._activatedRoute.snapshot.paramMap.get('order-slug');
         this.orderProgress.findIndex(item => item.name === this.orderSlug);
 
-        this.ordersDetails$ = this._orderSevice.ordersDetails$;
+        this.ordersDetails$ = this._orderService.ordersDetails$;
                 
         // Subscribe to media changes
         this._fuseMediaWatcherService.onMediaChange$
@@ -107,7 +113,22 @@ export class OrderListComponent implements OnInit
             this._changeDetectorRef.markForCheck();
         });
 
-        this._orderSevice.getOrdersWithDetails().subscribe((response) =>{});
+        // Get the products pagination
+        this._orderService.pagination$
+        .pipe(takeUntil(this._unsubscribeAll))
+        .subscribe((pagination: OrderPagination) => {
+            
+            // Update the pagination
+            this.pagination = pagination;
+            
+            // Mark for check
+            this._changeDetectorRef.markForCheck();
+        });        
+
+        this._orderService.getOrdersWithDetails().subscribe((response) =>{
+            console.log("Tengok Order :",response);
+            
+        });
         
         // --------------
         // Get store
@@ -180,6 +201,41 @@ export class OrderListComponent implements OnInit
         this._changeDetectorRef.markForCheck(); 
     }
 
+    /**
+    * On destroy
+    */
+    ngOnDestroy(): void
+    {
+        // Unsubscribe from all subscriptions
+        this._unsubscribeAll.next();
+        this._unsubscribeAll.complete();
+    }
+
+    /**
+     * After view init
+     */
+    ngAfterViewInit(): void
+    {
+        setTimeout(() => {
+            if (this._paginator )
+            {
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+
+                // Get products if sort or page changes
+                merge(this._paginator.page).pipe(
+                    switchMap(() => {
+                        this.isLoading = true;
+                        return this._orderService.getOrdersWithDetails("151c0fb8-5f43-4e7d-8a9e-457929ec08fa", 0, 12);
+                    }),
+                    map(() => {
+                        this.isLoading = false;
+                    })
+                ).subscribe();
+            }
+        }, 0);
+    }
+
     changeOrderDetails(value, event = null) {
 
         // find if categoty exists
@@ -219,6 +275,29 @@ export class OrderListComponent implements OnInit
         dialogRef.afterClosed()
         .subscribe((result) => {
         });
+        
+    }
+
+    onChangePage(pageOfItems: Array<any>) {
+        
+        // update current page of items
+        this.pageOfItems = pageOfItems;
+        
+        if (this.pageOfItems['currentPage'] - 1 !== this.pagination.page) {
+            // set loading to true
+            this.isLoading = true;
+
+            this._orderService.getOrdersWithDetails("151c0fb8-5f43-4e7d-8a9e-457929ec08fa",this.pageOfItems['currentPage'] - 1, this.pageOfItems['pageSize'])
+                .subscribe(()=>{
+                    // set loading to false
+                    this.isLoading = false;
+                });
+        }
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
+    }
+
+    goToOrderDetails(){
         
     }
     

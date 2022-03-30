@@ -144,13 +144,22 @@
                                     Shipping
                                 </mat-checkbox>
                                 <mat-checkbox
-                                    [checked]="orderSlug === 'completed' ? true : false"
+                                    [checked]="orderSlug === 'delivered' ? true : false"
                                     [disabled]="orderSlug === 'completed' ? true : false"
                                     class="flex items-center h-10 min-h-10 px-4"
                                     [color]="'primary'"
                                     value="completed"
                                     (change)="changeOrderDetails($event.source.value)">
-                                    Completed
+                                    Delivered
+                                </mat-checkbox>
+                                <mat-checkbox
+                                    [checked]="orderSlug === 'cancelled' ? true : false"
+                                    [disabled]="orderSlug === 'cancelled' ? true : false"
+                                    class="flex items-center h-10 min-h-10 px-4"
+                                    [color]="'primary'"
+                                    value="cancelled"
+                                    (change)="changeOrderDetails($event.source.value)">
+                                    Cancelled
                                 </mat-checkbox>
                             </div>
                         </div>
@@ -175,7 +184,7 @@
                                                     <div class="flex flex-col pl-2">
                                                         <h3 class="font-semibold text-xl">{{orderDetails.store.name}}</h3>
                                                         <h3 class="text-gray-400 text-sm">Order ID : {{orderDetails.invoiceId}}</h3>
-                                                        <h3 class="text-gray-400 text-sm">Order Placed : {{orderDetails.created}}</h3>
+                                                        <h3 class="text-gray-400 text-sm">Order Placed : {{orderDetails.created | date:'MMM dd, h:mm a' }}</h3>
                                                     </div>
                                                 </div>
                                                 <button class="flex flex-row m-2 justify-center w-32 border border-primary p-2 rounded">
@@ -183,7 +192,7 @@
                                                     <mat-icon 
                                                         *ngIf="orderDetails.completionStatus === 'BEING_PREPARED' || orderDetails.completionStatus === 'PAYMENT_CONFIRMED'" 
                                                         class="text-green-500" 
-                                                        svgIcon="feather:codesandbox">
+                                                        svgIcon="heroicons_solid:clock">
                                                     </mat-icon>
                                                     <mat-icon 
                                                         *ngIf="orderDetails.completionStatus === 'BEING_DELIVERED' || orderDetails.completionStatus === 'AWAITING_PICKUP'" 
@@ -194,6 +203,11 @@
                                                         *ngIf="orderDetails.completionStatus === 'DELIVERED_TO_CUSTOMER' || orderDetails.completionStatus === 'RECEIVED_AT_STORE'"
                                                         class="text-green-500" 
                                                         svgIcon="heroicons_solid:check-circle">
+                                                    </mat-icon>
+                                                    <mat-icon 
+                                                        *ngIf="orderDetails.completionStatus === 'CANCELED_BY_CUSTOMER' || orderDetails.completionStatus === 'CANCELED_BY_MERCHANT'"
+                                                        class="text-red-600" 
+                                                        svgIcon="heroicons_solid:x-circle">
                                                     </mat-icon>
 
                                                     <!-- Progress Status -->
@@ -208,6 +222,10 @@
                                                     <span 
                                                         *ngIf="orderDetails.completionStatus === 'DELIVERED_TO_CUSTOMER' || orderDetails.completionStatus === 'RECEIVED_AT_STORE'" 
                                                         class="font-semibold items-center pl-2">Delivered
+                                                    </span>
+                                                    <span 
+                                                        *ngIf="orderDetails.completionStatus === 'CANCELED_BY_CUSTOMER' || orderDetails.completionStatus === 'CANCELED_BY_MERCHANT'" 
+                                                        class="font-semibold items-center pl-2">Cancelled
                                                     </span>
 
                                                 </button>
@@ -235,7 +253,7 @@
                                                             <h3 class="text-gray-400">x{{orderItemDetail.quantity}}</h3>
                                                         </div>
                                                         <div class="items-end w-full flex flex-col">
-                                                            <h3 style="text-decoration: line-through;" class="font-bold">19.44</h3>
+                                                            <!-- <h3 style="text-decoration: line-through;" class="font-bold">19.44</h3> -->
                                                             <h3 class="font-bold text-primary">{{orderItemDetail.productPrice | currency: store.regionCountry.currencySymbol}}</h3>
                                                         </div>
                                                     </div>
@@ -301,7 +319,7 @@
                                                         </div>
                                                     </div>
                                                     <div class="flex flex-row w-44 justify-between mb-6">
-                                                        <p class="items-center font-semibold text-gray-400">Total Order(3):</p> 
+                                                        <p class="items-center font-semibold text-gray-400">Total Order :</p> 
                                                         <h3 class="w-fulltext-lg font-semibold">{{orderDetails.total | currency: store.regionCountry.currencySymbol}}</h3>
                                                     </div>
                                                 </div>
@@ -366,7 +384,7 @@
                                                 <h3 class="text-gray-400">x{{cartItem.quantity}}</h3>
                                             </div>
                                             <div class="items-end w-full flex flex-col">
-                                                <h3 style="text-decoration: line-through;" class="font-bold">19.44</h3>
+                                                <!-- <h3 style="text-decoration: line-through;" class="font-bold">19.44</h3> -->
                                                 <h3 class="font-bold text-primary">{{cartItem.productPrice | currency: store.regionCountry.currencySymbol}}</h3>
                                             </div>
                                         </div>
@@ -389,7 +407,7 @@
                                             </label>
                                         </div>
                                         <div class="flex flex-row w-44 justify-between mb-6">
-                                            <p class="items-center font-semibold text-gray-400">Total Order(3):</p> 
+                                            <p class="items-center font-semibold text-gray-400">Total Order :</p> 
                                             <h3 class="w-fulltext-lg font-semibold">RM 48.60</h3>
                                         </div>
                                     </div>
@@ -398,6 +416,15 @@
                         </div>
                     </div>
                 </ng-container>
+
+                <div class="flex w-full mt-4 items-center justify-center">
+                    <pagination 
+                        *ngIf="pagination"
+                        [itemLength]="pagination.length" 
+                        [initialPage]="pagination.page + 1"
+                        [pageSize]="pagination.size"
+                        (changePage)="onChangePage($event)"></pagination>
+                </div>
   
                 <!-- <mat-paginator
                     class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 sm:mx-4 z-10 rounded-lg shadow bg-gray-50 dark:bg-transparent"
