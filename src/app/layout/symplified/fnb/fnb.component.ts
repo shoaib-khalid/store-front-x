@@ -10,6 +10,8 @@ import { CartItem } from 'app/core/cart/cart.types';
 import { NotificationService } from 'app/core/notification/notification.service';
 import { DatePipe } from '@angular/common';
 import { ProductsService } from 'app/core/product/product.service';
+import { UserService } from 'app/core/user/user.service';
+import { User } from 'app/core/user/user.types';
 
 @Component({
     selector     : 'fnb-layout',
@@ -20,6 +22,7 @@ export class FnbLayoutComponent implements OnDestroy
 {
     public version: string = environment.appVersion;
     
+    user: User;
     store: Store;
     storeCategories: StoreCategory[];
     storeCategory: StoreCategory;
@@ -64,6 +67,7 @@ export class FnbLayoutComponent implements OnDestroy
         private _changeDetectorRef: ChangeDetectorRef,
         private _router: Router,
         private _activatedRoute: ActivatedRoute,
+        private _userService: UserService,
         private _productsService: ProductsService
     )
     {
@@ -109,6 +113,12 @@ export class FnbLayoutComponent implements OnDestroy
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
+            });
+
+        this._userService.user$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((user: User)=>{
+                this.user = user;                
             });
             
             

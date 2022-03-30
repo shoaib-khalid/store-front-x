@@ -4,7 +4,6 @@ import { finalize, takeUntil } from 'rxjs/operators';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
-import { PlatformService } from 'app/core/platform/platform.service';
 import { Subject } from 'rxjs';
 import { Platform } from 'app/core/platform/platform.types';
 
@@ -39,7 +38,6 @@ export class AuthForgotPasswordComponent implements OnInit
      */
     constructor(
         private _authService: AuthService,
-        private _platformsService: PlatformService,
         private _formBuilder: FormBuilder
     )
     {
@@ -58,22 +56,6 @@ export class AuthForgotPasswordComponent implements OnInit
         this.forgotPasswordForm = this._formBuilder.group({
             email: ['', [Validators.required, Validators.email]]
         });
-
-        // Subscribe to platform data
-        this._platformsService.platform$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((platform: Platform) => {
-                
-                this.platform = platform;
-
-                if (this.platform.id === "symplified") {
-                    this.platformUrlName = "deliverin.my";
-                } else if (this.platform.id === "easydukan") {
-                    this.platformUrlName = "easydukan.co";
-                } else {
-                    console.error("Undefined domain")
-                }
-            });
 
     }
 

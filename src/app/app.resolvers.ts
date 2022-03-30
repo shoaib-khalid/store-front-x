@@ -201,14 +201,14 @@ export class StoreResolver implements Resolve<any>
 @Injectable({
     providedIn: 'root'
 })
-export class LandingDataResolver implements Resolve<any>
+export class MainDataResolver implements Resolve<any>
 {
     /**
      * Constructor
      */
     constructor(
         private _ipAddressService: IpAddressService,
-        private _platformsService: PlatformService
+        private _platformsService: PlatformService,
     )
     {
     }
@@ -228,7 +228,7 @@ export class LandingDataResolver implements Resolve<any>
         // Fork join multiple API endpoint calls to wait all of them to finish
         return forkJoin([
             this._ipAddressService.getIPAddress(),
-            this._platformsService.set()
+            this._platformsService.set(),
         ]);
     }
 }

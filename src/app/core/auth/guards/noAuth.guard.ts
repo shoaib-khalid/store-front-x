@@ -3,7 +3,6 @@ import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, CanLoad, Route, 
 import { Observable, of } from 'rxjs';
 import { AuthService } from 'app/core/auth/auth.service';
 import { switchMap } from 'rxjs/operators';
-import { PlatformService } from 'app/core/platform/platform.service';
 
 @Injectable({
     providedIn: 'root'
@@ -15,7 +14,6 @@ export class NoAuthGuard implements CanActivate, CanActivateChild, CanLoad
      */
     constructor(
         private _authService: AuthService,
-        private _platformService: PlatformService,
         private _router: Router
     )
     {
@@ -73,11 +71,6 @@ export class NoAuthGuard implements CanActivate, CanActivateChild, CanLoad
         return this._authService.check()
                    .pipe(
                        switchMap((authenticated) => {
-                        
-                            // Check only allow marketplace to login
-                            if (this._platformService.getPlatformType() === "marketplace") {                                            
-                                return of(false);
-                            }
 
                            // If the user is authenticated...
                            if ( authenticated )

@@ -130,6 +130,18 @@
                                                 [svgIcon]="'heroicons_solid:shopping-cart'"></mat-icon>
                                         </label>
                                     </div>
+                                    <!-- Login/SignUp -->
+                                    <div *ngIf="!user" class="flex flex-row pl-8 items-center">
+                                        <span class="cursor-pointer">Sign In</span>
+                                        <span> &nbsp; | &nbsp; </span>
+                                        <span class="cursor-pointer">Sign Up</span>
+                                    </div>
+                                    <!-- Account / SignOut -->
+                                    <div *ngIf="user" class="flex flex-row pl-8 items-center">
+                                        <span class="cursor-pointer">{{ user.username }}</span>
+                                        <span> &nbsp; | &nbsp; </span>
+                                        <span class="cursor-pointer">Sign Out</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>

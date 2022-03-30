@@ -7,7 +7,10 @@ import { Store } from './core/store/store.types';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { IpAddressService } from './core/ip-address/ip-address.service';
 import { CartService } from './core/cart/cart.service';
-
+import { CookieService } from 'ngx-cookie-service'
+import { AuthService } from './core/auth/auth.service';
+import { JwtService } from './core/jwt/jwt.service';
+import { UserService } from './core/user/user.service';
 
 declare let gtag: Function;
 
@@ -22,6 +25,10 @@ export class AppComponent
     store      : Store = null;
     ipAddress  : string; 
     deviceInfo = null;
+
+    ownerId: string;
+    accessToken: string;
+    refreshToken: string;
 
     favIcon16: HTMLLinkElement = document.querySelector('#appIcon16');
     favIcon32: HTMLLinkElement = document.querySelector('#appIcon32');
@@ -38,6 +45,10 @@ export class AppComponent
         private _deviceService: DeviceDetectorService,
         private _ipAddressService: IpAddressService,
         private _cartService: CartService,
+        private _cookieService: CookieService,
+        private _authService: AuthService,
+        private _jwtService: JwtService,
+        private _userService: UserService
     )
     {
     
@@ -46,6 +57,8 @@ export class AppComponent
     ngOnInit() {
 
         console.log("navigator",navigator.userAgent);
+
+        // Get User IP Address
         this._ipAddressService.ipAdressInfo$
             .subscribe((response:any)=>{
                 if (response) {
@@ -54,7 +67,38 @@ export class AppComponent
                     // Mark for check
                     this._changeDetectorRef.markForCheck();
                 }
-            }); 
+            });
+
+        // Set cookie for testing
+        this._cookieService.set('CustomerId','794d406c-7add-4f6f-988b-b6c14aca1f17');
+        this._cookieService.set('AccessToken','mna');
+        this._cookieService.set('RefreshToken','good');
+
+        // Get cookie
+        this.ownerId = this._cookieService.get('CustomerId');
+        this.accessToken = this._cookieService.get('AccessToken');
+        this.refreshToken = this._cookieService.get('RefreshToken');
+
+        // set to localstorage
+        if (this.ownerId && this.accessToken && this.refreshToken) {
+            
+            this._userService.get(this.ownerId)
+                .subscribe((response)=>{
+                    let jwtPayload = {
+                        iss: 'Fuse',
+                        act: this.accessToken,
+                        rft: this.refreshToken,
+                        uid: this.ownerId
+                    }
+        
+                    let token = this._jwtService.generate({ alg: "HS256", typ: "JWT"}, jwtPayload, this.accessToken);
+        
+                    this._authService.jwtAccessToken = token;
+
+                    // Mark for check
+                    this._changeDetectorRef.markForCheck();
+                });
+        }
         
         // Get current store
         this._storesService.store$

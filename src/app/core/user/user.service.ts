@@ -24,7 +24,7 @@ export class UserService
         private _httpClient: HttpClient,
         private _apiServer: AppConfig,
         private _authService: AuthService,
-        private _jwt: JwtService,
+        private _jwtService: JwtService,
         private _logging: LogService
     )
     {
@@ -50,23 +50,23 @@ export class UserService
         return this._user.asObservable();
     }
 
-        /**
+    /**
      * Setter & getter for user
      *
      * @param value
      */
-        set customer(value: Customer)
-        {
-            // Store the value
-            this._customer.next(value);
-        }
+    set customer(value: Customer)
+    {
+        // Store the value
+        this._customer.next(value);
+    }
     
-        get customer$(): Observable<Customer>
-        {
-            return this._customer.asObservable();
-        }
+    get customer$(): Observable<Customer>
+    {
+        return this._customer.asObservable();
+    }
 
-                /**
+    /**
      * Setter & getter for user
      *
      * @param value
@@ -99,9 +99,11 @@ export class UserService
 
         return this._httpClient.get<any>(userService + "/customers/" + ownerId, header)
             .pipe(
-                tap((user) => {
+                map((user) => {
                     this._logging.debug("Response from UserService (getCustomerById)",user);
-                    this._user.next(user);
+                    this._user.next(user.data);
+
+                    return user.data;
                 })
             );
     }
