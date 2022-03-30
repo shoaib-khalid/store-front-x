@@ -11,6 +11,8 @@ import { FuseAlertModule } from '@fuse/components/alert';
 import { SharedModule } from 'app/shared/shared.module';
 import { AuthSignUpComponent } from 'app/modules/auth/sign-up/sign-up.component';
 import { authSignupRoutes } from 'app/modules/auth/sign-up/sign-up.routing';
+import { SharedBackgroundModule } from '../shared-background/shared-background.module';
+import { SharedLogoModule } from '../shared-logo/shared-logo.module';
 
 @NgModule({
     declarations: [
@@ -26,7 +28,9 @@ import { authSignupRoutes } from 'app/modules/auth/sign-up/sign-up.routing';
         MatProgressSpinnerModule,
         FuseCardModule,
         FuseAlertModule,
-        SharedModule
+        SharedModule,
+        SharedBackgroundModule,
+        SharedLogoModule
     ]
 })
 export class AuthSignUpModule

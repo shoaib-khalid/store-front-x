@@ -5,7 +5,8 @@ import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { Product, ProductVariant, ProductInventory, ProductCategory, ProductPagination, ProductVariantAvailable, ProductPackageOption, ProductAssets } from 'app/core/product/product.types';
 import { AppConfig } from 'app/config/service.config';
 import { JwtService } from 'app/core/jwt/jwt.service';
-import { LogService } from '../logging/log.service';
+import { LogService } from 'app/core/logging/log.service';
+import { AuthService } from 'app/core/auth/auth.service';
 
 @Injectable({
     providedIn: 'root'
@@ -33,6 +34,7 @@ export class ProductsService
      * Constructor
      */
     constructor(
+        private _authService: AuthService,
         private _httpClient: HttpClient,
         private _apiServer: AppConfig,
         private _logging: LogService,
@@ -95,15 +97,6 @@ export class ProductsService
     }
 
     /**
-     * Getter for access token
-     */
- 
-    get accessToken(): string
-    {
-        return localStorage.getItem('accessToken') ?? '';
-    }
-
-    /**
      * Getter for storeId
      */
  
@@ -129,11 +122,9 @@ export class ProductsService
         Observable<{ pagination: ProductPagination; products: Product[] }>
     {
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
             params: {
                 page        : '' + page,
                 pageSize    : '' + size,
@@ -201,12 +192,9 @@ export class ProductsService
     getProductBySeoName(seoName: string): Observable<any>
     {
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
-        let clientId = this._jwt.getJwtPayload(this.accessToken).uid;
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
             params: {
                 seoName: encodeURI(seoName)
             }
@@ -232,12 +220,9 @@ export class ProductsService
     createProduct(productBody: Product): Observable<Product>
     {
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
-        let clientId = this._jwt.getJwtPayload(this.accessToken).uid;
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
         };
 
         return this.products$.pipe(
@@ -279,12 +264,9 @@ export class ProductsService
     updateProduct(id: string, product: Product): Observable<Product>
     {
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
-        let clientId = this._jwt.getJwtPayload(this.accessToken).uid;
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
         };
 
         return this.products$.pipe(
@@ -331,12 +313,9 @@ export class ProductsService
     deleteProduct(id: string): Observable<boolean>
     {
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
-        let clientId = this._jwt.getJwtPayload(this.accessToken).uid;
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
         };
       
         return this.products$.pipe(
@@ -371,12 +350,9 @@ export class ProductsService
 
     async getProductAssetsById(productId){
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
-        let clientId = this._jwt.getJwtPayload(this.accessToken).uid;
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
         };
 
         let response = await this._httpClient.get<any>(productService + '/stores/' + this.storeId$ + '/products/' + productId + '/assets').toPromise();
@@ -394,12 +370,9 @@ export class ProductsService
      addProductAssets(productId: string, formData: FormData, productAssets: ProductAssets, assetIndex: number = null): Observable<ProductAssets>{
 
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
-        let clientId = this._jwt.getJwtPayload(this.accessToken).uid;
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
             params: {
                 itemCode: productAssets.itemCode,
                 isThumbnail: productAssets.isThumbnail
@@ -462,12 +435,9 @@ export class ProductsService
 
     updateProductAssets(productId: string, productAssets: ProductAssets, assetId: string) : Observable<ProductAssets> {
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
-        let clientId = this._jwt.getJwtPayload(this.accessToken).uid;
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
         };
 
         return this.products$.pipe(
@@ -500,12 +470,9 @@ export class ProductsService
 
     deleteProductAssets(productId: string, assetId: string) : Observable<ProductAssets> {
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
-        let clientId = this._jwt.getJwtPayload(this.accessToken).uid;
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
         };
 
         return this.products$.pipe(
@@ -543,12 +510,9 @@ export class ProductsService
     addInventoryToProduct(product: Product, productInventory): Observable<ProductInventory>{
 
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
-        let clientId = this._jwt.getJwtPayload(this.accessToken).uid;
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
         };
 
         const now = new Date();
@@ -600,12 +564,9 @@ export class ProductsService
     updateInventoryToProduct(productId: string, productInventoriesId: string, productInventories: ProductInventory): Observable<ProductInventory>{
 
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
-        let clientId = this._jwt.getJwtPayload(this.accessToken).uid;
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
         };
 
         return this._products.pipe(
@@ -643,12 +604,9 @@ export class ProductsService
     deleteInventoryToProduct(productId: string, productInventoriesId: string): Observable<ProductInventory>{
 
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
-        let clientId = this._jwt.getJwtPayload(this.accessToken).uid;
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
         };
 
         return this._products.pipe(
@@ -680,11 +638,9 @@ export class ProductsService
 
     getVariants(){
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
         };
 
         return this._httpClient.get<any>(productService +'/stores/'+this.storeId$+'/products', header).pipe(
@@ -742,12 +698,9 @@ export class ProductsService
      */
     createVariant(variant: ProductVariant, productId: string){
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
-        let clientId = this._jwt.getJwtPayload(this.accessToken).uid;
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
         };
 
         const now = new Date();
@@ -781,11 +734,9 @@ export class ProductsService
     updateVariant(id: string, variant: ProductVariant): Observable<ProductCategory>
     {
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
         };
 
         let queryParam = "?storeId=" + this.storeId$ + "&name=" + variant.name;
@@ -799,12 +750,9 @@ export class ProductsService
      */
     deleteVariant(productId:string, variantId:string, variant: ProductVariant){
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
-        let clientId = this._jwt.getJwtPayload(this.accessToken).uid;
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
         };
       
         return this._products.pipe(
@@ -841,12 +789,9 @@ export class ProductsService
      */
     createVariantAvailable(variantAvailable: ProductVariantAvailable, productId: string){
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
-        let clientId = this._jwt.getJwtPayload(this.accessToken).uid;
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
         };
 
         const now = new Date();
@@ -870,11 +815,9 @@ export class ProductsService
     updateVariantAvailable(id: string, variant: ProductVariant): Observable<ProductCategory>
     {
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
         };
 
         let queryParam = "?storeId=" + this.storeId$ + "&name=" + variant.name;
@@ -888,12 +831,9 @@ export class ProductsService
      */
     deleteVariantAvailable(variantAvailable: ProductVariantAvailable, productId:string){
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
-        let clientId = this._jwt.getJwtPayload(this.accessToken).uid;
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
         };
       
         return this.products$.pipe(
@@ -916,11 +856,9 @@ export class ProductsService
     {
 
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
             params: {
                 storeId: this.storeId$
             }
@@ -956,11 +894,9 @@ export class ProductsService
     Observable<{ pagination: ProductPagination; products: ProductCategory[] }>
     {
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
             params: {
                 page        : '' + page,
                 pageSize    : '' + size,
@@ -1031,11 +967,9 @@ export class ProductsService
     createCategory(category: ProductCategory, formData: FormData = null): Observable<ProductCategory>
     {
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
             params: {
                 name: category.name,
                 storeId: this.storeId$
@@ -1070,11 +1004,9 @@ export class ProductsService
     {
 
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
         };
 
         let queryParam = "?storeId=" + this.storeId$ + "&name=" + category.name;
@@ -1119,11 +1051,9 @@ export class ProductsService
     deleteCategory(id: string): Observable<boolean>
     {
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`)
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`)
         };
 
         // product-service/v1/swagger-ui.html#/store-category-controller
@@ -1161,11 +1091,9 @@ export class ProductsService
     {
 
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`)
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`)
         };
 
         return this._httpClient.get<any>(productService + '/stores/' + this.storeId$ + '/package/' + packageId + '/options',header).pipe(
@@ -1184,12 +1112,9 @@ export class ProductsService
     addOptionsToProductPackage(packageId, body: ProductPackageOption): Observable<ProductInventory>{
 
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
-        let clientId = this._jwt.getJwtPayload(this.accessToken).uid;
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
         };
 
         const now = new Date();
@@ -1218,11 +1143,9 @@ export class ProductsService
     {
 
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
         };
 
         // product-service/v1/swagger-ui.html#/store-category-controller/postStoreCategoryByStoreIdUsingPOST
@@ -1275,11 +1198,9 @@ export class ProductsService
     {
 
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
         };
 
         return this.packages$.pipe(
@@ -1310,11 +1231,9 @@ export class ProductsService
     deleteProductsOptionById(optionId: string, packageId: string): Observable<boolean>
     {
         let productService = this._apiServer.settings.apiServer.productService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
         };
 
         return this.packages$.pipe(

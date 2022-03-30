@@ -22,6 +22,11 @@ export class AuthSignUpComponent implements OnInit
     signUpForm: FormGroup;
     showAlert: boolean = false;
 
+    //to be display the text
+    titleText:string ='Sign Up';
+    descriptionText:string ='Please enter the following details to create your account';
+
+
     /**
      * Constructor
      */
@@ -45,9 +50,9 @@ export class AuthSignUpComponent implements OnInit
         // Create the form
         this.signUpForm = this._formBuilder.group({
                 name      : ['', Validators.required],
+                username      : ['', Validators.required],
                 email     : ['', [Validators.required, Validators.email]],
                 password  : ['', Validators.required],
-                company   : [''],
                 agreements: ['', Validators.requiredTrue]
             }
         );

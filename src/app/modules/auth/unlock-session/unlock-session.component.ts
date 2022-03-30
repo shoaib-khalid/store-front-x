@@ -25,6 +25,10 @@ export class AuthUnlockSessionComponent implements OnInit
     unlockSessionForm: FormGroup;
     private _email: string;
 
+    //to be display the text
+    titleText:string ='Unlock your session';
+    descriptionText:string ='Your session is locked due to inactivity';
+
     /**
      * Constructor
      */

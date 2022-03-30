@@ -17,42 +17,45 @@ export const appRoutes: Route[] = [
     // After the user signs in, the sign in page will redirect the user to the 'signed-in-redirect'
     // path. Below is another redirection for that path to redirect the user to the desired
     // location. This is a small convenience to keep all main routes together here on this file.
-    {path: 'signed-in-redirect', pathMatch : 'full', redirectTo: 'example'},
+    {path: 'signed-in-redirect', pathMatch : 'full', redirectTo: 'home'},
 
-    // Auth routes for guests
-    {
-        path: '',
-        canActivate: [NoAuthGuard],
-        canActivateChild: [NoAuthGuard],
-        component: LayoutComponent,
-        data: {
-            layout: 'empty'
-        },
-        children: [
-            {path: 'confirmation-required', loadChildren: () => import('app/modules/auth/confirmation-required/confirmation-required.module').then(m => m.AuthConfirmationRequiredModule)},
-            {path: 'forgot-password', loadChildren: () => import('app/modules/auth/forgot-password/forgot-password.module').then(m => m.AuthForgotPasswordModule)},
-            {path: 'reset-password', loadChildren: () => import('app/modules/auth/reset-password/reset-password.module').then(m => m.AuthResetPasswordModule)},
-            {path: 'sign-in', loadChildren: () => import('app/modules/auth/sign-in/sign-in.module').then(m => m.AuthSignInModule)},
-            {path: 'sign-up', loadChildren: () => import('app/modules/auth/sign-up/sign-up.module').then(m => m.AuthSignUpModule)}
-        ]
-    },
+    // Auth routes for (Marketplace)
+    // {
+    //     path: '',
+    //     canActivate: [NoAuthGuard],
+    //     canActivateChild: [NoAuthGuard],
+    //     component: LayoutComponent,
+    //     data: {
+    //         layout: 'empty'
+    //     },
+    //     resolve: {
+    //         mainResolver: MainResolver
+    //     },
+    //     children: [
+    //         {path: 'confirmation-required', loadChildren: () => import('app/modules/auth/confirmation-required/confirmation-required.module').then(m => m.AuthConfirmationRequiredModule)},
+    //         {path: 'forgot-password', loadChildren: () => import('app/modules/auth/forgot-password/forgot-password.module').then(m => m.AuthForgotPasswordModule)},
+    //         {path: 'reset-password', loadChildren: () => import('app/modules/auth/reset-password/reset-password.module').then(m => m.AuthResetPasswordModule)},
+    //         {path: 'sign-in', loadChildren: () => import('app/modules/auth/sign-in/sign-in.module').then(m => m.AuthSignInModule)},
+    //         {path: 'sign-up', loadChildren: () => import('app/modules/auth/sign-up/sign-up.module').then(m => m.AuthSignUpModule)}
+    //     ]
+    // },
 
-    // Auth routes for authenticated users
-    {
-        path: '',
-        canActivate: [AuthGuard],
-        canActivateChild: [AuthGuard],
-        component: LayoutComponent,
-        data: {
-            layout: 'empty'
-        },
-        children: [
-            {path: 'sign-out', loadChildren: () => import('app/modules/auth/sign-out/sign-out.module').then(m => m.AuthSignOutModule)},
-            {path: 'unlock-session', loadChildren: () => import('app/modules/auth/unlock-session/unlock-session.module').then(m => m.AuthUnlockSessionModule)}
-        ]
-    },
+    // Auth routes for authenticated (Marketplace) users
+    // {
+    //     path: '',
+    //     canActivate: [AuthGuard],
+    //     canActivateChild: [AuthGuard],
+    //     component: LayoutComponent,
+    //     data: {
+    //         layout: 'empty'
+    //     },
+    //     children: [
+    //         {path: 'sign-out', loadChildren: () => import('app/modules/auth/sign-out/sign-out.module').then(m => m.AuthSignOutModule)},
+    //         {path: 'unlock-session', loadChildren: () => import('app/modules/auth/unlock-session/unlock-session.module').then(m => m.AuthUnlockSessionModule)}
+    //     ]
+    // },
 
-    // Landing routes
+    // Landing routes (Store Front)
     {
         path: '',
         component  : LayoutComponent,
@@ -96,4 +99,6 @@ export const appRoutes: Route[] = [
             {path: 'changelog', loadChildren: () => import('app/modules/admin/docs/changelog/changelog.module').then(m => m.ChangelogModule)}
         ]
     },
+
+    {path: '**', redirectTo: 'home'}
 ];

@@ -6,6 +6,7 @@ import { CustomerActivity } from './analytic.types';
 import { AppConfig } from 'app/config/service.config';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { LogService } from 'app/core/logging/log.service';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
     providedIn: 'root'
@@ -20,6 +21,7 @@ export class AnalyticService
     constructor(
         private _httpClient: HttpClient,
         private _apiServer: AppConfig,
+        private _authService: AuthService,
         private _jwt: JwtService,
         private _logging: LogService
 
@@ -37,18 +39,6 @@ export class AnalyticService
     get analytic$(): Observable<CustomerActivity>
     {
         return this._analytic.asObservable();
-    }
-    /**
-    * Setter & getter for access token
-    */
-    set accessToken(token: string)
-    {
-        localStorage.setItem('accessToken', token);
-    }
-
-    get accessToken(): string
-    {
-        return localStorage.getItem('accessToken') ?? '';
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -75,11 +65,9 @@ export class AnalyticService
     postActivity(bodyActivity: CustomerActivity): Observable<any>
     {
         let analyticService = this._apiServer.settings.apiServer.analyticService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {  
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`)
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`)
         };
 
         return this._httpClient.post<any>(analyticService + '/customeractivity', bodyActivity, header)

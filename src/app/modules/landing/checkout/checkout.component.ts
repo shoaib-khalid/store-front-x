@@ -506,8 +506,6 @@ export class LandingCheckoutComponent implements OnInit
                             deliveryProviders: [deliveryProviderResponse[0]]
                         });
                         
-                        console.log("deliveryProvidersGroup", this.deliveryProvidersGroup );
-
                         // if there's 1 delivery provider, load the delivery provider to mat-select
                         this.checkoutForm.get('deliveryProviderId').patchValue(this.deliveryProviders[0].providerId);
 
@@ -573,10 +571,7 @@ export class LandingCheckoutComponent implements OnInit
                                     })
                                 }
                             }
-                        });
-
-                        console.log("this.deliveryProvidersGroup", this.deliveryProvidersGroup);
-                        
+                        });                        
                                                 
                         // load all delivery provider in mat-select without default provider
                         this.deliveryProviders = deliveryProviderResponse;
