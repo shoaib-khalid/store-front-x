@@ -1,7 +1,7 @@
 <ul *ngIf="pager.pages && pager.pages.length" class="pagination flex flex-row items-center">
-    <li 
+    <!-- <li 
         (click)="setPage(1)"
-        class="bg-card h-10 w-10 flex justify-center items-center cursor-pointer rounded-full page-item first-item" 
+        class="bg-card h-10 w-10 pt-[6px] flex justify-center items-center cursor-pointer rounded-full page-item first-item" 
         [ngClass]="pager.currentPage === 1 ? 'disabled bg-disabled cursor-default' : 'bg-card cursor-pointer group hover:bg-primary'"
     >
         <a class="page-link">
@@ -10,10 +10,10 @@
                 [ngClass]="pager.currentPage === 1 ? '' : 'text-primary group-hover:text-white'"
                 [svgIcon]="'heroicons_outline:chevron-double-left'"></mat-icon>
         </a>
-    </li>
+    </li> -->
     <li 
         (click)="setPage(pager.currentPage - 1)"
-        class="bg-card h-10 w-10 flex justify-center items-center cursor-pointer rounded-full page-item previous-item" 
+        class="bg-card h-10 w-10 pt-[6px] flex justify-center items-center cursor-pointer rounded-full page-item previous-item" 
         [ngClass]="pager.currentPage === 1 ? 'disabled bg-disabled cursor-default' : 'bg-card cursor-pointer group hover:bg-primary'"
     >
         <a class="page-link">
@@ -38,7 +38,7 @@
 
     <li 
         (click)="setPage(pager.currentPage + 1)"
-        class="bg-card h-10 w-10 flex justify-center items-center cursor-pointer rounded-full page-item next-item" 
+        class="bg-card h-10 w-10 pt-[6px] flex justify-center items-center cursor-pointer rounded-full page-item next-item" 
         [ngClass]="pager.currentPage === pager.totalPages ? 'disabled bg-disabled cursor-default' : 'bg-card cursor-pointer group hover:bg-primary'"
     >
         <a class="page-link">
@@ -48,9 +48,9 @@
                 [svgIcon]="'heroicons_outline:chevron-right'"></mat-icon>
         </a>
     </li>
-    <li 
+    <!-- <li 
         (click)="setPage(pager.totalPages)"
-        class="bg-card h-10 w-10 flex justify-center items-center cursor-pointer rounded-full page-item last-item" 
+        class="bg-card h-10 w-10 pt-[6px] flex justify-center items-center cursor-pointer rounded-full page-item last-item" 
         [ngClass]="pager.currentPage === pager.totalPages ? 'disabled bg-disabled cursor-default' : 'bg-card cursor-pointer group hover:bg-primary'"
     >
         <a class="page-link">
@@ -59,5 +59,5 @@
                 [ngClass]="pager.currentPage === pager.totalPages ? '' : 'text-primary group-hover:text-white'"
                 [svgIcon]="'heroicons_outline:chevron-double-right'"></mat-icon>
         </a>
-    </li>
+    </li> -->
 </ul>
