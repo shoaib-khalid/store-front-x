@@ -1,7 +1,9 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { AuthService } from 'app/core/auth/auth.service';
 import { CartService } from 'app/core/cart/cart.service';
 import { Cart } from 'app/core/cart/cart.types';
+import { JwtService } from 'app/core/jwt/jwt.service';
 import { StoresService } from 'app/core/store/store.service';
 import { Store, StoreAssets } from 'app/core/store/store.types';
 
@@ -26,6 +28,8 @@ export class LandingThankyouComponent
     constructor(
         private _storesService: StoresService,
         private _activatedRoute: ActivatedRoute,
+        private _jwtService: JwtService,
+        private _authService: AuthService,
         private _cartService: CartService
     )
     {
@@ -34,9 +38,10 @@ export class LandingThankyouComponent
     ngOnInit() {
 
         let currentCartId = this._cartService.cartId$
+        let customerId = this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid ? this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid : null
 
-        let createCartBody = {
-            customerId: null, // later make a getter to get logged in user
+        const createCartBody = {
+            customerId: customerId, 
             storeId: this._storesService.storeId$,
         }
 

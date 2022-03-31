@@ -84,6 +84,8 @@ export class StoreResolver implements Resolve<any>
         private _storesService: StoresService,
         private _cartService: CartService,
         private _platformLocation: PlatformLocation,
+        private _authService: AuthService,
+        private _jwtService: JwtService,
         private _router: Router
     )
     {
@@ -152,8 +154,10 @@ export class StoreResolver implements Resolve<any>
                         
                     } else {
 
-                        let createCartBody = {
-                            customerId: null, // later make a getter to get logged in user
+                        let customerId = this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid ? this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid : null
+
+                        const createCartBody = {
+                            customerId: customerId, 
                             storeId: this._storesService.storeId$,
                         }
                         this._cartService.createCart(createCartBody)
