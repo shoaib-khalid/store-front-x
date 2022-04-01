@@ -264,11 +264,17 @@
                                                 </div>
                                                 <!-- Product Footer -->
                                                 <div class="flex flex-col px-4 mb-4 h-60 w-full">
-                                                    <div class="mt-4 sm:text-xl font-bold font-medium line-clamp-2">{{product.name}}</div>
+                                                    <!-- min-h-[48px] -->
+                                                    <div class="mt-4 sm:text-xl font-bold font-medium line-clamp-2 pb-2">{{product.name}}</div>
                                                     <div class="relative h-40">
+                                                        <!-- h-[5.5rem] -->
+                                                        <!-- [ngClass]="displaySeeMore(product.description) ? 'h-26' : 'h-auto'" -->
                                                         <div 
                                                             class="mt-2 mb-4 text-ellipsis overflow-hidden"
-                                                            [ngClass]="displaySeeMore(product.description) ? 'h-26' : 'h-auto'">
+                                                            [ngClass]="( ( displaySeeMore(product.description) ) && !( product.productInventories.length > 0 && product.productInventories[0].itemDiscount ) ) ? 'h-26' : 
+                                                            ( ( displaySeeMore(product.description) ) && ( product.productInventories.length > 0 && product.productInventories[0].itemDiscount ) ) ? 'h-[5.5rem]' :
+                                                            'h-auto'"
+                                                            >
                                                             <span class="text-gray-500" [innerHtml]="product.description"></span>
                                                         </div>
                                                         <span class="absolute text-gray-500 bottom-0 left-0" [ngClass]="displaySeeMore(product.description) ? 'block' : 'hidden'">...more</span>

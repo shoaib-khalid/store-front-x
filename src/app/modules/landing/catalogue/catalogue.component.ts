@@ -434,7 +434,7 @@ export class LandingCatalogueComponent implements OnInit
         div.style.width ="15rem";
         document.body.appendChild(div)
 
-        if (div.offsetHeight > 130) {
+        if (div.offsetHeight > 120) {
             div.setAttribute("class","hidden")
             return true;
         } else {
