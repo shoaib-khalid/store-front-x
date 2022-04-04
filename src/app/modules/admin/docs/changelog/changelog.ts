@@ -25,7 +25,8 @@ export class ChangelogComponent
                     type: 'Fix',
                     list: [
                         '(LandingCataloguePage) KB-1394 Limit to 2 lines for product title in Catalogue',
-                        '(LandingCheckoutPage) KB-1300 Checkout page UI adjustment, fix stretch product image preview'
+                        '(LandingCheckoutPage) KB-1399 Checkout page UI adjustment',
+                        '(LandingProductPage) Fix stretch product image preview'
                     ]
                 }
             ]

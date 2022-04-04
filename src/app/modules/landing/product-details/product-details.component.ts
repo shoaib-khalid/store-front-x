@@ -39,7 +39,7 @@ import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from 'ngx-gal
 
             @screen sm {
                 position: relative;
-                z-index: 40;
+                z-index: 35;
             }
         }
 
