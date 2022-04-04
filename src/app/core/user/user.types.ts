@@ -13,7 +13,7 @@ export interface Customer
     username: string;
     name: string;
     email: string;
-    phoneNumber: number;
+    phoneNumber?: number;
     locked: boolean;
     deactivated: boolean;
     created: string;
@@ -35,4 +35,36 @@ export interface CustomerAddress
     phoneNumber: string;
     postCode: string;
     state: string;
+}
+
+export interface Client
+{
+    id: string;
+    username: string;
+    name: string;
+    regionCountry?: RegionCountry;
+    email: string;
+    avatar?: string;
+    status?: string;
+    role: UserRole
+    locked: string;
+    deactivated: string;
+    countryId?: string;
+    created: string;
+    updated: string;
+    roleId: string;
+}
+
+export interface RegionCountry
+{
+    id?: string;
+    name?: string;
+    region?: string;
+}
+
+
+export enum UserRole {
+    Admin = 'SUPER_USER',
+    Merchant = 'STORE_OWNER',
+    Customer ='CUSTOMER'
 }

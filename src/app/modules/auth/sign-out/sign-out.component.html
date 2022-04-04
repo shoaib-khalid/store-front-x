@@ -1,23 +1,33 @@
-<div class="flex flex-col flex-auto items-center sm:justify-center min-w-0">
-    <div class="w-full sm:w-auto py-8 px-4 sm:p-12 sm:rounded-2xl sm:shadow sm:bg-card">
-        <div class="w-full max-w-80 sm:w-80 mx-auto sm:mx-0">
-            <!-- Logo -->
-            <div class="w-12 mx-auto">
-                <img src="assets/images/logo/logo.svg">
+<div class="flex flex-col sm:flex-row items-center md:items-start sm:justify-center md:justify-start flex-auto min-w-0">
+    <!-- Forms -->
+    <div class="z-20 w-auto h-full md:w-1/2 flex flex-col items-center justify-center pt-4">
+        <div class="py-8 px-4 sm:p-12 md:p-16 rounded-2xl sm:shadow md:shadow-none bg-card">
+            <div class="w-full max-w-80 sm:w-80 mx-auto sm:mx-0">
+                <!-- Logo , Title , Description-->
+                <app-shared-logo [titleText]="titleText"></app-shared-logo>
+
+                <!-- Title -->
+                <div class="flex justify-center mt-0.5 font-medium">
+                    <!-- Redirect countdown -->
+                    <ng-container *ngIf="countdown > 0">
+                        Redirecting in {{countdown | i18nPlural: countdownMapping }}
+                    </ng-container>
+
+                    <!-- Redirect message -->
+                    <ng-container *ngIf="countdown === 0">
+                        You are now being redirected!
+                    </ng-container>
+                </div>
             </div>
 
-            <!-- Title -->
-            <div class="mt-8 text-4xl font-extrabold tracking-tight leading-tight text-center">You have signed out!</div>
-            <div class="flex justify-center mt-0.5 font-medium">
-                <!-- Redirect countdown -->
-                <ng-container *ngIf="countdown > 0">
-                    Redirecting in {{countdown | i18nPlural: countdownMapping }}
-                </ng-container>
-
-                <!-- Redirect message -->
-                <ng-container *ngIf="countdown === 0">
-                    You are now being redirected!
-                </ng-container>
+            <!-- Sign-up -->
+            <div class="flex flex-row mt-4 mb-4 sm:mt-8 sm:mb-0 w-full justify-center">
+                <div>Don't have an account?</div>
+                <a
+                    class="ml-1 text-primary-500 hover:underline"
+                    [routerLink]="['/sign-up']"
+                    >Sign up
+                </a>
             </div>
 
             <!-- Form footer -->
@@ -29,5 +39,13 @@
                 </a>
             </div>
         </div>
+    </div>
+    <!-- Shared background -->
+    <div class="relative hidden md:flex flex-auto items-center justify-center w-1/2 h-full p-16 lg:px-28 overflow-hidden bg-primary dark:border-l">
+        <app-shared-background></app-shared-background>
+    </div>
+
+    <!-- Mobile background -->
+    <div class="md:hidden absolute w-full h-60 top-0 left-0 right-0 z-10 bg-primary">         
     </div>
 </div>

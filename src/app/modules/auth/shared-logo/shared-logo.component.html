@@ -1,0 +1,16 @@
+<div  class="grid justify-items-center">
+    <div class="w-2/3">
+        <img [src]="'assets/images/logo/' + platform.logo">
+    </div>
+</div>
+
+<div *ngIf="titleText" class="grid justify-items-center mt-8 text-3xl font-bold tracking-tight leading-tight">{{titleText}}</div>
+<div *ngIf="descriptionText" class="flex items-center mt-4 font-medium text-gray-500">
+    <div>
+        <p class="text-center">
+            {{descriptionText}}
+        </p>
+       
+    </div>
+   
+</div>

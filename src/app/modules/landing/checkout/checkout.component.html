@@ -18,7 +18,7 @@
                         <!-- Store Pickup -->
                         <div class="flex flex-col sm:flex-row justify-between sm:items-center w-full">
                             <h1 class="text-2xl font-bold pb-2 sm:pb-0">Delivery Information</h1>
-                            <div *ngIf="allowsStorePickup" class="flex flex-row w-full sm:w-auto justify-between">
+                            <div *ngIf="allowsStorePickup" class="flex flex-row w-full sm:w-auto justify-between pt-2 sm:pt-0">
                                 <!-- <p class="mr-4">I want to pick my order from store</p> -->
                                 <!-- <mat-slide-toggle
                                     [color]="'primary'"
@@ -226,7 +226,7 @@
                         <!-- For Normal delivery -->
                         <ng-container *ngIf="!checkoutForm.get('storePickup').value">
                             <!-- City & Postcode -->
-                            <div class="w-full flex flex-wrap sm:flex-nowrap sm:flex-row mb-2">
+                            <div class="w-full flex flex-wrap sm:flex-nowrap sm:flex-row mb-0">
                                 <!--City -->
                                 <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
                                     <mat-label>City</mat-label>
@@ -330,7 +330,7 @@
                         <!-- Additional info & save future order -->
                         <div class="w-full">
                             <!-- Additional info -->
-                            <mat-form-field class="w-full pt-2" floatLabel="always">
+                            <mat-form-field class="w-full pt-0" floatLabel="always">
                                 <textarea
                                     matInput
                                     [formControlName]="'specialInstruction'"

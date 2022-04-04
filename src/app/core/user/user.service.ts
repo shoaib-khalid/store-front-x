@@ -1,8 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, ReplaySubject } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { User } from 'app/core/user/user.types';
+import { Client, Customer, User } from 'app/core/user/user.types';
+import { AppConfig } from 'app/config/service.config';
+import { JwtService } from 'app/core/jwt/jwt.service';
+import { LogService } from 'app/core/logging/log.service';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
     providedIn: 'root'
@@ -10,11 +14,19 @@ import { User } from 'app/core/user/user.types';
 export class UserService
 {
     private _user: ReplaySubject<User> = new ReplaySubject<User>(1);
+    private _customer: BehaviorSubject<Customer | null> = new BehaviorSubject(null);
+    private _client: BehaviorSubject<Client | null> = new BehaviorSubject(null);
 
     /**
      * Constructor
      */
-    constructor(private _httpClient: HttpClient)
+    constructor(
+        private _httpClient: HttpClient,
+        private _apiServer: AppConfig,
+        private _authService: AuthService,
+        private _jwtService: JwtService,
+        private _logging: LogService
+    )
     {
     }
 
@@ -38,6 +50,39 @@ export class UserService
         return this._user.asObservable();
     }
 
+    /**
+     * Setter & getter for user
+     *
+     * @param value
+     */
+    set customer(value: Customer)
+    {
+        // Store the value
+        this._customer.next(value);
+    }
+    
+    get customer$(): Observable<Customer>
+    {
+        return this._customer.asObservable();
+    }
+
+    /**
+     * Setter & getter for user
+     *
+     * @param value
+     */
+    set client(value: Client)
+    {
+        // Store the value
+        this._client.next(value);
+    }
+
+    get client$(): Observable<Client>
+    {
+        return this._client.asObservable();
+    }
+         
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
@@ -45,13 +90,22 @@ export class UserService
     /**
      * Get the current logged in user data
      */
-    get(): Observable<User>
+    get(ownerId: string): Observable<any>
     {
-        return this._httpClient.get<User>('api/common/user').pipe(
-            tap((user) => {
-                this._user.next(user);
-            })
-        );
+        let userService = this._apiServer.settings.apiServer.userService;
+        const header = {
+            headers: new HttpHeaders().set("Authorization", this._authService.publicToken)
+        };        
+
+        return this._httpClient.get<any>(userService + "/customers/" + ownerId, header)
+            .pipe(
+                map((user) => {
+                    this._logging.debug("Response from UserService (getCustomerById)",user);
+                    this._user.next(user.data);
+
+                    return user.data;
+                })
+            );
     }
 
     /**
