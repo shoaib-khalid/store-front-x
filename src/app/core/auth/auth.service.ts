@@ -1,23 +1,29 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, of, throwError } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { AuthUtils } from 'app/core/auth/auth.utils';
-import { UserService } from 'app/core/user/user.service';
+import { AppConfig } from 'app/config/service.config';
+import { JwtService } from 'app/core/jwt/jwt.service';
+import { LogService } from 'app/core/logging/log.service'
+import { CustomerAuthenticate } from './auth.types';
 
 @Injectable()
 export class AuthService
 {
     private _authenticated: boolean = false;
+    private _customerAuthenticate: BehaviorSubject<CustomerAuthenticate | null> = new BehaviorSubject(null);
 
     /**
      * Constructor
      */
     constructor(
         private _httpClient: HttpClient,
-        private _userService: UserService
+        private _apiServer: AppConfig,
+        private _jwt: JwtService,
+        private _logging: LogService
     )
-    {
+    {        
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -25,16 +31,45 @@ export class AuthService
     // -----------------------------------------------------------------------------------------------------
 
     /**
-     * Setter & getter for access token
-     */
-    set accessToken(token: string)
+     * Getter for Customer Authenticate
+     *
+    */
+    get customerAuthenticate$(): Observable<CustomerAuthenticate>
     {
-        localStorage.setItem('accessToken', token);
+        return this._customerAuthenticate.asObservable();
+    }
+ 
+    /**
+     * Setter for Customer Authenticate
+     *
+     * @param value
+     */
+    set customerAuthenticate(value: CustomerAuthenticate)
+    {
+        // Store the value
+        this._customerAuthenticate.next(value);
     }
 
-    get accessToken(): string
+
+    /**
+     * Setter & getter for access token
+     */
+    set jwtAccessToken(token: string)
     {
-        return localStorage.getItem('accessToken') ?? '';
+        localStorage.setItem('jwtAccessToken', token);
+    }
+
+    get jwtAccessToken(): string
+    {
+        return localStorage.getItem('jwtAccessToken') ?? '';
+    }
+
+    /**
+     * Getter for public access token
+     */
+    get publicToken(): string
+    {
+        return "Bearer accessToken";
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -46,9 +81,24 @@ export class AuthService
      *
      * @param email
      */
-    forgotPassword(email: string): Observable<any>
+    forgotPassword(email: string, platformName: string, callbackUrl: string): Observable<any>
     {
-        return this._httpClient.post('api/auth/forgot-password', email);
+        let userService = this._apiServer.settings.apiServer.userService;
+        const header = {
+            headers: new HttpHeaders().set("Authorization", this.publicToken),
+            params: {
+                domain: platformName,
+                resetUrl: callbackUrl
+            }
+        };
+
+        return this._httpClient.get(userService + '/customers/' + email + '/password_reset', header).pipe(
+            switchMap(async (response: any) => {
+
+                this._logging.debug("Response from UserService (password_reset)",response);
+                
+            })
+        );
     }
 
     /**
@@ -56,9 +106,20 @@ export class AuthService
      *
      * @param password
      */
-    resetPassword(password: string): Observable<any>
+    resetPassword(id: string, code, body): Observable<any>
     {
-        return this._httpClient.post('api/auth/reset-password', password);
+        let userService = this._apiServer.settings.apiServer.userService;
+        const header = {
+            headers: new HttpHeaders().set("Authorization", this.publicToken)
+        };
+
+        return this._httpClient.put(userService + '/customers/' + id + '/password/' + code + '/reset' , body ,  header).pipe(
+            switchMap(async (response: any) => {
+
+                this._logging.debug("Response from UserService (password_reset_id)",response);
+            })
+
+        );
     }
 
     /**
@@ -66,7 +127,7 @@ export class AuthService
      *
      * @param credentials
      */
-    signIn(credentials: { email: string; password: string }): Observable<any>
+    signIn(credentials: { username: string; password: string }): Observable<any>
     {
         // Throw error, if the user is already logged in
         if ( this._authenticated )
@@ -74,21 +135,44 @@ export class AuthService
             return throwError('User is already logged in.');
         }
 
-        return this._httpClient.post('api/auth/sign-in', credentials).pipe(
-            switchMap((response: any) => {
+        let userService = this._apiServer.settings.apiServer.userService;
+        const header = {
+            headers: new HttpHeaders().set("Authorization", this.publicToken)
+        };
+        
+        return this._httpClient.post(userService + '/customers/authenticate', credentials, header)
+            .pipe(
+                map((response: any) => {
 
-                // Store the access token in the local storage
-                this.accessToken = response.accessToken;
+                    this._logging.debug("Response from UserService (/customers/authenticate)",response);
 
-                // Set the authenticated flag to true
-                this._authenticated = true;
+                    let jwtPayload = {
+                        iat: Date.parse(response.data.session.created),
+                        iss: 'Fuse',
+                        exp: Date.parse(response.data.session.expiry),
+                        role: response.data.role,
+                        act: response.data.session.accessToken,
+                        rft: response.data.session.refreshToken,
+                        uid: response.data.session.ownerId
+                    }
 
-                // Store the user on the user service
-                this._userService.user = response.user;
+                    let token = this._jwt.generate({ alg: "HS256", typ: "JWT"}, jwtPayload, response.data.session.accessToken);
 
-                // Return a new observable with the response
-                return of(response);
-            })
+                    // Store the access token in the local storage
+                    this.jwtAccessToken = token;
+
+                    // Set the authenticated flag to true
+                    this._authenticated = true;
+
+                    this._customerAuthenticate = response.data;
+
+                    // // Store the user on the user service
+                    // this._userService.user = response.user;
+
+                    // Return true
+                    return response.data;
+                }
+            )
         );
     }
 
@@ -98,29 +182,44 @@ export class AuthService
     signInUsingToken(): Observable<any>
     {
         // Renew token
-        return this._httpClient.post('api/auth/refresh-access-token', {
-            accessToken: this.accessToken
-        }).pipe(
-            catchError(() =>
+        let userService = this._apiServer.settings.apiServer.userService;
+        const header = {
+            headers: new HttpHeaders().set("Authorization", this.publicToken)
+        };        
+        
+        return this._httpClient.post(userService + '/customers/session/refresh', this._jwt.getJwtPayload(this.jwtAccessToken).rft, header)
+            .pipe(
+                catchError(() =>
+                    // Return false
+                    of(false)
+                ),
+                switchMap((response: any) => {
 
-                // Return false
-                of(false)
-            ),
-            switchMap((response: any) => {
+                    this._logging.debug("Response from UserService (signInUsingToken)",response);
 
-                // Store the access token in the local storage
-                this.accessToken = response.accessToken;
+                    let jwtPayload = {
+                        iat: Date.parse(response.data.session.created),
+                        iss: 'Fuse',
+                        exp: Date.parse(response.data.session.expiry),
+                        role: response.data.role,
+                        act: response.data.session.accessToken,
+                        rft: response.data.session.refreshToken,
+                        uid: response.data.session.ownerId
+                    }
+                    
+                    // this._genJwt.generate(jwtheader,jwtpayload,secret)
+                    let token = this._jwt.generate({ alg: "HS256", typ: "JWT"},jwtPayload,response.data.session.accessToken);
 
-                // Set the authenticated flag to true
-                this._authenticated = true;
+                    // Store the access token in the local storage
+                    this.jwtAccessToken = token;
 
-                // Store the user on the user service
-                this._userService.user = response.user;
+                    // Set the authenticated flag to true
+                    this._authenticated = true;
 
-                // Return true
-                return of(true);
-            })
-        );
+                    // Return true
+                    return of(true);
+                })
+            );
     }
 
     /**
@@ -129,7 +228,8 @@ export class AuthService
     signOut(): Observable<any>
     {
         // Remove the access token from the local storage
-        localStorage.removeItem('accessToken');
+        localStorage.removeItem('jwtAccessToken');
+        localStorage.removeItem('storeId');
 
         // Set the authenticated flag to false
         this._authenticated = false;
@@ -143,9 +243,34 @@ export class AuthService
      *
      * @param user
      */
-    signUp(user: { name: string; email: string; password: string; company: string }): Observable<any>
+    signUp(user: { name: string; email: string; password: string; username: string;countryId: string }): Observable<any>
     {
-        return this._httpClient.post('api/auth/sign-up', user);
+        let userService = this._apiServer.settings.apiServer.userService;
+        const header: any = {
+            headers: new HttpHeaders().set("Authorization", this.publicToken)
+        };
+        const body = {
+            "deactivated": true,
+            "email": user.email,
+            "locked": true,
+            "name": user.name,
+            "username": user.username,
+            "password": user.password,
+            "roleId": "STORE_OWNER",
+            "countryId":user.countryId
+          };
+        
+        return this._httpClient.post(userService + '/customers/register', body, header).pipe(
+            map((response, error) => {
+                this._logging.debug("Response from AuthService (signUp)",response);
+
+                return response;
+            },
+            catchError((error:HttpErrorResponse)=>{
+                return of(error);
+            })
+            )
+        );
     }
 
     /**
@@ -170,13 +295,13 @@ export class AuthService
         }
 
         // Check the access token availability
-        if ( !this.accessToken )
+        if ( !this.jwtAccessToken )
         {
             return of(false);
         }
 
         // Check the access token expire date
-        if ( AuthUtils.isTokenExpired(this.accessToken) )
+        if ( AuthUtils.isTokenExpired(this.jwtAccessToken) )
         {
             return of(false);
         }

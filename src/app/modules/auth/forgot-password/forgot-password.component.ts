@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, NgForm, Validators } from '@angular/forms';
-import { finalize } from 'rxjs/operators';
+import { finalize, takeUntil } from 'rxjs/operators';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
+import { Subject } from 'rxjs';
+import { Platform } from 'app/core/platform/platform.types';
 
 @Component({
     selector     : 'auth-forgot-password',
@@ -15,6 +17,9 @@ export class AuthForgotPasswordComponent implements OnInit
 {
     @ViewChild('forgotPasswordNgForm') forgotPasswordNgForm: NgForm;
 
+    platform: Platform;
+    platformUrlName: string;
+
     alert: { type: FuseAlertType; message: string } = {
         type   : 'success',
         message: ''
@@ -22,6 +27,12 @@ export class AuthForgotPasswordComponent implements OnInit
     forgotPasswordForm: FormGroup;
     showAlert: boolean = false;
 
+    //to be display the text
+    titleText:string ='Forgot password?';
+    descriptionText:string ='Please enter the email address to retrieve reset link';
+
+    private _unsubscribeAll: Subject<any> = new Subject<any>();
+    
     /**
      * Constructor
      */
@@ -45,6 +56,7 @@ export class AuthForgotPasswordComponent implements OnInit
         this.forgotPasswordForm = this._formBuilder.group({
             email: ['', [Validators.required, Validators.email]]
         });
+
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -69,7 +81,7 @@ export class AuthForgotPasswordComponent implements OnInit
         this.showAlert = false;
 
         // Forgot password
-        this._authService.forgotPassword(this.forgotPasswordForm.get('email').value)
+        this._authService.forgotPassword(this.forgotPasswordForm.get('email').value, this.platformUrlName ,'https://' + this.platform.url + '/reset-password')
             .pipe(
                 finalize(() => {
 

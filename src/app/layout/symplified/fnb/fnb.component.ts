@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnDestroy, ViewEncapsulation } from '@angular/core';
 import { StoresService } from 'app/core/store/store.service';
 import { Store, StoreAssets, StoreCategory, StoreSnooze, StoreTiming } from 'app/core/store/store.types';
 import { Subject, Subscription } from 'rxjs';
@@ -8,8 +8,13 @@ import { filter, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { CartService } from 'app/core/cart/cart.service';
 import { CartItem } from 'app/core/cart/cart.types';
 import { NotificationService } from 'app/core/notification/notification.service';
-import { DatePipe } from '@angular/common';
+import { DatePipe, DOCUMENT } from '@angular/common';
 import { ProductsService } from 'app/core/product/product.service';
+import { UserService } from 'app/core/user/user.service';
+import { User } from 'app/core/user/user.types';
+import { AppConfig } from 'app/config/service.config';
+import { Platform } from 'app/core/platform/platform.types';
+import { PlatformService } from 'app/core/platform/platform.service';
 
 @Component({
     selector     : 'fnb-layout',
@@ -20,6 +25,8 @@ export class FnbLayoutComponent implements OnDestroy
 {
     public version: string = environment.appVersion;
     
+    platform: Platform;
+    user: User;
     store: Store;
     storeCategories: StoreCategory[];
     storeCategory: StoreCategory;
@@ -57,6 +64,7 @@ export class FnbLayoutComponent implements OnDestroy
      * Constructor
      */
     constructor(
+        @Inject(DOCUMENT) private _document: Document,
         private _storesService: StoresService,
         private _cartService: CartService,
         private _datePipe: DatePipe,
@@ -64,6 +72,9 @@ export class FnbLayoutComponent implements OnDestroy
         private _changeDetectorRef: ChangeDetectorRef,
         private _router: Router,
         private _activatedRoute: ActivatedRoute,
+        private _userService: UserService,
+        private _apiServer: AppConfig,
+        private _platformService: PlatformService,
         private _productsService: ProductsService
     )
     {
@@ -109,6 +120,18 @@ export class FnbLayoutComponent implements OnDestroy
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
+            });
+
+        this._userService.user$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((user: User)=>{
+                this.user = user;                
+            });
+
+        this._platformService.platform$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((platform: Platform)=>{
+                this.platform = platform;                
             });
             
             
@@ -434,5 +457,14 @@ export class FnbLayoutComponent implements OnDestroy
     reload(){
         this._router.routeReuseStrategy.shouldReuseRoute = () => false;
         this._router.onSameUrlNavigation = 'reload';
+    }
+
+    customerLogin(){
+        this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + 
+            '?redirectUrl=' + encodeURI('https://' + this.platform.url);
+    }
+
+    customerLogout(){
+
     }
 }

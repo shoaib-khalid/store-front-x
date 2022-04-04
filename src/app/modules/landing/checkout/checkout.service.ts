@@ -8,6 +8,7 @@ import { LogService } from 'app/core/logging/log.service';
 import { StoresService } from 'app/core/store/store.service';
 import { Customer } from 'app/core/user/user.types';
 import { CartDiscount, DeliveryCharges, DeliveryProvider } from './checkout.types';
+import { AuthService } from 'app/core/auth/auth.service';
 
 @Injectable({
     providedIn: 'root'
@@ -21,6 +22,7 @@ export class CheckoutService
      * Constructor
      */
     constructor(
+        private _authService: AuthService,
         private _httpClient: HttpClient,
         private _apiServer: AppConfig,
         private _storeService: StoresService,
@@ -59,11 +61,9 @@ export class CheckoutService
     getCustomerInfo(email: string = null, phoneNumber: string = null): Observable<Customer>
     {
         let userService = this._apiServer.settings.apiServer.userService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {  
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
             params: {
                 email,
                 phoneNumber
@@ -86,11 +86,9 @@ export class CheckoutService
     postToRetrieveDeliveryCharges(deliveryCharges: DeliveryCharges) : Observable<DeliveryProvider[]>
     {
         let deliveryService = this._apiServer.settings.apiServer.deliveryService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {  
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`)
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`)
         };
 
         return this._httpClient.post<any>(deliveryService + '/orders/getprice', deliveryCharges, header)
@@ -109,11 +107,9 @@ export class CheckoutService
     getDiscountOfCart(id: string, deliveryQuotationId: string = null, deliveryType: string): Observable<CartDiscount>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {  
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
             params: {
                 deliveryQuotationId,
                 deliveryType
@@ -135,11 +131,9 @@ export class CheckoutService
     getSubTotalDiscount(id: string): Observable<CartDiscount>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {  
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`)
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`)
         };
 
         return this._httpClient.get<any>(orderService + '/carts/'+ id +'/subtotaldiscount', header)
@@ -155,11 +149,9 @@ export class CheckoutService
     postPlaceOrder(cartId: string, orderBody, saveInfo: boolean) : Observable<any>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {  
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
             params: {
                 cartId,
                 saveCustomerInformation: saveInfo
@@ -179,11 +171,9 @@ export class CheckoutService
     postMakePayment(paymentBody) : Observable<any>
     {
         let paymentService = this._apiServer.settings.apiServer.paymentService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {  
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`)
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`)
         };
 
         return this._httpClient.post<any>(paymentService + '/payments/makePayment', paymentBody, header)
@@ -204,11 +194,11 @@ export class CheckoutService
     // createCart(cart: Cart): Observable<any>
     // {
     //     let orderService = this._apiServer.settings.apiServer.orderService;
-    //     //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-    //     let accessToken = "accessToken";
+    //  
+    //  
 
     //     const header = {  
-    //         headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`)
+    //         headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`)
     //     };
 
     //     return this._httpClient.post<any>(orderService + '/carts', cart, header)

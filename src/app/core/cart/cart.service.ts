@@ -6,7 +6,7 @@ import { Cart, CartItem } from 'app/core/cart/cart.types';
 import { AppConfig } from 'app/config/service.config';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { LogService } from 'app/core/logging/log.service';
-import { StoresService } from '../store/store.service';
+import { AuthService } from 'app/core/auth/auth.service';
 
 @Injectable({
     providedIn: 'root'
@@ -22,7 +22,7 @@ export class CartService
     constructor(
         private _httpClient: HttpClient,
         private _apiServer: AppConfig,
-        private _storeService: StoresService,
+        private _authService: AuthService,
         private _jwt: JwtService,
         private _logging: LogService
     )
@@ -108,11 +108,9 @@ export class CartService
     createCart(cart: Cart): Observable<any>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {  
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`)
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`)
         };
 
         return this._httpClient.post<any>(orderService + '/carts', cart, header)
@@ -148,11 +146,9 @@ export class CartService
     deleteCartbyId(cartId: string):  Observable<any>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {  
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`)
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`)
         };
 
         return this._httpClient.delete<any>(orderService + '/carts/' + cartId, header)
@@ -176,11 +172,9 @@ export class CartService
     getCartItems(id: string): Observable<Cart>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {  
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`)
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`)
         };
 
         return this._httpClient.get<any>(orderService + '/carts/' + id + '/items', header)
@@ -199,11 +193,9 @@ export class CartService
     postCartItem(cartId: string, cartItem: CartItem):  Observable<CartItem>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {  
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`)
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`)
         };
 
         return this.cartItems$.pipe(
@@ -233,11 +225,9 @@ export class CartService
     putCartItem(cartId: string, cartItem: CartItem, itemId: string):  Observable<CartItem>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {  
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`)
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`)
         };
 
         return this.cartItems$.pipe(
@@ -267,11 +257,9 @@ export class CartService
     deleteCartItem(cartId: string, itemId: string):  Observable<CartItem>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {  
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`)
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`)
         };
 
         return this.cartItems$.pipe(

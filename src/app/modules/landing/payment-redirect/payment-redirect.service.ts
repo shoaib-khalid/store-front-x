@@ -5,6 +5,7 @@ import { map, switchMap, take, tap } from 'rxjs/operators';
 import { AppConfig } from 'app/config/service.config';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { LogService } from 'app/core/logging/log.service';
+import { AuthService } from 'app/core/auth/auth.service';
 
 @Injectable({
     providedIn: 'root'
@@ -19,6 +20,7 @@ export class PaymentRedirectService
      */
     constructor(
         private _httpClient: HttpClient,
+        private _authService: AuthService,
         private _apiServer: AppConfig,
         private _jwt: JwtService,
         private _logging: LogService
@@ -41,11 +43,9 @@ export class PaymentRedirectService
     getOrderById(id: string): Observable<any>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
-        let accessToken = "accessToken";
 
         const header = {  
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`)
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`)
         };
 
         return this._httpClient.get<any>(orderService + '/orders/' + id, header)

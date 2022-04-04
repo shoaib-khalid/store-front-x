@@ -299,11 +299,7 @@ export class LandingCatalogueComponent implements OnInit
     {
         setTimeout(() => {
             // if (this._paginator )
-            // {
-
-            //     console.log("this._paginator", this._paginator);
-                
-
+            // {                
             //     // Mark for check
             //     this._changeDetectorRef.markForCheck();
 
