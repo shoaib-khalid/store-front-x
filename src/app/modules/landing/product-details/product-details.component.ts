@@ -36,7 +36,18 @@ import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from 'ngx-gal
         ngx-gallery {
             position: relative;
             z-index: 10;
+
+            @screen sm {
+                position: relative;
+                z-index: 40;
+            }
         }
+
+        :host ::ng-deep .ngx-gallery-preview-img {
+            width: auto;
+            background-color: white
+        }
+
         `
     ]
 })

@@ -17,15 +17,31 @@
                     <div class="flex flex-col order-2 md:order-1 w-full mt-8 md:mt-0">
                         <!-- Store Pickup -->
                         <div class="flex flex-col sm:flex-row justify-between sm:items-center w-full">
-                            <h1 class="text-2xl font-bold pb-2 sm:pb-0">Contact Information</h1>
+                            <h1 class="text-2xl font-bold pb-2 sm:pb-0">Delivery Information</h1>
                             <div *ngIf="allowsStorePickup" class="flex flex-row w-full sm:w-auto justify-between">
-                                <p class="mr-4">I want to pick my order from store</p>
-                                <mat-slide-toggle
+                                <!-- <p class="mr-4">I want to pick my order from store</p> -->
+                                <!-- <mat-slide-toggle
                                     [color]="'primary'"
                                     [formControlName]="'storePickup'"
                                     (change)="allowPickupStore();addressFormChanges();"
                                     >
-                                </mat-slide-toggle>
+                                </mat-slide-toggle> -->
+                                <mat-radio-group
+                                    class="flex flex-row"
+                                    [color]="'primary'"
+                                    (change)="allowPickupStore();addressFormChanges();"
+                                    [formControlName]="'storePickup'">
+                                    <mat-radio-button
+                                        class="ml-2"
+                                        [value]="true">
+                                        Self Pick-Up
+                                    </mat-radio-button>
+                                    <mat-radio-button
+                                        class="ml-6"
+                                        [value]="false">
+                                        Deliver
+                                    </mat-radio-button>
+                                </mat-radio-group>
                             </div>
                         </div>
 
@@ -63,23 +79,8 @@
                                 </mat-form-field> -->
         
                                 <!-- Start New Design Here -->
-                                <!-- Full name -->
-                                <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
-                                    <mat-label>Full Name</mat-label>
-                                    <input
-                                        matInput
-                                        [formControlName]="'fullName'"
-                                        placeholder="Enter full name"
-                                        autocomplete="disabled"
-                                        [required]="true"
-                                        >
-                                        <mat-error *ngIf="checkoutForm.get('fullName').hasError('required')">
-                                            Required
-                                        </mat-error>
-                                </mat-form-field>
-        
                                 <!-- Email Address -->
-                                <mat-form-field class="w-full sm:w-1/2 sm:pl-1" floatLabel="always">
+                                <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
                                     <mat-label>Email Address</mat-label>
                                     <input
                                         matInput
@@ -96,6 +97,21 @@
                                         Enter a valid email address
                                     </mat-error>
                                 </mat-form-field>
+                                <!-- Full name -->
+                                <mat-form-field class="w-full sm:w-1/2 sm:pl-1" floatLabel="always">
+                                    <mat-label>Full Name</mat-label>
+                                    <input
+                                        matInput
+                                        [formControlName]="'fullName'"
+                                        placeholder="Enter full name"
+                                        autocomplete="disabled"
+                                        [required]="true"
+                                        >
+                                        <mat-error *ngIf="checkoutForm.get('fullName').hasError('required')">
+                                            Required
+                                        </mat-error>
+                                </mat-form-field>
+        
                             </div>
                             <!-- Phone number & State -->
                             <div class="w-full flex flex-col sm:flex-row mb-4 sm:mb-0">
@@ -145,27 +161,10 @@
 
                         <!-- For store pickup -->
                         <ng-container *ngIf="checkoutForm.get('storePickup').value">
-                            <!-- Full name -->
+                            <!-- Email Address -->
                             <div class="w-full flex flex-col sm:flex-row pt-5 sm:pt-10">
-                                <mat-form-field class="w-full" floatLabel="always">
-                                    <mat-label>Full Name</mat-label>
-                                    <input
-                                        matInput
-                                        [formControlName]="'fullName'"
-                                        placeholder="Enter full name"
-                                        autocomplete="disabled"
-                                        [required]="true"
-                                        >
-                                        <mat-error *ngIf="checkoutForm.get('fullName').hasError('required')">
-                                            Required
-                                        </mat-error>
-                                </mat-form-field>
-                            </div>
-
-                            <!-- Email & Phoonenumber -->
-                            <div class="w-full flex flex-col sm:flex-row mb-4 sm:mb-0">
                                 <!-- Email Address -->
-                                <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
+                                <mat-form-field class="w-full" floatLabel="always">
                                     <mat-label>Email Address</mat-label>
                                     <input
                                         matInput
@@ -181,6 +180,26 @@
                                     <mat-error *ngIf="checkoutForm.get('email').hasError('email')">
                                         Enter a valid email address
                                     </mat-error>
+                                </mat-form-field>
+
+                                
+                            </div>
+
+                            <!-- Full name & Phonenumber -->
+                            <div class="w-full flex flex-col sm:flex-row mb-4 sm:mb-0">
+                                <!-- Full name -->
+                                <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
+                                    <mat-label>Full Name</mat-label>
+                                    <input
+                                        matInput
+                                        [formControlName]="'fullName'"
+                                        placeholder="Enter full name"
+                                        autocomplete="disabled"
+                                        [required]="true"
+                                        >
+                                        <mat-error *ngIf="checkoutForm.get('fullName').hasError('required')">
+                                            Required
+                                        </mat-error>
                                 </mat-form-field>
 
                                 <!--Phone Number -->
@@ -274,11 +293,11 @@
                             
                             <div class="mb-2" *ngIf="checkoutForm.get('storePickup').value">
                                 <mat-label class="font-medium text-gray-600">Store Address</mat-label>
-                                <fieldset [ngClass]="'bg-gray-100 text-gray-500'" class="flex flex-row mt-1 border border-solid border-gray-300 rounded-lg px-4 py-4">
-                                    <div class="w-1/2">
+                                <fieldset [ngClass]="'bg-gray-100 text-gray-500'" class="flex flex-col sm:flex-row mt-1 border border-solid border-gray-300 rounded-lg px-4 py-4">
+                                    <div class="w-full sm:w-1/2">
                                         <span class="text-gray-500">{{store.address}} {{store.city}} {{store.postcode}} {{store.regionCountryStateId}} {{store.regionCountry.name}}</span>
                                     </div>
-                                    <div class="flex flex-col w-1/2">
+                                    <div class="flex flex-col w-full sm:w-1/2 pt-2 sm:pt-0">
                                         <span class="text-gray-500">Contact Us</span>
                                         <span class="text-gray-500">Email: {{store.email}}</span>
                                         <span class="text-gray-500">Phone no: {{store.phoneNumber}}</span>
