@@ -9,6 +9,27 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v1.0.1
+        {
+            version    : 'v1.0.1',
+            releaseDate: 'Apr 4, 2022',
+            changes    : [
+                {
+                    type: 'Added',
+                    list: [
+                        '(LandingProductPage) KB-1387 Add custom special instruction to product detail'
+
+                    ]
+                },
+                {
+                    type: 'Fix',
+                    list: [
+                        '(LandingCataloguePage) KB-1394 Limit to 2 lines for product title in Catalogue',
+                        '(LandingCheckoutPage) KB-1300 Checkout page UI adjustment, fix stretch product image preview'
+                    ]
+                }
+            ]
+        },
         // v1.0.0
         {
             version    : 'v1.0.0',
