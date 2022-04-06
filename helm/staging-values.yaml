@@ -51,6 +51,9 @@ ingress:
         if ($host = 'dev-pk.symplified.ai') {
           set $temp_cache 1;
         }
+        if ($host = 'symplified.services') {
+          set $temp_cache 1;
+        }
         if ($request_uri !~ '\?') {
           set $temp_cache 1$temp_cache;
         }
@@ -77,6 +80,10 @@ ingress:
     paths:
     - path: /
       pathType: Prefix
+  - host: '*.symplified.services'
+    paths:
+      - path: /
+        pathType: Prefix
   tls:
   - hosts:
     - dev-my.symplified.ai
@@ -86,6 +93,10 @@ ingress:
     - dev-pk.symplified.ai
     - '*.dev-pk.symplified.ai'
     secretName: secret-tls-ai
+  - hosts:
+      - symplified.services
+      - '*.symplified.services'
+    secretName: secret-tls-services
 nameOverride: ""
 nodeSelector: {}
 podAnnotations: {}

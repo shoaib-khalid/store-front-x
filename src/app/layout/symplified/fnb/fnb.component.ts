@@ -476,7 +476,7 @@ export class FnbLayoutComponent implements OnDestroy
 
         // Sign out
         this._authService.signOut();
-        this._cookieService.deleteAll();
+        this._cookieService.deleteAll('/', this._apiServer.settings.storeFrontDomain);
 
         this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-out' +
             '?redirectUrl=' + encodeURI('https://' + this.platform.url);
