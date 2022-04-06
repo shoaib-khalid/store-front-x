@@ -15,6 +15,8 @@ import { User } from 'app/core/user/user.types';
 import { AppConfig } from 'app/config/service.config';
 import { Platform } from 'app/core/platform/platform.types';
 import { PlatformService } from 'app/core/platform/platform.service';
+import { CookieService } from 'ngx-cookie-service';
+import { AuthService } from 'app/core/auth/auth.service';
 
 @Component({
     selector     : 'fnb-layout',
@@ -75,7 +77,10 @@ export class FnbLayoutComponent implements OnDestroy
         private _userService: UserService,
         private _apiServer: AppConfig,
         private _platformService: PlatformService,
-        private _productsService: ProductsService
+        private _productsService: ProductsService,
+        private _cookieService: CookieService,
+        private _authService: AuthService
+
     )
     {
     }
@@ -460,11 +465,29 @@ export class FnbLayoutComponent implements OnDestroy
     }
 
     customerLogin(){
+        // this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + 
+        //     '?redirectUrl=' + encodeURI('https://' + this.platform.url);
+
         this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + 
-            '?redirectUrl=' + encodeURI('https://' + this.platform.url);
+            '?redirectUrl=' + encodeURI('https://' + this.platform.url + this._router.url);
     }
 
     customerLogout(){
 
+        // Sign out
+        this._authService.signOut();
+        this._cookieService.deleteAll();
+
+        this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-out' +
+            '?redirectUrl=' + encodeURI('https://' + this.platform.url);
+        
     }
+
+    customerRegister(){
+        // this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-up' +
+        //     '?redirectUrl=' + encodeURI('https://' + this.platform.url);
+        
+        
+    }
+
 }

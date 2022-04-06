@@ -70,9 +70,9 @@ export class AppComponent
             });
 
         // Set cookie for testing
-        // this._cookieService.set('CustomerId','794d406c-7add-4f6f-988b-b6c14aca1f17');
-        // this._cookieService.set('AccessToken','mna');
-        // this._cookieService.set('RefreshToken','good');
+        // this._cookieService.set('CustomerId','c7a2430d-8745-4d19-a013-92b460b414b1');
+        // this._cookieService.set('AccessToken','W0JAMjg5NjM1NjI=');
+        // this._cookieService.set('RefreshToken','W0JANTcwOTk4ODg=');
 
         // Get cookie
         this.ownerId = this._cookieService.get('CustomerId');

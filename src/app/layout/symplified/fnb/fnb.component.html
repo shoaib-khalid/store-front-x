@@ -134,13 +134,13 @@
                                     <div *ngIf="!user" class="flex flex-row pl-8 items-center">
                                         <span (click)="customerLogin()" class="cursor-pointer">Sign In</span>
                                         <span> &nbsp; | &nbsp; </span>
-                                        <span class="cursor-pointer">Sign Up</span>
+                                        <span (click)="customerRegister()" class="cursor-pointer">Sign Up</span>
                                     </div>
                                     <!-- Account / SignOut -->
                                     <div *ngIf="user" class="flex flex-row pl-8 items-center">
-                                        <span class="cursor-pointer">{{ user.username }}</span>
+                                        <span class="cursor-default">{{ user.username }}</span>
                                         <span> &nbsp; | &nbsp; </span>
-                                        <span class="cursor-pointer">Sign Out</span>
+                                        <span (click)="customerLogout()" class="cursor-pointer">Sign Out</span>
                                     </div>
                                 </div>
                             </div>
@@ -258,7 +258,7 @@
             </label>
 
             <!-- Choose Category -->
-            <div class="font-semibold px-6 pt-4 pb-2">Choose Category x</div>
+            <div class="font-semibold px-6 pt-4 pb-2">Choose Category</div>
 
             <!-- Categories -->
             <ng-container *ngFor="let category of storeCategories">

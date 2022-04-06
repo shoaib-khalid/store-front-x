@@ -4,7 +4,7 @@
     },
     "apiServer": {
         "flowBuilderService"    : "https://api.symplified.it/flow-builder/v1",
-        "userService"           : "https://api.symplified.it/user-service/v1",
+        "userService"           : "https://api.symplified.services/user-service/v1",
         "productService"        : "https://api.symplified.it/product-service/v1",
         "orderService"          : "https://api.symplified.it/order-service/v1",
         "reportService"         : "https://api.symplified.it/report-service/v1",
@@ -12,8 +12,8 @@
         "paymentService"        : "https://api.symplified.it/payment-service/v1",
         "analyticService"       : "https://api.symplified.it/analytic-service/v1"
     },
-    "storeFrontDomain"          : ".dev-my.symplified.ai",
+    "storeFrontDomain"          : ".symplified.services",
+    "marketplaceDomain"         : "customer.symplified.services",
     "merchantPortalDomain"      : "merchant.symplified.it",
-    "marketplaceDomain"         : "customer.dev-my.symplified.ai",
     "logging": 0
 }
