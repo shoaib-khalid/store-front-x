@@ -16,7 +16,6 @@ import { NotificationService } from 'app/core/notification/notification.service'
 import { IpAddressService } from 'app/core/ip-address/ip-address.service';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { AuthService } from 'app/core/auth/auth.service';
-import { PlatformService } from 'app/core/platform/platform.service';
 
 @Injectable({
     providedIn: 'root'
@@ -212,7 +211,6 @@ export class MainDataResolver implements Resolve<any>
      */
     constructor(
         private _ipAddressService: IpAddressService,
-        private _platformsService: PlatformService,
     )
     {
     }
@@ -232,7 +230,6 @@ export class MainDataResolver implements Resolve<any>
         // Fork join multiple API endpoint calls to wait all of them to finish
         return forkJoin([
             this._ipAddressService.getIPAddress(),
-            this._platformsService.set(),
         ]);
     }
 }

@@ -8,13 +8,11 @@ import { filter, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { CartService } from 'app/core/cart/cart.service';
 import { CartItem } from 'app/core/cart/cart.types';
 import { NotificationService } from 'app/core/notification/notification.service';
-import { DatePipe, DOCUMENT } from '@angular/common';
+import { DatePipe, DOCUMENT, PlatformLocation } from '@angular/common';
 import { ProductsService } from 'app/core/product/product.service';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
 import { AppConfig } from 'app/config/service.config';
-import { Platform } from 'app/core/platform/platform.types';
-import { PlatformService } from 'app/core/platform/platform.service';
 import { CookieService } from 'ngx-cookie-service';
 import { AuthService } from 'app/core/auth/auth.service';
 
@@ -27,7 +25,6 @@ export class FnbLayoutComponent implements OnDestroy
 {
     public version: string = environment.appVersion;
     
-    platform: Platform;
     user: User;
     store: Store;
     storeCategories: StoreCategory[];
@@ -61,6 +58,7 @@ export class FnbLayoutComponent implements OnDestroy
     daysArray = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
     
     private _unsubscribeAll: Subject<any> = new Subject<any>();
+    sanatiseUrl: string;
 
     /**
      * Constructor
@@ -76,10 +74,10 @@ export class FnbLayoutComponent implements OnDestroy
         private _activatedRoute: ActivatedRoute,
         private _userService: UserService,
         private _apiServer: AppConfig,
-        private _platformService: PlatformService,
         private _productsService: ProductsService,
         private _cookieService: CookieService,
-        private _authService: AuthService
+        private _authService: AuthService,
+        private _platformLocation: PlatformLocation
 
     )
     {
@@ -105,6 +103,12 @@ export class FnbLayoutComponent implements OnDestroy
      * On init
     */
     ngOnInit() {
+
+        let fullUrl = (this._platformLocation as any).location.origin;
+
+        this.sanatiseUrl = fullUrl.replace(/^(https?:|)\/\//, '').split(':')[0]; // this will get the domain from the URL
+
+
         this._storesService.store$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((response: Store) => {
@@ -132,13 +136,6 @@ export class FnbLayoutComponent implements OnDestroy
             .subscribe((user: User)=>{
                 this.user = user;                
             });
-
-        this._platformService.platform$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((platform: Platform)=>{
-                this.platform = platform;                
-            });
-            
             
         this._cartService.cartItems$
             .pipe(takeUntil(this._unsubscribeAll))
@@ -219,6 +216,8 @@ export class FnbLayoutComponent implements OnDestroy
         //             }
         //         }
         //     });
+
+
         
     }
 
@@ -469,17 +468,22 @@ export class FnbLayoutComponent implements OnDestroy
         //     '?redirectUrl=' + encodeURI('https://' + this.platform.url);
 
         this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + 
-            '?redirectUrl=' + encodeURI('https://' + this.platform.url + this._router.url);
+            '?redirectUrl=' + encodeURI('https://' + this.sanatiseUrl + this._router.url);
     }
 
     customerLogout(){
 
         // Sign out
         this._authService.signOut();
-        this._cookieService.deleteAll('/', this._apiServer.settings.storeFrontDomain);
+
+        // this._cookieService.deleteAll('/');
+
+        this._cookieService.delete('CustomerId');
+        this._cookieService.delete('RefreshToken');
+        this._cookieService.delete('AccessToken');
 
         this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-out' +
-            '?redirectUrl=' + encodeURI('https://' + this.platform.url);
+            '?redirectUrl=' + encodeURI('https://' + this.sanatiseUrl);
         
     }
 
