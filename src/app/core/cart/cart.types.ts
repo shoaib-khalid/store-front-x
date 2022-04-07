@@ -65,3 +65,9 @@ export interface Product
     isPackage: boolean;
     status: string;
 }
+
+export interface CustomerCart
+{
+    cartList: [];
+    totalItem: number;
+}

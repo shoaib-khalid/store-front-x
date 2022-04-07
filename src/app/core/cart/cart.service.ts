@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, ReplaySubject } from 'rxjs';
 import { map, switchMap, take, tap } from 'rxjs/operators';
-import { Cart, CartItem } from 'app/core/cart/cart.types';
+import { Cart, CartItem, CustomerCart } from 'app/core/cart/cart.types';
 import { AppConfig } from 'app/config/service.config';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { LogService } from 'app/core/logging/log.service';
@@ -15,6 +15,7 @@ export class CartService
 {
     private _cart: ReplaySubject<Cart> = new ReplaySubject<Cart>(1);
     private _cartItems: ReplaySubject<CartItem[]> = new ReplaySubject<CartItem[]>(1);
+    private _customerCart: ReplaySubject<CustomerCart> = new ReplaySubject<CustomerCart>(1);
 
     /**
      * Constructor
@@ -79,6 +80,15 @@ export class CartService
     {
         return localStorage.getItem('cartId') ?? '';
     }
+
+    /**
+     * Getter for customer cart
+     */
+    get customerCart$(): Observable<CustomerCart>
+    {
+        return this._customerCart.asObservable();
+    }
+
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
@@ -284,5 +294,32 @@ export class CartService
             ))
         );
     }
+
+    /**
+     * Get the current customer cart data
+     */
+     getCartsByCustomerId(id: string): Observable<CustomerCart>
+     {
+         let orderService = this._apiServer.settings.apiServer.orderService;
+ 
+         const header = {  
+             headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
+             params: {
+                customerId : id,
+            }
+         };
+ 
+         return this._httpClient.get<CustomerCart>(orderService + '/carts/customer', header)
+             .pipe(
+                 map((response) => {
+                     this._logging.debug("Response from StoresService (getCartsByCustomerId)", response["data"]);
+ 
+                     // set customer cart
+                     this._customerCart.next(response["data"]);
+ 
+                     return response["data"];
+                 })
+             );
+     }
 
 }

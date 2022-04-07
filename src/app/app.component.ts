@@ -79,9 +79,6 @@ export class AppComponent
         this.accessToken = this._cookieService.get('AccessToken');
         this.refreshToken = this._cookieService.get('RefreshToken');
 
-        console.log('ownerId', this.ownerId);
-        console.log('accessToken', this.accessToken);
-        console.log('refreshToken', this.refreshToken);
 
         // set to localstorage
         if (this.ownerId && this.accessToken && this.refreshToken) {
@@ -99,9 +96,16 @@ export class AppComponent
         
                     this._authService.jwtAccessToken = token;
 
+                    // set customerCartId
+
                     // Mark for check
                     this._changeDetectorRef.markForCheck();
                 });
+
+            this._cartService.getCartsByCustomerId(this.ownerId)
+                .subscribe((resp) => {
+                    
+                })
         }
         
         // Get current store

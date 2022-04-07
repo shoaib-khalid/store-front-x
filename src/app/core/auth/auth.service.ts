@@ -229,7 +229,7 @@ export class AuthService
     {
         // Remove the access token from the local storage
         localStorage.removeItem('jwtAccessToken');
-        // localStorage.removeItem('storeId');
+        // localStorage.removeItem('cartId');
 
         // Set the authenticated flag to false
         this._authenticated = false;

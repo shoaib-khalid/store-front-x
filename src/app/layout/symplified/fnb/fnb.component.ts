@@ -6,7 +6,7 @@ import { environment } from 'environments/environment';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { CartService } from 'app/core/cart/cart.service';
-import { CartItem } from 'app/core/cart/cart.types';
+import { CartItem, CustomerCart } from 'app/core/cart/cart.types';
 import { NotificationService } from 'app/core/notification/notification.service';
 import { DatePipe, DOCUMENT, PlatformLocation } from '@angular/common';
 import { ProductsService } from 'app/core/product/product.service';
@@ -34,6 +34,7 @@ export class FnbLayoutComponent implements OnDestroy
     
     cartItem: CartItem[];
     cartItemQuantity: number = 0;
+    userCartItemQuantity: number = 0;
 
     storeSnooze: StoreSnooze = null;
     
@@ -134,7 +135,19 @@ export class FnbLayoutComponent implements OnDestroy
         this._userService.user$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((user: User)=>{
-                this.user = user;                
+                console.log('user', user);
+                
+                this.user = user;   
+
+                this._cartService.customerCart$
+                    .pipe(takeUntil(this._unsubscribeAll))
+                    .subscribe((item: CustomerCart)=>{
+                        
+                        this.userCartItemQuantity = item.totalItem;  
+                        
+                        // Mark for check
+                        this._changeDetectorRef.markForCheck();
+                    });             
             });
             
         this._cartService.cartItems$
@@ -153,6 +166,8 @@ export class FnbLayoutComponent implements OnDestroy
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
+
+        
 
         // below used to decide which banner or header to be displayed
         this.isHomePage = this._router.url === "/home" ? true : false;
@@ -464,12 +479,6 @@ export class FnbLayoutComponent implements OnDestroy
     }
 
     customerLogin(){
-        // this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + 
-        //     '?redirectUrl=' + encodeURI('https://' + this.platform.url);
-
-        // this._cookieService.set('CustomerId','bd421a78-fc36-4691-a5e5-38278e0a4245');
-        // this._cookieService.set('AccessToken','W0JAMjIxMWIyZmI=');
-        // this._cookieService.set('RefreshToken','W0JAN2FkZjI5YjU=');
 
         this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + 
             '?redirectUrl=' + encodeURI('https://' + this.sanatiseUrl + this._router.url);
@@ -479,8 +488,6 @@ export class FnbLayoutComponent implements OnDestroy
 
         // Sign out
         this._authService.signOut();
-
-        // this._cookieService.deleteAll('/catalogue');
 
         this._cookieService.delete('CustomerId','/', this._apiServer.settings.storeFrontDomain);
         this._cookieService.delete('RefreshToken','/', this._apiServer.settings.storeFrontDomain);
@@ -492,9 +499,8 @@ export class FnbLayoutComponent implements OnDestroy
     }
 
     customerRegister(){
-        // this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-up' +
-        //     '?redirectUrl=' + encodeURI('https://' + this.platform.url);
-        
+
+        this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-up';
         
     }
 
