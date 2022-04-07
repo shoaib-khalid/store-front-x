@@ -478,9 +478,9 @@ export class FnbLayoutComponent implements OnDestroy
 
         // this._cookieService.deleteAll('/');
 
-        this._cookieService.delete('CustomerId');
-        this._cookieService.delete('RefreshToken');
-        this._cookieService.delete('AccessToken');
+        this._cookieService.delete('CustomerId','/');
+        this._cookieService.delete('RefreshToken', '/');
+        this._cookieService.delete('AccessToken', '/');
 
         this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-out' +
             '?redirectUrl=' + encodeURI('https://' + this.sanatiseUrl);
