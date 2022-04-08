@@ -13,7 +13,7 @@ configProdJson:
           },
           "apiServer": {
               "flowBuilderService"  : "https://api.symplified.it/flow-builder/v1",
-              "userService"         : "https://api.symplified.services/user-service/v1",
+              "userService"         : "https://api.dev-my.symplified.ai/user-service/v1",
               "productService"      : "https://api.symplified.it/product-service/v1",
               "orderService"        : "https://api.symplified.it/order-service/v1",
               "reportService"       : "https://api.symplified.it/report-service/v1",
@@ -21,8 +21,8 @@ configProdJson:
               "paymentService"      : "https://api.symplified.it/payment-service/v1",
               "analyticService"     : "https://api.symplified.it/analytic-service/v1"
           },
-          "storeFrontDomain"          : ".symplified.services",
-          "marketplaceDomain"         : "customer.symplified.services",
+          "storeFrontDomain"          : ".dev-my.symplified.ai",
+          "marketplaceDomain"         : "customer.dev-my.symplified.ai",
           "merchantPortalDomain"      : "merchant.symplified.it",
           "logging": 0
       }
@@ -51,9 +51,6 @@ ingress:
         if ($host = 'dev-pk.symplified.ai') {
           set $temp_cache 1;
         }
-        if ($host = 'symplified.services') {
-          set $temp_cache 1;
-        }
         if ($request_uri !~ '\?') {
           set $temp_cache 1$temp_cache;
         }
@@ -80,10 +77,6 @@ ingress:
     paths:
     - path: /
       pathType: Prefix
-  - host: '*.symplified.services'
-    paths:
-      - path: /
-        pathType: Prefix
   tls:
   - hosts:
     - dev-my.symplified.ai
@@ -93,10 +86,6 @@ ingress:
     - dev-pk.symplified.ai
     - '*.dev-pk.symplified.ai'
     secretName: secret-tls-ai
-  - hosts:
-      - symplified.services
-      - '*.symplified.services'
-    secretName: secret-tls-services
 nameOverride: ""
 nodeSelector: {}
 podAnnotations: {}
