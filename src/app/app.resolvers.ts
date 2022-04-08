@@ -109,7 +109,7 @@ export class StoreResolver implements Resolve<any>
             this.url.domain = "cinema-online.symplified.ai"
         } else if (this.url.domain.split('.').slice(-1)[0] === "test") {
             // check for local development
-            this.url.domain = this.url.domain.split('.')[0] + ".symplified.services";
+            this.url.domain = this.url.domain.split('.')[0] + ".dev-my.symplified.ai";
         }
     }
 
