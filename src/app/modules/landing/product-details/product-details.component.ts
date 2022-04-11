@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { CartService } from 'app/core/cart/cart.service';
 import { ProductsService } from 'app/core/product/product.service';
@@ -8,6 +8,8 @@ import { Store, StoreCategory } from 'app/core/store/store.types';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 
 import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from 'ngx-gallery-9';
+import { debounceTime, fromEvent, map, switchMap, takeUntil } from 'rxjs';
+import { FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 
 @Component({
     selector     : 'landing-product-details',
@@ -88,6 +90,7 @@ export class LandingProductDetailsComponent implements OnInit
     imageCollection:any = [];
     galleryOptions: NgxGalleryOptions[] = [];
     galleryImages: NgxGalleryImage[] = [];
+    specialInstructionForm: FormGroup;
 
     /**
      * Constructor
@@ -97,7 +100,10 @@ export class LandingProductDetailsComponent implements OnInit
         private _productsService: ProductsService,
         private _cartService: CartService,
         private _fuseConfirmationService: FuseConfirmationService,
-        private _router: Router
+        private _router: Router,
+        private _formBuilder: FormBuilder,
+        private _changeDetectorRef: ChangeDetectorRef
+
     )
     {
     }
@@ -107,6 +113,10 @@ export class LandingProductDetailsComponent implements OnInit
     // -----------------------------------------------------------------------------------------------------
 
     ngOnInit() {
+
+        this.specialInstructionForm = this._formBuilder.group({
+            specialInstructionValue     : ['']
+        });
 
         // Get the store info
         this._storesService.store$
@@ -317,11 +327,24 @@ export class LandingProductDetailsComponent implements OnInit
 
     addToCart() {
 
+        // Do nothing if special instruction is empty
+
+        if (this.product.isNoteOptional === false && !this.specialInstructionForm.get('specialInstructionValue').value) {
+
+            // this is to make the form shows 'required' error
+            this.specialInstructionForm.get('specialInstructionValue').markAsTouched();
+
+            // Mark for check
+            this._changeDetectorRef.markForCheck();
+
+            return;
+        }
+
         // Pre-check the product inventory
         if (!this.selectedProductInventory) {
             const confirmation = this._fuseConfirmationService.open({
                 "title": "Product Out of Stock",
-                "message": "Sorry, The product is currently out of stock",
+                "message": "Sorry, the product is currently out of stock",
                 "icon": {
                   "show": true,
                   "name": "heroicons_outline:exclamation",
@@ -388,7 +411,7 @@ export class LandingProductDetailsComponent implements OnInit
             productPrice: this.selectedProductInventory.price, // need to recheck & revisit
             quantity: this.quantity,
             SKU: this.selectedProductInventory.sku,
-            specialInstruction: this.specialInstruction
+            specialInstruction: this.specialInstructionForm.get('specialInstructionValue').value
         };
 
         // additinal step for product combo
@@ -412,7 +435,7 @@ export class LandingProductDetailsComponent implements OnInit
                                     itemCode: productPakageOptionDetail.productInventory[0].itemCode,
                                     quantity: 1, // this is set to one because this is not main product quantity, this is item for selected prouct in this combo
                                     productPrice: 0, // this is set to zero because we don't charge differently for product combo item
-                                    specialInstruction: this.specialInstruction // we actually don't need this because this already included in main product, we'll at this later
+                                    specialInstruction: this.specialInstructionForm.get('specialInstructionValue').value // we actually don't need this because this already included in main product, we'll at this later
                                 }
                             );
                         }
@@ -581,4 +604,5 @@ export class LandingProductDetailsComponent implements OnInit
                 this.quantity = this.maxQuantity;
         }
     }
+
 }

@@ -79,9 +79,9 @@ export class AppComponent
         this.accessToken = this._cookieService.get('AccessToken');
         this.refreshToken = this._cookieService.get('RefreshToken');
 
-        console.log('ownerId', this.ownerId);
-        console.log('accessToken', this.accessToken);
-        console.log('refreshToken', this.refreshToken);
+        // console.log('ownerId', this.ownerId);
+        // console.log('accessToken', this.accessToken);
+        // console.log('refreshToken', this.refreshToken);
 
         // set to localstorage
         if (this.ownerId && this.accessToken && this.refreshToken) {

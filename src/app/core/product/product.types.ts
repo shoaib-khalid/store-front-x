@@ -23,6 +23,8 @@ export interface Product
     productReviews?: [];
     productAssets?: ProductAssets[];
     productDeliveryDetail?: string;
+    customNote?: string;
+    isNoteOptional?: boolean;
 }
 
 /**

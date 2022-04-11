@@ -103,19 +103,27 @@
                             </div>
     
                             <!-- Special Instruction -->
-                            <div class="w-full mt-2">
-                                <span class="font-semibold">Special Instruction{{!product.isNoteOptional ? ' *' : ''}}:</span> 
-                                <mat-form-field class="mt-2 fuse-mat-textarea w-full" floatLabel="always">
-                                    <textarea
-                                        matInput
-                                        [(ngModel)]="specialInstruction"
-                                        maxlength="500"
-                                        [rows]="5"
-                                        [placeholder]="product.customNote ? product.customNote : 'Make it special'"
-                                        [required]="product.isNoteOptional === false"
-                                        matTextareaAutosize></textarea>
-                                </mat-form-field>
-                            </div>
+                            <form [formGroup]="specialInstructionForm">
+                                <div class="w-full mt-2">
+                                    <span class="font-semibold">Special Instruction{{ product.isNoteOptional === false ? ' (required)' : ''}}:</span> 
+                                    <mat-form-field class="mt-2 fuse-mat-textarea w-full" floatLabel="always">
+                                        <!-- [(ngModel)]="specialInstruction" -->
+                                        <textarea
+                                            [ngClass]="'border border-red-600'"
+                                            matInput
+                                            [formControlName]="'specialInstructionValue'"
+                                            maxlength="500"
+                                            [rows]="5"
+                                            [placeholder]="product.customNote ? product.customNote : 'Make it special'"
+                                            [required]="product.isNoteOptional === false"
+                                            matTextareaAutosize></textarea>
+                                            <mat-error *ngIf="specialInstructionForm.get('specialInstructionValue').hasError('required')">
+                                                Required
+                                            </mat-error>
+                                    </mat-form-field>
+                                </div>
+
+                            </form>
 
                             <div class="flex flex-row w-full justify-between mb-6">
                                 <p class="font-semibold">Sub Total:</p> 
@@ -130,16 +138,16 @@
                             <!-- Add to cart / checkoout -->
                             <div class="w-full flex flex-row justify-between items-center">
                                 <!-- Add to cart -->
+                                <!-- [disabled]="!specialInstruction && product.isNoteOptional === false" -->
+                                <!-- [ngClass]="!specialInstruction && product.isNoteOptional === false ? 'cursor-default bg-gray-200' : 'cursor-pointer border-primary-300 bg-primary hover:border-primary-500'" -->
                                 <input
                                     id="add-to-cart-button"
                                     type="button"
                                     class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
                                     (click)="addToCart()"
-                                    [disabled]="!specialInstruction && product.isNoteOptional === false"
                                     mat-button>
                                 <label 
-                                    class="flex items-center justify-center w-5/12 sm:w-2/5 h-10 px-2 border rounded-lg"
-                                    [ngClass]="!specialInstruction && product.isNoteOptional === false ? 'cursor-default bg-gray-200' : 'cursor-pointer border-primary-300 bg-primary hover:border-primary-500'"
+                                    class="flex items-center justify-center w-5/12 sm:w-2/5 h-10 px-2 border rounded-lg cursor-pointer border-primary-300 bg-primary hover:border-primary-500"
                                     for="add-to-cart-button"
                                     matRipple>
                                     <span class="text-sm font-semibold text-black">Add to Cart</span>
