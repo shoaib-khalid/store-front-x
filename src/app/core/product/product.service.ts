@@ -118,7 +118,7 @@ export class ProductsService
      * @param order
      * @param search
      */
-    getProducts(page: number = 0, size: number = 20, sort: string = 'name', order: 'asc' | 'desc' | '' = 'asc', search: string = '', status: string = 'ACTIVE,INACTIVE', categoryId: string = null):
+    getProducts(page: number = 0, size: number = 20, sort: string = 'name', order: 'asc' | 'desc' | '' = 'asc', search: string = '', status: string = 'ACTIVE,OUTOFSTOCK', categoryId: string = null):
         Observable<{ pagination: ProductPagination; products: Product[] }>
     {
         let productService = this._apiServer.settings.apiServer.productService;
