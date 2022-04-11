@@ -9,6 +9,20 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v1.0.3
+        {
+            version    : 'v1.0.3',
+            releaseDate: 'Apr 11, 2022',
+            changes    : [
+                {
+                    type: 'Fix',
+                    list: [
+                        '(LandingCataloguePage) Fix out-of-stock product not displaying',
+                        '(LandingProductPage) KB-1387 Some UI adjustments to Special Instruction text area - show error message if it is mandatory'
+                    ]
+                }
+            ]
+        },
         // v1.0.2
         {
             version    : 'v1.0.2',
