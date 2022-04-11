@@ -73,8 +73,20 @@ export const appRoutes: Route[] = [
             {path: 'product', resolve: { cartItems: CartItemsResolver }, data: { breadcrumb: 'Product' }, loadChildren: () => import('app/modules/landing/product-details/product-details.module').then(m => m.LandingProductDetailsModule)},
             {path: 'checkout', resolve: { cartItems: CartItemsResolver }, data: { breadcrumb: 'Checkout' }, loadChildren: () => import('app/modules/landing/checkout/checkout.module').then(m => m.LandingCheckoutModule)},
             {path: 'thankyou', resolve: { cartItems: CartItemsResolver }, data: { breadcrumb: 'Thankyou' }, loadChildren: () => import('app/modules/landing/thankyou/thankyou.module').then(m => m.LandingThankyouModule)},
-            {path: 'payment-redirect', resolve: { cartItems: CartItemsResolver }, data: { layout: 'empty', breadcrumb: 'Payment Redirect' }, loadChildren: () => import('app/modules/landing/payment-redirect/payment-redirect.module').then(m => m.LandingPaymentRedirectModule)}
         ]
+    },
+
+    // Store Front Redirect
+    {
+        path: 'payment-redirect', 
+        resolve: { 
+            cartItems: CartItemsResolver 
+        }, 
+        data: { 
+            layout: 'empty', 
+            breadcrumb: 'Payment Redirect' 
+        }, 
+        loadChildren: () => import('app/modules/landing/payment-redirect/payment-redirect.module').then(m => m.LandingPaymentRedirectModule)
     },
 
     // Admin routes
