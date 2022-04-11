@@ -9,13 +9,26 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v1.2.0
+        {
+            version    : 'v1.2.0',
+            releaseDate: 'Apr 11, 2022',
+            changes    : [
+                {
+                    type: 'Removed',
+                    list: [
+                        '(IntergrateWithMarketplace) Temporarily removed login/logout button'
+                    ]
+                }
+            ]
+        },
         // v1.1.0
         {
             version    : 'v1.1.0',
             releaseDate: 'Apr 11, 2022',
             changes    : [
                 {
-                    type: 'Fix',
+                    type: 'Added',
                     list: [
                         '(AppFeature) Add QA environment support'
                     ]
