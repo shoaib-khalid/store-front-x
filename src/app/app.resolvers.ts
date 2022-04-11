@@ -16,6 +16,7 @@ import { NotificationService } from 'app/core/notification/notification.service'
 import { IpAddressService } from 'app/core/ip-address/ip-address.service';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { AuthService } from 'app/core/auth/auth.service';
+import { AppConfig } from 'app/config/service.config';
 
 @Injectable({
     providedIn: 'root'
@@ -80,6 +81,7 @@ export class StoreResolver implements Resolve<any>
      * Constructor
      */
     constructor(
+        private _apiServer: AppConfig,
         private _storesService: StoresService,
         private _cartService: CartService,
         private _platformLocation: PlatformLocation,
@@ -103,13 +105,13 @@ export class StoreResolver implements Resolve<any>
 
         this.url.domainName = domainNameArr.join("."); 
         this.url.subDomainName = sanatiseUrl.split('.')[0];
+
+        let isImpersonate = this._apiServer.settings.env.impersonate;
         
         // hardcord localhost to cinema-online (for now)
-        if (this.url.subDomainName.indexOf("localhost") > -1) {
-            this.url.domain = "cinema-online.symplified.ai"
-        } else if (this.url.domain.split('.').slice(-1)[0] === "test") {
+        if (isImpersonate === true) {
             // check for local development
-            this.url.domain = this.url.domain.split('.')[0] + ".dev-my.symplified.ai";
+            this.url.domain = this.url.domain.split('.')[0] + this._apiServer.settings.env.impersonateUrl;
         }
     }
 
