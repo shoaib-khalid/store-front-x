@@ -136,3 +136,18 @@ export interface Order
     total: number;
     updated: string;
 }
+
+export interface Address
+{
+    address     : string;
+    city        : string;
+    country     : string;
+    customerId  : string;
+    email       : string;
+    id          : string;
+    name        : string;
+    phoneNumber : string;
+    postCode    : string;
+    state       : string;
+    isDefault?  : boolean;
+}

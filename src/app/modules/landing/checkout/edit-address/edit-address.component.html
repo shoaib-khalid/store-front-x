@@ -1,0 +1,172 @@
+<div class="flex flex-col max-w-120 md:min-w-160 overflow-y-auto">
+
+    <!-- Compose form -->
+    <div class="flex flex-col flex-auto p-2 overflow-y-auto">
+        <!-- Header new adrdress -->
+        <div class="flex items-center justify-center flex-auto min-w-0 mb-8">
+            <span class="text-center text-2xl font-bold text-primary">Edit Address</span> <br>
+        </div>
+
+        <!-- Address form -->
+        
+        <form 
+            [formGroup]="editAddressForm"
+            #checkoutNgForm="ngForm">
+            <!-- Full Name  & Email Address-->
+            <div class="w-full flex flex-col sm:flex-row">
+                <!-- Full name -->
+                <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
+                    <mat-label>Full Name</mat-label>
+                    <input
+                        matInput
+                        [formControlName]="'name'"
+                        placeholder="Enter full name"
+                        autocomplete="disabled"
+                        [required]="true"
+                        >
+                        <!-- <mat-error *ngIf="checkoutForm.get('fullName').hasError('required')">
+                            Required
+                        </mat-error> -->
+                </mat-form-field>
+
+                <!-- Email Address -->
+                <mat-form-field class="w-full sm:w-1/2 sm:pl-1" floatLabel="always">
+                    <mat-label>Email Address</mat-label>
+                    <input
+                        matInput
+                        [formControlName]="'email'"
+                        placeholder="Enter email address"
+                        autocomplete="disabled"
+                        [required]="true"
+                        >
+                    <!-- <mat-error *ngIf="checkoutForm.get('email').hasError('required')">
+                        Required
+                    </mat-error>
+                    <mat-error *ngIf="checkoutForm.get('email').hasError('email')">
+                        Enter a valid email address
+                    </mat-error> -->
+                </mat-form-field>
+            </div>
+            <!-- Phonenumber & State -->
+            <div class="w-full flex flex-col sm:flex-row mb-4 sm:mb-0">
+                <!--Phone Number -->
+                <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
+                    <mat-label>Phone Number</mat-label>
+                    <input
+                        matInput
+                        [formControlName]="'phoneNumber'"
+                        placeholder="+60123456789"
+                        autocomplete="disabled"
+                        [required]="true"
+                        >
+                    <!-- <mat-error *ngIf="checkoutForm.get('phoneNumber').hasError('required')">
+                        Required
+                    </mat-error>
+                    <mat-error *ngIf="checkoutForm.get('phoneNumber').hasError('invalidPhonenumber')">
+                        Invalid Phone number
+                    </mat-error> -->
+                </mat-form-field>
+
+                <!-- State -->
+                <mat-form-field class="fuse-mat-no-subscript w-full sm:w-1/2 sm:pl-1" floatLabel="always">
+                    <mat-label>State</mat-label>
+                    <mat-select 
+                        [required]="true"
+                        [formControlName]="'state'"
+                        [placeholder]="'Select state'"
+                        #stateSelector="matSelect">
+                        <mat-select-trigger>
+                            <span class="flex items-center">
+                                <span>{{ stateSelector.triggerValue }}</span>
+                            </span>
+                        </mat-select-trigger>
+                        <div *ngFor="let state of regionCountryStates">
+                            <mat-option [value]="state.id">{{state.name}}</mat-option>
+                        </div>
+                    </mat-select>
+                    <!-- <mat-error *ngIf="checkoutForm.get('state').hasError('required')">
+                        Required
+                    </mat-error> -->
+                </mat-form-field>
+            </div>
+            <div class="w-full flex flex-col sm:flex-row mb-4 sm:mb-0">
+                <!--City -->
+                <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
+                    <mat-label>City</mat-label>
+                    <input
+                        matInput
+                        [formControlName]="'city'"
+                        placeholder="Enter city"
+                        autocomplete="disabled"
+                        [required]="true"
+                        >
+                    <!-- <mat-error *ngIf="checkoutForm.get('city').hasError('required')">
+                        Required
+                    </mat-error> -->
+                </mat-form-field>
+                <!-- Postcode -->
+                <mat-form-field class="w-full sm:w-1/2 sm:pl-1" floatLabel="always">
+                    <mat-label>Postcode</mat-label>
+                    <input
+                        matInput
+                        [formControlName]="'postCode'"
+                        placeholder="Enter postcode"
+                        autocomplete="disabled"
+                        [required]="true"
+                        >
+                    <!-- <mat-error *ngIf="checkoutForm.get('postCode').hasError('required')">
+                        Required
+                    </mat-error>
+                    <mat-error *ngIf="checkoutForm.get('postCode').hasError('invalidPostcode')">
+                        Invalid postcode
+                    </mat-error>
+                    <mat-error *ngIf="checkoutForm.get('postCode').hasError('minlength')">
+                        Minimum length of postcode not meet
+                    </mat-error>
+                    <mat-error *ngIf="checkoutForm.get('postCode').hasError('maxlength')">
+                        Exceed maximum length of postcode
+                    </mat-error> -->
+                </mat-form-field>
+            </div>
+            <div class="w-full">
+                <!-- Address -->
+                <mat-form-field
+                class="w-full" 
+                floatLabel="always" 
+                >
+                <mat-label>Address</mat-label>
+                <input
+                    matInput
+                    [formControlName]="'address'"
+                    placeholder="Enter address"
+                    autocomplete="disabled"
+                    [required]="true">
+                <!-- <mat-error *ngIf="checkoutForm.get('address').hasError('required')">
+                    Required
+                </mat-error> -->
+            </mat-form-field>
+            </div>
+        </form>
+
+        <!-- Actions -->
+        <div class="flex sm:flex-row sm:items-center justify-end mt-4 sm:mt-6">
+            <div class="order-last">
+                <!-- Send -->
+                <button
+                    class="hover:bg-gray-500 border border-gray-500"
+                    mat-flat-button
+                    (click)="cancel()"
+                    [color]="'gray'">
+                    Cancel
+                </button>
+                <span>&nbsp;&nbsp;</span>
+                <button
+                    mat-flat-button
+                    (click)="updateAddress()"
+                    [color]="'primary'">
+                    Update
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

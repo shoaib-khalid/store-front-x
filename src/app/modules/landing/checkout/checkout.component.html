@@ -14,10 +14,9 @@
 
                 <ng-container *ngIf="!notificationMessage; else storeClosed">
                     <!-- Checkout form section -->
-                    <div class="flex flex-col order-2 md:order-1 w-full mt-8 md:mt-0">
-                        <!-- Store Pickup -->
+                    <div class="flex flex-col order-2 md:order-1 w-full mt-8 md:mt-0 md:min-w-120 md:max-w-180">
                         <div class="flex flex-col sm:flex-row justify-between sm:items-center w-full">
-                            <h1 class="text-2xl font-bold pb-2 sm:pb-0">Delivery Information</h1>
+                            <h1 class="text-2xl font-bold pb-2 sm:pb-0">Delivery {{user ? 'Address' : 'Information'}}</h1>
                             <div *ngIf="allowsStorePickup" class="flex flex-row w-full sm:w-auto justify-between pt-2 sm:pt-0">
                                 <!-- <p class="mr-4">I want to pick my order from store</p> -->
                                 <!-- <mat-slide-toggle
@@ -47,117 +46,363 @@
 
                         <!-- For Normal delivery -->
                         <ng-container *ngIf="!checkoutForm.get('storePickup').value">
-                            <!-- Full Name  & Email Address-->
-                            <div class="w-full flex flex-col sm:flex-row pt-5 sm:pt-10">
-                                <!-- First Name -->
-                                <!-- <mat-form-field class="w-full sm:w-1/2 sm:pr-2" floatLabel="always">
-                                    <mat-label>First Name</mat-label>
-                                    <input
-                                        matInput
-                                        [formControlName]="'firstName'"
-                                        placeholder="Enter first name"
-                                        autocomplete="disabled"
-                                        [required]="true"
-                                        >
-                                        <mat-error *ngIf="checkoutForm.get('firstName').hasError('required')">
+                            <!-- If anon -->
+                            <div *ngIf="!user">
+                                <!-- Full Name  & Email Address-->
+                                <div class="w-full flex flex-col sm:flex-row pt-5 sm:pt-10">
+                                    <!-- First Name -->
+                                    <!-- <mat-form-field class="w-full sm:w-1/2 sm:pr-2" floatLabel="always">
+                                        <mat-label>First Name</mat-label>
+                                        <input
+                                            matInput
+                                            [formControlName]="'firstName'"
+                                            placeholder="Enter first name"
+                                            autocomplete="disabled"
+                                            [required]="true"
+                                            >
+                                            <mat-error *ngIf="checkoutForm.get('firstName').hasError('required')">
+                                                Required
+                                            </mat-error>
+                                    </mat-form-field> -->
+                                    <!--Last Name -->
+                                    <!-- <mat-form-field class="w-full sm:w-1/2 sm:pl-2" floatLabel="always">
+                                        <mat-label>Last Name</mat-label>
+                                        <input
+                                            matInput
+                                            [formControlName]="'lastName'"
+                                            placeholder="Enter last name"
+                                            autocomplete="disabled"
+                                            [required]="true"
+                                            >
+                                        <mat-error *ngIf="checkoutForm.get('lastName').hasError('required')">
                                             Required
                                         </mat-error>
-                                </mat-form-field> -->
-                                <!--Last Name -->
-                                <!-- <mat-form-field class="w-full sm:w-1/2 sm:pl-2" floatLabel="always">
-                                    <mat-label>Last Name</mat-label>
-                                    <input
-                                        matInput
-                                        [formControlName]="'lastName'"
-                                        placeholder="Enter last name"
-                                        autocomplete="disabled"
-                                        [required]="true"
-                                        >
-                                    <mat-error *ngIf="checkoutForm.get('lastName').hasError('required')">
-                                        Required
-                                    </mat-error>
-                                </mat-form-field> -->
-        
-                                <!-- Start New Design Here -->
-                                <!-- Email Address -->
-                                <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
-                                    <mat-label>Email Address</mat-label>
-                                    <input
-                                        matInput
-                                        [formControlName]="'email'"
-                                        (change)="checkCustomerInfo('email', this.checkoutForm.get('email').value)"
-                                        placeholder="Enter email address"
-                                        autocomplete="disabled"
-                                        [required]="true"
-                                        >
-                                    <mat-error *ngIf="checkoutForm.get('email').hasError('required')">
-                                        Required
-                                    </mat-error>
-                                    <mat-error *ngIf="checkoutForm.get('email').hasError('email')">
-                                        Enter a valid email address
-                                    </mat-error>
-                                </mat-form-field>
-                                <!-- Full name -->
-                                <mat-form-field class="w-full sm:w-1/2 sm:pl-1" floatLabel="always">
-                                    <mat-label>Full Name</mat-label>
-                                    <input
-                                        matInput
-                                        [formControlName]="'fullName'"
-                                        placeholder="Enter full name"
-                                        autocomplete="disabled"
-                                        [required]="true"
-                                        >
-                                        <mat-error *ngIf="checkoutForm.get('fullName').hasError('required')">
+                                    </mat-form-field> -->
+            
+                                    <!-- Start New Design Here -->
+                                    <!-- Email Address -->
+                                    <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
+                                        <mat-label>Email Address</mat-label>
+                                        <input
+                                            matInput
+                                            [formControlName]="'email'"
+                                            (change)="checkCustomerInfo('email', this.checkoutForm.get('email').value)"
+                                            placeholder="Enter email address"
+                                            autocomplete="disabled"
+                                            [required]="true"
+                                            >
+                                        <mat-error *ngIf="checkoutForm.get('email').hasError('required')">
                                             Required
                                         </mat-error>
-                                </mat-form-field>
-        
+                                        <mat-error *ngIf="checkoutForm.get('email').hasError('email')">
+                                            Enter a valid email address
+                                        </mat-error>
+                                    </mat-form-field>
+                                    <!-- Full name -->
+                                    <mat-form-field class="w-full sm:w-1/2 sm:pl-1" floatLabel="always">
+                                        <mat-label>Full Name</mat-label>
+                                        <input
+                                            matInput
+                                            [formControlName]="'fullName'"
+                                            placeholder="Enter full name"
+                                            autocomplete="disabled"
+                                            [required]="true"
+                                            >
+                                            <mat-error *ngIf="checkoutForm.get('fullName').hasError('required')">
+                                                Required
+                                            </mat-error>
+                                    </mat-form-field>
+            
+                                </div>
+                                <!-- Phone number & State -->
+                                <div class="w-full flex flex-col sm:flex-row mb-4 sm:mb-0">
+                                    <!--Phone Number -->
+                                    <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
+                                        <mat-label>Phone Number</mat-label>
+                                        <input
+                                            matInput
+                                            (change)="checkCustomerInfo('phoneNumber', this.checkoutForm.get('phoneNumber').value)"
+                                            [formControlName]="'phoneNumber'"
+                                            placeholder="+60123456789"
+                                            autocomplete="disabled"
+                                            [required]="true"
+                                            >
+                                        <mat-error *ngIf="checkoutForm.get('phoneNumber').hasError('required')">
+                                            Required
+                                        </mat-error>
+                                        <mat-error *ngIf="checkoutForm.get('phoneNumber').hasError('invalidPhonenumber')">
+                                            Invalid Phone number
+                                        </mat-error>
+                                    </mat-form-field>
+            
+                                    <!-- State -->
+                                    <mat-form-field class="fuse-mat-no-subscript w-full sm:w-1/2 sm:pl-1" floatLabel="always">
+                                        <mat-label>State</mat-label>
+                                        <mat-select 
+                                            [formControlName]="'state'"
+                                            [required]="true"
+                                            [placeholder]="'Select state'"
+                                            (selectionChange)="checkoutForm.get('state').patchValue($event.value);"
+                                            #stateSelector="matSelect">
+                                            <mat-select-trigger>
+                                                <span class="flex items-center">
+                                                    <span>{{ stateSelector.triggerValue }}</span>
+                                                </span>
+                                            </mat-select-trigger>
+                                            <div *ngFor="let state of regionCountryStates">
+                                                <mat-option [value]="state.id">{{state.name}}</mat-option>
+                                            </div>
+                                        </mat-select>
+                                        <mat-error *ngIf="checkoutForm.get('state').hasError('required')">
+                                            Required
+                                        </mat-error>
+                                    </mat-form-field>
+                                </div>
                             </div>
-                            <!-- Phone number & State -->
-                            <div class="w-full flex flex-col sm:flex-row mb-4 sm:mb-0">
-                                <!--Phone Number -->
-                                <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
-                                    <mat-label>Phone Number</mat-label>
-                                    <input
-                                        matInput
-                                        (change)="checkCustomerInfo('phoneNumber', this.checkoutForm.get('phoneNumber').value)"
-                                        [formControlName]="'phoneNumber'"
-                                        placeholder="+60 12 345 6789"
-                                        autocomplete="disabled"
-                                        [required]="true"
-                                        >
-                                    <mat-error *ngIf="checkoutForm.get('phoneNumber').hasError('required')">
-                                        Required
-                                    </mat-error>
-                                    <mat-error *ngIf="checkoutForm.get('phoneNumber').hasError('invalidPhonenumber')">
-                                        Invalid Phone number
-                                    </mat-error>
-                                </mat-form-field>
-        
-                                <!-- State -->
-                                <mat-form-field class="fuse-mat-no-subscript w-full sm:w-1/2 sm:pl-1" floatLabel="always">
-                                    <mat-label>State</mat-label>
-                                    <mat-select 
-                                        [formControlName]="'state'"
-                                        [required]="true"
-                                        [placeholder]="'Select state'"
-                                        (selectionChange)="checkoutForm.get('state').patchValue($event.value);"
-                                        #stateSelector="matSelect">
-                                        <mat-select-trigger>
-                                            <span class="flex items-center">
-                                                <span>{{ stateSelector.triggerValue }}</span>
-                                            </span>
-                                        </mat-select-trigger>
-                                        <div *ngFor="let state of regionCountryStates">
-                                            <mat-option [value]="state.id">{{state.name}}</mat-option>
+
+                            <!-- If logged in  -->
+                            <div *ngIf="user"
+                                class="py-5 pl-0">
+                                <container *ngIf="false">
+                                    
+                                    <div class="p-1">
+                                        <fuse-card class="flex flex-col w-80 h-48 rounded-lg p-4 border border-primary-300 cursor-pointer"
+                                            >
+                                            <div class="flex flex-row justify-between">
+                                                <div class="flex flex-col md:max-w-[200px]">
+                                                    <h3 class="text-lg font-semibold leading-tight truncate">{{checkoutForm.get('customerAddress').value.name}}</h3>
+                                                    <h3 class="font-medium">{{checkoutForm.get('customerAddress').value.phoneNumber}}</h3>
+                                                </div>
+                                                <div 
+                                                    class="flex flex-row"
+                                                    [ngClass]="checkoutForm.get('customerAddress').value.id === defaultAddress ? 'visible':'invisible'">
+                                                    <h3 class="text-primary font-bold pt-[0.1rem]">Default</h3>
+                                                    <mat-icon class="text-primary pl-1" svgIcon="mat_solid:verified"></mat-icon>
+                                                </div>
+                                            </div>
+                                            <div class="mt-4 w-full h-full line-clamp-3">{{checkoutForm.get('customerAddress').value.address}}, {{checkoutForm.get('customerAddress').value.postCode}}, {{checkoutForm.get('customerAddress').value.city}}, {{checkoutForm.get('customerAddress').value.state}}</div>
+                                            <div class="flex flex-row justify-end pt-0">
+                                                <input
+                                                id="change-address"
+                                                type="button"
+                                                (click)="changeAddress()"
+                                                class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                                                mat-button>
+                                                <label 
+                                                    class="flex items-center justify-center h-8 px-1 border border-gray-300 rounded cursor-pointer hover:bg-hover"
+                                                    for="change-address"
+                                                    matRipple>
+                                                    <mat-icon
+                                                        class="sm:mr-1 icon-size-5 text-primary"
+                                                        [svgIcon]="'mat_solid:location_on'">
+                                                    </mat-icon>
+                                                    <span class="hidden sm:block justify-center text-sm">Change</span>
+                                                </label>
+                                            </div>
+                                        </fuse-card>
+                                    </div>
+                                </container>
+                                <container *ngIf="true">
+                                    <!-- Desktop view  -->
+                                    <div #addressContainer class="flex flex-nowrap items-center justify-between overflow-x-auto">
+                                        <ng-container *ngIf="customerAddresses.length > 0">
+                                            <ng-container *ngFor="let address of customerAddresses; let i = index;">
+                                                <div class="hidden sm:block flex-wrap items-center p-1">
+                                                    <fuse-card class="flex flex-col w-80 h-48 rounded-lg p-4 border border-primary-300 cursor-pointer"
+                                                        [ngClass]="address.id === checkoutForm.get('customerAddress').value.id ? 'bg-primary-50 border-primary-600':'bg-white'"
+                                                        (click)="selectAddress(address, i); scrollToLeft(addressContainer);">
+                                                        <div class="flex flex-row justify-between">
+                                                            <div class="flex flex-col max-w-[200px]">
+                                                                <h3 class="text-lg font-semibold leading-tight truncate">{{address.name}}</h3>
+                                                                <h3 class="font-medium">{{address.phoneNumber}}</h3>
+                                                            </div>
+                                                            <div 
+                                                                class="flex flex-row mt-1"
+                                                                *ngIf="address.id === defaultAddress">
+                                                                <h3 class="text-primary font-bold pt-[0.1rem]">Default</h3>
+                                                                <mat-icon class="text-primary pl-1" svgIcon="mat_solid:verified"></mat-icon>
+                                                            </div>
+                                                            <button 
+                                                                type="button"
+                                                                *ngIf="address.id != defaultAddress"
+                                                                (click)="setDefaultAddress(address, i); $event.stopPropagation()"
+                                                                class="bg-transparent hover:bg-primary-500 font-semibold hover:text-white p-1 h-8 hover:border-transparent rounded text-sm">
+                                                                Set Default
+                                                              </button>
+                                                            <!-- <div 
+                                                                class="flex flex-row border border-gray-300 rounded cursor-pointer"
+                                                                *ngIf="address.id != defaultAddress"
+                                                                (click)="setDefaultAddress(address, i); $event.stopPropagation()">
+                                                                <h3 class=" pt-[0.1rem] tracking-tight">Set as Default</h3>
+                                                                <mat-icon class="text-primary pl-1" svgIcon="mat_solid:verified"></mat-icon>
+                                                            </div> -->
+                                                            <!-- <div *ngIf="address.id != defaultAddress" class="flex flex-row justify-end pt-0">
+                                                                <input
+                                                                id="set-default"
+                                                                type="button"
+                                                                (click)="setDefaultAddress(address, i); $event.stopPropagation()"
+                                                                class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                                                                mat-button>
+                                                                <label 
+                                                                    class="flex items-center justify-center h-8 px-1 border border-gray-300 rounded cursor-pointer hover:bg-hover bg-white"
+                                                                    for="set-default"
+                                                                    matRipple>
+                                                                    <mat-icon
+                                                                        class="sm:mr-1 icon-size-5 text-primary"
+                                                                        [svgIcon]="'mat_solid:location_on'">
+                                                                    </mat-icon>
+                                                                    <span class="hidden sm:block justify-center tracking-tighter text-sm">Set as Default</span>
+                                                                </label>
+                                                            </div> -->
+                                                        </div>
+                                                        <div class="mt-4 w-full h-full line-clamp-3">{{address.address}}, {{address.postCode}}, {{address.city}}, {{address.state}}</div>
+                                                        <div class="flex flex-row justify-between pt-4">
+                                                            <div (click)="deleteAddress(address, i); $event.stopPropagation()" class="flex flex-row group">
+                                                                <mat-icon class="text-center text-red-500 group-hover:text-red-700" svgIcon="heroicons_outline:trash"></mat-icon>
+                                                                <span class="pl-1 pt-0.5 font-bold text-red-500 group-hover:text-red-700">Delete</span>
+                                                            </div>
+                                                            <div (click)="editAddress(address.id, i, addressContainer); $event.stopPropagation()" class="flex flex-row group">
+                                                                <mat-icon class="text-primary group-hover:text-primary-600" svgIcon="heroicons_outline:pencil-alt"></mat-icon>
+                                                                <span class="pl-1 pt-0.5 font-bold text-primary group-hover:text-primary-600 pr-5">Edit</span>
+                                                            </div>
+                                                            <!-- <div 
+                                                                class="flex flex-row pl-4"
+                                                                [ngClass]="address.id === checkoutForm.get('customerAddress').value.id ? 'visible':'invisible'">
+                                                                <mat-icon class="text-center text-primary-700" svgIcon="heroicons_outline:clipboard-check"></mat-icon>
+                                                                <span class="pl-1 pt-0.5 font-bold text-primary-700">Selected</span>
+                                                            </div> -->
+                                                        </div>
+                                                    </fuse-card>
+                                                </div>
+                                            </ng-container>
+                                        </ng-container>
+                                        <div class="hidden sm:block flex-wrap items-center p-1">
+                                            <fuse-card
+                                                (click)="addNewAddress(addressContainer)" 
+                                                class="flex flex-col w-80 h-48 rounded-lg border border-gray-300 hover:border-primary-300 hover:bg-primary-50 cursor-pointer">
+                                                <div class="w-full pt-14 items-center justify-center flex flex-col">
+                                                    <mat-icon class="text-primary w-10 h-10 items-center" svgIcon="add"></mat-icon>
+                                                    <span class="text-primary text-center text-lg">Add New Address</span>
+                                                </div>
+                                            </fuse-card>
                                         </div>
-                                    </mat-select>
-                                    <mat-error *ngIf="checkoutForm.get('state').hasError('required')">
-                                        Required
-                                    </mat-error>
-                                </mat-form-field>
+                                    </div>
+                                    <!-- Mobile view  -->
+                                    <div #addressContainerMobile class="w-full block sm:hidden flex-col">
+                                        <div *ngIf="checkoutForm.get('customerAddress').value">
+                                            <fuse-card class="mb-2 flex flex-col w-auto h-48 rounded-lg p-4 border border-primary-300 cursor-pointer bg-primary-50 border-primary-600"
+                                                >
+                                                <div class="flex flex-row justify-between">
+                                                    <div class="flex flex-col max-w-[200px]">
+                                                        <h3 class="text-lg font-semibold leading-tight truncate">{{checkoutForm.get('customerAddress').value.name}}</h3>
+                                                        <h3 class="font-medium">{{checkoutForm.get('customerAddress').value.phoneNumber}}</h3>
+                                                    </div>
+                                                    <div 
+                                                        class="flex flex-row mt-1"
+                                                        *ngIf="checkoutForm.get('customerAddress').value.id === defaultAddress">
+                                                        <h3 class="text-primary font-bold pt-[0.1rem]">Default</h3>
+                                                        <mat-icon class="text-primary pl-1" svgIcon="mat_solid:verified"></mat-icon>
+                                                    </div>
+                                                    <button 
+                                                        type="button"
+                                                        *ngIf="checkoutForm.get('customerAddress').value.id != defaultAddress"
+                                                        (click)="setDefaultAddress(checkoutForm.get('customerAddress').value, i); $event.stopPropagation()"
+                                                        class="bg-transparent hover:bg-primary-500 font-semibold hover:text-white p-1 h-8 hover:border-transparent rounded text-sm">
+                                                        Set Default
+                                                        </button>
+                                                </div>
+                                                <div class="mt-4 w-full h-full line-clamp-3">{{checkoutForm.get('customerAddress').value.address}}, {{checkoutForm.get('customerAddress').value.postCode}}, {{checkoutForm.get('customerAddress').value.city}}, {{checkoutForm.get('customerAddress').value.state}}</div>
+                                                <div class="flex flex-row justify-between pt-4">
+                                                    <div (click)="deleteAddress(checkoutForm.get('customerAddress').value, i); $event.stopPropagation()" class="flex flex-row group">
+                                                        <mat-icon class="text-center text-red-500 group-hover:text-red-700" svgIcon="heroicons_outline:trash"></mat-icon>
+                                                        <span class="pl-1 pt-0.5 font-bold text-red-500 group-hover:text-red-700">Delete</span>
+                                                    </div>
+                                                    <div (click)="editAddress(checkoutForm.get('customerAddress').value.id, i, addressContainer); $event.stopPropagation()" class="flex flex-row group">
+                                                        <mat-icon class="text-primary group-hover:text-primary-600" svgIcon="heroicons_outline:pencil-alt"></mat-icon>
+                                                        <span class="pl-1 pt-0.5 font-bold text-primary group-hover:text-primary-600 pr-5">Edit</span>
+                                                    </div>
+                                                </div>
+                                            </fuse-card>
+
+                                        </div>
+                                        <fuse-card
+                                            *ngIf="customerAddresses.length === 0"
+                                            (click)="addNewAddress(addressContainerMobile)" 
+                                            class="mb-2 justify-center flex flex-col w-auto h-[48px] rounded-lg border border-gray-300 hover:border-primary-300 hover:bg-primary-50 cursor-pointer">
+                                            <div class="w-full items-center justify-center flex flex-row">
+                                                <mat-icon class="text-primary w-8 h-8 pr-1 items-center" svgIcon="add"></mat-icon>
+                                                <span class="text-primary text-center ">Add New Address</span>
+                                            </div>
+                                        </fuse-card>
+                                        <mat-accordion class="max-w-4xl mt-8">
+                                            <ng-container *ngIf="customerAddresses.length > 0">
+                                                <mat-expansion-panel [expanded]="panelOpenState" (opened)="panelOpenState = true"
+                                                (closed)="panelOpenState = false" class="border-gray-300 border">
+                                                    <mat-expansion-panel-header [collapsedHeight]="'48px'">
+                                                        <mat-panel-title class="font-medium leading-tight justify-center">Change Address</mat-panel-title>
+                                                    </mat-expansion-panel-header>
+                                                    <ng-container *ngFor="let address of customerAddresses; let i = index;">
+                                                        <div class="flex-wrap items-center m-1">
+                                                            <fuse-card 
+                                                                *ngIf="address.id != checkoutForm.get('customerAddress').value.id" 
+                                                                class="flex flex-col w-auto h-48 rounded-lg p-4 border border-primary-300 cursor-pointer"
+                                                                [ngClass]="address.id === checkoutForm.get('customerAddress').value.id? 'bg-primary-50 border-primary-600':'bg-white'"
+                                                                (click)="selectAddress(address, i);">
+                                                                <div class="flex flex-row justify-between">
+                                                                    <div class="flex flex-col max-w-[200px]">
+                                                                        <h3 class="text-lg font-semibold leading-tight truncate">{{address.name}}</h3>
+                                                                        <h3 class="font-medium">{{address.phoneNumber}}</h3>
+                                                                    </div>
+                                                                    <div 
+                                                                        class="flex flex-row mt-1"
+                                                                        *ngIf="address.id === defaultAddress">
+                                                                        <h3 class="text-primary font-bold pt-[0.1rem]">Default</h3>
+                                                                        <mat-icon class="text-primary pl-1" svgIcon="mat_solid:verified"></mat-icon>
+                                                                    </div>
+                                                                    <button 
+                                                                        type="button"
+                                                                        *ngIf="address.id != defaultAddress"
+                                                                        (click)="setDefaultAddress(address, i); $event.stopPropagation()"
+                                                                        class="bg-transparent hover:bg-primary-500 font-semibold hover:text-white p-1 h-8 hover:border-transparent rounded text-sm">
+                                                                        Set Default
+                                                                      </button>
+                                                                    
+                                                                </div>
+                                                                <div class="mt-4 w-full h-full line-clamp-3">{{address.address}}, {{address.postCode}}, {{address.city}}, {{address.state}}</div>
+                                                                <div class="flex flex-row justify-between pt-4">
+                                                                    <div (click)="deleteAddress(address, i); $event.stopPropagation()" class="flex flex-row group">
+                                                                        <mat-icon class="text-center text-red-500 group-hover:text-red-700" svgIcon="heroicons_outline:trash"></mat-icon>
+                                                                        <span class="pl-1 pt-0.5 font-bold text-red-500 group-hover:text-red-700">Delete</span>
+                                                                    </div>
+                                                                    <div (click)="editAddress(address.id, i, addressContainerMobile); $event.stopPropagation()" class="flex flex-row group">
+                                                                        <mat-icon class="text-primary group-hover:text-primary-600" svgIcon="heroicons_outline:pencil-alt"></mat-icon>
+                                                                        <span class="pl-1 pt-0.5 font-bold text-primary group-hover:text-primary-600 pr-5">Edit</span>
+                                                                    </div>
+                                                                    
+                                                                </div>
+                                                            </fuse-card>
+                                                        </div>
+                                                    </ng-container>
+                                                    <div class="mx-1 mb-1"> 
+                                                        <fuse-card
+                                                            *ngIf="customerAddresses.length > 0"
+                                                            (click)="addNewAddress(addressContainerMobile)" 
+                                                            class=" justify-center flex flex-col w-auto h-[56px] rounded-lg border border-gray-300 hover:border-primary-300 hover:bg-primary-50 cursor-pointer">
+                                                            <div class="w-full items-center justify-center flex flex-row">
+                                                                <mat-icon class="text-primary w-8 h-8 pr-1 items-center" svgIcon="add"></mat-icon>
+                                                                <span class="text-primary text-center ">Add New Address</span>
+                                                            </div>
+                                                        </fuse-card>
+                                                    </div>
+                                                </mat-expansion-panel>
+                                            </ng-container>
+                                        </mat-accordion>
+                                    </div>
+                                </container>
                             </div>
                         </ng-container>
+
+                        
 
                         <!-- For store pickup -->
                         <ng-container *ngIf="checkoutForm.get('storePickup').value">
@@ -209,7 +454,7 @@
                                         matInput
                                         (change)="checkCustomerInfo('phoneNumber', this.checkoutForm.get('phoneNumber').value)"
                                         [formControlName]="'phoneNumber'"
-                                        placeholder="+60 12 345 6789"
+                                        placeholder="+60123456789"
                                         autocomplete="disabled"
                                         [required]="true"
                                         >
@@ -224,7 +469,7 @@
                         </ng-container>
 
                         <!-- For Normal delivery -->
-                        <ng-container *ngIf="!checkoutForm.get('storePickup').value">
+                        <ng-container *ngIf="!checkoutForm.get('storePickup').value && !user">
                             <!-- City & Postcode -->
                             <div class="w-full flex flex-wrap sm:flex-nowrap sm:flex-row mb-0">
                                 <!--City -->
@@ -273,8 +518,8 @@
 
                         <!-- Address -->
                         <div class="w-full">
-                            <!-- Address -->
-                            <mat-form-field *ngIf="!checkoutForm.get('storePickup').value"
+                            <!-- Address for normal delivery-->
+                            <mat-form-field *ngIf="!checkoutForm.get('storePickup').value && !user"
                                 class="w-full" 
                                 floatLabel="always" 
                                 >
@@ -290,7 +535,8 @@
                                     Required
                                 </mat-error>
                             </mat-form-field>
-                            
+
+                            <!-- Store address if self pickup-->
                             <div class="mb-2" *ngIf="checkoutForm.get('storePickup').value">
                                 <mat-label class="font-medium text-gray-600">Store Address</mat-label>
                                 <fieldset [ngClass]="'bg-gray-100 text-gray-500'" class="flex flex-col sm:flex-row mt-1 border border-solid border-gray-300 rounded-lg px-4 py-4">

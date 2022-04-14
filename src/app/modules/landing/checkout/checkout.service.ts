@@ -185,6 +185,28 @@ export class CheckoutService
                 })
             );
     }
+
+    getStoreRegionCountryState(regionCountryId: string): Observable<any>
+    {
+        let productService = this._apiServer.settings.apiServer.productService;
+        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
+        let accessToken = "accessToken";
+
+        const header = {
+            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            params: {
+                "regionCountryId": regionCountryId
+            }
+        };
+
+        return this._httpClient.get<any>(productService + '/region-country-state', header)
+            .pipe(
+                map((response) => {
+                    this._logging.debug("Response from StoresService (getStoreRegionCountryState)",response);
+                    return response["data"].content;
+                })
+            );
+    }
     
     // /**
     //  * Create the cart

@@ -16,12 +16,17 @@ import { ChooseDeliveryAddressComponent } from './choose-delivery-address/choose
 import { MatDialogModule } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import { ModalConfirmationDeleteItemComponent } from './modal-confirmation-delete-item/modal-confirmation-delete-item.component';
+import { AddAddressComponent } from './add-address/add-address.component';
+import { EditAddressComponent } from './edit-address/edit-address.component';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @NgModule({
     declarations: [
         LandingCheckoutComponent,
         ChooseDeliveryAddressComponent,
-        ModalConfirmationDeleteItemComponent
+        ModalConfirmationDeleteItemComponent,
+        AddAddressComponent,
+        EditAddressComponent
     ],
     imports     : [
         RouterModule.forChild(landingCheckoutRoutes),
@@ -35,7 +40,8 @@ import { ModalConfirmationDeleteItemComponent } from './modal-confirmation-delet
         MatTooltipModule,
         MatDialogModule,
         MatRadioModule,
-        SharedModule
+        SharedModule,
+        MatExpansionModule
     ],
     providers   : [
         DatePipe

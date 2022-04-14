@@ -13,11 +13,15 @@ import { CheckoutService } from './checkout.service';
 import { CheckoutValidationService } from './checkout.validation.service';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ChooseDeliveryAddressComponent } from './choose-delivery-address/choose-delivery-address.component';
-import { CartDiscount, DeliveryProvider, DeliveryProviderGroup, Order, Payment } from './checkout.types';
+import { Address, CartDiscount, DeliveryProvider, DeliveryProviderGroup, Order, Payment } from './checkout.types';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { ModalConfirmationDeleteItemComponent } from './modal-confirmation-delete-item/modal-confirmation-delete-item.component';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
+import { UserService } from 'app/core/user/user.service';
+import { User } from 'app/core/user/user.types';
+import { AddAddressComponent } from './add-address/add-address.component';
+import { EditAddressComponent } from './edit-address/edit-address.component';
 
 @Component({
     selector     : 'landing-checkout',
@@ -42,6 +46,13 @@ import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
             ::ng-deep .mat-radio-button .mat-radio-ripple{
                 display: none;
             }
+            :host ::ng-deep .mat-radio-label-content {
+                width: 100%;
+            }
+
+            :host ::ng-deep .mat-expansion-panel-body {
+                padding: 0px;
+            }
         `
     ]
 })
@@ -54,7 +65,7 @@ export class LandingCheckoutComponent implements OnInit
     
     checkoutForm: FormGroup;
     store: Store;
-
+    user: User;
     storeSnooze: StoreSnooze = null;
     notificationMessage: string;
     daysArray = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
@@ -102,6 +113,11 @@ export class LandingCheckoutComponent implements OnInit
     isCalculating: boolean = false;
 
     allowsStorePickup: boolean = false;
+    showAddresses: boolean = false;
+    customerAddresses: Address[] = [];
+    defaultAddress: string = '';
+    panelOpenState: boolean = false;
+
 
     /**
      * Constructor
@@ -117,6 +133,7 @@ export class LandingCheckoutComponent implements OnInit
         private _datePipe: DatePipe,
         private _dialog: MatDialog,
         private _router: Router,
+        private _userService: UserService,
         @Inject(DOCUMENT) document: Document
     )
     {
@@ -141,11 +158,56 @@ export class LandingCheckoutComponent implements OnInit
             country             : [''],
             regionCountryStateId: [''],
             specialInstruction  : [''],
-            saveMyInfo          : [true]
+            saveMyInfo          : [true],
+            addresses           : [],
+            customerAddress     : ['']
         });
 
         // Set Payment Completion Status "Calculate Charges"
         this.paymentCompletionStatus = { id:"CALCULATE_CHARGES", label: "Calculate Charges" };
+
+        this._userService.user$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((user: User)=>{
+                this.user = user;     
+
+                this.checkoutForm.get('email').patchValue(user.email);
+                this.checkoutForm.get('fullName').patchValue(user.name);
+                // this.checkoutForm.get('phoneNumber').patchValue(user.);  
+                
+                // Get customer Addresses
+                this._userService.getCustomerAddress(user.id)
+                .subscribe((response: any) => {
+                    
+                    if (response.length > 0) {
+
+                        //sort isDefault true first
+                        this.customerAddresses = response.sort((a, b) => Number(b.isDefault) - Number(a.isDefault));
+    
+                        let index = this.customerAddresses.findIndex(element => element.isDefault === true);
+    
+                        if (index > -1) {
+                            this.defaultAddress = this.customerAddresses[index].id;
+                            this.checkoutForm.get('customerAddress').patchValue(this.customerAddresses[index]);    
+                            
+                        }
+                        else {
+                            this.checkoutForm.get('customerAddress').patchValue(this.customerAddresses[0]);
+                        }
+    
+                        this.setCustomerDetails();
+
+                        // Mark for check
+                        this._changeDetectorRef.markForCheck();
+                    }
+                    
+                    else {
+                        
+                    }
+
+                });
+                
+            });
 
         // --------------
         // Get store
@@ -354,7 +416,7 @@ export class LandingCheckoutComponent implements OnInit
             "actions": {
             "confirm": {
                 "show": true,
-                "label": "Okay",
+                "label": "OK",
                 "color": "warn"
             },
             "cancel": {
@@ -885,6 +947,36 @@ export class LandingCheckoutComponent implements OnInit
         animateScroll();    
     }
 
+    scrollToLeft(el) {
+        
+        var to = 0;
+        var duration = 600;
+        var start = el.scrollLeft,
+            change = to - start,
+            currentTime = 0,
+            increment = 20;
+    
+        var easeInOutQuad = function(t, b, c, d) {
+            t /= d / 2;
+            if (t < 1) 
+                return c / 2 * t * t + b;
+            t--;
+            return -c / 2 * (t * (t - 2) - 1) + b;
+        }
+    
+        var animateScroll = function() {        
+            currentTime += increment;
+            var val = easeInOutQuad(currentTime, start, change, duration);
+    
+            el.scrollLeft = val;
+            if(currentTime < duration) {
+                setTimeout(animateScroll, increment);
+                el.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start' });
+            }
+        }
+        animateScroll();    
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
@@ -1081,4 +1173,178 @@ export class LandingCheckoutComponent implements OnInit
     //     this.checkoutForm.get('postCode').setErrors({required: false});
     //     this.checkoutForm.get('address').setErrors({required: false});
     // }
+
+    setDefaultAddress(address: Address, index?: any){
+        
+        address.isDefault = true;
+        
+        this._userService.updateCustomerAddress(address.id, address)
+            .subscribe((response) => {
+                this.defaultAddress = address.id;
+            });
+    }
+
+    editAddress(addressId:string, index: any, htmlContainer: any)
+    {
+        const dialogRef = this._dialog.open(
+            EditAddressComponent, {
+                width: this.currentScreenSize.includes('sm') ? 'auto' : '100%',
+                height: this.currentScreenSize.includes('sm') ? 'auto' : '100%',
+                maxWidth: this.currentScreenSize.includes('sm') ? 'auto' : '100vw',  
+                maxHeight: this.currentScreenSize.includes('sm') ? 'auto' : '100vh',
+                disableClose: true,
+                data:{ addressId:addressId, store:this.store }
+                });                
+            
+            dialogRef.afterClosed().subscribe(result =>{
+                if (result.selectAddress === true) {
+                    
+                    // select the address
+                    this.selectAddress(result.address, index)
+                    
+                    this.scrollToLeft(htmlContainer);
+                    
+                }
+            });
+    }
+
+    selectAddress(address: Address, index?: any) {
+        this.checkoutForm.get('customerAddress').patchValue(address)
+        
+        // move the selected address to the front
+        this.customerAddresses = this.moveArray(this.customerAddresses, index, 0)
+
+        this.panelOpenState = false;
+        
+        this.setCustomerDetails();
+        
+    }
+
+    moveArray(arr, old_index, new_index) {
+        if (new_index >= arr.length) {
+            var k = new_index - arr.length + 1;
+            while (k--) {
+                arr.push(undefined);
+            }
+        }
+        arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+        return arr; 
+    };
+
+    addNewAddress(htmlContainer: any) : void 
+    {
+        const dialogRef = this._dialog.open(
+            AddAddressComponent, {
+                width: this.currentScreenSize.includes('sm') ? 'auto' : '100%',
+                height: this.currentScreenSize.includes('sm') ? 'auto' : '100%',
+                maxWidth: this.currentScreenSize.includes('sm') ? 'auto' : '100vw',  
+                maxHeight: this.currentScreenSize.includes('sm') ? 'auto' : '100vh',
+                disableClose: true,
+                data: { store: this.store } 
+                });
+        
+        dialogRef.afterClosed().subscribe(result =>{
+            if (result.selectAddress === true) {
+                
+                // select the address
+                this.selectAddress(result.address)
+
+                this.scrollToLeft(htmlContainer);
+
+                // if first address, set as default
+                if (this.customerAddresses.length === 1) {
+                    this.setDefaultAddress(result.address)
+                }
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            }
+        });
+    }
+
+    setCustomerDetails() {
+        const formData = this.checkoutForm.getRawValue();
+
+        this.checkoutForm.get("address").patchValue(formData.customerAddress.address)
+        this.checkoutForm.get("city").patchValue(formData.customerAddress.city)
+        this.checkoutForm.get("email").patchValue(formData.customerAddress.email)
+        this.checkoutForm.get("phoneNumber").patchValue(formData.customerAddress.phoneNumber)
+        this.checkoutForm.get('fullName').patchValue(formData.customerAddress.name)
+        this.checkoutForm.get("state").patchValue(formData.customerAddress.state)
+        this.checkoutForm.get("postCode").patchValue(formData.customerAddress.postCode)
+
+    }
+
+    deleteAddress(address: Address, index: any) {
+
+        index === undefined ? index = 0 : index = index;            
+
+        if (address.id === this.defaultAddress) {
+
+            const confirmation = this._fuseConfirmationService.open({
+                "title": "Unable to Delete Address",
+                "message": "You cannot delete default address",
+                "icon": {
+                  "show": true,
+                  "name": "heroicons_outline:exclamation",
+                  "color": "warn"
+                },
+                "actions": {
+                  "confirm": {
+                    "show": true,
+                    "label": "OK",
+                    "color": "warn"
+                  },
+                  "cancel": {
+                    "show": false,
+                    "label": "Cancel"
+                  }
+                },
+                "dismissible": true
+              });
+        }
+        else {
+            
+            const confirmation = this._fuseConfirmationService.open({
+                title  : 'Delete Address',
+                message: 'Are you sure you want to delete this address?',
+                icon:{
+                    name:"mat_outline:delete_forever",
+                    color:"primary"
+                },
+                actions: {
+                    confirm: {
+                        label: 'Delete',
+                        color: 'primary'
+                    }
+                }
+            });
+            // Subscribe to the confirmation dialog closed action
+            confirmation.afterClosed().subscribe((result) => {
+    
+                // If the confirm button pressed...
+                if ( result === 'confirmed' )
+                {
+
+
+                    // Delete the customer on the server
+                    this._userService.deleteCustomerAddress(address.id).subscribe((response) => {
+
+                        if (this.customerAddresses.length > 0) {
+                            this.checkoutForm.get('customerAddress').patchValue(this.customerAddresses[0]);
+                        }
+                        else {
+                            this.checkoutForm.get('customerAddress').patchValue('');
+                        }
+
+                        // Mark for check
+                        this._changeDetectorRef.markForCheck();
+    
+                    });
+                }
+            });
+        }
+
+    }
+
 }

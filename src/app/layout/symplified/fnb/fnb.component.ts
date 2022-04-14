@@ -464,12 +464,11 @@ export class FnbLayoutComponent implements OnDestroy
     }
 
     customerLogin(){
-        // this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + 
-        //     '?redirectUrl=' + encodeURI('https://' + this.platform.url);
 
+        // // Set cookie for testing
         // this._cookieService.set('CustomerId','bd421a78-fc36-4691-a5e5-38278e0a4245');
-        // this._cookieService.set('AccessToken','W0JAMjIxMWIyZmI=');
-        // this._cookieService.set('RefreshToken','W0JAN2FkZjI5YjU=');
+        // this._cookieService.set('AccessToken','W0JAMTI5ZTE3NDg=');
+        // this._cookieService.set('RefreshToken','W0JANTQwOGY0ZmU=');
 
         this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + 
             '?redirectUrl=' + encodeURI('https://' + this.sanatiseUrl + this._router.url);
@@ -481,6 +480,11 @@ export class FnbLayoutComponent implements OnDestroy
         this._authService.signOut();
 
         // this._cookieService.deleteAll('/catalogue');
+
+        // // for localhost testing
+        // this._cookieService.delete('CustomerId');
+        // this._cookieService.delete('RefreshToken');
+        // this._cookieService.delete('AccessToken');
 
         this._cookieService.delete('CustomerId','/', this._apiServer.settings.storeFrontDomain);
         this._cookieService.delete('RefreshToken','/', this._apiServer.settings.storeFrontDomain);
