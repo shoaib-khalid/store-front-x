@@ -9,6 +9,20 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v1.3.0
+        {
+            version    : 'v1.3.0',
+            releaseDate: 'Apr 15, 2022',
+            changes    : [
+                {
+                    type: 'Added',
+                    list: [
+                        '(CheckoutPage) KB-1373 Added address management for logged in user',
+                        '(CheckoutPage) KB-1355 Added voucher redeem and selection for logged in user'
+                    ]
+                }
+            ]
+        },
         // v1.2.0
         {
             version    : 'v1.2.0',
