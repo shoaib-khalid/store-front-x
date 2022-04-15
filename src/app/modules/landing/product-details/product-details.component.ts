@@ -447,7 +447,7 @@ export class LandingProductDetailsComponent implements OnInit
         this._cartService.postCartItem(this._cartService.cartId$, cartItemBody)
             .subscribe(()=>{
                 const confirmation = this._fuseConfirmationService.open({
-                    "title": "Great",
+                    "title": "Great!",
                     "message": "Item successfully added to cart",
                     "icon": {
                       "show": true,
@@ -457,8 +457,30 @@ export class LandingProductDetailsComponent implements OnInit
                     "actions": {
                       "confirm": {
                         "show": true,
-                        "label": "Okay",
+                        "label": "OK",
                         "color": "primary"
+                      },
+                      "cancel": {
+                        "show": false,
+                        "label": "Cancel"
+                      }
+                    },
+                    "dismissible": true
+                  });
+            }, (error) => {
+                const confirmation = this._fuseConfirmationService.open({
+                    "title": "Out of Stock!",
+                    "message": "Sorry, this item is currently out of stock",
+                    "icon": {
+                      "show": true,
+                      "name": "heroicons_outline:exclamation",
+                      "color": "warn"
+                    },
+                    "actions": {
+                      "confirm": {
+                        "show": true,
+                        "label": "OK",
+                        "color": "warn"
                       },
                       "cancel": {
                         "show": false,

@@ -13,7 +13,7 @@ import { CheckoutService } from './checkout.service';
 import { CheckoutValidationService } from './checkout.validation.service';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ChooseDeliveryAddressComponent } from './choose-delivery-address/choose-delivery-address.component';
-import { Address, CartDiscount, DeliveryProvider, DeliveryProviderGroup, Order, Payment } from './checkout.types';
+import { Address, CartDiscount, CustomerVoucher, CustomerVoucherPagination, DeliveryProvider, DeliveryProviderGroup, Order, Payment, UsedCustomerVoucherPagination, Voucher } from './checkout.types';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { ModalConfirmationDeleteItemComponent } from './modal-confirmation-delete-item/modal-confirmation-delete-item.component';
@@ -53,6 +53,10 @@ import { EditAddressComponent } from './edit-address/edit-address.component';
             :host ::ng-deep .mat-expansion-panel-body {
                 padding: 0px;
             }
+
+            :host ::ng-deep .mat-form-field.mat-form-field-appearance-fill.fuse-mat-dense .mat-form-field-wrapper .mat-form-field-flex {
+                min-height: 42px
+            }
         `
     ]
 })
@@ -89,7 +93,15 @@ export class LandingCheckoutComponent implements OnInit
         deliveryDiscount: 0,
         deliveryDiscountDescription: null,
         deliveryDiscountMaxAmount: 0,
-        cartGrandTotal: 0
+        cartGrandTotal: 0,
+        voucherDeliveryDiscount: 0,
+        voucherDeliveryDiscountDescription: null,
+        voucherDiscountCalculationType: null,
+        voucherDiscountCalculationValue: 0,
+        voucherDiscountMaxAmount: 0,
+        voucherDiscountType: null,
+        voucherSubTotalDiscount: 0,
+        voucherSubTotalDiscountDescription: null,
     }
 
     paymentCompletionStatus: {id: "CALCULATE_CHARGES", label: "Calculate Charges"} | {id: "PLACE_ORDER", label: "Place Order"} | {id: "ONLINE_PAY", label: "Pay Now"};
@@ -117,8 +129,19 @@ export class LandingCheckoutComponent implements OnInit
     customerAddresses: Address[] = [];
     defaultAddress: string = '';
     panelOpenState: boolean = false;
+    dialingCode: string;
 
+    // Voucher
+    
+    customerVouchers: CustomerVoucher[] = [] ;
+    customerVoucherPagination: CustomerVoucherPagination;
 
+    usedCustomerVouchers: CustomerVoucher[] = [] ;
+    usedCustomerVoucherPagination: UsedCustomerVoucherPagination;
+    promoCode: string = '';
+    voucherApplied: any = null;
+    voucherDiscountAppliedMax: number = 0;
+    voucherDiscountApplied: number = 0;
     /**
      * Constructor
      */
@@ -174,6 +197,7 @@ export class LandingCheckoutComponent implements OnInit
                 this.checkoutForm.get('email').patchValue(user.email);
                 this.checkoutForm.get('fullName').patchValue(user.name);
                 // this.checkoutForm.get('phoneNumber').patchValue(user.);  
+                this.checkoutForm.get("id").patchValue(user.id);
                 
                 // Get customer Addresses
                 this._userService.getCustomerAddress(user.id)
@@ -215,6 +239,25 @@ export class LandingCheckoutComponent implements OnInit
         this._storesService.store$
             .subscribe((response: Store) => {
                 this.store = response;
+
+                // -------------------------
+                // Set Dialing code
+                // -------------------------
+                
+                let countryId = this.store.regionCountry.id;
+                
+                switch (countryId) {
+                    case 'MYS':
+                        this.dialingCode = '+60'
+                        break;
+                
+                    case 'PAK':
+                        this.dialingCode = '+92'
+                        break;
+
+                    default:
+                        break;
+                }
 
                 // -----------------------
                 // Store Timings & Snooze
@@ -333,6 +376,42 @@ export class LandingCheckoutComponent implements OnInit
                 this._changeDetectorRef.markForCheck();
             });
 
+        // ----------------------
+        // Voucher
+        // ----------------------
+
+        // Get used customer voucher
+        this._checkoutService.customerVouchers$
+        .subscribe((response: CustomerVoucher[]) => {
+
+            this.customerVouchers = response;
+            
+            // Mark for check
+            this._changeDetectorRef.markForCheck();
+        });
+
+        // Get customer voucher pagination, isUsed = false 
+        this._checkoutService.customerVoucherPagination$
+        .pipe(takeUntil(this._unsubscribeAll))
+        .subscribe((response: CustomerVoucherPagination) => {
+
+            this.customerVoucherPagination = response; 
+            
+            // Mark for check
+            this._changeDetectorRef.markForCheck();           
+        });
+
+        // Get used customer voucher pagination, isUsed = true 
+        this._checkoutService.usedCustomerVoucherPagination$
+        .pipe(takeUntil(this._unsubscribeAll))
+        .subscribe((response: UsedCustomerVoucherPagination) => {
+
+            this.usedCustomerVoucherPagination = response;
+            
+            // Mark for check
+            this._changeDetectorRef.markForCheck();
+        });
+
     }
     
     /**
@@ -374,9 +453,11 @@ export class LandingCheckoutComponent implements OnInit
                 .subscribe((response)=>{
 
                     // recheck the getDiscountOfCart
-                    this._checkoutService.getDiscountOfCart(this._cartService.cartId$, this.selectedDeliveryProvider.refId, this.selectedDeliveryProvider.deliveryType)
+                    this._checkoutService.getDiscountOfCart(this._cartService.cartId$, this.selectedDeliveryProvider?.refId, this.selectedDeliveryProvider?.deliveryType, this.voucherApplied?.voucher.voucherCode, this.user.id)
                         .subscribe((response)=>{
                             this.paymentDetails = {...this.paymentDetails, ...response};
+
+                            // this.addressFormChanges();
                         });
                 });
         }
@@ -455,6 +536,10 @@ export class LandingCheckoutComponent implements OnInit
 
         // Set Payment Completion Status "Calculate Charges"
         this.paymentCompletionStatus = { id:"CALCULATE_CHARGES", label: "Calculate Charges" };
+
+        // Set back voucher related field to 0
+        this.paymentDetails.voucherSubTotalDiscount = 0;
+        this.paymentDetails.voucherDeliveryDiscount = 0;
 
         // Mark for check
         this._changeDetectorRef.markForCheck();
@@ -595,9 +680,10 @@ export class LandingCheckoutComponent implements OnInit
                         } else {
 
                             // get getDiscountOfCart
-                            this._checkoutService.getDiscountOfCart(this._cartService.cartId$, this.selectedDeliveryProvider.refId, this.selectedDeliveryProvider.deliveryType)
+                            this._checkoutService.getDiscountOfCart(this._cartService.cartId$, this.selectedDeliveryProvider.refId, this.selectedDeliveryProvider.deliveryType, this.voucherApplied?.voucher.voucherCode, this.user?.id)
                                 .subscribe((response)=>{
                                     this.paymentDetails = {...this.paymentDetails, ...response};
+                                    
                                 });
         
                             // set price (this is based on delivery service api getPrice)
@@ -649,7 +735,7 @@ export class LandingCheckoutComponent implements OnInit
                 });
         } else {
             // Get discount for store pickup    
-            this._checkoutService.getDiscountOfCart(this._cartService.cartId$, null, "PICKUP")
+            this._checkoutService.getDiscountOfCart(this._cartService.cartId$, null, "PICKUP", this.voucherApplied?.voucher.voucherCode, this.user.id)
                 .subscribe((response)=>{
                     this.paymentDetails = {...this.paymentDetails, ...response};
 
@@ -751,7 +837,7 @@ export class LandingCheckoutComponent implements OnInit
 
             } else {
 
-                this._checkoutService.getDiscountOfCart(this._cartService.cartId$, this.selectedDeliveryProvider.refId, this.selectedDeliveryProvider.deliveryType)
+                this._checkoutService.getDiscountOfCart(this._cartService.cartId$, this.selectedDeliveryProvider.refId, this.selectedDeliveryProvider.deliveryType,  this.voucherApplied?.voucher.voucherCode, this.user.id)
                     .subscribe((response: CartDiscount)=>{
                         this.paymentDetails = {...this.paymentDetails, ...response};
 
@@ -792,6 +878,7 @@ export class LandingCheckoutComponent implements OnInit
             orderPaymentDetails: {
                 accountName: this.checkoutForm.get('fullName').value, // ni mace saloh
                 deliveryQuotationReferenceId: (this.checkoutForm.get('storePickup').value === false) ? this.selectedDeliveryProvider.refId : null, // deliveryQuotationReferenceId not needed if it's a store pickup
+                couponId: this.voucherApplied?.voucher.voucherCode,
             },
             orderShipmentDetails: {
                 address:  this.checkoutForm.get("address").value,
@@ -1217,6 +1304,8 @@ export class LandingCheckoutComponent implements OnInit
         this.panelOpenState = false;
         
         this.setCustomerDetails();
+        // Change button to Calculate Charges
+        this.addressFormChanges();
         
     }
 
@@ -1331,10 +1420,14 @@ export class LandingCheckoutComponent implements OnInit
                     this._userService.deleteCustomerAddress(address.id).subscribe((response) => {
 
                         if (this.customerAddresses.length > 0) {
-                            this.checkoutForm.get('customerAddress').patchValue(this.customerAddresses[0]);
+                            // this.checkoutForm.get('customerAddress').patchValue(this.customerAddresses[0]);
+                            this.selectAddress(this.customerAddresses[0])
                         }
                         else {
                             this.checkoutForm.get('customerAddress').patchValue('');
+                            // Change button to Calculate Charges
+                            this.addressFormChanges();
+
                         }
 
                         // Mark for check
@@ -1347,4 +1440,88 @@ export class LandingCheckoutComponent implements OnInit
 
     }
 
+    redeemPromoCode() {
+
+        this._checkoutService.postCustomerClaimVoucher(this.user.id, this.promoCode)
+            .subscribe((response) => {
+                // if voucher is valid
+                this.promoCode = '';
+                const confirmation = this._fuseConfirmationService.open({
+                    "title": "Congratulations!",
+                    "message": "Promo code successfully added",
+                    "icon": {
+                      "show": true,
+                      "name": "heroicons_outline:check",
+                      "color": "success"
+                    },
+                    "actions": {
+                      "confirm": {
+                        "show": true,
+                        "label": "Okay",
+                        "color": "primary"
+                      },
+                      "cancel": {
+                        "show": false,
+                        "label": "Cancel"
+                      }
+                    },
+                    "dismissible": true
+                  });
+                
+            }, (error) => {
+
+                // if voucher is invalid
+                this.promoCode = '';
+
+                if (error['status'] != 404) {
+
+                    const confirmation = this._fuseConfirmationService.open({
+                        "title": "Voucher already redeemed!",
+                        "message": "Please enter different code",
+                        "icon": {
+                          "show": true,
+                          "name": "heroicons_outline:exclamation",
+                          "color": "warn"
+                        },
+                        "actions": {
+                          "confirm": {
+                            "show": true,
+                            "label": "OK",
+                            "color": "warn"
+                          },
+                          "cancel": {
+                            "show": false,
+                            "label": "Cancel"
+                          }
+                        },
+                        "dismissible": true
+                      });
+
+                }
+            });
+        
+    }
+
+    selectVoucher(voucher: any) {
+        
+        this.voucherApplied = voucher;
+
+        // this.calculateCharges();
+                    
+        this.voucherDiscountAppliedMax = voucher.voucher.discountValue;
+
+        // voucherCode & customerId
+
+        // change button to Calculate Charges
+        this.addressFormChanges();
+    }
+
+    deselectVoucher() {
+        this.voucherApplied = null;
+        this.voucherDiscountAppliedMax = 0;
+
+        // change button to Calculate Charges
+        this.addressFormChanges();
+        
+    }
 }
