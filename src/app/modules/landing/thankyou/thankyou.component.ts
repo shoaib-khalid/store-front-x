@@ -49,8 +49,10 @@ export class LandingThankyouComponent
         this.completionStatus = this._activatedRoute.snapshot.paramMap.get('completion-status');
         
         if(this.completionStatus === "Payment_was_successful" || this.completionStatus === "ORDER_CONFIRMED") {
-            this._cartService.deleteCartbyId(currentCartId).subscribe((response) => {
-            });
+            // this._cartService.deleteCartbyId(currentCartId).subscribe((response) => {
+            // });
+
+            this._cartService.cartId = '';
             
             this._cartService.createCart(createCartBody)
             .subscribe((cart: Cart)=>{
