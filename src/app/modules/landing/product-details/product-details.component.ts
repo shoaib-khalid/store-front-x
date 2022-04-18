@@ -547,7 +547,6 @@ export class LandingProductDetailsComponent implements OnInit
                 // reorder image collection 
                 this.galleryImages = [];
                 this.imageCollection = [];
-
                 this.productAssets = assetsArr;
 
                 // rearrange imageCollection 
