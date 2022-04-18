@@ -41,7 +41,7 @@ import { FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/f
 
             @screen sm {
                 position: relative;
-                z-index: 35;
+                z-index: 50;
             }
         }
 

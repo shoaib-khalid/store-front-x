@@ -453,7 +453,7 @@ export class LandingCheckoutComponent implements OnInit
                 .subscribe((response)=>{
 
                     // recheck the getDiscountOfCart
-                    this._checkoutService.getDiscountOfCart(this._cartService.cartId$, this.selectedDeliveryProvider?.refId, this.selectedDeliveryProvider?.deliveryType, this.voucherApplied?.voucher.voucherCode, this.user.id)
+                    this._checkoutService.getDiscountOfCart(this._cartService.cartId$, this.selectedDeliveryProvider?.refId, this.selectedDeliveryProvider?.deliveryType, this.voucherApplied?.voucher.voucherCode, this.user?.id)
                         .subscribe((response)=>{
                             this.paymentDetails = {...this.paymentDetails, ...response};
 
@@ -1522,6 +1522,10 @@ export class LandingCheckoutComponent implements OnInit
 
         // change button to Calculate Charges
         this.addressFormChanges();
-        
+    }
+
+    redirect(pagename: string) {
+        // this._route.snapshot.paramMap.get(pagename)
+        this._router.navigate([window.location.href = pagename]);
     }
 }

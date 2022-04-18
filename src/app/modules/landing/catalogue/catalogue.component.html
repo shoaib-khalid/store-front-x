@@ -1,120 +1,64 @@
 <div class="relative flex flex-col items-center w-full h-full">
     <!-- Main menu -->
-    <div class="flex flex-col items-center w-full h-auto my-5">
-        <!-- Search For xs view Mobile -->
-        <ng-container *ngIf="!currentScreenSize.includes('md')">
-            <mat-form-field class="w-full fuse-mat-emphasized-affix min-w-64">
-                <input
-                    matInput
-                    [formControl]="searchInputControl"
-                    [autocomplete]="'off'"
-                    [placeholder]="'Search products'">
-                <mat-icon
-                class="icon-size-4 text-primary"
-                matSuffix
-                [svgIcon]="'search'"></mat-icon>
-            </mat-form-field>
-        </ng-container>
-        <!-- categories for xs view mobile -->
-        <div class="md:hidden w-full truncate ">
-            <div class="flex flex-nowrap items-center overflow-x-scroll">
-                <div class="flex flex-wrap items-center p-0.5">
-                    <input 
-                        [id]="'categories-btn-all-product'" 
-                        type="button" 
-                        class="w-0 h-0 invisible"
-                        (click)="changeCatalogue('')">
-                    <label
-                        class="font-bold p-2.5 rounded-full cursor-pointer"
-                        [ngClass]="{'bg-black text-primary' : !storeCategory,
-                                    'bg-primary text-black' : storeCategory}"
-                        [for]="'categories-btn-all-product'"
-                    >
-                        <span class="">All Products</span>
-                    </label>
-                </div>
-                <div *ngFor="let category of storeCategories" class="justify-around pl-3">
-                    <input 
-                        [id]="'categories-btn-' + category.id" 
-                        [value]="getCategorySlug(category.name)"
-                        type="button" 
-                        class="w-0 h-0 invisible"
-                        (click)="changeCatalogue($event.target.value, $event)">
-                    <label
-                        class="font-bold p-3 rounded-full cursor-pointer"
-                        [ngClass]="{
-                                    'bg-amber-500 text-black' : !storeCategory,
-                                    'bg-black text-primary' : (storeCategory && storeCategory.id === category.id),
-                                    'bg-primary text-black' : (storeCategory && storeCategory.id !== category.id)      
-                                    }"
-                        [for]="'categories-btn-' + category.id"
-                    >
-                        <span class="">{{category.name}}</span>
-                    </label>
-                </div>
-            </div>
-        </div>
-        <!-- Sort -->
-        <div class="flex flex-row items-center justify-between md:justify-end mt-2 md:mt-0 w-full">
-            <mat-select
-                class="order-1 md:order-2 border border-gray-300 w-40 p-2 rounded text-sm"
-                placeholder="Sort by name"
-                [formControl]="sortInputControl"
-                #sortSelector="matSelect"
-                >
-                <mat-select-trigger>
-                    <span class="flex items-center">
-                        <span>{{ sortSelector.triggerValue }}</span>
-                    </span>
-                </mat-select-trigger>
-                <ng-container>
-                    <mat-option [value]="'recent'">Most Recent</mat-option>
-                    <mat-option [value]="'cheapest'">Price : Cheapest</mat-option>
-                    <mat-option [value]="'expensive'">Price : Most Expensive</mat-option>
-                    <mat-option [value]="'a-z'">Name : Ascending</mat-option>
-                    <mat-option [value]="'z-a'">Name : Descending</mat-option>
-                </ng-container>
-            </mat-select>
-
-            <div class="flex flex-row order-2 sm:order-1">
-                <!-- Grid view -->
-                <input
-                    id="grid-view-button"
-                    type="button"
-                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                    (click)="productViewOrientation = 'grid'"
-                    mat-button>
-                <label 
-                    class="flex items-center justify-center h-10 px-1 cursor-pointer mr-1"
-                    for="grid-view-button"
-                    matRipple>
-                    <mat-icon
-                        [ngClass]="productViewOrientation === 'grid' ? 'text-black dark:text-white' : 'text-gray'"
-                        class="icon-size-4"
-                        [svgIcon]="'block-view'"></mat-icon>
-                </label>
-
-                <!-- List view -->
-                <input
-                    id="list-view-button"
-                    type="button"
-                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                    (click)="productViewOrientation = 'list'"
-                    mat-button>
-                <label 
-                    class="flex items-center justify-center h-10 px-1 cursor-pointer sm:mr-2"
-                    for="list-view-button"
-                    matRipple>
-                    <mat-icon
-                        [ngClass]="productViewOrientation === 'list' ? 'text-black dark:text-white' : 'text-gray'"
-                        class="icon-size-4"
-                        [svgIcon]="'list-view'"></mat-icon>
-                </label>
-            </div>
-        </div>
+    <div class="flex flex-col items-center w-full h-auto p-2 sm:px-0">
 
         <!-- Container -->
-        <div class="flex flex-col md:flex-row justify-between mt-4 w-full">
+        <div class="flex flex-col md:flex-row justify-between w-full md:mt-14">
+            
+            <!-- Search For xs view Mobile -->
+            <ng-container *ngIf="!currentScreenSize.includes('md')">
+                <mat-form-field class="w-full fuse-mat-emphasized-affix min-w-64">
+                    <input
+                        matInput
+                        [formControl]="searchInputControl"
+                        [autocomplete]="'off'"
+                        [placeholder]="'Search products'">
+                    <mat-icon
+                    class="icon-size-4 text-primary"
+                    matSuffix
+                    [svgIcon]="'search'"></mat-icon>
+                </mat-form-field>
+            </ng-container>
+            <!-- categories for xs view mobile -->
+            <div class="md:hidden w-full truncate ">
+                <div class="flex flex-nowrap items-center overflow-x-scroll">
+                    <div class="flex flex-wrap items-center p-0.5">
+                        <input 
+                            [id]="'categories-btn-all-product'" 
+                            type="button" 
+                            class="w-0 h-0 invisible"
+                            (click)="changeCatalogue('')">
+                        <label
+                            class="font-bold p-2.5 rounded-full cursor-pointer"
+                            [ngClass]="{'bg-black text-primary' : !storeCategory,
+                                        'bg-primary text-black' : storeCategory}"
+                            [for]="'categories-btn-all-product'"
+                        >
+                            <span class="">All Products</span>
+                        </label>
+                    </div>
+                    <div *ngFor="let category of storeCategories" class="justify-around pl-3">
+                        <input 
+                            [id]="'categories-btn-' + category.id" 
+                            [value]="getCategorySlug(category.name)"
+                            type="button" 
+                            class="w-0 h-0 invisible"
+                            (click)="changeCatalogue($event.target.value, $event)">
+                        <label
+                            class="font-bold p-3 rounded-full cursor-pointer"
+                            [ngClass]="{
+                                        'bg-amber-500 text-black' : !storeCategory,
+                                        'bg-black text-primary' : (storeCategory && storeCategory.id === category.id),
+                                        'bg-primary text-black' : (storeCategory && storeCategory.id !== category.id)      
+                                        }"
+                            [for]="'categories-btn-' + category.id"
+                        >
+                            <span class="">{{category.name}}</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
             <!-- Search & Filter -->
             <ng-container *ngIf="currentScreenSize.includes('md')">
                 <div class="flex flex-col lg:pr-6">
@@ -216,7 +160,67 @@
             </ng-container>
 
             <!-- Products -->
-            <div class="flex flex-col md:flex-wrap relative w-full md:px-4">
+            <div class="flex flex-col md:flex-wrap relative w-full md:pl-4">
+
+                <!-- Sort -->
+                <div class="flex flex-row items-start justify-between md:justify-end mt-2 md:mt-0 md:mb-2 w-full">
+                    <mat-select
+                        class="order-1 md:order-2 border border-gray-300 w-40 p-2 rounded text-sm"
+                        placeholder="Sort by name"
+                        [formControl]="sortInputControl"
+                        #sortSelector="matSelect"
+                        >
+                        <mat-select-trigger>
+                            <span class="flex items-center">
+                                <span>{{ sortSelector.triggerValue }}</span>
+                            </span>
+                        </mat-select-trigger>
+                        <ng-container>
+                            <mat-option [value]="'recent'">Most Recent</mat-option>
+                            <mat-option [value]="'cheapest'">Price : Cheapest</mat-option>
+                            <mat-option [value]="'expensive'">Price : Most Expensive</mat-option>
+                            <mat-option [value]="'a-z'">Name : Ascending</mat-option>
+                            <mat-option [value]="'z-a'">Name : Descending</mat-option>
+                        </ng-container>
+                    </mat-select>
+        
+                    <div class="flex flex-row order-2 sm:order-1">
+                        <!-- Grid view -->
+                        <input
+                            id="grid-view-button"
+                            type="button"
+                            class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                            (click)="productViewOrientation = 'grid'"
+                            mat-button>
+                        <label 
+                            class="flex items-center justify-center h-10 px-1 cursor-pointer mr-1"
+                            for="grid-view-button"
+                            matRipple>
+                            <mat-icon
+                                [ngClass]="productViewOrientation === 'grid' ? 'text-black dark:text-white' : 'text-gray'"
+                                class="icon-size-4"
+                                [svgIcon]="'block-view'"></mat-icon>
+                        </label>
+        
+                        <!-- List view -->
+                        <input
+                            id="list-view-button"
+                            type="button"
+                            class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                            (click)="productViewOrientation = 'list'"
+                            mat-button>
+                        <label 
+                            class="flex items-center justify-center h-10 px-1 cursor-pointer sm:mr-2"
+                            for="list-view-button"
+                            matRipple>
+                            <mat-icon
+                                [ngClass]="productViewOrientation === 'list' ? 'text-black dark:text-white' : 'text-gray'"
+                                class="icon-size-4"
+                                [svgIcon]="'list-view'"></mat-icon>
+                        </label>
+                    </div>
+                </div>
+
                 <ng-container *ngIf="(products$ | async) as products">
                     <ng-container *ngIf="products.length > 0; else noProduct">
                         <ng-container *ngIf="isLoading === false; else productLoading">
