@@ -15,9 +15,9 @@
                 <div class="flex items-center w-full p-4 pl-6">
                     <!-- Logo -->
                     <div class="flex items-center justify-start">
-                        <!-- <img
+                        <img
                             class="w-1/2 py-1"
-                            [src]="platform.logoDark"> -->
+                            [src]="platform.logoDark">
                     </div>
                     <!-- Components -->
                     <div class="flex items-center ml-auto">
@@ -70,14 +70,14 @@
                     </ng-container>
     
                     <!-- Logo -->
-                    <div class="flex items-center ml-6">
+                    <div class="flex items-center md:ml-0 ml-6">
                         <!-- <img
                             class="hidden md:block w-24"
                             [src]="platform.logo"
                             alt="Logo image"> -->
                         <img
                             class="h-18 cursor-pointer"
-                            [routerLink]="'/'"
+                            [routerLink]="'/home'"
                             [src]="displayStoreLogo(store.storeAssets)"
                             alt="Logo image">
                         <span class="block md:hidden">{{headerTitle}}</span>
@@ -93,6 +93,11 @@
                         </div>
                         <cart></cart>
                         <user *ngIf="!isScreenSmall"></user>
+                        <ng-container *ngIf="!isScreenSmall">
+                            <div class="ml-4 text-medium font-medium leading-5 truncate">
+                                {{displayUsername}}
+                            </div>
+                        </ng-container>
                     </div>
                 </div>
             </div>

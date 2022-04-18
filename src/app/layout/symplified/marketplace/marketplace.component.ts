@@ -10,6 +10,8 @@ import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
 import { Store, StoreAssets } from 'app/core/store/store.types';
 import { StoresService } from 'app/core/store/store.service';
+import { PlatformService } from 'app/core/platform/platform.service';
+import { Platform } from 'app/core/platform/platform.types';
 
 @Component({
     selector     : 'marketplace-layout',
@@ -25,9 +27,11 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
     navigation: Navigation;
 
     headerTitle: string;
+    displayUsername: string ='';
 
     public version: string = environment.appVersion;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
+    platform: Platform;
 
     /**
      * Constructor
@@ -40,7 +44,9 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
         private _userService: UserService,
         private _navigationService: NavigationService,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
-        private _fuseNavigationService: FuseNavigationService
+        private _fuseNavigationService: FuseNavigationService,
+        private _platformsService: PlatformService
+
     )
     {
         this.headerTitle = this.getHeaderTitle(this._activatedRoute.root); 
@@ -127,6 +133,8 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
             .pipe((takeUntil(this._unsubscribeAll)))
             .subscribe((user: User) => {
                 this.user = user;
+                this.displayUsername = this.textTruncate(user.name, 12)
+
             });
 
         // Subscribe to media changes
@@ -136,6 +144,13 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
 
                 // Check if the screen is small
                 this.isScreenSmall = !matchingAliases.includes('md');
+            });
+
+        // Subscribe to platform data
+        this._platformsService.platform$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((platform: Platform) => {
+                this.platform = platform;
             });
     }
 
@@ -222,6 +237,20 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
     reload(){
         this._router.routeReuseStrategy.shouldReuseRoute = () => false;
         this._router.onSameUrlNavigation = 'reload';
+    }
+
+    textTruncate(str, length, ending?:any){
+        if (length == null) {
+            length = 100;
+          }
+          if (ending == null) {
+            ending = '...';
+          }
+          if (str.length > length) {
+            return str.substring(0, length - ending.length) + ending;
+          } else {
+            return str;
+          }  
     }
 
 }

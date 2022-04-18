@@ -17,6 +17,7 @@ import { IpAddressService } from 'app/core/ip-address/ip-address.service';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { AppConfig } from 'app/config/service.config';
+import { PlatformService } from './core/platform/platform.service';
 
 @Injectable({
     providedIn: 'root'
@@ -236,5 +237,35 @@ export class MainDataResolver implements Resolve<any>
         return forkJoin([
             this._ipAddressService.getIPAddress(),
         ]);
+    }
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class PlatformSetupResolver implements Resolve<any>
+{
+    /**
+     * Constructor
+     */
+    constructor(
+        private _platformsService: PlatformService
+    )
+    {
+    }
+
+    // -----------------------------------------------------------------------------------------------------
+    // @ Public methods
+    // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Use this resolver to resolve initial mock-api for the application
+     *
+     * @param route
+     * @param state
+     */
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any>
+    {
+        return this._platformsService.set();
     }
 }

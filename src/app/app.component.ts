@@ -11,6 +11,7 @@ import { CookieService } from 'ngx-cookie-service'
 import { AuthService } from './core/auth/auth.service';
 import { JwtService } from './core/jwt/jwt.service';
 import { UserService } from './core/user/user.service';
+import { Subject, takeUntil } from 'rxjs';
 
 declare let gtag: Function;
 
@@ -33,6 +34,7 @@ export class AppComponent
     favIcon16: HTMLLinkElement = document.querySelector('#appIcon16');
     favIcon32: HTMLLinkElement = document.querySelector('#appIcon32');
 
+    private _unsubscribeAll: Subject<any> = new Subject<any>();
     /**
      * Constructor
      */
@@ -102,6 +104,7 @@ export class AppComponent
         
         // Get current store
         this._storesService.store$
+        .pipe(takeUntil(this._unsubscribeAll))
         .subscribe((response: Store)=>{            
             if (response) {
                 this.store = response;

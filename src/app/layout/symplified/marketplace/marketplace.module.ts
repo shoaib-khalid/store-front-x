@@ -19,10 +19,12 @@ import { CartModule } from 'app/layout/common/cart/cart.module';
 import { SharedModule } from 'app/shared/shared.module';
 import { MarketplaceLayoutComponent } from 'app/layout/symplified/marketplace/marketplace.component';
 import { BreadcrumbModule } from 'app/layout/common/breadcrumb/breadcrumb.module';
+import { Error404Component } from 'app/shared/error/error-404/error-404.component';
 
 @NgModule({
     declarations: [
-        MarketplaceLayoutComponent
+        MarketplaceLayoutComponent,
+        Error404Component,
     ],
     imports     : [
         HttpClientModule,
@@ -43,7 +45,7 @@ import { BreadcrumbModule } from 'app/layout/common/breadcrumb/breadcrumb.module
         ShortcutsModule,
         UserModule,
         CartModule,
-        SharedModule
+        SharedModule,
     ],
     exports     : [
         MarketplaceLayoutComponent
