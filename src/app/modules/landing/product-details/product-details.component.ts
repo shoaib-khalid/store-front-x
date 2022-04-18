@@ -626,5 +626,4 @@ export class LandingProductDetailsComponent implements OnInit
                 this.quantity = this.maxQuantity;
         }
     }
-
 }
