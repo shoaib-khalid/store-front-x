@@ -10,7 +10,10 @@ import { Store, StoreAssets, StoreDiscount } from 'app/core/store/store.types';
 @Component({
     selector     : 'sliders',
     templateUrl  : './silders.component.html',
-    styles       : [``],
+    styles       : [`
+    .mat-tab-group .mat-tab-body-content {
+        padding: 0px;
+    }`],
     encapsulation: ViewEncapsulation.None
 })
 export class SlidersComponent implements OnInit
