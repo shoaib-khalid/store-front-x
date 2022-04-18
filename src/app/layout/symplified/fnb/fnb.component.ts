@@ -105,9 +105,7 @@ export class FnbLayoutComponent implements OnDestroy
     ngOnInit() {
 
         let fullUrl = (this._platformLocation as any).location.origin;
-
         this.sanatiseUrl = fullUrl.replace(/^(https?:|)\/\//, '').split(':')[0]; // this will get the domain from the URL
-
 
         this._storesService.store$
             .pipe(takeUntil(this._unsubscribeAll))
@@ -498,8 +496,6 @@ export class FnbLayoutComponent implements OnDestroy
     customerRegister(){
         // this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-up' +
         //     '?redirectUrl=' + encodeURI('https://' + this.platform.url);
-        
-        
     }
 
 }

@@ -18,7 +18,8 @@ import { SettingsModule } from 'app/layout/common/settings/settings.module';
 import { SharedModule } from 'app/shared/shared.module';
 
 // SYMplified 
-import { FnbLayoutModule } from 'app/layout/symplified/fnb/fnb.module'
+import { FnbLayoutModule } from 'app/layout/symplified/fnb/fnb.module';
+import { MarketplaceLayoutModule } from 'app/layout/symplified/marketplace/marketplace.module';
 import { HamburgerMenuModule } from './common/hamburger-menu/hamburger-menu.module';
 
 const layoutModules = [
@@ -40,7 +41,8 @@ const layoutModules = [
     ThinLayoutModule,
 
     // SYMplified 
-    FnbLayoutModule
+    FnbLayoutModule,
+    MarketplaceLayoutModule
 ];
 
 @NgModule({

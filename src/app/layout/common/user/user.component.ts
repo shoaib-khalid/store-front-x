@@ -1,10 +1,15 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, Input, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { BooleanInput } from '@angular/cdk/coercion';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { User } from 'app/core/user/user.types';
 import { UserService } from 'app/core/user/user.service';
+import { DOCUMENT, PlatformLocation } from '@angular/common';
+import { AuthService } from 'app/core/auth/auth.service';
+import { AppConfig } from 'app/config/service.config';
+import { CookieService } from 'ngx-cookie-service';
+import { CustomerAuthenticate } from 'app/core/auth/auth.types';
 
 @Component({
     selector       : 'user',
@@ -21,6 +26,10 @@ export class UserComponent implements OnInit, OnDestroy
 
     @Input() showAvatar: boolean = true;
     user: User;
+    customer:any;
+    customerAuthenticate: CustomerAuthenticate;
+
+    sanatiseUrl: string;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -28,8 +37,13 @@ export class UserComponent implements OnInit, OnDestroy
      * Constructor
      */
     constructor(
+        @Inject(DOCUMENT) private _document: Document,
+        private _platformLocation: PlatformLocation,
         private _changeDetectorRef: ChangeDetectorRef,
+        private _apiServer: AppConfig,
         private _router: Router,
+        private _authService: AuthService,
+        private _cookieService: CookieService,
         private _userService: UserService
     )
     {
@@ -44,6 +58,9 @@ export class UserComponent implements OnInit, OnDestroy
      */
     ngOnInit(): void
     {
+        let fullUrl = (this._platformLocation as any).location.origin;
+        this.sanatiseUrl = fullUrl.replace(/^(https?:|)\/\//, '').split(':')[0]; // this will get the domain from the URL
+
         // Subscribe to user changes
         this._userService.user$
             .pipe(takeUntil(this._unsubscribeAll))
@@ -53,6 +70,23 @@ export class UserComponent implements OnInit, OnDestroy
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
+
+        this._authService.customerAuthenticate$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((response: CustomerAuthenticate) => {
+                this.customerAuthenticate = response;
+
+                if (this.customerAuthenticate) {
+                    this._userService.get(this.customerAuthenticate.session.ownerId)
+                        .subscribe((response)=>{
+                            this.customer = response.data;
+                        });
+                }
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
+
     }
 
     /**
@@ -95,5 +129,50 @@ export class UserComponent implements OnInit, OnDestroy
     signOut(): void
     {
         this._router.navigate(['/sign-out']);
+    }
+ 
+    /**
+     * Edit Profile
+     */
+ 
+    editProfile(): void
+    {
+        this._router.navigate(['/profile']);
+    }
+
+    customerLogin(){
+        // // Set cookie for testing
+        // this._cookieService.set('CustomerId','bd421a78-fc36-4691-a5e5-38278e0a4245');
+        // this._cookieService.set('AccessToken','W0JAMTI5ZTE3NDg=');
+        // this._cookieService.set('RefreshToken','W0JANTQwOGY0ZmU=');
+
+        this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + 
+            '?redirectUrl=' + encodeURI('https://' + this.sanatiseUrl + this._router.url);
+    }
+
+    customerLogout(){
+
+        // Sign out
+        this._authService.signOut();
+
+        // this._cookieService.deleteAll('/catalogue');
+
+        // // for localhost testing
+        // this._cookieService.delete('CustomerId');
+        // this._cookieService.delete('RefreshToken');
+        // this._cookieService.delete('AccessToken');
+
+        this._cookieService.delete('CustomerId','/', this._apiServer.settings.storeFrontDomain);
+        this._cookieService.delete('RefreshToken','/', this._apiServer.settings.storeFrontDomain);
+        this._cookieService.delete('AccessToken','/', this._apiServer.settings.storeFrontDomain);
+
+        this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-out' +
+            '?redirectUrl=' + encodeURI('https://' + this.sanatiseUrl);
+        
+    }
+
+    customerRegister(){
+        this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-up' +
+            '?redirectUrl=' + encodeURI('https://' + this.sanatiseUrl);
     }
 }

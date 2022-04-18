@@ -87,6 +87,7 @@ export class StoreResolver implements Resolve<any>
         private _platformLocation: PlatformLocation,
         private _authService: AuthService,
         private _jwtService: JwtService,
+        private _navigationService: NavigationService,
         private _router: Router
     )
     {
@@ -127,7 +128,7 @@ export class StoreResolver implements Resolve<any>
      */
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any>
     {     
-        return this._storesService.getStoreByDomainName(this.url.domain).pipe(
+        return forkJoin([this._storesService.getStoreByDomainName(this.url.domain).pipe(
             take(1),
             switchMap(() => {
                 // check if store id exists
@@ -191,7 +192,9 @@ export class StoreResolver implements Resolve<any>
 
                 return of(true);
             })
-        );
+        ),
+        this._navigationService.get(),
+        ]);
     }
 
     getCartItems(cartId: string){        

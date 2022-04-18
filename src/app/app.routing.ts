@@ -60,7 +60,7 @@ export const appRoutes: Route[] = [
         path: '',
         component  : LayoutComponent,
         data: {
-            layout: 'fnb'
+            layout: 'marketplace'
         },
         resolve    : {
             products: ProductsResolver,
