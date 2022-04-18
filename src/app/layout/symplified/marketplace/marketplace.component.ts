@@ -87,8 +87,40 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
         this._navigationService.navigation$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((navigation: Navigation) => {
+                
                 this.navigation = navigation;
+                let navigationObjectIndex =  navigation.default.findIndex(item => item.id === 'product-categories' )
+                this._storesService.storeCategories$
+                    .pipe(takeUntil(this._unsubscribeAll))
+                    .subscribe((categories: any) => {
+                        
+                        this.navigation.default[navigationObjectIndex].children = [
+                            {
+                                id: 'all-products',
+                                title: 'All Products',
+                                type: "basic",
+                                exactMatch: true,
+                                link : '/catalogue/all-products',
+                                function: ()=> this.reload(),
+                                
+                            }
+                        ];
+                        categories.forEach(category => {
+                            let categorySlug = this.getCategorySlug(category.name)
+                            this.navigation.default[navigationObjectIndex].children.push( 
+                                {
+                                    id: categorySlug,
+                                    title: category.name,
+                                    type: "basic",
+                                    exactMatch: true,
+                                    link : '/catalogue/' + categorySlug,
+                                    function: ()=> this.reload()
+                                } 
+                             ) 
+                        })
+                    });
             });
+
 
         // Subscribe to the user service
         this._userService.user$
@@ -165,7 +197,7 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
         // If the route is dynamic route such as ':id', remove it
         const lastRoutePart = path.split('/').pop();
         const isDynamicRoute = lastRoutePart.startsWith(':');
-        if(isDynamicRoute && !!route.snapshot) {
+        if(isDynamicRoute && !!route.snapshot && route.routeConfig.data.headerTitle) {
             const paramName = lastRoutePart.split(':')[1];
             path = path.replace(lastRoutePart, route.snapshot.params[paramName]);
             label = route.snapshot.params[paramName];
@@ -182,4 +214,14 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
 
         return labelName;
     }
+
+    getCategorySlug(categoryName: string) {
+        return categoryName.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '');
+    }
+
+    reload(){
+        this._router.routeReuseStrategy.shouldReuseRoute = () => false;
+        this._router.onSameUrlNavigation = 'reload';
+    }
+
 }

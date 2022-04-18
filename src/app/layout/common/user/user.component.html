@@ -24,9 +24,21 @@
 </ng-container>
 <ng-template #notLoggedIn>
     <div class="flex flex-row pl-8 items-center">
-        <span (click)="customerLogin()" class="cursor-pointer hover:text-primary">Sign In</span>
+        <div class="flex items-center">
+            <span (click)="customerLogin()" class="hidden md:block cursor-pointer hover:text-primary">Sign In</span>
+            <mat-icon
+                (click)="customerLogin()"
+                class="block md:hidden cursor-pointer"
+                [svgIcon]="'mat_solid:login'"></mat-icon>
+        </div>
         <span> &nbsp; | &nbsp; </span>
-        <span (click)="customerRegister()" class="cursor-pointer hover:text-primary">Sign Up</span>
+        <div class="flex items-center">
+            <span (click)="customerRegister()" class="hidden md:block cursor-pointer hover:text-primary">Sign Up</span>
+            <mat-icon
+                (click)="customerRegister()"
+                class="block md:hidden cursor-pointer"
+                [svgIcon]="'heroicons_solid:user-add'"></mat-icon>
+        </div>
     </div>
 </ng-template>
 
