@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Inject, NgZone, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, NgForm, ValidationErrors, Validators } from '@angular/forms';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { DOCUMENT } from '@angular/common'; 
@@ -18,6 +18,7 @@ import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { ModalConfirmationDeleteItemComponent } from './modal-confirmation-delete-item/modal-confirmation-delete-item.component';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
+import { MapsAPILoader } from '@agm/core';
 
 @Component({
     selector     : 'landing-checkout',
@@ -63,6 +64,14 @@ export class LandingCheckoutComponent implements OnInit
     cartItems: CartItem[] = [];
     order: Order;
     payment: Payment;
+    latitude: number;
+    longitude: number;
+    zoom: number;
+    address: string;
+    private geoCoder;
+    
+    @ViewChild('search')
+    public searchElementRef: ElementRef;
 
     paymentDetails: CartDiscount = {
         cartSubTotal: 0,
@@ -117,12 +126,37 @@ export class LandingCheckoutComponent implements OnInit
         private _datePipe: DatePipe,
         private _dialog: MatDialog,
         private _router: Router,
+        private mapsAPILoader: MapsAPILoader,
+        private ngZone: NgZone,
         @Inject(DOCUMENT) document: Document
     )
     {
     }
 
     ngOnInit() {
+        this.mapsAPILoader.load().then(() => {
+            this.setCurrentLocation();
+            this.geoCoder = new google.maps.Geocoder;
+      
+            let autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement);
+            autocomplete.addListener("place_changed", () => {
+              this.ngZone.run(() => {
+                //get the place result
+                let place: google.maps.places.PlaceResult = autocomplete.getPlace();
+      
+                //verify result
+                if (place.geometry === undefined || place.geometry === null) {
+                  return;
+                }
+      
+                //set latitude, longitude and zoom
+                this.latitude = place.geometry.location.lat();
+                this.longitude = place.geometry.location.lng();
+                this.zoom = 12;
+              });
+            });
+          });
+        
         // Create the support form
         this.checkoutForm = this._formBuilder.group({
             // Main Store Section
@@ -273,6 +307,7 @@ export class LandingCheckoutComponent implements OnInit
 
     }
     
+    
     /**
      * On destroy
      */
@@ -286,6 +321,46 @@ export class LandingCheckoutComponent implements OnInit
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
+
+    setCurrentLocation() {
+        if ('geolocation' in navigator) {
+            navigator.geolocation.getCurrentPosition((position) => {
+              this.latitude = position.coords.latitude;
+              this.longitude = position.coords.longitude;
+              this.zoom = 8;
+              this.getAddress(this.latitude, this.longitude);
+            });
+          }
+    }
+    markerDragEnd($event: any) {
+        console.log($event);
+        this.latitude = $event.coords.lat;
+        this.longitude = $event.coords.lng;
+        this.getAddress(this.latitude, this.longitude);
+      }
+      getAddress(latitude, longitude) {
+        this.geoCoder.geocode({ 'location': { lat: latitude, lng: longitude } }, (results, status) => {
+          console.log(results);
+          console.log(status);
+          if (status === 'OK') {
+            if (results[0]) {
+              this.zoom = 12;
+              this.address = results[0].formatted_address;
+            } else {
+              window.alert('No results found');
+            }
+          } else {
+            window.alert('Geocoder failed due to: ' + status);
+          }
+    
+        });
+      }
+    
+    onMapClicked(event: any){
+        console.table(event.coords);
+        this.latitude = event.coords.lat;
+        this.longitude = event.coords.lng;
+      }
 
     updateQuantity(cartItem: CartItem, quantity: number, operator: string = null) {
         if (operator === 'decrement')

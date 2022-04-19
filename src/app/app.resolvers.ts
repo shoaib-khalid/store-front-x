@@ -109,9 +109,15 @@ export class StoreResolver implements Resolve<any>
         let isImpersonate = this._apiServer.settings.env.impersonate;
         
         // hardcord localhost to cinema-online (for now)
-        if (isImpersonate === true) {
+        // if (isImpersonate === true) {
+        //     // check for local development
+        //     this.url.domain = this.url.domain.split('.')[0] + this._apiServer.settings.env.impersonateUrl;
+        // }
+        if (this.url.subDomainName.indexOf("localhost") > -1) {
+            this.url.domain = "cinema-online.dev-my.symplified.ai"
+        } else if (this.url.domain.split('.').at(-1) === "test") {
             // check for local development
-            this.url.domain = this.url.domain.split('.')[0] + this._apiServer.settings.env.impersonateUrl;
+            this.url.domain = this.url.domain.split('.')[0] + ".symplified.ai";
         }
     }
 

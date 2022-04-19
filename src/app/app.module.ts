@@ -16,6 +16,7 @@ import { AppConfig } from 'app/config/service.config';
 import * as Hammer from 'hammerjs';
 import { HammerGestureConfig, HAMMER_GESTURE_CONFIG, HammerModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
+import { AgmCoreModule } from '@agm/core';
 
 const routerConfig: ExtraOptions = {
     preloadingStrategy       : PreloadAllModules,
@@ -56,7 +57,12 @@ export class MyHammerConfig extends HammerGestureConfig {
         HttpClientModule,
 
         // 3rd party modules that require global configuration via forRoot
-        MarkdownModule.forRoot({})
+        MarkdownModule.forRoot({}),
+
+        // Map with API key
+        AgmCoreModule.forRoot({
+            apiKey: 'AIzaSyCFhf1LxbPWNQSDmxpfQlx69agW-I-xBIw'
+        })
     ],
     providers: [
         AppConfig,

@@ -326,6 +326,17 @@
                                     matInput></textarea>
                             </mat-form-field> -->
                         </div>
+
+                        <!-- Map -->
+
+                        <div class="w-full">
+                            <agm-map style=" height: 250px; width: 100%;" 
+                            [latitude]="latitude" [longitude]="longitude" (mapClick)="onMapClicked($event)" [zoom]="zoom">
+                            <agm-marker [latitude]="latitude" [longitude]="longitude" [markerDraggable]="true"
+                            (dragEnd)="markerDragEnd($event)">    
+                            </agm-marker>
+                            </agm-map>
+                        </div>
                         
                         <!-- Additional info & save future order -->
                         <div class="w-full">

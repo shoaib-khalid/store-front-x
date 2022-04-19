@@ -16,6 +16,7 @@ import { ChooseDeliveryAddressComponent } from './choose-delivery-address/choose
 import { MatDialogModule } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import { ModalConfirmationDeleteItemComponent } from './modal-confirmation-delete-item/modal-confirmation-delete-item.component';
+import { AgmCoreModule } from '@agm/core';
 
 @NgModule({
     declarations: [
@@ -35,7 +36,10 @@ import { ModalConfirmationDeleteItemComponent } from './modal-confirmation-delet
         MatTooltipModule,
         MatDialogModule,
         MatRadioModule,
-        SharedModule
+        SharedModule,
+        AgmCoreModule.forRoot({  
+            apiKey: 'AIzaSyCFhf1LxbPWNQSDmxpfQlx69agW-I-xBIw'  
+          }),  
     ],
     providers   : [
         DatePipe
