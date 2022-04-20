@@ -153,6 +153,7 @@ export class LandingCheckoutComponent implements OnInit
                 this.latitude = place.geometry.location.lat();
                 this.longitude = place.geometry.location.lng();
                 this.zoom = 12;
+                console.log('Location Entered', 'Lat' , this.latitude + ' Lng', this.longitude)
               });
             });
           });
@@ -322,7 +323,7 @@ export class LandingCheckoutComponent implements OnInit
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
-    setCurrentLocation() {
+    private setCurrentLocation() {
         if ('geolocation' in navigator) {
             navigator.geolocation.getCurrentPosition((position) => {
               this.latitude = position.coords.latitude;
@@ -337,11 +338,12 @@ export class LandingCheckoutComponent implements OnInit
         this.latitude = $event.coords.lat;
         this.longitude = $event.coords.lng;
         this.getAddress(this.latitude, this.longitude);
+        // console.log('Marker Dragged',  'Lat' , this.latitude + ' Lng', this.longitude)
       }
-      getAddress(latitude, longitude) {
+    getAddress(latitude, longitude) {
         this.geoCoder.geocode({ 'location': { lat: latitude, lng: longitude } }, (results, status) => {
-          console.log(results);
-          console.log(status);
+        //   console.log(results);
+        //   console.log(status);
           if (status === 'OK') {
             if (results[0]) {
               this.zoom = 12;
@@ -356,11 +358,11 @@ export class LandingCheckoutComponent implements OnInit
         });
       }
     
-    onMapClicked(event: any){
-        console.table(event.coords);
-        this.latitude = event.coords.lat;
-        this.longitude = event.coords.lng;
-      }
+    // onMapClicked(event: any){
+    //     console.table(event.coords);
+    //     this.latitude = event.coords.lat;
+    //     this.longitude = event.coords.lng;
+    //   }
 
     updateQuantity(cartItem: CartItem, quantity: number, operator: string = null) {
         if (operator === 'decrement')

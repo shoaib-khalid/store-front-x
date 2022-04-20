@@ -284,8 +284,11 @@
                                     [formControlName]="'address'"
                                     placeholder="Enter address"
                                     autocomplete="disabled"
+                                    (keydown.enter)="$event.preventDefault()"
                                     (change)="addressFormChanges()"
-                                    [required]="true">
+                                    [required]="true"
+                                    type="text"
+                                    #search>
                                 <mat-error *ngIf="checkoutForm.get('address').hasError('required')">
                                     Required
                                 </mat-error>
@@ -327,11 +330,11 @@
                             </mat-form-field> -->
                         </div>
 
-                        <!-- Map -->
+                        <!-- Map (mapClick)="onMapClicked($event)" -->
 
                         <div class="w-full">
                             <agm-map style=" height: 250px; width: 100%;" 
-                            [latitude]="latitude" [longitude]="longitude" (mapClick)="onMapClicked($event)" [zoom]="zoom">
+                            [latitude]="latitude" [longitude]="longitude"  [zoom]="zoom">
                             <agm-marker [latitude]="latitude" [longitude]="longitude" [markerDraggable]="true"
                             (dragEnd)="markerDragEnd($event)">    
                             </agm-marker>

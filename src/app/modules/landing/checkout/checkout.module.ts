@@ -38,7 +38,8 @@ import { AgmCoreModule } from '@agm/core';
         MatRadioModule,
         SharedModule,
         AgmCoreModule.forRoot({  
-            apiKey: 'AIzaSyCFhf1LxbPWNQSDmxpfQlx69agW-I-xBIw'  
+            apiKey: 'AIzaSyCFhf1LxbPWNQSDmxpfQlx69agW-I-xBIw' ,
+            libraries: ['places'] 
           }),  
     ],
     providers   : [
