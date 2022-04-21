@@ -14,23 +14,8 @@
             #checkoutNgForm="ngForm">
             <!-- Full Name  & Email Address-->
             <div class="w-full flex flex-col sm:flex-row">
-                <!-- Full name -->
-                <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
-                    <mat-label>Full Name</mat-label>
-                    <input
-                        matInput
-                        [formControlName]="'name'"
-                        placeholder="Enter full name"
-                        autocomplete="disabled"
-                        [required]="true"
-                        >
-                        <!-- <mat-error *ngIf="checkoutForm.get('fullName').hasError('required')">
-                            Required
-                        </mat-error> -->
-                </mat-form-field>
-
                 <!-- Email Address -->
-                <mat-form-field class="w-full sm:w-1/2 sm:pl-1" floatLabel="always">
+                <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
                     <mat-label>Email Address</mat-label>
                     <input
                         matInput
@@ -46,6 +31,21 @@
                         Enter a valid email address
                     </mat-error> -->
                 </mat-form-field>
+
+                <!-- Full name -->
+                <mat-form-field class="w-full sm:w-1/2 sm:pl-1" floatLabel="always">
+                    <mat-label>Full Name</mat-label>
+                    <input
+                        matInput
+                        [formControlName]="'name'"
+                        placeholder="Enter full name"
+                        autocomplete="disabled"
+                        [required]="true"
+                        >
+                        <!-- <mat-error *ngIf="checkoutForm.get('fullName').hasError('required')">
+                            Required
+                        </mat-error> -->
+                </mat-form-field>
             </div>
             <!-- Phonenumber & State -->
             <div class="w-full flex flex-col sm:flex-row mb-4 sm:mb-0">
@@ -55,9 +55,10 @@
                     <input
                         matInput
                         [formControlName]="'phoneNumber'"
-                        placeholder="+60123456789"
+                        [placeholder]="dialingCode + '123456789'"
                         autocomplete="disabled"
                         [required]="true"
+                        (change)="editAddressForm.get('phoneNumber').patchValue(sanitizePhoneNumber(editAddressForm.get('phoneNumber').value))"
                         >
                     <!-- <mat-error *ngIf="checkoutForm.get('phoneNumber').hasError('required')">
                         Required

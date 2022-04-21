@@ -1,0 +1,32 @@
+<!-- Marquee -->
+<!-- <div class="relative">
+    <div class="sticky bg-primary flex items-center justify-center text-black font-semibold px-4 py-3 w-full relative">
+        <div class="flex flex-row items-center justify-center w-full max-w-280">
+            <marquee width="100%" direction="left">
+                {{messages | uppercase}}
+            </marquee>
+        </div>
+        <span 
+            class="absolute top-0 bottom-0 right-0 px-4 py-2 cursor-pointer">
+            <mat-icon 
+                class="text-black"
+                [svgIcon]="'heroicons_solid:x'"></mat-icon>
+        </span>
+    </div>
+</div> -->
+<ng-container *ngIf="messages">
+    <div class="z-99 top-0 right-0 left-0 w-full bg-primary flex items-center justify-center text-black font-semibold px-4 py-3 fixed">
+        <div class="flex flex-row items-center justify-center w-full md:max-w-280 max-w-[75vw]">
+            <marquee width="100%" direction="left">
+                {{messages | uppercase}}
+            </marquee>
+        </div>
+        <span 
+            (click)="closeNotification()"
+            class="absolute top-0 bottom-0 right-0 px-4 py-2 cursor-pointer">
+            <mat-icon 
+                class="text-black"
+                [svgIcon]="'heroicons_solid:x'"></mat-icon>
+        </span>
+    </div>
+</ng-container>

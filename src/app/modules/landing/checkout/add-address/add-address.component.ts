@@ -108,6 +108,35 @@ export class AddAddressComponent implements OnInit {
     this.dialogRef.close({isAddress: false});
   }
 
+  // -----------------------------------------------------------------------------------------------------
+  // @ Public methods
+  // -----------------------------------------------------------------------------------------------------
+
+  sanitizePhoneNumber(phoneNumber: string) {
+
+    let substring = phoneNumber.substring(0, 1)
+    let countryId = this.store.regionCountry.id;
+    let sanitizedPhoneNo = ''
+    
+    if ( countryId === 'MYS' ) {
+
+             if (substring === '6') sanitizedPhoneNo = phoneNumber;
+        else if (substring === '0') sanitizedPhoneNo = '6' + phoneNumber;
+        else if (substring === '+') sanitizedPhoneNo = phoneNumber.substring(1);
+        else                        sanitizedPhoneNo = '60' + phoneNumber;
+
+    }
+    else if ( countryId === 'PAK') {
+
+             if (substring === '9') sanitizedPhoneNo = phoneNumber;
+        else if (substring === '2') sanitizedPhoneNo = '9' + phoneNumber;
+        else if (substring === '+') sanitizedPhoneNo = phoneNumber.substring(1);
+        else                        sanitizedPhoneNo = '92' + phoneNumber;
+
+    }
+
+    return sanitizedPhoneNo;
+}
 
   createAddress() {
 
@@ -115,7 +144,7 @@ export class AddAddressComponent implements OnInit {
       name       : this.createAddressForm.get('fullName').value,
       address    : this.createAddressForm.get('address').value,
       city       : this.createAddressForm.get('city').value,
-      country    : this.state,
+      country    : this.store.regionCountry.name,
       customerId : this.user.id,
       email      : this.createAddressForm.get('email').value,
       phoneNumber: this.createAddressForm.get('phoneNumber').value,

@@ -30,6 +30,7 @@ export class EditAddressComponent implements OnInit {
   state: any;
   regionCountryStates: any;
   store: Store;
+  dialingCode: string;
 
   constructor(
     private dialogRef: MatDialogRef<EditAddressComponent>,
@@ -61,6 +62,15 @@ export class EditAddressComponent implements OnInit {
       isDefault           : [false]
     });
 
+    // -------------------------
+    // Set Dialing code
+    // -------------------------
+    
+    let countryId = this.store.regionCountry.id;
+
+    if (countryId === 'MYS') this.dialingCode = '+60';
+    else if (countryId === 'PAK') this.dialingCode = '+92';
+    
     this._userService.getCustomerAddressById(this.addressId)
     .subscribe((response: Address) => {
  
@@ -68,6 +78,8 @@ export class EditAddressComponent implements OnInit {
 
       // Fill the form step 1
       this.editAddressForm.patchValue(selectedAddress);
+      // Sanitize phone number
+      this.editAddressForm.get('phoneNumber').patchValue(this.sanitizePhoneNumber(selectedAddress.phoneNumber))
     });
 
     // Get store states
@@ -93,8 +105,36 @@ export class EditAddressComponent implements OnInit {
     this.dialogRef.close({isAddress: false});
   }
 
-  chooseAddress() {
-  }
+  
+  // -----------------------------------------------------------------------------------------------------
+  // @ Public methods
+  // -----------------------------------------------------------------------------------------------------
+
+  sanitizePhoneNumber(phoneNumber: string) {
+
+    let substring = phoneNumber.substring(0, 1)
+    let countryId = this.store.regionCountry.id;
+    let sanitizedPhoneNo = ''
+    
+    if ( countryId === 'MYS' ) {
+
+             if (substring === '6') sanitizedPhoneNo = phoneNumber;
+        else if (substring === '0') sanitizedPhoneNo = '6' + phoneNumber;
+        else if (substring === '+') sanitizedPhoneNo = phoneNumber.substring(1);
+        else                        sanitizedPhoneNo = '60' + phoneNumber;
+
+    }
+    else if ( countryId === 'PAK') {
+
+             if (substring === '9') sanitizedPhoneNo = phoneNumber;
+        else if (substring === '2') sanitizedPhoneNo = '9' + phoneNumber;
+        else if (substring === '+') sanitizedPhoneNo = phoneNumber.substring(1);
+        else                        sanitizedPhoneNo = '92' + phoneNumber;
+
+    }
+
+    return sanitizedPhoneNo;
+}
 
   updateAddress() {
 

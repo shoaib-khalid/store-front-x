@@ -290,7 +290,7 @@ export class CheckoutService
             );
     }
 
-    getAvailableCustomerVoucher (isUsed: boolean, page: number = 0, size: number = 2) : 
+    getAvailableCustomerVoucher (isUsed: boolean, verticalCode: string = '', page: number = 0, size: number = 10) : 
         Observable<{ customerVoucherPagination: CustomerVoucherPagination; usedCustomerVoucherPagination: UsedCustomerVoucherPagination; vouchers: CustomerVoucher[] }>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
@@ -302,15 +302,16 @@ export class CheckoutService
             headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
             params : {
                 isUsed,
-                page       : '' + page,
-                pageSize   : '' + size
+                page         : '' + page,
+                pageSize     : '' + size,
+                verticalCode : verticalCode
             }
         };
 
         return this._httpClient.get<any>(orderService + '/voucher/claim/' + customerId, header)
             .pipe(
                 map((response) => {
-                    this._logging.debug("Response from OrderService (getAvailableCustomerVoucher) isUsed: " + isUsed ,response);
+                    this._logging.debug("Response from OrderService (getAvailableCustomerVoucher) isUsed: " + isUsed, response);
 
                     if(isUsed){
                         let usedCustomerVoucherPagination = {

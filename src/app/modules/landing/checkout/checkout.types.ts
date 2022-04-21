@@ -178,6 +178,7 @@ export interface Voucher
     calculationType   : string;
     startDate         : string;
     endDate           : string;
+    verticalCode      : string;
 }
 
 export interface CustomerVoucher

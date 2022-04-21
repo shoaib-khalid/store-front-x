@@ -137,7 +137,14 @@ export class UserComponent implements OnInit, OnDestroy
  
     editProfile(): void
     {
-        this._router.navigate(['/profile']);
+        // this._router.navigate(['/profile']);
+
+        this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/profile';
+    }
+
+    ordersRedirect() {
+
+        this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/orders';
     }
 
     customerLogin(){
@@ -146,7 +153,7 @@ export class UserComponent implements OnInit, OnDestroy
         // this._cookieService.set('AccessToken','W0JAMTI5ZTE3NDg=');
         // this._cookieService.set('RefreshToken','W0JANTQwOGY0ZmU=');
 
-        this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + 
+        this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-in'
             '?redirectUrl=' + encodeURI('https://' + this.sanatiseUrl + this._router.url);
     }
 

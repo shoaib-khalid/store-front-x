@@ -206,73 +206,50 @@
                                     <div #addressContainer class="flex flex-nowrap items-center justify-between overflow-x-auto">
                                         <ng-container *ngIf="customerAddresses.length > 0">
                                             <ng-container *ngFor="let address of customerAddresses; let i = index;">
-                                                <div class="hidden sm:block flex-wrap items-center p-1">
-                                                    <fuse-card class="flex flex-col w-80 h-48 rounded-lg p-4 border border-primary-300 cursor-pointer"
-                                                        [ngClass]="address.id === checkoutForm.get('customerAddress').value.id ? 'bg-primary-50 border-primary-600':'bg-white'"
-                                                        (click)="selectAddress(address, i); scrollToLeft(addressContainer);">
-                                                        <div class="flex flex-row justify-between">
-                                                            <div class="flex flex-col max-w-[200px]">
-                                                                <h3 class="text-lg font-semibold leading-tight truncate">{{address.name}}</h3>
-                                                                <h3 class="font-medium">{{address.phoneNumber}}</h3>
+                                                <ng-container *ngIf="address">
+                                                    <div class="hidden sm:block flex-wrap items-center p-1">
+                                                        <fuse-card class="flex flex-col w-80 h-48 rounded-lg p-4 border border-primary-300 cursor-pointer hover:bg-primary-50 hover:border-primary-600"
+                                                            [ngClass]="address.id === checkoutForm.get('customerAddress').value.id ? 'bg-primary-50 border-primary-600':'bg-white'"
+                                                            (click)="selectAddress(address, i); scrollToLeft(addressContainer);">
+                                                            <div class="flex flex-row justify-between">
+                                                                <div class="flex flex-col max-w-[200px]">
+                                                                    <h3 class="text-lg font-semibold leading-tight truncate">{{address.name}}</h3>
+                                                                    <h3 class="font-medium">{{address.phoneNumber}}</h3>
+                                                                </div>
+                                                                <div 
+                                                                    class="flex flex-row mt-1"
+                                                                    *ngIf="address.id === defaultAddress">
+                                                                    <h3 class="text-primary font-bold pt-[0.1rem]">Default</h3>
+                                                                    <mat-icon class="text-primary pl-1" svgIcon="mat_solid:verified"></mat-icon>
+                                                                </div>
+                                                                <button 
+                                                                    type="button"
+                                                                    *ngIf="address.id != defaultAddress"
+                                                                    (click)="setDefaultAddress(address, i); $event.stopPropagation()"
+                                                                    class="bg-transparent hover:bg-primary-500 font-semibold hover:text-white p-1 h-8 hover:border-transparent rounded text-sm">
+                                                                    Set Default
+                                                                  </button>
                                                             </div>
-                                                            <div 
-                                                                class="flex flex-row mt-1"
-                                                                *ngIf="address.id === defaultAddress">
-                                                                <h3 class="text-primary font-bold pt-[0.1rem]">Default</h3>
-                                                                <mat-icon class="text-primary pl-1" svgIcon="mat_solid:verified"></mat-icon>
+                                                            <div class="mt-4 w-full h-full line-clamp-3">{{address.address}}, {{address.postCode}}, {{address.city}}, {{address.state}}</div>
+                                                            <div class="flex flex-row justify-between pt-4">
+                                                                <div (click)="deleteAddress(address, i); $event.stopPropagation()" class="flex flex-row group">
+                                                                    <mat-icon class="text-center text-red-500 group-hover:text-red-700" svgIcon="heroicons_outline:trash"></mat-icon>
+                                                                    <span class="pl-1 pt-0.5 font-bold text-red-500 group-hover:text-red-700">Delete</span>
+                                                                </div>
+                                                                <div (click)="editAddress(address.id, i, addressContainer); $event.stopPropagation()" class="flex flex-row group">
+                                                                    <mat-icon class="text-primary group-hover:text-primary-600" svgIcon="heroicons_outline:pencil-alt"></mat-icon>
+                                                                    <span class="pl-1 pt-0.5 font-bold text-primary group-hover:text-primary-600 pr-2">Edit</span>
+                                                                </div>
+                                                                <!-- <div 
+                                                                    class="flex flex-row pl-4"
+                                                                    [ngClass]="address.id === checkoutForm.get('customerAddress').value.id ? 'visible':'invisible'">
+                                                                    <mat-icon class="text-center text-primary-700" svgIcon="heroicons_outline:clipboard-check"></mat-icon>
+                                                                    <span class="pl-1 pt-0.5 font-bold text-primary-700">Selected</span>
+                                                                </div> -->
                                                             </div>
-                                                            <button 
-                                                                type="button"
-                                                                *ngIf="address.id != defaultAddress"
-                                                                (click)="setDefaultAddress(address, i); $event.stopPropagation()"
-                                                                class="bg-transparent hover:bg-primary-500 font-semibold hover:text-white p-1 h-8 hover:border-transparent rounded text-sm">
-                                                                Set Default
-                                                              </button>
-                                                            <!-- <div 
-                                                                class="flex flex-row border border-gray-300 rounded cursor-pointer"
-                                                                *ngIf="address.id != defaultAddress"
-                                                                (click)="setDefaultAddress(address, i); $event.stopPropagation()">
-                                                                <h3 class=" pt-[0.1rem] tracking-tight">Set as Default</h3>
-                                                                <mat-icon class="text-primary pl-1" svgIcon="mat_solid:verified"></mat-icon>
-                                                            </div> -->
-                                                            <!-- <div *ngIf="address.id != defaultAddress" class="flex flex-row justify-end pt-0">
-                                                                <input
-                                                                id="set-default"
-                                                                type="button"
-                                                                (click)="setDefaultAddress(address, i); $event.stopPropagation()"
-                                                                class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                                                mat-button>
-                                                                <label 
-                                                                    class="flex items-center justify-center h-8 px-1 border border-gray-300 rounded cursor-pointer hover:bg-hover bg-white"
-                                                                    for="set-default"
-                                                                    matRipple>
-                                                                    <mat-icon
-                                                                        class="sm:mr-1 icon-size-5 text-primary"
-                                                                        [svgIcon]="'mat_solid:location_on'">
-                                                                    </mat-icon>
-                                                                    <span class="hidden sm:block justify-center tracking-tighter text-sm">Set as Default</span>
-                                                                </label>
-                                                            </div> -->
-                                                        </div>
-                                                        <div class="mt-4 w-full h-full line-clamp-3">{{address.address}}, {{address.postCode}}, {{address.city}}, {{address.state}}</div>
-                                                        <div class="flex flex-row justify-between pt-4">
-                                                            <div (click)="deleteAddress(address, i); $event.stopPropagation()" class="flex flex-row group">
-                                                                <mat-icon class="text-center text-red-500 group-hover:text-red-700" svgIcon="heroicons_outline:trash"></mat-icon>
-                                                                <span class="pl-1 pt-0.5 font-bold text-red-500 group-hover:text-red-700">Delete</span>
-                                                            </div>
-                                                            <div (click)="editAddress(address.id, i, addressContainer); $event.stopPropagation()" class="flex flex-row group">
-                                                                <mat-icon class="text-primary group-hover:text-primary-600" svgIcon="heroicons_outline:pencil-alt"></mat-icon>
-                                                                <span class="pl-1 pt-0.5 font-bold text-primary group-hover:text-primary-600 pr-2">Edit</span>
-                                                            </div>
-                                                            <!-- <div 
-                                                                class="flex flex-row pl-4"
-                                                                [ngClass]="address.id === checkoutForm.get('customerAddress').value.id ? 'visible':'invisible'">
-                                                                <mat-icon class="text-center text-primary-700" svgIcon="heroicons_outline:clipboard-check"></mat-icon>
-                                                                <span class="pl-1 pt-0.5 font-bold text-primary-700">Selected</span>
-                                                            </div> -->
-                                                        </div>
-                                                    </fuse-card>
-                                                </div>
+                                                        </fuse-card>
+                                                    </div>
+                                                </ng-container>
                                             </ng-container>
                                         </ng-container>
                                         <div class="hidden sm:block flex-wrap items-center p-1">
@@ -289,7 +266,7 @@
                                     <!-- Mobile view  -->
                                     <div #addressContainerMobile class="w-full block sm:hidden flex-col">
                                         <div *ngIf="checkoutForm.get('customerAddress').value">
-                                            <fuse-card class="mb-2 flex flex-col w-auto h-48 rounded-lg p-4 border border-primary-300 cursor-pointer bg-primary-50 border-primary-600"
+                                            <fuse-card class="mb-2 flex flex-col w-auto h-48 rounded-lg p-4 border cursor-pointer bg-primary-50 border-primary-600"
                                                 >
                                                 <div class="flex flex-row justify-between">
                                                     <div class="flex flex-col max-w-[200px]">
@@ -341,46 +318,48 @@
                                                         <mat-panel-title class="font-medium leading-tight justify-center">Change Address</mat-panel-title>
                                                     </mat-expansion-panel-header>
                                                     <ng-container *ngFor="let address of customerAddresses; let i = index;">
-                                                        <div class="flex-wrap items-center m-1">
-                                                            <fuse-card 
-                                                                *ngIf="address.id != checkoutForm.get('customerAddress').value.id" 
-                                                                class="flex flex-col w-auto h-48 rounded-lg p-4 border border-primary-300 cursor-pointer"
-                                                                [ngClass]="address.id === checkoutForm.get('customerAddress').value.id? 'bg-primary-50 border-primary-600':'bg-white'"
-                                                                (click)="selectAddress(address, i);">
-                                                                <div class="flex flex-row justify-between">
-                                                                    <div class="flex flex-col max-w-[200px]">
-                                                                        <h3 class="text-lg font-semibold leading-tight truncate">{{address.name}}</h3>
-                                                                        <h3 class="font-medium">{{address.phoneNumber}}</h3>
+                                                        <ng-container *ngIf="address">
+                                                            <div class="flex-wrap items-center m-1">
+                                                                <fuse-card 
+                                                                    *ngIf="address.id != checkoutForm.get('customerAddress').value.id" 
+                                                                    class="flex flex-col w-auto h-48 rounded-lg p-4 border border-primary-300 cursor-pointer"
+                                                                    [ngClass]="address.id === checkoutForm.get('customerAddress').value.id? 'bg-primary-50 border-primary-600':'bg-white'"
+                                                                    (click)="selectAddress(address, i);">
+                                                                    <div class="flex flex-row justify-between">
+                                                                        <div class="flex flex-col max-w-[200px]">
+                                                                            <h3 class="text-lg font-semibold leading-tight truncate">{{address.name}}</h3>
+                                                                            <h3 class="font-medium">{{address.phoneNumber}}</h3>
+                                                                        </div>
+                                                                        <div 
+                                                                            class="flex flex-row mt-1"
+                                                                            *ngIf="address.id === defaultAddress">
+                                                                            <h3 class="text-primary font-bold pt-[0.1rem]">Default</h3>
+                                                                            <mat-icon class="text-primary pl-1" svgIcon="mat_solid:verified"></mat-icon>
+                                                                        </div>
+                                                                        <button 
+                                                                            type="button"
+                                                                            *ngIf="address.id != defaultAddress"
+                                                                            (click)="setDefaultAddress(address, i); $event.stopPropagation()"
+                                                                            class="bg-transparent hover:bg-primary-500 font-semibold hover:text-white p-1 h-8 hover:border-transparent rounded text-sm">
+                                                                            Set Default
+                                                                          </button>
+                                                                        
                                                                     </div>
-                                                                    <div 
-                                                                        class="flex flex-row mt-1"
-                                                                        *ngIf="address.id === defaultAddress">
-                                                                        <h3 class="text-primary font-bold pt-[0.1rem]">Default</h3>
-                                                                        <mat-icon class="text-primary pl-1" svgIcon="mat_solid:verified"></mat-icon>
+                                                                    <div class="mt-4 w-full h-full line-clamp-3">{{address.address}}, {{address.postCode}}, {{address.city}}, {{address.state}}</div>
+                                                                    <div class="flex flex-row justify-between pt-4">
+                                                                        <div (click)="deleteAddress(address, i); $event.stopPropagation()" class="flex flex-row group">
+                                                                            <mat-icon class="text-center text-red-500 group-hover:text-red-700" svgIcon="heroicons_outline:trash"></mat-icon>
+                                                                            <span class="pl-1 pt-0.5 font-bold text-red-500 group-hover:text-red-700">Delete</span>
+                                                                        </div>
+                                                                        <div (click)="editAddress(address.id, i, addressContainerMobile); $event.stopPropagation()" class="flex flex-row group">
+                                                                            <mat-icon class="text-primary group-hover:text-primary-600" svgIcon="heroicons_outline:pencil-alt"></mat-icon>
+                                                                            <span class="pl-1 pt-0.5 font-bold text-primary group-hover:text-primary-600 pr-2">Edit</span>
+                                                                        </div>
+                                                                        
                                                                     </div>
-                                                                    <button 
-                                                                        type="button"
-                                                                        *ngIf="address.id != defaultAddress"
-                                                                        (click)="setDefaultAddress(address, i); $event.stopPropagation()"
-                                                                        class="bg-transparent hover:bg-primary-500 font-semibold hover:text-white p-1 h-8 hover:border-transparent rounded text-sm">
-                                                                        Set Default
-                                                                      </button>
-                                                                    
-                                                                </div>
-                                                                <div class="mt-4 w-full h-full line-clamp-3">{{address.address}}, {{address.postCode}}, {{address.city}}, {{address.state}}</div>
-                                                                <div class="flex flex-row justify-between pt-4">
-                                                                    <div (click)="deleteAddress(address, i); $event.stopPropagation()" class="flex flex-row group">
-                                                                        <mat-icon class="text-center text-red-500 group-hover:text-red-700" svgIcon="heroicons_outline:trash"></mat-icon>
-                                                                        <span class="pl-1 pt-0.5 font-bold text-red-500 group-hover:text-red-700">Delete</span>
-                                                                    </div>
-                                                                    <div (click)="editAddress(address.id, i, addressContainerMobile); $event.stopPropagation()" class="flex flex-row group">
-                                                                        <mat-icon class="text-primary group-hover:text-primary-600" svgIcon="heroicons_outline:pencil-alt"></mat-icon>
-                                                                        <span class="pl-1 pt-0.5 font-bold text-primary group-hover:text-primary-600 pr-2">Edit</span>
-                                                                    </div>
-                                                                    
-                                                                </div>
-                                                            </fuse-card>
-                                                        </div>
+                                                                </fuse-card>
+                                                            </div>
+                                                        </ng-container>
                                                     </ng-container>
                                                     <div class="mx-1 mb-1"> 
                                                         <fuse-card
@@ -634,9 +613,9 @@
                                                     class="flex items-center justify-center w-full h-full text-xs font-semibold leading-none text-center uppercase">
                                                 </div>
                                             </div>
-                                            <div class="flex flex-col justify-between py-1 w-full h-20">
+                                            <div class="flex flex-col justify-between py-1 w-full h-20 pr-1">
                                                 <div class="flex flex-row justify-between">
-                                                    <h1 class="font-semibold mb-1 line-clamp-3 cursor-pointer"
+                                                    <h1 class="font-semibold pb-1 line-clamp-3 cursor-pointer"
                                                         (click)="redirect(cartItem.productInventory.product.seoUrl)">
                                                         {{cartItem.productName}}
                                                     </h1>
@@ -824,7 +803,7 @@
                                 <!-- Delivery Periods -->
                                 <ng-container *ngIf="store.verticalCode === 'E-Commerce' && selectedDeliveryProvidersGroup">
                                     <fieldset class="flex flex-row border border-gray-300 rounded-lg w-full p-2 mb-2">
-                                        <legend class="px-2 mx-2 text-sm text-gray-400">Delivery service</legend>
+                                        <legend class="px-2 mx-2 text-sm text-gray-400">Delivery Service</legend>
                                         <mat-radio-group class="grid grid-cols-2 mb-2 w-full">
                                             <ng-container *ngFor="let deliveryPartner of selectedDeliveryProvidersGroup.deliveryProviders">
                                                 <ng-container *ngIf="deliveryPartner.isError === false">
@@ -880,46 +859,46 @@
                                     </div>
                                 </ng-container>
                                 <ng-container *ngIf="user">
-                                    <!-- Input Promo Code & Redeem button  -->
-                                    <div class="flex flex-row w-full justify-between py-1 items-center mt-4">
+                                    <!-- Input Promo Code & Claim button  -->
+                                    <div class="flex flex-row w-full justify-between py-1 items-center mt-2 border-t">
                                         <!-- Input Promo Code -->
-                                        <mat-form-field class="w-full max-w-[159px] fuse-mat-dense fuse-mat-no-subscript" floatLabel="always">
+                                        <mat-form-field class="w-full max-w-[159px] fuse-mat-dense fuse-mat-no-subscript pt-2" floatLabel="always">
                                             <input
                                                 matInput
                                                 [(ngModel)]="promoCode"
-                                                [placeholder]="'Input Promo Code'"
+                                                [placeholder]="'Enter Promo Code'"
                                                 [ngModelOptions]="{standalone: true}"
                                                 autocomplete="disabled"
                                                 >
                                         </mat-form-field>
-                                        <!-- Redeem Button -->
+                                        <!-- Claim Voucher Button -->
                                         <div>
                                             <!-- <input
-                                                id="redeem-button"
+                                                id="claim-button"
                                                 type="button"
                                                 class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
                                                 mat-button
                                                 >
                                             <label 
                                                 class="flex items-center justify-center h-10 px-2 border rounded-lg border-primary-300 bg-primary hover:border-primary-500 cursor-pointer"
-                                                for="redeem-button"
-                                                (click)="redeemPromoCode()"
+                                                for="claim-button"
+                                                (click)="claimPromoCode()"
                                                 matRipple>
-                                                <span class="text-sm font-semibold text-black">Redeem</span>
+                                                <span class="text-sm font-semibold text-black">Claim</span>
                                             </label> -->
                                             <button
                                                 [disabled]="isLoading" 
                                                 class="my-2 w-auto font-semibold py-2 px-3 rounded hover:bg-primary-600"
                                                 [ngClass]="isLoading ? 'cursor-wait bg-gray-200' : 'bg-primary-500'"
-                                                (click)="redeemPromoCode()">
+                                                (click)="claimPromoCode()">
                                                 <span class="tracking-tight">
-                                                    Redeem
+                                                    Claim
                                                 </span>
                                             </button>
                                         </div>
                                     </div>
                                     <!-- Voucher Dropdown -->
-                                    <div class="flex flex-row w-full justify-between py-1 items-center mb-4">
+                                    <div class="flex flex-row w-full justify-between py-1 items-center mb-1">
                                         <div class="flex flex-row justify-between items-center w-full max-w-[183px]">
                                             <mat-form-field class="fuse-mat-no-subscript fuse-mat-dense w-full" floatLabel="always">
                                                 <mat-label>Voucher Discount</mat-label>
@@ -948,6 +927,12 @@
                                         <!-- <div class="pt-6">
                                             <p class="font-semibold"> -{{ (paymentDetails.voucherDeliveryDiscount ? paymentDetails.voucherDeliveryDiscount : paymentDetails.voucherSubTotalDiscount ? paymentDetails.voucherSubTotalDiscount : '0') | currency: store.regionCountry.currencySymbol }}</p>
                                         </div> -->
+                                        <div class="pt-6" *ngIf="voucherApplied && voucherApplied.voucher.calculationType === 'FIX'">
+                                            <p class="text-gray-400 text-sm" >Max discount amount: {{store.regionCountry.currencySymbol}}{{ voucherApplied.voucher.discountValue }}</p>
+                                        </div>
+                                        <div class="pt-6" *ngIf="voucherApplied && voucherApplied.voucher.calculationType === 'PERCENT'">
+                                            <p class="text-gray-400 text-sm" >Max discount amount: {{store.regionCountry.currencySymbol}}{{ voucherApplied.voucher.maxDiscountAmount }}</p>
+                                        </div>
                                     </div>
                                 </ng-container>
                             </div>

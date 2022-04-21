@@ -196,10 +196,10 @@ export class UserService
 
         return this.customerAddresses$.pipe(
             take(1),
-            switchMap( addresses => this._httpClient.post<any>(userService + '/customer/' + customerId + '/address', customerAddressBody, header)
+            switchMap( addresses => this._httpClient.post<Address>(userService + '/customer/' + customerId + '/address', customerAddressBody, header)
             .pipe(
                 map((response) => {
-                    this._logging.debug("Response from UserService (postCustomerAddress)",response);
+                    this._logging.debug("Response from UserService (postCustomerAddress)", response);
                     
                     const updatedAddresses = addresses;
 

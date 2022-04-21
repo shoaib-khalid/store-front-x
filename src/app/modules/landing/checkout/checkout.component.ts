@@ -171,7 +171,7 @@ export class LandingCheckoutComponent implements OnInit
             // firstName           : ['', Validators.required],
             // lastName            : ['', Validators.required],
             email               : ['', [Validators.required, CheckoutValidationService.emailValidator]],
-            phoneNumber         : ['', CheckoutValidationService.phonenumberValidator],
+            phoneNumber         : ['', [CheckoutValidationService.phonenumberValidator, Validators.minLength(5), Validators.maxLength(30)]],
             address             : ['', Validators.required],
             storePickup         : [false],
             postCode            : ['', [Validators.required, Validators.minLength(5), Validators.maxLength(10), CheckoutValidationService.postcodeValidator]],
@@ -199,38 +199,7 @@ export class LandingCheckoutComponent implements OnInit
                 // this.checkoutForm.get('phoneNumber').patchValue(user.);  
                 this.checkoutForm.get("id").patchValue(user.id);
                 
-                // Get customer Addresses
-                this._userService.getCustomerAddress(user.id)
-                .subscribe((response: any) => {
-                    
-                    if (response.length > 0) {
-
-                        //sort isDefault true first
-                        this.customerAddresses = response.sort((a, b) => Number(b.isDefault) - Number(a.isDefault));
-    
-                        let index = this.customerAddresses.findIndex(element => element.isDefault === true);
-    
-                        if (index > -1) {
-                            this.defaultAddress = this.customerAddresses[index].id;
-                            this.checkoutForm.get('customerAddress').patchValue(this.customerAddresses[index]);    
-                            
-                        }
-                        else {
-                            this.checkoutForm.get('customerAddress').patchValue(this.customerAddresses[0]);
-                        }
-    
-                        this.setCustomerDetails();
-
-                        // Mark for check
-                        this._changeDetectorRef.markForCheck();
-                    }
-                    
-                    else {
-                        
-                    }
-
-                });
-                
+                this.getCustomerAddresses(user);
             });
 
         // --------------
@@ -240,6 +209,9 @@ export class LandingCheckoutComponent implements OnInit
             .subscribe((response: Store) => {
                 this.store = response;
 
+                console.log('store verticalCode', this.store);
+                
+
                 // -------------------------
                 // Set Dialing code
                 // -------------------------
@@ -248,11 +220,11 @@ export class LandingCheckoutComponent implements OnInit
                 
                 switch (countryId) {
                     case 'MYS':
-                        this.dialingCode = '+60'
+                        this.dialingCode = '60'
                         break;
                 
                     case 'PAK':
-                        this.dialingCode = '+92'
+                        this.dialingCode = '92'
                         break;
 
                     default:
@@ -358,6 +330,43 @@ export class LandingCheckoutComponent implements OnInit
                         this.allowsStorePickup = response.allowsStorePickup;
                     });
 
+
+                // ----------------------
+                // Voucher
+                // ----------------------
+
+                // Get used customer voucher
+                this._checkoutService.getAvailableCustomerVoucher(false, this.store.verticalCode)
+                .subscribe((response: any) => {
+                    
+                    this.customerVouchers = response;
+                    
+                    // Mark for check
+                    this._changeDetectorRef.markForCheck();
+                });
+
+                // Get customer voucher pagination, isUsed = false 
+                this._checkoutService.customerVoucherPagination$
+                .pipe(takeUntil(this._unsubscribeAll))
+                .subscribe((response: CustomerVoucherPagination) => {
+
+                    this.customerVoucherPagination = response; 
+                    
+                    // Mark for check
+                    this._changeDetectorRef.markForCheck();           
+                });
+
+                // Get used customer voucher pagination, isUsed = true 
+                this._checkoutService.usedCustomerVoucherPagination$
+                .pipe(takeUntil(this._unsubscribeAll))
+                .subscribe((response: UsedCustomerVoucherPagination) => {
+
+                    this.usedCustomerVoucherPagination = response;
+                    
+                    // Mark for check
+                    this._changeDetectorRef.markForCheck();
+                });
+                    
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
@@ -376,41 +385,7 @@ export class LandingCheckoutComponent implements OnInit
                 this._changeDetectorRef.markForCheck();
             });
 
-        // ----------------------
-        // Voucher
-        // ----------------------
-
-        // Get used customer voucher
-        this._checkoutService.customerVouchers$
-        .subscribe((response: CustomerVoucher[]) => {
-
-            this.customerVouchers = response;
-            
-            // Mark for check
-            this._changeDetectorRef.markForCheck();
-        });
-
-        // Get customer voucher pagination, isUsed = false 
-        this._checkoutService.customerVoucherPagination$
-        .pipe(takeUntil(this._unsubscribeAll))
-        .subscribe((response: CustomerVoucherPagination) => {
-
-            this.customerVoucherPagination = response; 
-            
-            // Mark for check
-            this._changeDetectorRef.markForCheck();           
-        });
-
-        // Get used customer voucher pagination, isUsed = true 
-        this._checkoutService.usedCustomerVoucherPagination$
-        .pipe(takeUntil(this._unsubscribeAll))
-        .subscribe((response: UsedCustomerVoucherPagination) => {
-
-            this.usedCustomerVoucherPagination = response;
-            
-            // Mark for check
-            this._changeDetectorRef.markForCheck();
-        });
+        
 
     }
     
@@ -423,7 +398,7 @@ export class LandingCheckoutComponent implements OnInit
         this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
     }
-    
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
@@ -545,9 +520,42 @@ export class LandingCheckoutComponent implements OnInit
         this._changeDetectorRef.markForCheck();
     }
 
+    sanitizePhoneNumber(phoneNumber: string) {
+
+        let substring = phoneNumber.substring(0, 1)
+        let countryId = this.store.regionCountry.id;
+        let sanitizedPhoneNo = ''
+        
+        if ( countryId === 'MYS' ) {
+
+                 if (substring === '6') sanitizedPhoneNo = phoneNumber;
+            else if (substring === '0') sanitizedPhoneNo = '6' + phoneNumber;
+            else if (substring === '+') sanitizedPhoneNo = phoneNumber.substring(1);
+            else                        sanitizedPhoneNo = '60' + phoneNumber;
+
+        }
+        else if ( countryId === 'PAK') {
+
+                 if (substring === '9') sanitizedPhoneNo = phoneNumber;
+            else if (substring === '2') sanitizedPhoneNo = '9' + phoneNumber;
+            else if (substring === '+') sanitizedPhoneNo = phoneNumber.substring(1);
+            else                        sanitizedPhoneNo = '92' + phoneNumber;
+
+        }
+
+        return sanitizedPhoneNo;
+    }
+
     checkCustomerInfo(type: string, data: string) {
         const email =  type === "email" ? data : null;
-        const phoneNumber =  type === "phoneNumber" ? data : null;
+        let phoneNumber =  type === "phoneNumber" ? data : null;
+
+        // phone number sanitization
+        if ( type === "phoneNumber" ) {
+            phoneNumber = this.sanitizePhoneNumber(phoneNumber)
+            this.checkoutForm.get('phoneNumber').patchValue(phoneNumber)
+        }
+                
         this._checkoutService.getCustomerInfo(email, phoneNumber)
             .subscribe((response)=>{
                 if (response && response.customerAddress.length > 0) {
@@ -556,8 +564,8 @@ export class LandingCheckoutComponent implements OnInit
                         if (result.isAddress === true) {
                             this.checkoutForm.get('id').patchValue(response.id);
                             this.checkoutForm.get('fullName').patchValue(response.name);
-                            if (type === "phoneNumber") this.checkoutForm.get('email').patchValue(response.email);
-                            if (type === "email") this.checkoutForm.get('phoneNumber').patchValue(response.phoneNumber);
+                            if (type === "email") this.checkoutForm.get('email').patchValue(response.email);
+                            if (type === "phoneNumber") this.checkoutForm.get('phoneNumber').patchValue(response.phoneNumber);
         
                             this.checkoutForm.get('address').patchValue(result.address);
                             this.checkoutForm.get('postCode').patchValue(result.postCode);
@@ -875,10 +883,10 @@ export class LandingCheckoutComponent implements OnInit
             cartId: this._cartService.cartId$,
             customerId: this.checkoutForm.get("id").value, 
             customerNotes: this.checkoutForm.get("specialInstruction").value,
+            voucherCode: this.voucherApplied ? this.voucherApplied.voucher.voucherCode : '',
             orderPaymentDetails: {
                 accountName: this.checkoutForm.get('fullName').value, // ni mace saloh
                 deliveryQuotationReferenceId: (this.checkoutForm.get('storePickup').value === false) ? this.selectedDeliveryProvider.refId : null, // deliveryQuotationReferenceId not needed if it's a store pickup
-                couponId: this.voucherApplied?.voucher.voucherCode,
             },
             orderShipmentDetails: {
                 address:  this.checkoutForm.get("address").value,
@@ -1067,6 +1075,35 @@ export class LandingCheckoutComponent implements OnInit
     // -----------------------------------------------------------------------------------------------------
     // @ Private methods
     // -----------------------------------------------------------------------------------------------------
+
+    
+    getCustomerAddresses(user) {
+        // Get customer Addresses
+        this._userService.getCustomerAddress(user.id)
+        .subscribe((response: any) => {
+            
+            if (response.length > 0) {
+
+                //sort isDefault true first
+                this.customerAddresses = response.sort((a, b) => Number(b.isDefault) - Number(a.isDefault));
+
+                let index = this.customerAddresses.findIndex(element => element.isDefault === true);
+
+                if (index > -1) {
+                    this.defaultAddress = this.customerAddresses[index].id;
+                    this.checkoutForm.get('customerAddress').patchValue(this.customerAddresses[index]);    
+                }
+                else {
+                    this.checkoutForm.get('customerAddress').patchValue(this.customerAddresses[0]);
+                }
+
+                // 
+                this.setCustomerDetails();
+            }
+            // Mark for check
+            this._changeDetectorRef.markForCheck();
+        });
+    }
 
     checkStoreTiming(storeTiming: StoreTiming[], storeSnooze: StoreSnooze): void
     {
@@ -1335,15 +1372,23 @@ export class LandingCheckoutComponent implements OnInit
         dialogRef.afterClosed().subscribe(result =>{
             if (result.selectAddress === true) {
                 
-                // select the address
-                this.selectAddress(result.address)
+                // Get customer Addresses
+                this._userService.getCustomerAddress(this.user.id)
+                    .subscribe((response: any) => {
+                        this.customerAddresses = response;
 
+                        let index = this.customerAddresses.findIndex(element => element.id === result.address.id);
+                        
+                        // select the address
+                        this.selectAddress(result.address, index)
+
+                        // if first address, set as default
+                        if (this.customerAddresses.length === 1) {
+                            this.setDefaultAddress(result.address)
+                        }
+                    })
+                
                 this.scrollToLeft(htmlContainer);
-
-                // if first address, set as default
-                if (this.customerAddresses.length === 1) {
-                    this.setDefaultAddress(result.address)
-                }
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
@@ -1440,7 +1485,11 @@ export class LandingCheckoutComponent implements OnInit
 
     }
 
-    redeemPromoCode() {
+    claimPromoCode() {
+
+        if (this.promoCode === ''){
+            return;
+        }
 
         this._checkoutService.postCustomerClaimVoucher(this.user.id, this.promoCode)
             .subscribe((response) => {
@@ -1457,7 +1506,7 @@ export class LandingCheckoutComponent implements OnInit
                     "actions": {
                       "confirm": {
                         "show": true,
-                        "label": "Okay",
+                        "label": "OK",
                         "color": "primary"
                       },
                       "cancel": {

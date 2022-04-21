@@ -57,8 +57,11 @@ export class CheckoutValidationService {
 
         // https://regexr.com/3c53v
         if (
+          // control.value.match(
+          //   /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/
+          // )
           control.value.match(
-            /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/
+            /^\d+$/
           )
         ) {
           return null;

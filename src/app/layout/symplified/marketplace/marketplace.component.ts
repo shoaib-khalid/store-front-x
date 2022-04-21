@@ -8,10 +8,11 @@ import { NavigationService } from 'app/core/navigation/navigation.service';
 import { environment } from 'environments/environment';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
-import { Store, StoreAssets } from 'app/core/store/store.types';
+import { Store, StoreAssets, StoreSnooze, StoreTiming } from 'app/core/store/store.types';
 import { StoresService } from 'app/core/store/store.service';
 import { PlatformService } from 'app/core/platform/platform.service';
 import { Platform } from 'app/core/platform/platform.types';
+import { DatePipe } from '@angular/common';
 
 @Component({
     selector     : 'marketplace-layout',
@@ -33,6 +34,10 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     platform: Platform;
 
+    message: string;
+    daysArray = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
+    storeSnooze: StoreSnooze = null;
+
     /**
      * Constructor
      */
@@ -45,7 +50,8 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
         private _navigationService: NavigationService,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _fuseNavigationService: FuseNavigationService,
-        private _platformsService: PlatformService
+        private _platformsService: PlatformService,
+        private _datePipe: DatePipe,
 
     )
     {
@@ -84,6 +90,19 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((response: Store) => {
                 this.store = response;
+
+                this._storesService.storeSnooze$
+                    .subscribe((response: StoreSnooze) => {
+                        this.storeSnooze = response;
+                        
+                        if (this.store && this.storeSnooze) {
+                            // check store timings
+                            this.checkStoreTiming(this.store.storeTiming, this.storeSnooze);
+                        }
+        
+                        // Mark for check
+                        this._changeDetectorRef.markForCheck();
+                    });
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
@@ -251,6 +270,187 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
           } else {
             return str;
           }  
+    }
+
+    checkStoreTiming(storeTiming: StoreTiming[], storeSnooze: StoreSnooze): void
+    {
+        // the only thing that this function required is this.store.storeTiming
+
+        let todayDate = new Date();
+        let today = this.daysArray[todayDate.getDay()];
+
+        // check if store closed for all days
+        let isStoreCloseAllDay = storeTiming.map(item => item.isOff);
+
+        // --------------------
+        // Check store timing
+        // --------------------
+
+        // isStoreCloseAllDay.includes(false) means that there's a day that the store is open
+        // hence, we need to find the day that the store is open
+        if (isStoreCloseAllDay.includes(false)) {
+            storeTiming.forEach((item, index) => {
+                if (item.day === today) {
+                    // this mean store opened
+                    if (item.isOff === false) {
+                        let openTime = new Date();
+                        openTime.setHours(Number(item.openTime.split(":")[0]), Number(item.openTime.split(":")[1]), 0);
+
+                        let closeTime = new Date();
+                        closeTime.setHours(Number(item.closeTime.split(":")[0]), Number(item.closeTime.split(":")[1]), 0);
+
+                        if(todayDate >= openTime && todayDate < closeTime ) {
+                            // this mean it's open today but it's already past store opening hour
+                            // console.info("We are OPEN today!");
+
+                            // --------------------
+                            // Check store snooze
+                            // --------------------
+
+                            let snoozeEndTime = new Date(storeSnooze.snoozeEndTime);
+                            let nextStoreOpeningTime: string = "";                            
+
+                            if (storeSnooze.isSnooze === true) {
+                                // console.info("Store is currently on snooze");
+
+                                // check if snoozeEndTime exceed closeTime
+                                if (snoozeEndTime > closeTime) {
+                                    // console.info("Store snooze exceed closeTime");
+
+                                    // ------------------------
+                                    // Find next available day
+                                    // ------------------------
+
+                                    let dayBeforeArray = storeTiming.slice(0, index + 1);
+                                    let dayAfterArray = storeTiming.slice(index + 1, storeTiming.length);
+                                    
+                                    let nextAvailableDay = dayAfterArray.concat(dayBeforeArray);                                
+                                    nextAvailableDay.forEach((object, iteration, array) => {
+                                        // this mean store opened
+                                        if (object.isOff === false) {
+                                            let nextOpenTime = new Date();
+                                            nextOpenTime.setHours(Number(object.openTime.split(":")[0]), Number(object.openTime.split(":")[1]), 0);
+
+                                            let nextCloseTime = new Date();
+                                            nextCloseTime.setHours(Number(object.closeTime.split(":")[0]), Number(object.closeTime.split(":")[1]), 0);
+
+                                            if(todayDate >= nextOpenTime){
+                                                let nextOpen = (iteration === 0) ? ("tommorow at " + object.openTime) : ("on " + object.day + " " + object.openTime);
+                                                // console.info("We will open " + nextOpen);
+                                                this.message = "Sorry for the inconvenience, We are closed! We will open " + nextOpen;
+                                                nextStoreOpeningTime = "Store will open " + nextOpen;
+                                                array.length = iteration + 1;
+                                            }
+                                        } else {
+                                            console.warn("Store currently snooze. Store close on " + object.day);
+                                        }
+                                    });
+
+                                } else {
+                                    // this works for safari & google crome
+                                    let storeSnoozeEndTime = new Date(storeSnooze.snoozeEndTime.replace(/-/g, "/")).toISOString();
+                                    
+                                    nextStoreOpeningTime = "Store will open at " + this._datePipe.transform(storeSnoozeEndTime,'EEEE, h:mm a');
+                                }                                
+
+                                if (storeSnooze.snoozeReason && storeSnooze.snoozeReason !== null) {
+                                    this.message = "Sorry for the inconvenience, Store is currently closed due to " + storeSnooze.snoozeReason + ". " + nextStoreOpeningTime;
+                                } else {
+                                    this.message = "Sorry for the inconvenience, Store is currently closed due to unexpected reason. " + nextStoreOpeningTime;
+                                }
+                            }
+                            
+                            // ---------------------
+                            // check for break hour
+                            // ---------------------
+                            if ((item.breakStartTime && item.breakStartTime !== null) && (item.breakEndTime && item.breakEndTime !== null)) {
+                                let breakStartTime = new Date();
+                                breakStartTime.setHours(Number(item.breakStartTime.split(":")[0]), Number(item.breakStartTime.split(":")[1]), 0);
+    
+                                let breakEndTime = new Date();
+                                breakEndTime.setHours(Number(item.breakEndTime.split(":")[0]), Number(item.breakEndTime.split(":")[1]), 0);
+
+                                if(todayDate >= breakStartTime && todayDate < breakEndTime ) {
+                                    // console.info("We are on BREAK! We will open at " + item.breakEndTime);
+                                    this.message = "Sorry for the inconvenience, We are on break! We will open at " + item.breakEndTime;
+                                }
+                            }
+                        } else if (todayDate < openTime) {
+                            // this mean it's open today but it's before store opening hour (store not open yet)
+                            this.message = "Sorry for the inconvenience, We are closed! We will open at " + item.openTime;
+                        } else {
+
+                            // console.info("We are CLOSED for the day!");
+
+                            // ------------------------
+                            // Find next available day
+                            // ------------------------
+
+                            let dayBeforeArray = storeTiming.slice(0, index + 1);
+                            let dayAfterArray = storeTiming.slice(index + 1, storeTiming.length);
+                            
+                            let nextAvailableDay = dayAfterArray.concat(dayBeforeArray);                                
+                            nextAvailableDay.forEach((object, iteration, array) => {
+                                
+                                // this mean store opened
+                                if (object.isOff === false) {
+                                    let nextOpenTime = new Date();
+                                    nextOpenTime.setHours(Number(object.openTime.split(":")[0]), Number(object.openTime.split(":")[1]), 0);
+
+                                    let nextCloseTime = new Date();
+                                    nextCloseTime.setHours(Number(object.closeTime.split(":")[0]), Number(object.closeTime.split(":")[1]), 0);
+
+                                    if(todayDate >= nextOpenTime){
+                                        let nextOpen = (iteration === 0) ? ("tommorow at " + object.openTime) : ("on " + object.day + " " + object.openTime);
+                                        // console.info("We will open " + nextOpen);
+                                        this.message = "Sorry for the inconvenience, We are closed! We will open " + nextOpen;
+                                        array.length = iteration + 1;
+                                    }
+                                } else {
+                                    console.warn("Store close on " + object.day);
+                                }
+                            });
+                        }
+                    } else {
+
+                        console.warn("We are CLOSED today");
+                        
+                        // ------------------------
+                        // Find next available day
+                        // ------------------------
+
+                        let dayBeforeArray = storeTiming.slice(0, index + 1);
+                        let dayAfterArray = storeTiming.slice(index + 1, storeTiming.length);
+                        
+                        let nextAvailableDay = dayAfterArray.concat(dayBeforeArray);
+            
+                        nextAvailableDay.forEach((object, iteration, array) => {
+                            // this mean store opened
+                            if (object.isOff === false) {
+                                
+                                let nextOpenTime = new Date();                    
+                                nextOpenTime.setHours(Number(object.openTime.split(":")[0]), Number(object.openTime.split(":")[1]), 0);
+                                
+                                let nextCloseTime = new Date();
+                                nextCloseTime.setHours(Number(object.closeTime.split(":")[0]), Number(object.closeTime.split(":")[1]), 0);
+                                  
+                                if(todayDate >= nextOpenTime){
+                                    let nextOpen = (iteration === 0) ? ("tommorow at " + object.openTime) : ("on " + object.day + " " + object.openTime);
+                                    // console.info("We will open " + nextOpen);
+                                    this.message = "Sorry for the inconvenience, We are closed! We will open " + nextOpen;
+                                    array.length = iteration + 1;
+                                }
+                            } else {
+                                console.warn("Store close on this " + object.day);
+                            }
+                        });
+                    }
+                }
+            });
+        } else {
+            // this indicate that store closed for all days
+            this.message = "Sorry for the inconvenience, We are closed!";
+        }
     }
 
 }

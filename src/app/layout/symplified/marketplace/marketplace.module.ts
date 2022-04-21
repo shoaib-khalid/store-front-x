@@ -20,6 +20,7 @@ import { SharedModule } from 'app/shared/shared.module';
 import { MarketplaceLayoutComponent } from 'app/layout/symplified/marketplace/marketplace.component';
 import { BreadcrumbModule } from 'app/layout/common/breadcrumb/breadcrumb.module';
 import { Error404Component } from 'app/shared/error/error-404/error-404.component';
+import { MarqueeModule } from 'app/layout/common/marquee/marquee.module';
 
 @NgModule({
     declarations: [
@@ -46,6 +47,7 @@ import { Error404Component } from 'app/shared/error/error-404/error-404.componen
         UserModule,
         CartModule,
         SharedModule,
+        MarqueeModule
     ],
     exports     : [
         MarketplaceLayoutComponent
