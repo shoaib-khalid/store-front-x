@@ -22,6 +22,7 @@ import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
 import { AddAddressComponent } from './add-address/add-address.component';
 import { EditAddressComponent } from './edit-address/edit-address.component';
+import { VoucherModalComponent } from './voucher-modal/voucher-modal.component';
 
 @Component({
     selector     : 'landing-checkout',
@@ -175,7 +176,7 @@ export class LandingCheckoutComponent implements OnInit
             address             : ['', Validators.required],
             storePickup         : [false],
             postCode            : ['', [Validators.required, Validators.minLength(5), Validators.maxLength(10), CheckoutValidationService.postcodeValidator]],
-            state               : ['', Validators.required],
+            state               : ['Selangor', Validators.required],
             city                : ['', Validators.required],
             deliveryProviderId  : ['', CheckoutValidationService.deliveryProviderValidator],
             country             : [''],
@@ -208,9 +209,6 @@ export class LandingCheckoutComponent implements OnInit
         this._storesService.store$
             .subscribe((response: Store) => {
                 this.store = response;
-
-                console.log('store verticalCode', this.store);
-                
 
                 // -------------------------
                 // Set Dialing code
@@ -1493,60 +1491,44 @@ export class LandingCheckoutComponent implements OnInit
 
         this._checkoutService.postCustomerClaimVoucher(this.user.id, this.promoCode)
             .subscribe((response) => {
-                // if voucher is valid
+
                 this.promoCode = '';
-                const confirmation = this._fuseConfirmationService.open({
-                    "title": "Congratulations!",
-                    "message": "Promo code successfully added",
-                    "icon": {
-                      "show": true,
-                      "name": "heroicons_outline:check",
-                      "color": "success"
-                    },
-                    "actions": {
-                      "confirm": {
-                        "show": true,
-                        "label": "OK",
-                        "color": "primary"
-                      },
-                      "cancel": {
-                        "show": false,
-                        "label": "Cancel"
-                      }
-                    },
-                    "dismissible": true
-                  });
+
+                if ((response.voucher.storeId === null || response.voucher.storeId === this.store.id ) && (response.voucher.verticalCode === this.store.verticalCode)) {
+
+                    // if voucher is valid
+                    this.openVoucherModal('mat_solid:check_circle','Congratulations!', 'Promo code successfully claimed', null, true);
+                }
+
+                else {
+                    // if voucher is invalid for this store
+                    this.openVoucherModal('mat_solid:check_circle','Congratulations!', 'Promo code successfully claimed', null, false);
+                }
+
                 
             }, (error) => {
 
                 // if voucher is invalid
                 this.promoCode = '';
 
-                if (error['status'] != 404) {
+                if (error['status'] === 409) {
 
-                    const confirmation = this._fuseConfirmationService.open({
-                        "title": "Voucher already redeemed!",
-                        "message": "Please enter different code",
-                        "icon": {
-                          "show": true,
-                          "name": "heroicons_outline:exclamation",
-                          "color": "warn"
-                        },
-                        "actions": {
-                          "confirm": {
-                            "show": true,
-                            "label": "OK",
-                            "color": "warn"
-                          },
-                          "cancel": {
-                            "show": false,
-                            "label": "Cancel"
-                          }
-                        },
-                        "dismissible": true
-                      });
+                    // if voucher is invalid
+                    this.openVoucherModal('heroicons_outline:x','Promo code already claimed!', 'Please enter a different code', null, true);
 
                 }
+
+                // if voucher is invalid
+                // if (error['status'] === 404) {
+                //     this.openVoucherModal('heroicons_outline:x','Invalid Code!', 'Invalid code, please try again', null, true);
+
+                // } else if (error['status'] === 409) {
+                //     this.openVoucherModal('heroicons_outline:x','Oops...', 'Sorry, you have claimed this voucher', null, true);
+
+                // } 
+                // else if (error['status'] === 417) {
+                //     this.openVoucherModal('heroicons_outline:x','Oops...', 'Sorry, this promo code has expired', null, true);
+                // }
             });
         
     }
@@ -1576,5 +1558,21 @@ export class LandingCheckoutComponent implements OnInit
     redirect(pagename: string) {
         // this._route.snapshot.paramMap.get(pagename)
         this._router.navigate([window.location.href = pagename]);
+    }
+
+    openVoucherModal(icon: string, title: string, description: string, voucher: CustomerVoucher, isValid: boolean) : void {
+        
+        const dialogRef = this._dialog.open( 
+        VoucherModalComponent,{
+            data:{ 
+                icon,
+                title,
+                description,
+                voucher, 
+                isValid
+            }
+        });
+        
+        dialogRef.afterClosed().subscribe();
     }
 }

@@ -5,6 +5,7 @@ export interface User
     email: string;
     avatar?: string;
     status?: string;
+    username: string;
 }
 
 export interface Customer

@@ -51,7 +51,7 @@ export class AddAddressComponent implements OnInit {
       phoneNumber         : ['', CheckoutValidationService.phonenumberValidator],
       address             : ['', Validators.required],
       postCode            : ['', [Validators.required, Validators.minLength(5), Validators.maxLength(10), CheckoutValidationService.postcodeValidator]],
-      state               : ['', Validators.required],
+      state               : ['Selangor', Validators.required],
       city                : ['', Validators.required],
     });
 

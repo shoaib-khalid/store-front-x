@@ -19,6 +19,7 @@ import { ModalConfirmationDeleteItemComponent } from './modal-confirmation-delet
 import { AddAddressComponent } from './add-address/add-address.component';
 import { EditAddressComponent } from './edit-address/edit-address.component';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { VoucherModalComponent } from './voucher-modal/voucher-modal.component';
 
 @NgModule({
     declarations: [
@@ -26,7 +27,8 @@ import { MatExpansionModule } from '@angular/material/expansion';
         ChooseDeliveryAddressComponent,
         ModalConfirmationDeleteItemComponent,
         AddAddressComponent,
-        EditAddressComponent
+        EditAddressComponent,
+        VoucherModalComponent
     ],
     imports     : [
         RouterModule.forChild(landingCheckoutRoutes),

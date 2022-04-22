@@ -154,7 +154,7 @@ export class UserComponent implements OnInit, OnDestroy
         // this._cookieService.set('RefreshToken','W0JANTQwOGY0ZmU=');
 
         this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-in' +
-            '?redirectUrl=' + encodeURI('https://' + this.sanatiseUrl + this._router.url);
+            '?redirectURL=' + encodeURI('https://' + this.sanatiseUrl + this._router.url);
     }
 
     customerLogout(){
@@ -174,12 +174,12 @@ export class UserComponent implements OnInit, OnDestroy
         this._cookieService.delete('AccessToken','/', this._apiServer.settings.storeFrontDomain);
 
         this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-out' +
-            '?redirectUrl=' + encodeURI('https://' + this.sanatiseUrl);
+            '?redirectURL=' + encodeURI('https://' + this.sanatiseUrl);
         
     }
 
     customerRegister(){
         this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-up' +
-            '?redirectUrl=' + encodeURI('https://' + this.sanatiseUrl);
+            '?redirectURL=' + encodeURI('https://' + this.sanatiseUrl);
     }
 }
