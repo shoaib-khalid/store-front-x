@@ -146,7 +146,7 @@ export class AddAddressComponent implements OnInit {
       city       : this.createAddressForm.get('city').value,
       country    : this.store.regionCountry.name,
       customerId : this.user.id,
-      email      : this.createAddressForm.get('email').value,
+      email      : this.user.email,
       phoneNumber: this.createAddressForm.get('phoneNumber').value,
       postCode   : this.createAddressForm.get('postCode').value,
       state      : this.createAddressForm.get('state').value,

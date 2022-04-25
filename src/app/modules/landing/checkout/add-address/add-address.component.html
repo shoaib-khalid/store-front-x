@@ -4,7 +4,7 @@
     <div class="flex flex-col flex-auto p-2 overflow-y-auto">
         <!-- Header new adrdress -->
         <div class="flex items-center justify-center flex-auto min-w-0 mb-8">
-            <span class="text-center text-2xl font-bold text-primary">Create New Address</span> <br>
+            <span class="text-center text-2xl font-bold text-primary">Create New Delivery Address</span> <br>
         </div>
 
         <!-- Address form -->
@@ -15,7 +15,7 @@
             <!-- Full Name  & Email Address-->
             <div class="w-full flex flex-col sm:flex-row">
                 <!-- Email Address -->
-                <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
+                <!-- <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
                     <mat-label>Email Address</mat-label>
                     <input
                         matInput
@@ -24,16 +24,10 @@
                         autocomplete="disabled"
                         [required]="true"
                         >
-                    <!-- <mat-error *ngIf="checkoutForm.get('email').hasError('required')">
-                        Required
-                    </mat-error>
-                    <mat-error *ngIf="checkoutForm.get('email').hasError('email')">
-                        Enter a valid email address
-                    </mat-error> -->
-                </mat-form-field>
+                </mat-form-field> -->
 
                 <!-- Full name -->
-                <mat-form-field class="w-full sm:w-1/2 sm:pl-1" floatLabel="always">
+                <mat-form-field class="w-full" floatLabel="always">
                     <mat-label>Full Name</mat-label>
                     <input
                         matInput
@@ -60,12 +54,6 @@
                         [required]="true"
                         (change)="createAddressForm.get('phoneNumber').patchValue(sanitizePhoneNumber(createAddressForm.get('phoneNumber').value))"
                         >
-                    <!-- <mat-error *ngIf="checkoutForm.get('phoneNumber').hasError('required')">
-                        Required
-                    </mat-error>
-                    <mat-error *ngIf="checkoutForm.get('phoneNumber').hasError('invalidPhonenumber')">
-                        Invalid Phone number
-                    </mat-error> -->
                 </mat-form-field>
 
                 <!-- State -->

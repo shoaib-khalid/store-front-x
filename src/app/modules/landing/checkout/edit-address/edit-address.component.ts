@@ -145,7 +145,7 @@ export class EditAddressComponent implements OnInit {
       city       : this.editAddressForm.get('city').value,
       country    : this.state,
       customerId : this.user.id,
-      email      : this.editAddressForm.get('email').value,
+      email      : this.user.email,
       phoneNumber: this.editAddressForm.get('phoneNumber').value,
       postCode   : this.editAddressForm.get('postCode').value,
       state      : this.editAddressForm.get('state').value,
