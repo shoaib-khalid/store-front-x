@@ -20,26 +20,29 @@
                         <!-- Product Details -->
                         <div class="flex flex-col w-full md:w-1/2">
                             <!-- Title -->
-                            <div class="justify-start items-center mt-2 md:mt-0 pb-2">
-                                <span class="mb-2 text-3xl sm:text-4xl font-semibold items-center">{{product.name}}</span>
+                            <div class="justify-start items-center mt-2 md:mt-0">
+                                <span class="text-3xl md:text-4xl font-semibold leading-none items-center">{{product.name}}</span>
                                 <!-- <span *ngIf="displayedProduct.discountAmount>0" class="mb-2 py-1 px-3 rounded text-sm font-semibold mx-2 items-center" [ngClass]="'text-primary-100 bg-red-600'">      
                                     {{displayedProduct.discountAmount}}% Off
                                 </span> -->
                             </div>
                             <!-- Price -->
-                            <div *ngIf="displayedProduct.discountAmount>0;else noItemDiscount" class="mb-2">
-                                <p class="font-semibold items-center">Price: &nbsp; 
-                                    <span style="text-decoration: line-through;" class="px-2">{{displayedProduct.price | currency: store.regionCountry.currencySymbol}}</span> 
-                                    <span class="text-xl font-semibold text-primary px-2 ">{{displayedProduct.discountedPrice | currency: store.regionCountry.currencySymbol}}</span> 
-                                    <span class="mb-2 py-1 px-3 rounded text-sm font-semibold mx-2 items-center" [ngClass]="'text-primary-100 bg-red-600'">{{displayedProduct.discountAmount}}% Off</span> 
-                                </p>
+                            <div class="mt-2">
+                                <ng-container *ngIf="displayedProduct.discountAmount>0;else noItemDiscount" >
+                                    <p class="font-semibold items-center">Price: &nbsp; 
+                                        <span style="text-decoration: line-through;" class="px-2">{{displayedProduct.price | currency: store.regionCountry.currencySymbol}}</span> 
+                                        <span class="text-xl font-semibold text-primary px-2 ">{{displayedProduct.discountedPrice | currency: store.regionCountry.currencySymbol}}</span> 
+                                        <span class="mb-2 py-1 px-3 rounded text-sm font-semibold mx-2 items-center" [ngClass]="'text-primary-100 bg-red-600'">{{displayedProduct.discountAmount}}% Off</span> 
+                                    </p>
+                                </ng-container>
+                                <ng-template #noItemDiscount>
+                                    <p class="font-semibold">Price: &nbsp; <span class="text-xl font-semibold text-primary px-2">{{displayedProduct.price | currency: store.regionCountry.currencySymbol}}</span> </p>
+                                </ng-template>
                             </div>
-                            <ng-template #noItemDiscount>
-                                <p class="font-semibold">Price: &nbsp; <span class="text-xl font-semibold text-primary px-2 ">{{displayedProduct.price | currency: store.regionCountry.currencySymbol}}</span> </p>
-                            </ng-template>
                             <!-- Details -->
-                            <div class="mb-2 pt-4">
-                                <p class="mb-2 font-semibold">Details:</p> <span class="text-sm font-normal" [innerHTML]="product.description"></span>
+                            <div class="">
+                                <p class="mb-2 font-semibold">Details:</p> 
+                                <span class="text-sm font-normal" [innerHTML]="product.description"></span>
                             </div>
                             <!-- Variants / Combo -->
                             <ng-container *ngIf="!product.isPackage; else comboProduct">
@@ -89,14 +92,14 @@
                             </ng-template>
     
                             <!-- Quantity -->
-                            <div class="flex flex-row justify-between items-center">
+                            <div class="flex flex-row justify-between items-center mt-4">
                                 <span class="font-semibold">Quantity:</span> 
-                                <div class="flex flex-row h-8 w-20 rounded-lg relative bg-primary mt-1">
-                                    <button (click)="checkQuantity('decrement')" class="text-black hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-l-lg cursor-pointer outline-none pb-2">
+                                <div class="flex flex-row h-8 w-20 rounded-lg relative border border-primary">
+                                    <button (click)="checkQuantity('decrement')" class="text-black hover:bg-primary h-full w-20 rounded-l-lg cursor-pointer outline-none pb-2">
                                         <span class="text-2xl">−</span>
                                     </button>
                                     <input [(ngModel)]="quantity" (change)="checkQuantity()" type="number" class="outline-none focus:outline-none text-center w-full font-semibold text-md text-black focus:text-black md:text-basecursor-default flex items-center outline-none" name="custom-input-number" value="0"/>
-                                    <button (click)="checkQuantity('increment')" class="text-black hover:text-gray-700 hover:bg-gray-400 h-full w-20 rounded-r-lg cursor-pointer pb-2">
+                                    <button (click)="checkQuantity('increment')" class="text-black hover:bg-primary h-full w-20 rounded-r-lg cursor-pointer pb-2">
                                         <span class="text-2xl">+</span>
                                     </button>
                                 </div>

@@ -3,27 +3,25 @@
     <div class="flex flex-col items-center justify-center w-full">
 
         <!-- Banner -->
-        <div class="flex flex-col relative items-center w-full h-56 md:h-96 bg-no-repeat bg-cover bg-center overflow-hidden mt-10 sm:rounded-xl">
+        <div class="flex flex-col relative items-center w-full h-56 mt-4 md:h-96 bg-no-repeat bg-cover bg-center overflow-hidden">
             <!-- Store Banner -->
             <banner-slider></banner-slider>
         </div>
 
+        <!-- Discounts -->
+        <sliders class="flex flex-auto relative w-full h-72 mt-4"></sliders>
+
         <!-- Store Description -->
-        <div class="flex flex-row w-full md:h-30 h-20 w-full justify-center items-center">
+        <div class="flex flex-row w-full h-10 w-full mt-4 justify-center items-center">
             <p class="px-2 flex flex-row text-black text-center w-200 h-full justify-center items-center" [innerHTML]="store.storeDescription"></p>
         </div>
         
         <!-- Category -->
-        <div class="flex flex-col items-center text-center w-full mb-4">
+        <div class="flex flex-col items-center text-center w-full mt-4 mb-4">
             <p class="font-bold sm:text-lg">Please select one of the Categories</p>
             <div class="flex flex-row w-full items-center justify-center">
                 <category-carousel class="w-full px-0"></category-carousel>
             </div>
         </div>
-
-        <!-- Discounts -->
-        <sliders class="flex flex-auto relative w-full"></sliders>
-
-
     </div>
 </div>

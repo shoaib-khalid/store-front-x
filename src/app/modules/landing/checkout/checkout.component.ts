@@ -76,6 +76,8 @@ export class LandingCheckoutComponent implements OnInit
     daysArray = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
     storeTimings: { days: string[], timing: string }[] = [];
 
+    displayRedeem: boolean = false;
+
     cartItems: CartItem[] = [];
     order: Order;
     payment: Payment;
@@ -290,11 +292,16 @@ export class LandingCheckoutComponent implements OnInit
                 // set country
                 this.checkoutForm.get('country').patchValue(this.store.regionCountry.name);
 
-                // Get store states
+                // Get store states 
                 this._storesService.getStoreRegionCountryState(this.store.regionCountry.id)
                     .subscribe((response)=>{                        
 
                         this.regionCountryStates = response;
+
+                        // this is when user is logged in and the checkoutForm is valid 
+                        if (this.user && this.checkoutForm.valid) {                            
+                            this.calculateCharges();
+                        }
 
                         // Mark for check
                         this._changeDetectorRef.markForCheck();
@@ -1078,29 +1085,29 @@ export class LandingCheckoutComponent implements OnInit
     getCustomerAddresses(user) {
         // Get customer Addresses
         this._userService.getCustomerAddress(user.id)
-        .subscribe((response: any) => {
-            
-            if (response.length > 0) {
+            .subscribe((response: any) => {
+                
+                if (response.length > 0) {
 
-                //sort isDefault true first
-                this.customerAddresses = response.sort((a, b) => Number(b.isDefault) - Number(a.isDefault));
+                    //sort isDefault true first
+                    this.customerAddresses = response.sort((a, b) => Number(b.isDefault) - Number(a.isDefault));
 
-                let index = this.customerAddresses.findIndex(element => element.isDefault === true);
+                    let index = this.customerAddresses.findIndex(element => element.isDefault === true);
 
-                if (index > -1) {
-                    this.defaultAddress = this.customerAddresses[index].id;
-                    this.checkoutForm.get('customerAddress').patchValue(this.customerAddresses[index]);    
+                    if (index > -1) {
+                        this.defaultAddress = this.customerAddresses[index].id;
+                        this.checkoutForm.get('customerAddress').patchValue(this.customerAddresses[index]);    
+                    }
+                    else {
+                        this.checkoutForm.get('customerAddress').patchValue(this.customerAddresses[0]);
+                    }
+
+                    // Set default customer address
+                    this.setCustomerDetails();
                 }
-                else {
-                    this.checkoutForm.get('customerAddress').patchValue(this.customerAddresses[0]);
-                }
-
-                // 
-                this.setCustomerDetails();
-            }
-            // Mark for check
-            this._changeDetectorRef.markForCheck();
-        });
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
     }
 
     checkStoreTiming(storeTiming: StoreTiming[], storeSnooze: StoreSnooze): void
@@ -1339,9 +1346,14 @@ export class LandingCheckoutComponent implements OnInit
         this.panelOpenState = false;
         
         this.setCustomerDetails();
-        // Change button to Calculate Charges
-        this.addressFormChanges();
-        
+
+        // this is when user is logged in and the checkoutForm is valid 
+        if (this.user && this.checkoutForm.valid) {                            
+            this.calculateCharges();
+        } else {
+            // Change button to Calculate Charges
+            this.addressFormChanges();
+        }
     }
 
     moveArray(arr, old_index, new_index) {
@@ -1397,14 +1409,13 @@ export class LandingCheckoutComponent implements OnInit
     setCustomerDetails() {
         const formData = this.checkoutForm.getRawValue();
 
-        this.checkoutForm.get("address").patchValue(formData.customerAddress.address)
-        this.checkoutForm.get("city").patchValue(formData.customerAddress.city)
-        this.checkoutForm.get("email").patchValue(formData.customerAddress.email)
-        this.checkoutForm.get("phoneNumber").patchValue(formData.customerAddress.phoneNumber)
-        this.checkoutForm.get('fullName').patchValue(formData.customerAddress.name)
-        this.checkoutForm.get("state").patchValue(formData.customerAddress.state)
-        this.checkoutForm.get("postCode").patchValue(formData.customerAddress.postCode)
-
+        this.checkoutForm.get("address").patchValue(formData.customerAddress.address);
+        this.checkoutForm.get("city").patchValue(formData.customerAddress.city);
+        this.checkoutForm.get("email").patchValue(formData.customerAddress.email);
+        this.checkoutForm.get("phoneNumber").patchValue(formData.customerAddress.phoneNumber);
+        this.checkoutForm.get('fullName').patchValue(formData.customerAddress.name);
+        this.checkoutForm.get("state").patchValue(formData.customerAddress.state);
+        this.checkoutForm.get("postCode").patchValue(formData.customerAddress.postCode);
     }
 
     deleteAddress(address: Address, index: any) {

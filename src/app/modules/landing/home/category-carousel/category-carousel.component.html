@@ -1,96 +1,58 @@
 <ng-container *ngIf="storeCategories && storeCategories.length > 0">
     <div class="flex flex-row">
-        <!-- <button class="prev" (click)="swipePrev()">
-            <i class="material-icons ">
-            keyboard_arrow_left
-            </i>
-        </button> -->
-        <!-- <button
-            class="min-w-10 min-h-7 h-7"
-            mat-stroked-button
-            mat-button
-            (click)="swipePrev()">
-            <mat-icon
-                class="icon-size-5"
-                [svgIcon]="'heroicons_solid:chevron-left'"></mat-icon>
-        </button> -->
         <div class="flex items-center pb-4 pl-2 sm:pl-0 pr-2">
-          <button 
+            <button 
             class="inline-flex items-center justify-center w-10 h-10 transition-colors duration-150 bg-amber-400 rounded-full focus:shadow-outline hover:bg-amber-500"
             (click)="swipePrev()">
             <mat-icon
-                  class="text-black icon-size-5"
-                  [svgIcon]="'heroicons_solid:chevron-left'"></mat-icon>
-          </button>
+                    class="text-black icon-size-5"
+                    [svgIcon]="'heroicons_solid:chevron-left'"></mat-icon>
+            </button>
         </div>
-
         <swiper
-          [slidesPerView]="swiperSlidesPerView"
-          [spaceBetween]="swiperSpaceBetween"
-          [loop]="true"
-          [slidesPerGroup]="swiperSlidesPerGroup"
-          [centeredSlides]="swiperCenteredSlides"
-          [effect]="swiperEffect"
-          [coverflowEffect]="{
-            rotate: 0,
-            stretch: -22,
-            depth: 100,
-            modifier: 1,
-            slideShadows: false
-          }"
-          class="mySwiper"
-        >
-          <ng-template swiperSlide *ngFor="let category of storeCategories">
-              <div class="carousel-cell group">
-                  <input
-                      [id]="'category-button' + category.id"
-                      class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                      type="button"
-                      (click)="chooseCategory(category.id)"
-                      mat-icon-button>
-                  <!-- <div class="h-5 group-hover:hidden"></div> -->
-                  <div class="h-5"></div>
-                  <label 
-                      class="flex flex-col items-center justify-center cursor-pointer"
-                      [for]="'category-button' + category.id"
-                      matRipple>
-                      <div class="relative w-44 sm:w-60 h-28 sm:h-36 my-1.5 mx-3 rounded-lg border-2 border-black group-hover:border-primary">
-                        <div class="rounded border-2 border-white group-hover:border-white absolute top-0.5 bottom-0.5 left-0.5 right-0.5">
-                            <img
-                                class="object-cover h-max-52 w-max-32 rounded"
-                                [src]="(category.thumbnailUrl && category.thumbnailUrl !== null) ? category.thumbnailUrl : displayStoreLogo(store.storeAssets)"
-                                alt="Logo image">
+            [slidesPerView]="swiperSlidesPerView"
+            [spaceBetween]="swiperSpaceBetween"
+            [loop]="true"
+            [slidesPerGroup]="swiperSlidesPerGroup"
+            [centeredSlides]="swiperCenteredSlides"
+            [effect]="swiperEffect"
+            [coverflowEffect]="{ rotate: 0, stretch: -22, depth: 100, modifier: 1, slideShadows: false }"
+            class="mySwiper">
+            <ng-template swiperSlide *ngFor="let category of storeCategories">
+                <div class="carousel-cell group">
+                    <input
+                        [id]="'category-button' + category.id"
+                        class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                        type="button"
+                        (click)="chooseCategory(category.id)"
+                        mat-icon-button>
+                    <div class="h-5"></div>
+                    <label 
+                        class="flex flex-col items-center justify-center cursor-pointer"
+                        [for]="'category-button' + category.id"
+                        matRipple>
+                        <div class="relative w-44 sm:w-60 h-28 sm:h-36 my-1.5 mx-3 rounded-lg border-2 border-black group-hover:border-primary">
+                            <div class="rounded border-2 border-white group-hover:border-white absolute top-0.5 bottom-0.5 left-0.5 right-0.5">
+                                <img
+                                    class="object-cover h-max-52 w-max-32 rounded"
+                                    [src]="(category.thumbnailUrl && category.thumbnailUrl !== null) ? category.thumbnailUrl : displayStoreLogo(store.storeAssets)"
+                                    alt="Logo image">
 
-                          </div>
-                      </div>
-                      <p class="my-2 mx-2 leading-none font-semibold text-md sm:text-lg group-hover:text-primary break-word">{{category.name}}</p>
-                  </label>
-              </div>
-              <!-- <div class="carousel-cell">
-                  <img src="https://cdn.pixabay.com/photo/2013/07/12/17/47/test-pattern-152459_960_720.png">
-              </div> -->
-          </ng-template>
+                            </div>
+                        </div>
+                        <p class="my-2 mx-2 leading-none font-semibold text-md sm:text-lg group-hover:text-primary break-word">{{category.name}}</p>
+                    </label>
+                </div>
+            </ng-template>
         </swiper>
         <div class="flex items-center pb-4 pr-2 sm:pr-0 pl-2">
-          <button 
+            <button 
             class="inline-flex items-center justify-center w-10 h-10 transition-colors duration-150 bg-amber-400 rounded-full focus:shadow-outline hover:bg-amber-500"
             (click)="swipeNext()">
             <mat-icon
-                  class="text-black icon-size-5"
-                  [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
-          </button>
+                class="text-black icon-size-5"
+                [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+            </button>
         </div>
     </div>
-  <!-- <div >
-    <button class="prev" (click)="swipePrev()">
-      <i class="material-icons">
-      keyboard_arrow_left
-      </i>
-    </button>
-    <button class="next" (click)="swipeNext()">
-      <i class="material-icons">
-      keyboard_arrow_right
-      </i>
-    </button>
-  </div> -->
 </ng-container>

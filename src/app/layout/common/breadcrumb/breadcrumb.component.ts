@@ -20,7 +20,7 @@ export class BreadcrumbComponent implements OnInit
         private _activatedRoute: ActivatedRoute
     )
     {        
-        this.breadcrumbs = this.buildBreadCrumb(this._activatedRoute.root);        
+        this.breadcrumbs = this.buildBreadCrumb(this._activatedRoute.root);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ export class BreadcrumbComponent implements OnInit
             filter((event) => event instanceof NavigationEnd),
             distinctUntilChanged(),
         ).subscribe(() => {
-            this.breadcrumbs = this.buildBreadCrumb(this._activatedRoute.root);
+            this.breadcrumbs = this.buildBreadCrumb(this._activatedRoute.root);            
         })
     }
 
