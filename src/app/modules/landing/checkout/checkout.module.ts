@@ -20,6 +20,7 @@ import { AddAddressComponent } from './add-address/add-address.component';
 import { EditAddressComponent } from './edit-address/edit-address.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { VoucherModalComponent } from './voucher-modal/voucher-modal.component';
+import { AgmCoreModule } from '@agm/core';
 
 @NgModule({
     declarations: [
@@ -43,7 +44,11 @@ import { VoucherModalComponent } from './voucher-modal/voucher-modal.component';
         MatDialogModule,
         MatRadioModule,
         SharedModule,
-        MatExpansionModule
+        MatExpansionModule,
+        AgmCoreModule.forRoot({  
+            apiKey: 'AIzaSyCFhf1LxbPWNQSDmxpfQlx69agW-I-xBIw' ,
+            libraries: ['places'] 
+          }), 
     ],
     providers   : [
         DatePipe

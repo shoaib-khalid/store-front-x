@@ -2,7 +2,7 @@
     "env": {
         "name": "dev",
         "impersonate": true,
-        "impersonateUrl": ".dev-my.symplified.ai"
+        "impersonateUrl": ".dev-pk.symplified.ai"
     },
     "apiServer": {
         "flowBuilderService"    : "https://api.symplified.it/flow-builder/v1",

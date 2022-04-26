@@ -508,7 +508,10 @@
                                     placeholder="Enter address"
                                     autocomplete="disabled"
                                     (change)="addressFormChanges()"
-                                    [required]="true">
+                                    [required]="true"
+                                    (keydown.enter)="$event.preventDefault()"
+                                    (change)="addressFormChanges()"
+                                    #search>
                                 <mat-error *ngIf="checkoutForm.get('address').hasError('required')">
                                     Required
                                 </mat-error>
@@ -551,6 +554,16 @@
                             </mat-form-field> -->
                         </div>
                         
+                         <!-- Map (mapClick)="onMapClicked($event)" -->
+                         <div *ngIf="countryId === 'PAK'" class="w-full">
+                            <agm-map style=" height: 250px; width: 100%;" 
+                            [latitude]="latitude" [longitude]="longitude"  [zoom]="zoom">
+                            <agm-marker [latitude]="latitude" [longitude]="longitude" [markerDraggable]="true"
+                            (dragEnd)="markerDragEnd($event)">    
+                            </agm-marker>
+                            </agm-map>
+                        </div>
+
                         <!-- Additional info & save future order -->
                         <div class="w-full">
                             <!-- Additional info -->
