@@ -209,6 +209,7 @@ export class LandingCheckoutComponent implements OnInit
         // Get store
         // --------------
         this._storesService.store$
+            .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((response: Store) => {
                 this.store = response;
 
@@ -237,6 +238,7 @@ export class LandingCheckoutComponent implements OnInit
                 
                 // get store timings & snooze (for store closing)
                 this._storesService.storeSnooze$
+                    .pipe(takeUntil(this._unsubscribeAll))
                     .subscribe((response: StoreSnooze) => {
                         this.storeSnooze = response;
                         
@@ -294,15 +296,10 @@ export class LandingCheckoutComponent implements OnInit
 
                 // Get store states 
                 this._storesService.getStoreRegionCountryState(this.store.regionCountry.id)
-                    .subscribe((response)=>{                        
+                    .subscribe((response)=>{
 
                         this.regionCountryStates = response;
-
-                        // this is when user is logged in and the checkoutForm is valid 
-                        if (this.user && this.checkoutForm.valid) {                            
-                            this.calculateCharges();
-                        }
-
+            
                         // Mark for check
                         this._changeDetectorRef.markForCheck();
                     })
@@ -312,19 +309,20 @@ export class LandingCheckoutComponent implements OnInit
                 // -----------------------
 
                 this._cartService.cartItems$
-                .subscribe((response: CartItem[])=>{
-                    this.cartItems = response;
+                    .pipe(takeUntil(this._unsubscribeAll))
+                    .subscribe((response: CartItem[])=>{
+                        this.cartItems = response;
 
-                    let subTotalArr = this.cartItems.map(item => {
-                        return item.price;
+                        let subTotalArr = this.cartItems.map(item => {
+                            return item.price;
+                        });
+
+                        // sum up the quantity in the array
+                        this.paymentDetails.cartSubTotal = subTotalArr.reduce((sum, a) => sum + a, 0);                    
+
+                        // Mark for check
+                        this._changeDetectorRef.markForCheck();
                     });
-
-                    // sum up the quantity in the array
-                    this.paymentDetails.cartSubTotal = subTotalArr.reduce((sum, a) => sum + a, 0);                    
-
-                    // Mark for check
-                    this._changeDetectorRef.markForCheck();
-                });
 
                 // ---------------------------
                 // Get Store Delivery Details
@@ -342,39 +340,64 @@ export class LandingCheckoutComponent implements OnInit
 
                 // Get used customer voucher
                 this._checkoutService.getAvailableCustomerVoucher(false, this.store.verticalCode)
-                .subscribe((response: any) => {
-                    
-                    this.customerVouchers = response;
-                    
-                    // Mark for check
-                    this._changeDetectorRef.markForCheck();
-                });
+                    .subscribe((response: any) => {
+                        this.customerVouchers = response;
+                        
+                        // Mark for check
+                        this._changeDetectorRef.markForCheck();
+                    });
 
                 // Get customer voucher pagination, isUsed = false 
                 this._checkoutService.customerVoucherPagination$
-                .pipe(takeUntil(this._unsubscribeAll))
-                .subscribe((response: CustomerVoucherPagination) => {
+                    .pipe(takeUntil(this._unsubscribeAll))
+                    .subscribe((response: CustomerVoucherPagination) => {
 
-                    this.customerVoucherPagination = response; 
-                    
-                    // Mark for check
-                    this._changeDetectorRef.markForCheck();           
-                });
+                        this.customerVoucherPagination = response; 
+                        
+                        // Mark for check
+                        this._changeDetectorRef.markForCheck();           
+                    });
 
                 // Get used customer voucher pagination, isUsed = true 
                 this._checkoutService.usedCustomerVoucherPagination$
-                .pipe(takeUntil(this._unsubscribeAll))
-                .subscribe((response: UsedCustomerVoucherPagination) => {
+                    .pipe(takeUntil(this._unsubscribeAll))
+                    .subscribe((response: UsedCustomerVoucherPagination) => {
 
-                    this.usedCustomerVoucherPagination = response;
-                    
-                    // Mark for check
-                    this._changeDetectorRef.markForCheck();
-                });
+                        this.usedCustomerVoucherPagination = response;
+                        
+                        // Mark for check
+                        this._changeDetectorRef.markForCheck();
+                    });
                     
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
+
+        // auto calculate charges
+        (this.checkoutForm.get('state').valueChanges && this.checkoutForm.get('city').valueChanges 
+        && this.checkoutForm.get('postCode').valueChanges && this.checkoutForm.get('address').valueChanges)
+            .pipe(
+                takeUntil(this._unsubscribeAll),
+                debounceTime(300),
+                switchMap(() => {
+
+                    // set loading to true
+                    // this.isLoading = true;          
+
+                    // this is when user is logged in and the checkoutForm is valid 
+                    // auto calculate charges
+                    if (this.user && this.checkoutForm.valid) { 
+                        this.calculateCharges();
+                    }
+                    
+                    return of(true);
+                }),
+                map(() => {
+                    // set loading to false
+                    // this.isLoading = false;
+                })
+            )
+            .subscribe();
 
         // ----------------------
         // Fuse Media Watcher
@@ -389,9 +412,6 @@ export class LandingCheckoutComponent implements OnInit
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
-
-        
-
     }
     
     /**
@@ -1348,7 +1368,8 @@ export class LandingCheckoutComponent implements OnInit
         this.setCustomerDetails();
 
         // this is when user is logged in and the checkoutForm is valid 
-        if (this.user && this.checkoutForm.valid) {                            
+        // auto calculate charges
+        if (this.user && this.checkoutForm.valid) {
             this.calculateCharges();
         } else {
             // Change button to Calculate Charges

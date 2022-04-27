@@ -4,7 +4,7 @@
     <div class="flex flex-col items-center w-full h-auto p-2 sm:px-0">
         
         <!-- Container -->
-        <div class="flex flex-col md:flex-row justify-between w-full md:mt-14">
+        <div class="flex flex-col md:flex-row justify-between w-full md:mt-14 md:mb-6">
             <!-- Contact information part -->
             <form
                 class="flex justify-between flex-col md:flex-row w-full"
@@ -568,6 +568,7 @@
                             </mat-form-field>
                             <!-- Save future order -->
                             <mat-checkbox
+                                *ngIf="!user"
                                 [formControlName]="'saveMyInfo'"
                                 color="primary"
                                 class="font-semibold pb-4">
