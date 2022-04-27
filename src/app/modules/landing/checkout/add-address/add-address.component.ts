@@ -48,7 +48,7 @@ export class AddAddressComponent implements OnInit {
     this.createAddressForm = this._formBuilder.group({
       // Main Store Section
       fullName            : ['', Validators.required],
-      email               : ['', [Validators.required, CheckoutValidationService.emailValidator]],
+      // email               : ['', [Validators.required, CheckoutValidationService.emailValidator]],
       phoneNumber         : ['', CheckoutValidationService.phonenumberValidator],
       address             : ['', Validators.required],
       postCode            : ['', [Validators.required, Validators.minLength(5), Validators.maxLength(10), CheckoutValidationService.postcodeValidator]],
@@ -115,28 +115,34 @@ export class AddAddressComponent implements OnInit {
 
   sanitizePhoneNumber(phoneNumber: string) {
 
-    let substring = phoneNumber.substring(0, 1)
-    let countryId = this.store.regionCountry.id;
-    let sanitizedPhoneNo = ''
-    
-    if ( countryId === 'MYS' ) {
+    if (phoneNumber.match(/^\d+$/)) {
 
-             if (substring === '6') sanitizedPhoneNo = phoneNumber;
-        else if (substring === '0') sanitizedPhoneNo = '6' + phoneNumber;
-        else if (substring === '+') sanitizedPhoneNo = phoneNumber.substring(1);
-        else                        sanitizedPhoneNo = '60' + phoneNumber;
+      let substring = phoneNumber.substring(0, 1)
+      let countryId = this.store.regionCountry.id;
+      let sanitizedPhoneNo = ''
+      
+      if ( countryId === 'MYS' ) {
 
-    }
-    else if ( countryId === 'PAK') {
+               if (substring === '6') sanitizedPhoneNo = phoneNumber;
+          else if (substring === '0') sanitizedPhoneNo = '6' + phoneNumber;
+          else if (substring === '+') sanitizedPhoneNo = phoneNumber.substring(1);
+          else                        sanitizedPhoneNo = '60' + phoneNumber;
 
-             if (substring === '9') sanitizedPhoneNo = phoneNumber;
-        else if (substring === '2') sanitizedPhoneNo = '9' + phoneNumber;
-        else if (substring === '+') sanitizedPhoneNo = phoneNumber.substring(1);
-        else                        sanitizedPhoneNo = '92' + phoneNumber;
+      }
+      else if ( countryId === 'PAK') {
 
-    }
+               if (substring === '9') sanitizedPhoneNo = phoneNumber;
+          else if (substring === '2') sanitizedPhoneNo = '9' + phoneNumber;
+          else if (substring === '+') sanitizedPhoneNo = phoneNumber.substring(1);
+          else                        sanitizedPhoneNo = '92' + phoneNumber;
 
-    return sanitizedPhoneNo;
+      }
+
+      return sanitizedPhoneNo;
+  }
+  else {
+      return phoneNumber;
+  }
 }
 
   createAddress() {

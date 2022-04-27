@@ -55,7 +55,7 @@ export class EditAddressComponent implements OnInit {
     this.editAddressForm = this._formBuilder.group({
       // Main Store Section
       name                : ['', Validators.required],
-      email               : ['', [Validators.required, CheckoutValidationService.emailValidator]],
+      // email               : ['', [Validators.required, CheckoutValidationService.emailValidator]],
       phoneNumber         : ['', CheckoutValidationService.phonenumberValidator],
       address             : ['', Validators.required],
       postCode            : ['', [Validators.required, Validators.minLength(5), Validators.maxLength(10), CheckoutValidationService.postcodeValidator]],

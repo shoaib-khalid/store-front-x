@@ -36,9 +36,9 @@
                         autocomplete="disabled"
                         [required]="true"
                         >
-                        <!-- <mat-error *ngIf="checkoutForm.get('fullName').hasError('required')">
-                            Required
-                        </mat-error> -->
+                        <mat-error *ngIf="editAddressForm.get('name').hasError('required')">
+                            Full name is required
+                        </mat-error>
                 </mat-form-field>
             </div>
             <!-- Phonenumber & State -->
@@ -54,12 +54,12 @@
                         [required]="true"
                         (change)="editAddressForm.get('phoneNumber').patchValue(sanitizePhoneNumber(editAddressForm.get('phoneNumber').value))"
                         >
-                    <!-- <mat-error *ngIf="checkoutForm.get('phoneNumber').hasError('required')">
-                        Required
+                    <mat-error *ngIf="editAddressForm.get('phoneNumber').hasError('required')">
+                        Phone number is required
                     </mat-error>
-                    <mat-error *ngIf="checkoutForm.get('phoneNumber').hasError('invalidPhonenumber')">
-                        Invalid Phone number
-                    </mat-error> -->
+                    <mat-error *ngIf="editAddressForm.get('phoneNumber').hasError('invalidPhonenumber')">
+                        Invalid phone number
+                    </mat-error>
                 </mat-form-field>
 
                 <!-- State -->
@@ -79,9 +79,9 @@
                             <mat-option [value]="state.id">{{state.name}}</mat-option>
                         </div>
                     </mat-select>
-                    <!-- <mat-error *ngIf="checkoutForm.get('state').hasError('required')">
-                        Required
-                    </mat-error> -->
+                    <mat-error *ngIf="editAddressForm.get('state').hasError('required')">
+                        State is required
+                    </mat-error>
                 </mat-form-field>
             </div>
             <div class="w-full flex flex-col sm:flex-row mb-4 sm:mb-0">
@@ -95,9 +95,9 @@
                         autocomplete="disabled"
                         [required]="true"
                         >
-                    <!-- <mat-error *ngIf="checkoutForm.get('city').hasError('required')">
-                        Required
-                    </mat-error> -->
+                    <mat-error *ngIf="editAddressForm.get('city').hasError('required')">
+                        City is required
+                    </mat-error>
                 </mat-form-field>
                 <!-- Postcode -->
                 <mat-form-field class="w-full sm:w-1/2 sm:pl-1" floatLabel="always">
@@ -109,18 +109,18 @@
                         autocomplete="disabled"
                         [required]="true"
                         >
-                    <!-- <mat-error *ngIf="checkoutForm.get('postCode').hasError('required')">
-                        Required
+                    <mat-error *ngIf="editAddressForm.get('postCode').hasError('required')">
+                        Postcode is required
                     </mat-error>
-                    <mat-error *ngIf="checkoutForm.get('postCode').hasError('invalidPostcode')">
+                    <mat-error *ngIf="editAddressForm.get('postCode').hasError('invalidPostcode')">
                         Invalid postcode
                     </mat-error>
-                    <mat-error *ngIf="checkoutForm.get('postCode').hasError('minlength')">
-                        Minimum length of postcode not meet
+                    <mat-error *ngIf="editAddressForm.get('postCode').hasError('minlength')">
+                        Postcode does not meet min. length
                     </mat-error>
-                    <mat-error *ngIf="checkoutForm.get('postCode').hasError('maxlength')">
+                    <mat-error *ngIf="editAddressForm.get('postCode').hasError('maxlength')">
                         Exceed maximum length of postcode
-                    </mat-error> -->
+                    </mat-error>
                 </mat-form-field>
             </div>
             <div class="w-full">
@@ -136,9 +136,9 @@
                         placeholder="Enter address"
                         autocomplete="disabled"
                         [required]="true">
-                    <!-- <mat-error *ngIf="checkoutForm.get('address').hasError('required')">
-                        Required
-                    </mat-error> -->
+                    <mat-error *ngIf="editAddressForm.get('address').hasError('required')">
+                        Address information is required
+                    </mat-error>
                 </mat-form-field>
             </div>
         </form>
@@ -174,6 +174,7 @@
                 <button
                     mat-flat-button
                     (click)="updateAddress()"
+                    [disabled]="editAddressForm.invalid"
                     [color]="'primary'">
                     Update
                 </button>

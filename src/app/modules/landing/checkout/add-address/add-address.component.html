@@ -36,9 +36,9 @@
                         autocomplete="disabled"
                         [required]="true"
                         >
-                        <!-- <mat-error *ngIf="checkoutForm.get('fullName').hasError('required')">
-                            Required
-                        </mat-error> -->
+                        <mat-error *ngIf="createAddressForm.get('fullName').hasError('required')">
+                            Full name is required
+                        </mat-error>
                 </mat-form-field>
             </div>
             <!-- Phonenumber & State -->
@@ -54,6 +54,12 @@
                         [required]="true"
                         (change)="createAddressForm.get('phoneNumber').patchValue(sanitizePhoneNumber(createAddressForm.get('phoneNumber').value))"
                         >
+                        <mat-error *ngIf="createAddressForm.get('phoneNumber').hasError('required')">
+                            Phone number is required
+                        </mat-error>
+                        <mat-error *ngIf="createAddressForm.get('phoneNumber').hasError('invalidPhonenumber')">
+                            Invalid phone number
+                        </mat-error>
                 </mat-form-field>
 
                 <!-- State -->
@@ -73,9 +79,9 @@
                             <mat-option [value]="state.id">{{state.name}}</mat-option>
                         </div>
                     </mat-select>
-                    <!-- <mat-error *ngIf="checkoutForm.get('state').hasError('required')">
-                        Required
-                    </mat-error> -->
+                    <mat-error *ngIf="createAddressForm.get('state').hasError('required')">
+                        State is required
+                    </mat-error>
                 </mat-form-field>
             </div>
             <div class="w-full flex flex-col sm:flex-row mb-4 sm:mb-0">
@@ -89,9 +95,9 @@
                         autocomplete="disabled"
                         [required]="true"
                         >
-                    <!-- <mat-error *ngIf="checkoutForm.get('city').hasError('required')">
-                        Required
-                    </mat-error> -->
+                    <mat-error *ngIf="createAddressForm.get('city').hasError('required')">
+                        City is required
+                    </mat-error>
                 </mat-form-field>
                 <!-- Postcode -->
                 <mat-form-field class="w-full sm:w-1/2 sm:pl-1" floatLabel="always">
@@ -103,18 +109,18 @@
                         autocomplete="disabled"
                         [required]="true"
                         >
-                    <!-- <mat-error *ngIf="checkoutForm.get('postCode').hasError('required')">
-                        Required
+                    <mat-error *ngIf="createAddressForm.get('postCode').hasError('required')">
+                        Postcode is required
                     </mat-error>
-                    <mat-error *ngIf="checkoutForm.get('postCode').hasError('invalidPostcode')">
+                    <mat-error *ngIf="createAddressForm.get('postCode').hasError('invalidPostcode')">
                         Invalid postcode
                     </mat-error>
-                    <mat-error *ngIf="checkoutForm.get('postCode').hasError('minlength')">
-                        Minimum length of postcode not meet
+                    <mat-error *ngIf="createAddressForm.get('postCode').hasError('minlength')">
+                        Postcode does not meet min. length
                     </mat-error>
-                    <mat-error *ngIf="checkoutForm.get('postCode').hasError('maxlength')">
+                    <mat-error *ngIf="createAddressForm.get('postCode').hasError('maxlength')">
                         Exceed maximum length of postcode
-                    </mat-error> -->
+                    </mat-error>
                 </mat-form-field>
             </div>
             <div class="w-full">
@@ -130,9 +136,9 @@
                     placeholder="Enter address"
                     autocomplete="disabled"
                     [required]="true">
-                <!-- <mat-error *ngIf="checkoutForm.get('address').hasError('required')">
-                    Required
-                </mat-error> -->
+                <mat-error *ngIf="createAddressForm.get('address').hasError('required')">
+                    Address information is required
+                </mat-error>
             </mat-form-field>
             </div>
         </form>
@@ -168,6 +174,7 @@
                 <button
                     mat-flat-button
                     (click)="createAddress()"
+                    [disabled]="createAddressForm.invalid"
                     [color]="'primary'">
                     Create
                 </button>
