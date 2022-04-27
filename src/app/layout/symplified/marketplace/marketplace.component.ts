@@ -13,6 +13,7 @@ import { StoresService } from 'app/core/store/store.service';
 import { PlatformService } from 'app/core/platform/platform.service';
 import { Platform } from 'app/core/platform/platform.types';
 import { DatePipe } from '@angular/common';
+import { AppConfig } from 'app/config/service.config';
 
 @Component({
     selector     : 'marketplace-layout',
@@ -42,16 +43,17 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
      * Constructor
      */
     constructor(
-        private _activatedRoute: ActivatedRoute,
-        private _router: Router,
+        private _apiServer: AppConfig,
         private _storesService: StoresService,
         private _changeDetectorRef: ChangeDetectorRef,
         private _userService: UserService,
         private _navigationService: NavigationService,
+        private _platformsService: PlatformService,
+        private _activatedRoute: ActivatedRoute,
+        private _router: Router,
+        private _datePipe: DatePipe,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _fuseNavigationService: FuseNavigationService,
-        private _platformsService: PlatformService,
-        private _datePipe: DatePipe,
 
     )
     {
@@ -113,8 +115,9 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((navigation: Navigation) => {
                 
-                this.navigation = navigation;
-                let navigationObjectIndex =  navigation.default.findIndex(item => item.id === 'product-categories' )
+                this.navigation = navigation;                
+
+                let navigationObjectIndex =  navigation.default.findIndex(item => item.id === 'product-categories');
                 this._storesService.storeCategories$
                     .pipe(takeUntil(this._unsubscribeAll))
                     .subscribe((categories: any) => {
@@ -144,16 +147,37 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
                              ) 
                         })
                     });
-            });
 
+                    // Subscribe to the user service
+                    this._userService.user$
+                    .pipe((takeUntil(this._unsubscribeAll)))
+                    .subscribe((user: User) => {
+                        this.user = user;
+                        this.displayUsername = this.textTruncate(user.username, 12);
+                        if (this.user) {                            
+                            this.navigation.default.unshift(
+                                {
+                                    id   : 'orders',
+                                    title: 'My Orders',
+                                    type : 'basic',
+                                    icon : 'heroicons_outline:shopping-cart',
+                                    externalLink: true,
+                                    link : 'https://' + this._apiServer.settings.marketplaceDomain + '/orders'
+                                },
+                                {
+                                    id   : 'vouchers',
+                                    title: 'My Vouchers',
+                                    type : 'basic',
+                                    icon : 'heroicons_outline:ticket',
+                                    externalLink: true,
+                                    link : 'https://' + this._apiServer.settings.marketplaceDomain + '/vouchers'
+                                }
+                            );
+                        }
+                    });
 
-        // Subscribe to the user service
-        this._userService.user$
-            .pipe((takeUntil(this._unsubscribeAll)))
-            .subscribe((user: User) => {
-                this.user = user;
-                this.displayUsername = this.textTruncate(user.name, 12)
-
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
             });
 
         // Subscribe to media changes
