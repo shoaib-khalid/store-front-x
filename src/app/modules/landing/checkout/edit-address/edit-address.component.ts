@@ -31,6 +31,8 @@ export class EditAddressComponent implements OnInit {
   regionCountryStates: any;
   store: Store;
   dialingCode: string;
+  flashMessage: 'success' | 'error' | 'warning' | null = null;
+
 
   constructor(
     private dialogRef: MatDialogRef<EditAddressComponent>,
@@ -154,10 +156,42 @@ export class EditAddressComponent implements OnInit {
 
     this._userService.updateCustomerAddress(this.addressId, editAddressBody)
     .subscribe((response) => {
+      // Show a success message
+      this.showFlashMessage('success');
 
-      this.dialogRef.close({selectAddress: true, address: response});
+      // Set delay before closing the details window
+      setTimeout(() => {
+
+        // close the window
+        this.dialogRef.close({selectAddress: true, address: response});
+
+        // Mark for check
+        this._changeDetectorRef.markForCheck();
+          
+      }, 1500);
     });
 
   }
+
+  /**
+     * Show flash message
+     */
+   showFlashMessage(type: 'success' | 'error' | 'warning'): void
+   {
+       // Show the message
+       this.flashMessage = type;
+
+       // Mark for check
+       this._changeDetectorRef.markForCheck();
+
+       // Hide it after 3 seconds
+       setTimeout(() => {
+
+           this.flashMessage = null;
+
+           // Mark for check
+           this._changeDetectorRef.markForCheck();
+       }, 3000);
+   }
 
 }

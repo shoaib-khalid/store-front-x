@@ -289,7 +289,7 @@
                                                 </div>
                                                 <div class="mt-4 w-full h-full line-clamp-3">{{checkoutForm.get('customerAddress').value.address}}, {{checkoutForm.get('customerAddress').value.postCode}}, {{checkoutForm.get('customerAddress').value.city}}, {{checkoutForm.get('customerAddress').value.state}}</div>
                                                 <div class="flex flex-row justify-between pt-4">
-                                                    <div (click)="deleteAddress(checkoutForm.get('customerAddress').value, i); $event.stopPropagation()" class="flex flex-row group">
+                                                    <div (click)="deleteAddress(checkoutForm.get('customerAddress').value, i); $event.stopPropagation();" class="flex flex-row group">
                                                         <mat-icon class="text-center text-red-500 group-hover:text-red-700" svgIcon="heroicons_outline:trash"></mat-icon>
                                                         <span class="pl-1 pt-0.5 font-bold text-red-500 group-hover:text-red-700">Delete</span>
                                                     </div>
