@@ -154,7 +154,11 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
                     .subscribe((user: User) => {
                         this.user = user;
                         this.displayUsername = this.textTruncate(user.username, 12);
-                        if (this.user) {                            
+
+                        // if the navigation already exist dont push a new one
+                        let index = this.navigation.default.findIndex(item => (item.id === 'orders' ||  item.id === 'orders'));
+
+                        if (this.user && index < 0) {                            
                             this.navigation.default.unshift(
                                 {
                                     id   : 'orders',
