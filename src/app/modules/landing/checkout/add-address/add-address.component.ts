@@ -115,7 +115,7 @@ export class AddAddressComponent implements OnInit {
 
   sanitizePhoneNumber(phoneNumber: string) {
 
-    if (phoneNumber.match(/^[0-9\+]+$/)) {
+    if (phoneNumber.match(/^\+?[0-9]+$/)) {
 
       let substring = phoneNumber.substring(0, 1)
       let countryId = this.store.regionCountry.id;

@@ -61,7 +61,7 @@ export class CheckoutValidationService {
           //   /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/
           // )
           control.value.match(
-            /^[0-9\+]+$/
+            /^\+?[0-9]+$/
           )
         ) {
           return null;
