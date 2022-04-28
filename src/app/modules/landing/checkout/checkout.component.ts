@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, NgForm, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, NgForm, ValidationErrors, Validators } from '@angular/forms';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { DOCUMENT } from '@angular/common'; 
 import { CartService } from 'app/core/cart/cart.service';
@@ -13,7 +13,7 @@ import { CheckoutService } from './checkout.service';
 import { CheckoutValidationService } from './checkout.validation.service';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ChooseDeliveryAddressComponent } from './choose-delivery-address/choose-delivery-address.component';
-import { Address, CartDiscount, CustomerVoucher, CustomerVoucherPagination, DeliveryProvider, DeliveryProviderGroup, Order, Payment, UsedCustomerVoucherPagination, Voucher } from './checkout.types';
+import { Address, CartDiscount, CustomerVoucher, CustomerVoucherPagination, DeliveryProvider, DeliveryProviderGroup, Order, Payment, UsedCustomerVoucherPagination, CheckoutInputField } from './checkout.types';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { ModalConfirmationDeleteItemComponent } from './modal-confirmation-delete-item/modal-confirmation-delete-item.component';
@@ -77,10 +77,12 @@ export class LandingCheckoutComponent implements OnInit
     storeTimings: { days: string[], timing: string }[] = [];
 
     displayRedeem: boolean = false;
-
+    
     cartItems: CartItem[] = [];
     order: Order;
     payment: Payment;
+
+    checkoutInputField: CheckoutInputField = new CheckoutInputField();
 
     paymentDetails: CartDiscount = {
         cartSubTotal: 0,
@@ -135,7 +137,6 @@ export class LandingCheckoutComponent implements OnInit
     dialingCode: string;
 
     // Voucher
-    
     customerVouchers: CustomerVoucher[] = [] ;
     customerVoucherPagination: CustomerVoucherPagination;
 
@@ -145,6 +146,7 @@ export class LandingCheckoutComponent implements OnInit
     voucherApplied: any = null;
     voucherDiscountAppliedMax: number = 0;
     voucherDiscountApplied: number = 0;
+
     /**
      * Constructor
      */
@@ -162,7 +164,7 @@ export class LandingCheckoutComponent implements OnInit
         private _userService: UserService,
         @Inject(DOCUMENT) document: Document
     )
-    {
+    {   
     }
 
     ngOnInit() {
@@ -615,6 +617,24 @@ export class LandingCheckoutComponent implements OnInit
         }
     }
 
+    copyFormControl(control: AbstractControl) {
+        if (control instanceof FormControl) {
+            return new FormControl(control.value);
+        } else if (control instanceof FormGroup) {
+            const copy = new FormGroup({});
+            Object.keys(control.controls).forEach(key => {
+                copy.addControl(key, this.copyFormControl(control.controls[key]));
+            });
+            return copy;
+        } else if (control instanceof FormArray) {
+            const copy = new FormArray([]);
+            control.controls.forEach(control => {
+                copy.push(this.copyFormControl(control));
+            })
+            return copy;
+        }
+    }
+
     calculateCharges() {
 
         // Set Loading to true
@@ -628,7 +648,11 @@ export class LandingCheckoutComponent implements OnInit
                 const controlErrors: ValidationErrors = this.checkoutForm.get(key).errors;
                 if (controlErrors != null) {
                     Object.keys(controlErrors).forEach(keyError => {
-                        this.displayError(CheckoutValidationService.getValidatorErrorMessage(keyError, 0));
+
+                        const checkoutFormInfo = this.checkoutForm.get(key);
+                        checkoutFormInfo["info"] = this.checkoutInputField[key];                         
+
+                        this.displayError(CheckoutValidationService.getValidatorErrorMessage(keyError, checkoutFormInfo));
                         throw BreakException;
                     });
                 }

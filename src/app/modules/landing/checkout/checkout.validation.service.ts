@@ -17,11 +17,11 @@ export class CheckoutValidationService {
   
     static getValidatorErrorMessage(validatorName: string, validatorValue?: any) {
         let config = {
-            required: 'Required',
+            required: validatorValue.info.name + ' is required',
             invalidEmailAddress: 'Invalid email address',
             invalidPhonenumber: 'Invalid phonenumber',
             invalidPostcode: 'Invalid postcode',
-            minlength: `Minimum length ${validatorValue.requiredLength}`,
+            minlength: `Minimum length of ${validatorValue.info.name.toLowerCase()} not meet`,
             deliveryProviderHasError: `Error found in delivery service provider ${validatorValue}`
         };
         
@@ -79,7 +79,7 @@ export class CheckoutValidationService {
         // https://regexr.com/3c53v
         if (
           control.value.match(
-            /^[0-9]+$/
+            /^[0-9]{5}$/
           )
         ) {
           return null;

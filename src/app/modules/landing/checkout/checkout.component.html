@@ -55,7 +55,7 @@
                                         <input
                                             matInput
                                             [formControlName]="'firstName'"
-                                            placeholder="Enter first name"
+                                            [placeholder]="checkoutInputField.firstName.placeholder"
                                             autocomplete="disabled"
                                             [required]="true"
                                             >
@@ -69,7 +69,7 @@
                                         <input
                                             matInput
                                             [formControlName]="'lastName'"
-                                            placeholder="Enter last name"
+                                            [placeholder]="checkoutInputField.lastName.placeholder"
                                             autocomplete="disabled"
                                             [required]="true"
                                             >
@@ -86,7 +86,7 @@
                                             matInput
                                             [formControlName]="'email'"
                                             (change)="checkCustomerInfo('email', this.checkoutForm.get('email').value)"
-                                            placeholder="Enter email address"
+                                            [placeholder]="checkoutInputField.email.placeholder"
                                             autocomplete="disabled"
                                             [required]="true"
                                             >
@@ -103,7 +103,7 @@
                                         <input
                                             matInput
                                             [formControlName]="'fullName'"
-                                            placeholder="Enter full name"
+                                            [placeholder]="checkoutInputField.fullName.placeholder"
                                             autocomplete="disabled"
                                             [required]="true"
                                             >
@@ -140,7 +140,7 @@
                                         <mat-select 
                                             [formControlName]="'state'"
                                             [required]="true"
-                                            [placeholder]="'Select state'"
+                                            [placeholder]="checkoutInputField.state.placeholder"
                                             (selectionChange)="checkoutForm.get('state').patchValue($event.value);"
                                             #stateSelector="matSelect">
                                             <mat-select-trigger>
@@ -393,7 +393,7 @@
                                         matInput
                                         [formControlName]="'email'"
                                         (change)="checkCustomerInfo('email', this.checkoutForm.get('email').value)"
-                                        placeholder="Enter email address"
+                                        [placeholder]="checkoutInputField.email.placeholder"
                                         autocomplete="disabled"
                                         [required]="true"
                                         >
@@ -416,7 +416,7 @@
                                     <input
                                         matInput
                                         [formControlName]="'fullName'"
-                                        placeholder="Enter full name"
+                                        [placeholder]="checkoutInputField.fullName.placeholder"
                                         autocomplete="disabled"
                                         [required]="true"
                                         >
@@ -456,7 +456,7 @@
                                     <input
                                         matInput
                                         [formControlName]="'city'"
-                                        placeholder="Enter city"
+                                        [placeholder]="checkoutInputField.city.placeholder"
                                         autocomplete="disabled"
                                         (input)="addressFormChanges()"
                                         (change)="addressFormChanges()"
@@ -472,7 +472,7 @@
                                     <input
                                         matInput
                                         [formControlName]="'postCode'"
-                                        placeholder="Enter postcode"
+                                        [placeholder]="checkoutInputField.postCode.placeholder"
                                         autocomplete="disabled"
                                         (input)="addressFormChanges()"
                                         (change)="addressFormChanges()"
@@ -505,7 +505,7 @@
                                 <input
                                     matInput
                                     [formControlName]="'address'"
-                                    placeholder="Enter address"
+                                    [placeholder]="checkoutInputField.address.placeholder"
                                     autocomplete="disabled"
                                     (change)="addressFormChanges()"
                                     [required]="true">
@@ -869,7 +869,7 @@
                                         <mat-form-field class="fuse-mat-no-subscript fuse-mat-dense w-full mb-1" floatLabel="always">
                                             <mat-label>Voucher Discount</mat-label>
                                             <mat-select 
-                                                [placeholder]="'Select My Voucher'"
+                                                placeholder="Select My Voucher"
                                                 (selectionChange)="selectVoucher(voucherSelector.value);"
                                                 [(ngModel)]="voucherApplied"
                                                 [ngModelOptions]="{standalone: true}"
@@ -906,7 +906,7 @@
                                                 <input
                                                     matInput
                                                     [(ngModel)]="promoCode"
-                                                    [placeholder]="'Enter Promo Code'"
+                                                    placeholder="Enter Promo Code"
                                                     [ngModelOptions]="{standalone: true}"
                                                     autocomplete="disabled">
                                             </mat-form-field>
