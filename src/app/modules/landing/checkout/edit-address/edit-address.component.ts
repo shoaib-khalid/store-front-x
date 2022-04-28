@@ -58,7 +58,7 @@ export class EditAddressComponent implements OnInit {
       // email               : ['', [Validators.required, CheckoutValidationService.emailValidator]],
       phoneNumber         : ['', CheckoutValidationService.phonenumberValidator],
       address             : ['', Validators.required],
-      postCode            : ['', [Validators.required, Validators.minLength(5), Validators.maxLength(10), CheckoutValidationService.postcodeValidator]],
+      postCode            : ['', [Validators.required, Validators.minLength(5), Validators.maxLength(5), CheckoutValidationService.postcodeValidator]],
       state               : ['', Validators.required],
       city                : ['', Validators.required],
       isDefault           : [false]
@@ -70,8 +70,8 @@ export class EditAddressComponent implements OnInit {
     
     let countryId = this.store.regionCountry.id;
 
-    if (countryId === 'MYS') this.dialingCode = '+60';
-    else if (countryId === 'PAK') this.dialingCode = '+92';
+    if (countryId === 'MYS') this.dialingCode = '60';
+    else if (countryId === 'PAK') this.dialingCode = '92';
     
     this._userService.getCustomerAddressById(this.addressId)
     .subscribe((response: Address) => {
@@ -114,29 +114,35 @@ export class EditAddressComponent implements OnInit {
 
   sanitizePhoneNumber(phoneNumber: string) {
 
-    let substring = phoneNumber.substring(0, 1)
-    let countryId = this.store.regionCountry.id;
-    let sanitizedPhoneNo = ''
-    
-    if ( countryId === 'MYS' ) {
+    if (phoneNumber.match(/^[0-9\+]+$/)) {
 
-             if (substring === '6') sanitizedPhoneNo = phoneNumber;
-        else if (substring === '0') sanitizedPhoneNo = '6' + phoneNumber;
-        else if (substring === '+') sanitizedPhoneNo = phoneNumber.substring(1);
-        else                        sanitizedPhoneNo = '60' + phoneNumber;
+      let substring = phoneNumber.substring(0, 1)
+      let countryId = this.store.regionCountry.id;
+      let sanitizedPhoneNo = ''
+      
+      if ( countryId === 'MYS' ) {
 
+               if (substring === '6') sanitizedPhoneNo = phoneNumber;
+          else if (substring === '0') sanitizedPhoneNo = '6' + phoneNumber;
+          else if (substring === '+') sanitizedPhoneNo = phoneNumber.substring(1);
+          else                        sanitizedPhoneNo = '60' + phoneNumber;
+
+      }
+      else if ( countryId === 'PAK') {
+
+               if (substring === '9') sanitizedPhoneNo = phoneNumber;
+          else if (substring === '2') sanitizedPhoneNo = '9' + phoneNumber;
+          else if (substring === '+') sanitizedPhoneNo = phoneNumber.substring(1);
+          else                        sanitizedPhoneNo = '92' + phoneNumber;
+
+      }
+
+      return sanitizedPhoneNo;
     }
-    else if ( countryId === 'PAK') {
-
-             if (substring === '9') sanitizedPhoneNo = phoneNumber;
-        else if (substring === '2') sanitizedPhoneNo = '9' + phoneNumber;
-        else if (substring === '+') sanitizedPhoneNo = phoneNumber.substring(1);
-        else                        sanitizedPhoneNo = '92' + phoneNumber;
-
+    else {
+        return phoneNumber;
     }
-
-    return sanitizedPhoneNo;
-}
+  }
 
   updateAddress() {
 

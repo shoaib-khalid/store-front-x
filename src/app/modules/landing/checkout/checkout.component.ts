@@ -174,10 +174,10 @@ export class LandingCheckoutComponent implements OnInit
             // firstName           : ['', Validators.required],
             // lastName            : ['', Validators.required],
             email               : ['', [Validators.required, CheckoutValidationService.emailValidator]],
-            phoneNumber         : ['', [CheckoutValidationService.phonenumberValidator, Validators.minLength(5), Validators.maxLength(30)]],
+            phoneNumber         : ['', [CheckoutValidationService.phonenumberValidator, Validators.maxLength(30)]],
             address             : ['', Validators.required],
             storePickup         : [false],
-            postCode            : ['', [Validators.required, Validators.minLength(5), Validators.maxLength(10), CheckoutValidationService.postcodeValidator]],
+            postCode            : ['', [Validators.required, Validators.minLength(5), Validators.maxLength(5), CheckoutValidationService.postcodeValidator]],
             state               : ['Selangor', Validators.required],
             city                : ['', Validators.required],
             deliveryProviderId  : ['', CheckoutValidationService.deliveryProviderValidator],
@@ -547,29 +547,35 @@ export class LandingCheckoutComponent implements OnInit
 
     sanitizePhoneNumber(phoneNumber: string) {
 
-        let substring = phoneNumber.substring(0, 1)
-        let countryId = this.store.regionCountry.id;
-        let sanitizedPhoneNo = ''
-        
-        if ( countryId === 'MYS' ) {
-
-                 if (substring === '6') sanitizedPhoneNo = phoneNumber;
-            else if (substring === '0') sanitizedPhoneNo = '6' + phoneNumber;
-            else if (substring === '+') sanitizedPhoneNo = phoneNumber.substring(1);
-            else                        sanitizedPhoneNo = '60' + phoneNumber;
-
+        if (phoneNumber.match(/^[0-9\+]+$/)) {
+    
+          let substring = phoneNumber.substring(0, 1)
+          let countryId = this.store.regionCountry.id;
+          let sanitizedPhoneNo = ''
+          
+          if ( countryId === 'MYS' ) {
+    
+                   if (substring === '6') sanitizedPhoneNo = phoneNumber;
+              else if (substring === '0') sanitizedPhoneNo = '6' + phoneNumber;
+              else if (substring === '+') sanitizedPhoneNo = phoneNumber.substring(1);
+              else                        sanitizedPhoneNo = '60' + phoneNumber;
+    
+          }
+          else if ( countryId === 'PAK') {
+    
+                   if (substring === '9') sanitizedPhoneNo = phoneNumber;
+              else if (substring === '2') sanitizedPhoneNo = '9' + phoneNumber;
+              else if (substring === '+') sanitizedPhoneNo = phoneNumber.substring(1);
+              else                        sanitizedPhoneNo = '92' + phoneNumber;
+    
+          }
+    
+          return sanitizedPhoneNo;
         }
-        else if ( countryId === 'PAK') {
-
-                 if (substring === '9') sanitizedPhoneNo = phoneNumber;
-            else if (substring === '2') sanitizedPhoneNo = '9' + phoneNumber;
-            else if (substring === '+') sanitizedPhoneNo = phoneNumber.substring(1);
-            else                        sanitizedPhoneNo = '92' + phoneNumber;
-
+        else {
+            return phoneNumber;
         }
-
-        return sanitizedPhoneNo;
-    }
+      }
 
     checkCustomerInfo(type: string, data: string) {
         const email =  type === "email" ? data : null;

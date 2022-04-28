@@ -84,7 +84,7 @@
                     </mat-error>
                 </mat-form-field>
             </div>
-            <div class="w-full flex flex-col sm:flex-row mb-4 sm:mb-0">
+            <div class="w-full flex flex-col sm:flex-row sm:mb-0">
                 <!--City -->
                 <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
                     <mat-label>City</mat-label>
@@ -108,19 +108,22 @@
                         placeholder="Enter postcode"
                         autocomplete="disabled"
                         [required]="true"
+                        maxlength="5"
                         >
-                    <mat-error *ngIf="editAddressForm.get('postCode').hasError('required')">
-                        Postcode is required
-                    </mat-error>
-                    <mat-error *ngIf="editAddressForm.get('postCode').hasError('invalidPostcode')">
-                        Invalid postcode
-                    </mat-error>
-                    <mat-error *ngIf="editAddressForm.get('postCode').hasError('minlength')">
-                        Postcode does not meet min. length
-                    </mat-error>
-                    <mat-error *ngIf="editAddressForm.get('postCode').hasError('maxlength')">
-                        Exceed maximum length of postcode
-                    </mat-error>
+                        <mat-error *ngIf="editAddressForm.get('postCode').hasError('required')">
+                            Postcode is required.
+                        </mat-error>
+                        <mat-error *ngIf="editAddressForm.get('postCode').hasError('invalidPostcode')">
+                            Invalid postcode{{editAddressForm.get('postCode').hasError('minlength') ? 
+                            '. Does not meet minimum length' : 
+                            editAddressForm.get('postCode').hasError('maxlength') ? '. Exceeded maximum length' : ''}}
+                        </mat-error>
+                        <mat-error *ngIf="!editAddressForm.get('postCode').hasError('invalidPostcode') && editAddressForm.get('postCode').hasError('minlength')">
+                            Does not meet minimum length
+                        </mat-error>
+                        <mat-error *ngIf="!editAddressForm.get('postCode').hasError('invalidPostcode') && editAddressForm.get('postCode').hasError('maxlength')">
+                            Exceeded maximum length
+                        </mat-error>
                 </mat-form-field>
             </div>
             <div class="w-full">

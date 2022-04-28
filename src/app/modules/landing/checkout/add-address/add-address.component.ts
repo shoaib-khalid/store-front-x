@@ -51,7 +51,7 @@ export class AddAddressComponent implements OnInit {
       // email               : ['', [Validators.required, CheckoutValidationService.emailValidator]],
       phoneNumber         : ['', CheckoutValidationService.phonenumberValidator],
       address             : ['', Validators.required],
-      postCode            : ['', [Validators.required, Validators.minLength(5), Validators.maxLength(10), CheckoutValidationService.postcodeValidator]],
+      postCode            : ['', [Validators.required, Validators.minLength(5), Validators.maxLength(5), CheckoutValidationService.postcodeValidator]],
       state               : ['Selangor', Validators.required],
       city                : ['', Validators.required],
     });
@@ -75,11 +75,11 @@ export class AddAddressComponent implements OnInit {
     
     switch (countryId) {
         case 'MYS':
-            this.dialingCode = '+60'
+            this.dialingCode = '60'
             break;
     
         case 'PAK':
-            this.dialingCode = '+92'
+            this.dialingCode = '92'
             break;
 
         default:
@@ -115,7 +115,7 @@ export class AddAddressComponent implements OnInit {
 
   sanitizePhoneNumber(phoneNumber: string) {
 
-    if (phoneNumber.match(/^\d+$/)) {
+    if (phoneNumber.match(/^[0-9\+]+$/)) {
 
       let substring = phoneNumber.substring(0, 1)
       let countryId = this.store.regionCountry.id;
@@ -139,11 +139,11 @@ export class AddAddressComponent implements OnInit {
       }
 
       return sanitizedPhoneNo;
+    }
+    else {
+        return phoneNumber;
+    }
   }
-  else {
-      return phoneNumber;
-  }
-}
 
   createAddress() {
 
