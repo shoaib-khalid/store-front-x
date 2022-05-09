@@ -73,12 +73,12 @@ export class SlidersComponent implements OnInit
                                 }
                             }));
                         }
-                    });                    
-        
+                    });            
+
                     // Go to step
                     this.goToStep(0);
                 }
-
+                
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });

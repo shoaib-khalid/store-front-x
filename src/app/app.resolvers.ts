@@ -157,6 +157,7 @@ export class StoreResolver implements Resolve<any>
                         
                     } else {
 
+                        // if customerId null means guest
                         let customerId = this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid ? this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid : null
 
                         const createCartBody = {
