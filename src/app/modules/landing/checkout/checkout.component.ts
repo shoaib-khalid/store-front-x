@@ -146,9 +146,9 @@ export class LandingCheckoutComponent implements OnInit
     voucherDiscountApplied: number = 0;
 
     // Map
-    latitude: number;
-    longitude: number;
-    zoom: number;
+    latitude: number = null;
+    longitude: number = null;
+    zoom: number = null;
     address: string;
     private geoCoder;
     countryId: String
@@ -223,6 +223,7 @@ export class LandingCheckoutComponent implements OnInit
             saveMyInfo          : [true],
             addresses           : [],
             customerAddress     : ['']
+
         });
 
         // Set Payment Completion Status "Calculate Charges"
@@ -709,7 +710,8 @@ export class LandingCheckoutComponent implements OnInit
                     deliveryCountry: this.checkoutForm.get('country').value,
                     deliveryContactEmail: this.checkoutForm.get('email').value,
                     deliveryContactName: this.checkoutForm.get('fullName').value,
-                    deliveryContactPhone: this.checkoutForm.get('phoneNumber').value
+                    deliveryContactPhone: this.checkoutForm.get('phoneNumber').value,
+                    deliveryPickUp: {latitude: this.latitude , longitude: this.longitude},
                 },
                 deliveryProviderId: null,
                 storeId: this._storesService.storeId$
@@ -717,11 +719,7 @@ export class LandingCheckoutComponent implements OnInit
 
             this._checkoutService.postToRetrieveDeliveryCharges(deliveryChargesBody)
                 .subscribe((deliveryProviderResponse: DeliveryProvider[])=>{
-
-                    // if (countryId === 'PAK') { 
-
-                        
-                    // }
+                   
     
                     if (deliveryProviderResponse.length === 0) {
                         // if there's no delivery provider, display error
