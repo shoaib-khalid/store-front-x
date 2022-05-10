@@ -180,6 +180,6 @@ export class UserComponent implements OnInit, OnDestroy
 
     customerRegister(){
         this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-up' +
-            '?redirectURL=' + encodeURI('https://' + this.sanatiseUrl);
+            '?redirectURL=' + encodeURI('https://' + this.sanatiseUrl  + this._router.url);
     }
 }
