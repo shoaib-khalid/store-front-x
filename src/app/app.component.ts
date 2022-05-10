@@ -193,10 +193,10 @@ export class AppComponent
                     const activityBody = 
                     {
                         browserType : _deviceBrowser,
-                        customerId  : "undefined",
+                        customerId  : this.ownerId?this.ownerId:null,
                         deviceModel : _deviceModel,
-                        errorOccur  : "string",
-                        errorType   : "string",
+                        errorOccur  : null,
+                        errorType   : null,
                         ip          : _IpService,
                         os          : _deviceOs,
                         pageVisited : event["urlAfterRedirects"],
