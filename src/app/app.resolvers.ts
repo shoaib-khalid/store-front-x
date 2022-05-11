@@ -163,19 +163,35 @@ export class StoreResolver implements Resolve<any>
                         // if customerId null means guest
                         let customerId = this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid ? this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid : null
 
-                        const createCartBody = {
-                            customerId: customerId, 
-                            storeId: this._storesService.storeId$,
+                        
+                        if (customerId != null) {
+                            this._cartService.getCarts(customerId, this._storesService.storeId$)
+                                .subscribe(response => {
+                                    const customerCartId = response['content'][0].id
+                                    console.log('getCartsByCustomerId', response['content'][0]);
+                                    // set cart id
+                                    this._cartService.cartId = customerCartId;
+                                    if(customerCartId && customerCartId !== '') {
+                                        this.getCartItems(customerCartId);
+                                    }
+                                })
+                                
+                            }
+                        else {
+                            const createCartBody = {
+                                customerId: customerId, 
+                                storeId: this._storesService.storeId$,
+                            }
+                            this._cartService.createCart(createCartBody)
+                            .subscribe((cart: Cart)=>{
+                                    // set cart id
+                                    this.cartId = cart.id;
+    
+                                    if(this.cartId && this.cartId !== '') {
+                                        this.getCartItems(this.cartId);
+                                    }
+                                });
                         }
-                        this._cartService.createCart(createCartBody)
-                        .subscribe((cart: Cart)=>{
-                                // set cart id
-                                this.cartId = cart.id;
-
-                                if(this.cartId && this.cartId !== '') {
-                                    this.getCartItems(this.cartId);
-                                }
-                            });
                     }
 
                     // -----------------------

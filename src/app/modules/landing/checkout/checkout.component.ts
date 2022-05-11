@@ -13,7 +13,7 @@ import { CheckoutService } from './checkout.service';
 import { CheckoutValidationService } from './checkout.validation.service';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ChooseDeliveryAddressComponent } from './choose-delivery-address/choose-delivery-address.component';
-import { Address, CartDiscount, CustomerVoucher, CustomerVoucherPagination, DeliveryProvider, DeliveryProviderGroup, Order, Payment, UsedCustomerVoucherPagination, CheckoutInputField } from './checkout.types';
+import { Address, CartDiscount, CustomerVoucher, CustomerVoucherPagination, DeliveryProvider, DeliveryProviderGroup, Order, Payment, UsedCustomerVoucherPagination, CheckoutInputField, VoucherVerticalList } from './checkout.types';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { ModalConfirmationDeleteItemComponent } from './modal-confirmation-delete-item/modal-confirmation-delete-item.component';
@@ -146,6 +146,7 @@ export class LandingCheckoutComponent implements OnInit
     voucherApplied: any = null;
     voucherDiscountAppliedMax: number = 0;
     voucherDiscountApplied: number = 0;
+    verticalList: VoucherVerticalList[] = [];
 
     /**
      * Constructor
@@ -344,7 +345,13 @@ export class LandingCheckoutComponent implements OnInit
                 this._checkoutService.getAvailableCustomerVoucher(false, this.store.verticalCode)
                     .subscribe((response: any) => {
                         this.customerVouchers = response;
-                        
+
+                        let index = this.customerVouchers.findIndex(x => x.voucher.isNewUserVoucher === true )
+                        // select the voucher if it is new user voucher
+                        if (index > -1) {
+                            this.selectVoucher(this.customerVouchers[index])
+                            // this.calculateCharges();
+                        }
                         // Mark for check
                         this._changeDetectorRef.markForCheck();
                     });
@@ -747,7 +754,19 @@ export class LandingCheckoutComponent implements OnInit
                                 .subscribe((response)=>{
                                     this.paymentDetails = {...this.paymentDetails, ...response};
                                     
-                                });
+                                    }, (error) => {
+
+                                        if (error['status'] === 409 && this.voucherApplied) {
+
+                                            // if voucher is invalid
+                                            this.openVoucherModal('heroicons_outline:x','Voucher cannot be used!', 'Purchase already have discount', null, true);
+                        
+                                        }
+                                    }
+                                    );
+
+
+
         
                             // set price (this is based on delivery service api getPrice)
                             this.paymentDetails.deliveryCharges = this.selectedDeliveryProvider.price;
@@ -1556,10 +1575,16 @@ export class LandingCheckoutComponent implements OnInit
 
                 this.promoCode = '';
 
-                if ((response.voucher.storeId === null || response.voucher.storeId === this.store.id ) && (response.voucher.verticalCode === this.store.verticalCode)) {
+                // find the verticalcode in the voucher list
+                // if index -1 mean that the voucher can't be used in current store
+                let index = response.voucher.voucherVerticalList.findIndex(item => item.verticalCode === this.store.verticalCode)
+
+                if ((response.voucher.storeId === null || response.voucher.storeId === this.store.id ) && (index > -1 && response.voucher.voucherVerticalList[index].verticalCode === this.store.verticalCode)) {
 
                     // if voucher is valid
                     this.openVoucherModal('mat_solid:check_circle','Congratulations!', 'Promo code successfully claimed', null, true);
+
+                    this.selectVoucher(response);
                 }
 
                 else {
@@ -1636,5 +1661,17 @@ export class LandingCheckoutComponent implements OnInit
         });
         
         dialogRef.afterClosed().subscribe();
+    }
+
+    validateVoucher(voucher: any) {
+        let index = voucher.voucher.voucherVerticalList.findIndex(item => item.verticalCode === this.store.verticalCode);
+
+        if (index > -1) {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

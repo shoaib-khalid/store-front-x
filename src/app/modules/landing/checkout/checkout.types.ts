@@ -191,7 +191,29 @@ export interface Voucher
     calculationType   : string;
     startDate         : string;
     endDate           : string;
-    verticalCode      : string;
+    isNewUserVoucher  : boolean;
+    voucherVerticalList : VoucherVerticalList[];
+}
+
+export interface VoucherVerticalList
+{
+    id: string;
+    regionVertical: {
+        code: string;
+        commissionPercentage: number;
+        customerActivationNotice: string;
+        defaultLogoUrl: string;
+        description: string;
+        domain: string;
+        minChargeAmount: number;
+        name: string;
+        regionId: string;
+        senderEmailAdress: string;
+        senderEmailName: string;
+        thumbnailUrl: string;
+    };
+    verticalCode: string;
+    voucherId: string;
 }
 
 export interface CustomerVoucher
