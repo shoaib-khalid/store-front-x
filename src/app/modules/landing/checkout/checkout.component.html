@@ -684,10 +684,12 @@
                             <!-- payment details -->
                             <div class="py-2 border-t w-full">
                                 <!-- Order Section -->
+                                <!-- Subtotal -->
                                 <div class="flex flex-row w-full justify-between py-1">
                                     <p class="font-semibold text-gray-500">Sub Total</p> 
                                     <span class="font-semibold">{{paymentDetails.cartSubTotal | currency: store.regionCountry.currencySymbol}}</span>
                                 </div>
+                                <!-- Order Discount -->
                                 <ng-container *ngIf="paymentDetails.subTotalDiscount !== 0">
                                     <div class="flex flex-row w-full justify-between py-1">
                                         <div class="flex flex-col">
@@ -702,6 +704,7 @@
                                         <span class="font-semibold">-{{paymentDetails.subTotalDiscount | currency: store.regionCountry.currencySymbol}}</span>
                                     </div>
                                 </ng-container>
+                                <!-- Voucher Discount -->
                                 <ng-container *ngIf="paymentDetails.voucherSubTotalDiscount">
                                     <div class="flex flex-row w-full justify-between py-1">
                                         <div class="flex flex-col">
@@ -720,10 +723,13 @@
                                         <span class="font-semibold">-{{paymentDetails.voucherSubTotalDiscount | currency: store.regionCountry.currencySymbol}}</span>
                                     </div>
                                 </ng-container>
-                                <div class="flex flex-row w-full justify-between py-1">
-                                    <p class="font-semibold text-gray-500">Service Charges ({{paymentDetails.storeServiceChargePercentage | number}}%)</p> 
-                                    <span class="font-semibold">{{paymentDetails.storeServiceCharge | currency: store.regionCountry.currencySymbol}}</span>
-                                </div>
+                                <!-- Service Charges -->
+                                <ng-container *ngIf="paymentDetails.storeServiceChargePercentage">
+                                    <div class="flex flex-row w-full justify-between py-1">
+                                        <p class="font-semibold text-gray-500">Service Charges ({{paymentDetails.storeServiceChargePercentage | number}}%)</p> 
+                                        <span class="font-semibold">{{paymentDetails.storeServiceCharge | currency: store.regionCountry.currencySymbol}}</span>
+                                    </div>
+                                </ng-container>
 
                                 <!-- Delivery Section -->
                                 <!-- Delivery Providers -->
@@ -827,11 +833,12 @@
                                         </mat-radio-group>
                                     </fieldset>
                                 </ng-container>
-
+                                <!-- Delivery Charges -->
                                 <div class="flex flex-row w-full justify-between py-1">
                                     <span class="font-semibold text-gray-500">Delivery Charges</span> 
                                     <span class="font-semibold">{{paymentDetails.deliveryCharges | currency: store.regionCountry.currencySymbol}}</span>
                                 </div>
+                                <!-- Delivery Discount -->
                                 <ng-container *ngIf="paymentDetails.deliveryDiscount !== 0">
                                     <div class="flex flex-row w-full justify-between py-1">
                                         <div class="flex flex-col">
@@ -846,6 +853,7 @@
                                         <span class="font-semibold">-{{paymentDetails.deliveryDiscount | currency: store.regionCountry.currencySymbol}}</span>
                                     </div>
                                 </ng-container>
+                                <!-- Voucher Discount -->
                                 <ng-container *ngIf="paymentDetails.voucherDeliveryDiscount">
                                     <div class="flex flex-row w-full justify-between py-1">
                                         <div class="flex flex-col">
@@ -863,7 +871,7 @@
                                     </div>
                                 </ng-container>
                                 <ng-container *ngIf="user">
-
+                                    
                                     <!-- Divider -->
                                     <div class="my-2 border-t"></div>
 
