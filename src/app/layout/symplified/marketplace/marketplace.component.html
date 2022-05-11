@@ -2,194 +2,201 @@
 <fuse-loading-bar></fuse-loading-bar>
 <custom-marquee [messages]="message"></custom-marquee>
 
-<ng-container *ngIf="(store && store.id !== null); else noStore">
-    <!-- Navigation -->
-    <ng-container *ngIf="isScreenSmall">
-        <fuse-vertical-navigation
-            class="dark bg-black print:hidden"
-            [mode]="'over'"
-            [name]="'mainNavigation'"
-            [navigation]="navigation.default"
-            [opened]="false">
-            <!-- Navigation header hook -->
-            <ng-container fuseVerticalNavigationContentHeader>
-                <div class="flex items-center w-full p-4 pl-6">
-                    <!-- Logo -->
-                    <div class="flex items-center justify-start">
-                        <img
-                            class="w-1/2 py-1"
-                            [src]="platform.logoDark">
-                    </div>
-                    <!-- Components -->
-                    <div class="flex items-center ml-auto">
-                        <user [showAvatar]="true"></user>
-                        <notifications class="ml-2"></notifications>
-                    </div>
-                </div>
-                <!-- User -->
-                <div *ngIf="user" class="flex flex-col items-center w-full p-4">
-                    <div class="relative w-24 h-24">
-                        <img
-                            class="w-full h-full rounded-full"
-                            *ngIf="user.avatar"
-                            [src]="user.avatar"
-                            alt="User avatar">
-                        <mat-icon
-                            class="icon-size-24"
-                            *ngIf="!user.avatar"
-                            [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
-                    </div>
-                    <div class="flex flex-col items-center justify-center w-full mt-6">
-                        <div class="w-full whitespace-nowrap text-ellipsis overflow-hidden text-center leading-normal font-medium">
-                            {{user.name}}
+<ng-container *ngIf="show500 === false; else error">
+    <ng-container *ngIf="(store && store.id !== null); else noStore">
+        <!-- Navigation -->
+        <ng-container *ngIf="isScreenSmall">
+            <fuse-vertical-navigation
+                class="dark bg-black print:hidden"
+                [mode]="'over'"
+                [name]="'mainNavigation'"
+                [navigation]="navigation.default"
+                [opened]="false">
+                <!-- Navigation header hook -->
+                <ng-container fuseVerticalNavigationContentHeader>
+                    <div class="flex items-center w-full p-4 pl-6">
+                        <!-- Logo -->
+                        <div class="flex items-center justify-start">
+                            <img
+                                class="w-1/2 py-1"
+                                [src]="platform.logoDark">
                         </div>
-                        <div class="w-full mt-0.5 whitespace-nowrap text-ellipsis overflow-hidden text-center text-md leading-normal font-medium text-secondary">
-                            {{user.email}}
+                        <!-- Components -->
+                        <div class="flex items-center ml-auto">
+                            <user [showAvatar]="true"></user>
+                            <notifications class="ml-2"></notifications>
                         </div>
                     </div>
-                </div>
-            </ng-container>
-        </fuse-vertical-navigation>
-    </ng-container>
-
-    <!-- Wrapper -->
-    <div class="flex flex-col flex-auto items-center w-full min-w-0 bg-card dark:bg-card">
-    
-        <!-- Header -->
-        <div class=" flex flex-col flex-0 justify-center w-full overflow-hidden z-49 shadow dark:shadow-none print:hidden sticky top-0 md:relative">
-            <!-- Top bar -->
-            <div class="relative dark flex flex-auto justify-center w-full bg-black dark:bg-gray-900">
-                <div class="flex flex-row justify-between items-center w-full px-5 max-w-280 h-16 sm:h-20 max-w-280">
-                    
-                    <!-- Navigation toggle button -->
-                    <ng-container *ngIf="isScreenSmall">
-                        <button
-                            mat-icon-button
-                            (click)="toggleNavigation('mainNavigation')">
-                            <mat-icon [svgIcon]="'heroicons_outline:menu'"></mat-icon>
-                        </button>
-                    </ng-container>
-    
-                    <!-- Logo -->
-                    <div class="flex items-center md:ml-0 ml-9">
-                        <!-- <img
-                            class="hidden md:block w-24"
-                            [src]="platform.logo"
-                            alt="Logo image"> -->
-                        <img
-                            class="h-18 cursor-pointer"
-                            [routerLink]="'/home'"
-                            [src]="displayStoreLogo(store.storeAssets)"
-                            alt="Logo image">
-                        <span class="block md:hidden">{{headerTitle}}</span>
-                    </div>
-                    
-                    <!-- Components -->
-                    <div class="flex items-center pl-2 space-x-0.5 sm:space-x-2">
-                        <!-- <search [appearance]="'bar'"></search> -->
-                        <!-- Phonenumber -->
-                        <div class="hidden sm:block flex flex-col text-right">
-                            <p>Call Us!</p>
-                            <p>{{ store.phoneNumber}}</p>
+                    <!-- User -->
+                    <div *ngIf="user" class="flex flex-col items-center w-full p-4">
+                        <div class="relative w-24 h-24">
+                            <img
+                                class="w-full h-full rounded-full"
+                                *ngIf="user.avatar"
+                                [src]="user.avatar"
+                                alt="User avatar">
+                            <mat-icon
+                                class="icon-size-24"
+                                *ngIf="!user.avatar"
+                                [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
                         </div>
-                        <cart></cart>
-                        <user *ngIf="!isScreenSmall"></user>
-                        <ng-container *ngIf="!isScreenSmall">
-                            <div class="ml-4 text-medium font-medium leading-5 truncate">
-                                {{displayUsername}}
+                        <div class="flex flex-col items-center justify-center w-full mt-6">
+                            <div class="w-full whitespace-nowrap text-ellipsis overflow-hidden text-center leading-normal font-medium">
+                                {{user.name}}
                             </div>
+                            <div class="w-full mt-0.5 whitespace-nowrap text-ellipsis overflow-hidden text-center text-md leading-normal font-medium text-secondary">
+                                {{user.email}}
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </fuse-vertical-navigation>
+        </ng-container>
+    
+        <!-- Wrapper -->
+        <div class="flex flex-col flex-auto items-center w-full min-w-0 bg-card dark:bg-card">
+        
+            <!-- Header -->
+            <div class=" flex flex-col flex-0 justify-center w-full overflow-hidden z-49 shadow dark:shadow-none print:hidden sticky top-0 md:relative">
+                <!-- Top bar -->
+                <div class="relative dark flex flex-auto justify-center w-full bg-black dark:bg-gray-900">
+                    <div class="flex flex-row justify-between items-center w-full px-5 max-w-280 h-16 sm:h-20 max-w-280">
+                        
+                        <!-- Navigation toggle button -->
+                        <ng-container *ngIf="isScreenSmall">
+                            <button
+                                mat-icon-button
+                                (click)="toggleNavigation('mainNavigation')">
+                                <mat-icon [svgIcon]="'heroicons_outline:menu'"></mat-icon>
+                            </button>
                         </ng-container>
-                    </div>
-                </div>
-            </div>
-            <!-- Breadcrumbs -->
-            <div class="hidden sm:block flex items-center w-full">
-                <breadcrumb class="w-full"></breadcrumb>
-            </div>
-            <!-- Bottom bar -->
-            <!-- <ng-container *ngIf="!isScreenSmall">
-                <div class="flex flex-auto justify-center px-4 md:px-8 bg-card dark:bg-gray-700">
-                    <div class="relative flex items-center w-full max-w-360 h-16">
-                        <fuse-horizontal-navigation
-                            class="-mx-4"
-                            [name]="'mainNavigation'"
-                            [navigation]="navigation.horizontal"></fuse-horizontal-navigation>
-                    </div>
-                </div>
-            </ng-container> -->
-        </div>
-    
-        <!-- Content -->
-        <div class="flex flex-auto justify-center w-full sm:px-5 max-w-280">
-            <div class="flex flex-col flex-auto w-full sm:overflow-hidden bg-card">
-                <!-- *ngIf="true" hack is required here for router-outlet to work correctly.
-                     Otherwise, layout changes won't be registered and the view won't be updated! -->
-                <router-outlet *ngIf="true"></router-outlet>
-            </div>
-        </div>
-    
-        <!-- Footer -->
-        <div class="flex flex-col items-center w-full max-h-72 bg-black">
-            <div class="flex flex-col h-full items-center w-full max-w-280">
-                <div class="flex flex-col w-full items-center px-2 sm:px-5 mb-2 text-white">
-                    <!-- <img
-                        class="w-20 sm:w-30 sm:h-30 lg:h-40 lg:w-40 h-20  my-1.5 rounded-full"
-                        [src]="displayStoreLogo(store.storeAssets)"
-                        alt="Logo image"> -->
-                    <div class="w-full border-t mt-4 sm:mt-12 border-gray-600"></div>
-                    <div class="flex flex-col md:flex-row w-full justify-between">
-                        <!-- this is a hack [ngClass]="store.displayAddress ? 'md:flex-col md:w-1/2' : 'md:flex-row md:w-full'" -->
-                        <div class="flex flex-col sm:flex-row w-full md:justify-between"
-                            [ngClass]="store.displayAddress ? 'md:flex-col md:w-1/2' : 'md:flex-row md:w-full'">
-                            <div class="flex flex-row items-center justify-between w-full sm:w-1/2 text-md text-white pt-2">
-                                <span class="w-1/2 sm:w-auto md:min-w-20 text-gray-400 pr-1">Contact Us:</span>  
-                                <span class="w-1/2 flex sm:w-auto flex-auto text-primary-400 items-center justify-end sm:justify-start">
-                                    <mat-icon 
-                                        class="icon-size-4 text-primary-400"
-                                        [svgIcon]="'heroicons_solid:phone'"></mat-icon>
-                                    &nbsp;
-                                    {{ store.phoneNumber}}
-                                </span>
-                            </div>
-                            <!-- this is a hack [ngClass]="store.displayAddress ? 'md:w-full' : 'md:w-1/2'"  -->
-                            <div class="flex flex-row items-center justify-between w-full sm:w-1/2 text-md text-white pt-2"
-                                [ngClass]="store.displayAddress ? 'md:w-full' : 'md:w-auto'">
-                                <span 
-                                    class="w-1/4 sm:w-auto text-gray-400 pr-1"
-                                    [ngClass]="store.displayAddress ? 'md:min-w-20' : 'md:min-w-[46px]'"
-                                    >Email:</span>  
-                                <span class="w-3/4 md:w-full flex flex-auto text-primary-400 items-center justify-end sm:justify-start">
-                                    <mat-icon 
-                                        class="icon-size-4 text-primary-400"
-                                        [svgIcon]="'mat_solid:email'"></mat-icon>
-                                    &nbsp;
-                                    {{ store.email}}
-                                </span>
-                            </div>
+        
+                        <!-- Logo -->
+                        <div class="flex items-center md:ml-0 ml-9">
+                            <!-- <img
+                                class="hidden md:block w-24"
+                                [src]="platform.logo"
+                                alt="Logo image"> -->
+                            <img
+                                class="h-18 cursor-pointer"
+                                [routerLink]="'/home'"
+                                [src]="displayStoreLogo(store.storeAssets)"
+                                alt="Logo image">
+                            <span class="block md:hidden">{{headerTitle}}</span>
                         </div>
-                        <div *ngIf="store.displayAddress" class="flex flex-col flex-wrap w-full md:w-1/2 justify-between">
-                            <p class="flex w-full text-sm text-white pt-2">
-                                <span class="min-w-20 text-gray-400">Location:</span>  
-                                <mat-icon 
-                                    class="icon-size-5 text-primary-400"
-                                    [svgIcon]="'mat_solid:location_on'"></mat-icon>
-                                &nbsp;
-                                <span class="flex flex-auto text-primary-400 text-right md:text-left items-end content-end justify-end sm:justify-start">
-                                    {{ store.displayAddress }}
-                                </span>
-                            </p>
+                        
+                        <!-- Components -->
+                        <div class="flex items-center pl-2 space-x-0.5 sm:space-x-2">
+                            <!-- <search [appearance]="'bar'"></search> -->
+                            <!-- Phonenumber -->
+                            <div class="hidden sm:block flex flex-col text-right">
+                                <p>Call Us!</p>
+                                <p>{{ store.phoneNumber}}</p>
+                            </div>
+                            <cart></cart>
+                            <user *ngIf="!isScreenSmall"></user>
+                            <ng-container *ngIf="!isScreenSmall">
+                                <div class="ml-4 text-medium font-medium leading-5 truncate">
+                                    {{displayUsername}}
+                                </div>
+                            </ng-container>
                         </div>
                     </div>
-                    <div class="flex flex-wrap w-full justify-center pt-4">
-                        <span class="text-sm font-medium text-secondary text-xs">SYMplified &copy; {{currentYear}} . Version-FNB01-001-{{version}}</span>
+                </div>
+                <!-- Breadcrumbs -->
+                <div class="hidden sm:block flex items-center w-full">
+                    <breadcrumb class="w-full"></breadcrumb>
+                </div>
+                <!-- Bottom bar -->
+                <!-- <ng-container *ngIf="!isScreenSmall">
+                    <div class="flex flex-auto justify-center px-4 md:px-8 bg-card dark:bg-gray-700">
+                        <div class="relative flex items-center w-full max-w-360 h-16">
+                            <fuse-horizontal-navigation
+                                class="-mx-4"
+                                [name]="'mainNavigation'"
+                                [navigation]="navigation.horizontal"></fuse-horizontal-navigation>
+                        </div>
+                    </div>
+                </ng-container> -->
+            </div>
+        
+            <!-- Content -->
+            <div class="flex flex-auto justify-center w-full sm:px-5 max-w-280">
+                <div class="flex flex-col flex-auto w-full sm:overflow-hidden bg-card">
+                    <!-- *ngIf="true" hack is required here for router-outlet to work correctly.
+                         Otherwise, layout changes won't be registered and the view won't be updated! -->
+                    <router-outlet *ngIf="true"></router-outlet>
+                </div>
+            </div>
+        
+            <!-- Footer -->
+            <div class="flex flex-col items-center w-full max-h-72 bg-black">
+                <div class="flex flex-col h-full items-center w-full max-w-280">
+                    <div class="flex flex-col w-full items-center px-2 sm:px-5 mb-2 text-white">
+                        <!-- <img
+                            class="w-20 sm:w-30 sm:h-30 lg:h-40 lg:w-40 h-20  my-1.5 rounded-full"
+                            [src]="displayStoreLogo(store.storeAssets)"
+                            alt="Logo image"> -->
+                        <div class="w-full border-t mt-4 sm:mt-12 border-gray-600"></div>
+                        <div class="flex flex-col md:flex-row w-full justify-between">
+                            <!-- this is a hack [ngClass]="store.displayAddress ? 'md:flex-col md:w-1/2' : 'md:flex-row md:w-full'" -->
+                            <div class="flex flex-col sm:flex-row w-full md:justify-between"
+                                [ngClass]="store.displayAddress ? 'md:flex-col md:w-1/2' : 'md:flex-row md:w-full'">
+                                <div class="flex flex-row items-center justify-between w-full sm:w-1/2 text-md text-white pt-2">
+                                    <span class="w-1/2 sm:w-auto md:min-w-20 text-gray-400 pr-1">Contact Us:</span>  
+                                    <span class="w-1/2 flex sm:w-auto flex-auto text-primary-400 items-center justify-end sm:justify-start">
+                                        <mat-icon 
+                                            class="icon-size-4 text-primary-400"
+                                            [svgIcon]="'heroicons_solid:phone'"></mat-icon>
+                                        &nbsp;
+                                        {{ store.phoneNumber}}
+                                    </span>
+                                </div>
+                                <!-- this is a hack [ngClass]="store.displayAddress ? 'md:w-full' : 'md:w-1/2'"  -->
+                                <div class="flex flex-row items-center justify-between w-full sm:w-1/2 text-md text-white pt-2"
+                                    [ngClass]="store.displayAddress ? 'md:w-full' : 'md:w-auto'">
+                                    <span 
+                                        class="w-1/4 sm:w-auto text-gray-400 pr-1"
+                                        [ngClass]="store.displayAddress ? 'md:min-w-20' : 'md:min-w-[46px]'"
+                                        >Email:</span>  
+                                    <span class="w-3/4 md:w-full flex flex-auto text-primary-400 items-center justify-end sm:justify-start">
+                                        <mat-icon 
+                                            class="icon-size-4 text-primary-400"
+                                            [svgIcon]="'mat_solid:email'"></mat-icon>
+                                        &nbsp;
+                                        {{ store.email}}
+                                    </span>
+                                </div>
+                            </div>
+                            <div *ngIf="store.displayAddress" class="flex flex-col flex-wrap w-full md:w-1/2 justify-between">
+                                <p class="flex w-full text-sm text-white pt-2">
+                                    <span class="min-w-20 text-gray-400">Location:</span>  
+                                    <mat-icon 
+                                        class="icon-size-5 text-primary-400"
+                                        [svgIcon]="'mat_solid:location_on'"></mat-icon>
+                                    &nbsp;
+                                    <span class="flex flex-auto text-primary-400 text-right md:text-left items-end content-end justify-end sm:justify-start">
+                                        {{ store.displayAddress }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap w-full justify-center pt-4">
+                            <span class="text-sm font-medium text-secondary text-xs">SYMplified &copy; {{currentYear}} . Version-FNB01-001-{{version}}</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+    </ng-container>
 </ng-container>
 
 <!-- No stores -->
 <ng-template #noStore>
     <error-404></error-404>
+</ng-template>
+
+<!-- Error -->
+<ng-template #error>
+    <error-500></error-500>
 </ng-template>

@@ -127,21 +127,24 @@ export class PlatformService
         
         return this._httpClient.get<any>(productService + '/platformconfig', header)
             .pipe(
-                tap((response) => {
-                    
-                    this._logging.debug("Response from StoresService (Before Reconstruct)",response);
+                catchError(() =>
+                    // Return false
+                    of(false)
+                ),
+                switchMap(async (response: any) => {
+                                
+                    this._logging.debug("Response from PlatformsService (Before Reconstruct)",response);
 
-                    response["data"].map((res)=>{
-                            let newPlatform = {
-                            id: res.platformId,
-                            name: res.platformName,
-                            logo: res.platformLogo,
-                            logoDark: res.platformLogoDark,
-                            country: res.platformCountry,
-                            favicon16:res.platformFavIcon,
-                            favicon32:res.platformFavIcon32,
-                            gacode:res.gaCode
-                        };
+                    let newPlatform = {
+                        id          : response ? response["data"][0].platformId : null,
+                        name        : response ? response["data"][0].platformName : null,
+                        logo        : response ? response["data"][0].platformLogo : null,
+                        logoDark    : response ? response["data"][0].platformLogoDark : null,
+                        country     : response ? response["data"][0].platformCountry : null,
+                        favicon16   : response ? response["data"][0].platformFavIcon : null,
+                        favicon32   : response ? response["data"][0].platformFavIcon32 : null,
+                        gacode      : response ? response["data"][0].gaCode : null
+                    };
                         
                     // set this
                     this.platformControl.setValue(newPlatform);
@@ -153,9 +156,6 @@ export class PlatformService
 
                     // Return the store
                     return newPlatform;
-                    })
-
-               
                 })
             );
     }
