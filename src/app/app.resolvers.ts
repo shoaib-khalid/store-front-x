@@ -18,6 +18,7 @@ import { JwtService } from 'app/core/jwt/jwt.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { AppConfig } from 'app/config/service.config';
 import { PlatformService } from './core/platform/platform.service';
+import { HttpStatService } from './mock-api/httpstat/httpstat.service';
 
 @Injectable({
     providedIn: 'root'
@@ -89,7 +90,9 @@ export class StoreResolver implements Resolve<any>
         private _authService: AuthService,
         private _jwtService: JwtService,
         private _navigationService: NavigationService,
-        private _router: Router
+        private _router: Router,
+        private _httpstatService: HttpStatService
+
     )
     {
 
@@ -196,6 +199,7 @@ export class StoreResolver implements Resolve<any>
             })
         ),
         this._navigationService.get(),
+        // this._httpstatService.get(500)
         ]);
     }
 

@@ -14,6 +14,7 @@ import { PlatformService } from 'app/core/platform/platform.service';
 import { Platform } from 'app/core/platform/platform.types';
 import { DatePipe } from '@angular/common';
 import { AppConfig } from 'app/config/service.config';
+import { Error500Service } from 'app/core/error-500/error-500.service';
 
 @Component({
     selector     : 'marketplace-layout',
@@ -38,6 +39,7 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
     message: string;
     daysArray = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
     storeSnooze: StoreSnooze = null;
+    show500: boolean;
 
     /**
      * Constructor
@@ -54,6 +56,8 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
         private _datePipe: DatePipe,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _fuseNavigationService: FuseNavigationService,
+        private _error500Service: Error500Service
+
 
     )
     {
@@ -133,19 +137,23 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
                                 
                             }
                         ];
-                        categories.forEach(category => {
-                            let categorySlug = this.getCategorySlug(category.name)
-                            this.navigation.default[navigationObjectIndex].children.push( 
-                                {
-                                    id: categorySlug,
-                                    title: category.name,
-                                    type: "basic",
-                                    exactMatch: true,
-                                    link : '/catalogue/' + categorySlug,
-                                    function: ()=> this.reload()
-                                } 
-                             ) 
-                        })
+
+                        if (categories) {
+                            categories.forEach(category => {
+                                let categorySlug = this.getCategorySlug(category.name)
+                                this.navigation.default[navigationObjectIndex].children.push( 
+                                    {
+                                        id: categorySlug,
+                                        title: category.name,
+                                        type: "basic",
+                                        exactMatch: true,
+                                        link : '/catalogue/' + categorySlug,
+                                        function: ()=> this.reload()
+                                    } 
+                                 ) 
+                            })
+                        }
+                        
                     });
 
                     // Subscribe to the user service
@@ -198,6 +206,13 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((platform: Platform) => {
                 this.platform = platform;
+            });
+
+        // Subscribe to platform data
+        this._error500Service.show500$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((any) => {
+                this.show500 = any;
             });
     }
 

@@ -95,12 +95,12 @@
                             <div class="flex flex-row justify-between items-center mt-4">
                                 <span class="font-semibold">Quantity:</span> 
                                 <div class="flex flex-row h-8 w-20 rounded-lg relative border border-primary">
-                                    <button (click)="checkQuantity('decrement')" class="text-black hover:bg-primary h-full w-20 rounded-l-lg cursor-pointer outline-none pb-2">
-                                        <span class="text-2xl">−</span>
+                                    <button (click)="checkQuantity('decrement')" class="pb-[0.1rem] text-black hover:bg-primary h-full w-20 rounded-l-lg cursor-pointer outline-none">
+                                        <span class="flex justify-center text-2xl">−</span>
                                     </button>
-                                    <input [(ngModel)]="quantity" (change)="checkQuantity()" type="number" class="outline-none focus:outline-none text-center w-full font-semibold text-md text-black focus:text-black md:text-basecursor-default flex items-center outline-none" name="custom-input-number" value="0"/>
-                                    <button (click)="checkQuantity('increment')" class="text-black hover:bg-primary h-full w-20 rounded-r-lg cursor-pointer pb-2">
-                                        <span class="text-2xl">+</span>
+                                    <input [(ngModel)]="quantity" (change)="checkQuantity()" type="number" class="pt-[0.1rem] outline-none focus:outline-none text-center w-full font-semibold text-md text-black focus:text-black md:text-basecursor-default flex items-center outline-none" name="custom-input-number" value="0"/>
+                                    <button (click)="checkQuantity('increment')" class="pb-[0.1rem] text-black hover:bg-primary h-full w-20 rounded-r-lg cursor-pointer">
+                                        <span class="flex justify-center text-2xl">+</span>
                                     </button>
                                 </div>
                             </div>

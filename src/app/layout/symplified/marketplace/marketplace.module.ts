@@ -21,11 +21,13 @@ import { MarketplaceLayoutComponent } from 'app/layout/symplified/marketplace/ma
 import { BreadcrumbModule } from 'app/layout/common/breadcrumb/breadcrumb.module';
 import { Error404Component } from 'app/shared/error/error-404/error-404.component';
 import { MarqueeModule } from 'app/layout/common/marquee/marquee.module';
+import { Error500Component } from 'app/shared/error/error-500/error-500.component';
 
 @NgModule({
     declarations: [
         MarketplaceLayoutComponent,
         Error404Component,
+        Error500Component
     ],
     imports     : [
         HttpClientModule,

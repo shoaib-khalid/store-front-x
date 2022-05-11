@@ -363,28 +363,54 @@ export class StoresService
                 "domain": domainName
             }
         };
-
-        return this.store$.pipe(
-            take(1),
-            // switchMap(products => this._httpClient.post<InventoryProduct>('api/apps/ecommerce/inventory/product', {}).pipe(
-            switchMap(store => this._httpClient.get<Store>(productService + '/stores', header).pipe(
-                map((response) => {
-
+        
+        return this._httpClient.get<Store>(productService + '/stores/' , header)
+            .pipe(
+                catchError(() =>
+                        // Return false
+                        of(false)
+                ),
+                switchMap(async (response: any) => {
                     this._logging.debug("Response from StoresService (getStoreByDomainName)", response);
 
-                    const store = response["data"].content.length > 0 ? response["data"].content[0] : null;
+                    const store = response ? response["data"].content[0] : null;
 
                     // Update the store
                     this._store.next(store);
 
                     // Update local storage
                     this.storeId = store !== null ? store.id : '';
-    
+
                     // Return the store
                     return store;
                 })
-            ))
-        );
+            )
+
+        // return this.store$.pipe(
+        //     take(1),
+        //     catchError(() =>
+        //         // Return false
+        //         of(false)
+        //     ),
+        //     // switchMap(products => this._httpClient.post<InventoryProduct>('api/apps/ecommerce/inventory/product', {}).pipe(
+        //     switchMap(store => this._httpClient.get<Store>(productService + '/stores', header).pipe(
+        //         map((response) => {
+
+        //             this._logging.debug("Response from StoresService (getStoreByDomainName)", response);
+
+        //             const store = response["data"].content.length > 0 ? response["data"].content[0] : null;
+
+        //             // Update the store
+        //             this._store.next(store);
+
+        //             // Update local storage
+        //             this.storeId = store !== null ? store.id : '';
+    
+        //             // Return the store
+        //             return store;
+        //         })
+        //     ))
+        // );
     }
 
     post(storeBody: CreateStore): Observable<any>
@@ -544,7 +570,11 @@ export class StoresService
 
         return this._httpClient.get<any>(productService + '/store-categories', header)
             .pipe(
-                tap((response) => {
+                catchError(() =>
+                    // Return false
+                    of(false)
+                ),
+                switchMap(async (response: any) => {
                     this._logging.debug("Response from StoresService (getStoreCategories)",response);
 
                     this._storeCategories.next(response["data"].content);
@@ -698,7 +728,11 @@ export class StoresService
 
         return this._httpClient.get<any>(productService + '/stores/' + this.storeId$ + '/timings/snooze', header)
             .pipe(
-                map((response) => {
+                catchError(() =>
+                    // Return false
+                    of(false)
+                ),
+                switchMap(async (response: any) => {
                     this._logging.debug("Response from StoresService (getStoreSnooze)",response);
 
                     this._storeSnooze.next(response["data"]);

@@ -16,6 +16,7 @@ import { fuseAnimations } from '@fuse/animations';
 import { MatIconRegistry } from "@angular/material/icon";
 import { DomSanitizer } from '@angular/platform-browser';
 import { CatalogueService } from './catalogue.service';
+import { HttpStatService } from 'app/mock-api/httpstat/httpstat.service';
 
 @Component({
     selector     : 'landing-catalogue',
@@ -111,7 +112,9 @@ export class LandingCatalogueComponent implements OnInit
         private _domSanitizer: DomSanitizer,
         private _matIconRegistry: MatIconRegistry,
         private _router: Router,
-        private _activatedRoute: ActivatedRoute
+        private _activatedRoute: ActivatedRoute,
+        private _httpstatService: HttpStatService
+
     )
     {
         this._matIconRegistry
@@ -125,6 +128,10 @@ export class LandingCatalogueComponent implements OnInit
     // -----------------------------------------------------------------------------------------------------
 
     ngOnInit(): void {
+
+        // this._httpstatService.get(503).subscribe((response) =>{
+                
+        // });
         
         // set loading to true
         this.isLoading = true;

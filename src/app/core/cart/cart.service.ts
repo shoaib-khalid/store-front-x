@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, ReplaySubject } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { Observable, of, ReplaySubject } from 'rxjs';
+import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 import { Cart, CartItem } from 'app/core/cart/cart.types';
 import { AppConfig } from 'app/config/service.config';
 import { JwtService } from 'app/core/jwt/jwt.service';
@@ -115,7 +115,11 @@ export class CartService
 
         return this._httpClient.post<any>(orderService + '/carts', cart, header)
             .pipe(
-                map((response) => {
+                catchError(() =>
+                    // Return false
+                    of(false)
+                ),
+                switchMap(async (response: any) => {
                     this._logging.debug("Response from StoresService (createCart)",response);
 
                     // set cart id
@@ -179,7 +183,11 @@ export class CartService
 
         return this._httpClient.get<any>(orderService + '/carts/' + id + '/items', header)
             .pipe(
-                map((response) => {
+                catchError(() =>
+                    // Return false
+                    of(false)
+                ),
+                switchMap(async (response: any) => {
                     this._logging.debug("Response from StoresService (getCartItems)",response);
 
                     // set cart id
