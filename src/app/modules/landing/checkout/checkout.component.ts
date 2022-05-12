@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild, ViewEncapsulation, NgZone } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, NgForm, ValidationErrors, Validators } from '@angular/forms';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { DOCUMENT } from '@angular/common'; 
@@ -23,6 +23,7 @@ import { User } from 'app/core/user/user.types';
 import { AddAddressComponent } from './add-address/add-address.component';
 import { EditAddressComponent } from './edit-address/edit-address.component';
 import { VoucherModalComponent } from './voucher-modal/voucher-modal.component';
+import { MapsAPILoader } from '@agm/core';
 
 @Component({
     selector     : 'landing-checkout',
@@ -148,6 +149,17 @@ export class LandingCheckoutComponent implements OnInit
     voucherDiscountApplied: number = 0;
     verticalList: VoucherVerticalList[] = [];
 
+    // Map
+    latitude: number = null;
+    longitude: number = null;
+    zoom: number = null;
+    address: string;
+    private geoCoder;
+    countryId: String
+    
+    @ViewChild('search')
+    public searchElementRef: ElementRef;
+
     /**
      * Constructor
      */
@@ -163,12 +175,37 @@ export class LandingCheckoutComponent implements OnInit
         private _dialog: MatDialog,
         private _router: Router,
         private _userService: UserService,
-        @Inject(DOCUMENT) document: Document
+        @Inject(DOCUMENT) document: Document,
+        private mapsAPILoader: MapsAPILoader,
+        private ngZone: NgZone,
     )
     {   
     }
 
     ngOnInit() {
+        this.mapsAPILoader.load().then(() => {
+            this.setCurrentLocation();
+            this.geoCoder = new google.maps.Geocoder;
+            
+            let autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement);
+            autocomplete.addListener("place_changed", () => {
+              this.ngZone.run(() => {
+                //get the place result
+                let place: google.maps.places.PlaceResult = autocomplete.getPlace();
+      
+                //verify result
+                if (place.geometry === undefined || place.geometry === null) {
+                  return;
+                }
+      
+                //set latitude, longitude and zoom
+                this.latitude = place.geometry.location.lat();
+                this.longitude = place.geometry.location.lng();
+                this.zoom = 12;
+                console.log('Location Entered', 'Lat' , this.latitude + ' Lng', this.longitude)
+              });
+            });
+          });
         // Create the support form
         this.checkoutForm = this._formBuilder.group({
             // Main Store Section
@@ -190,6 +227,7 @@ export class LandingCheckoutComponent implements OnInit
             saveMyInfo          : [true],
             addresses           : [],
             customerAddress     : ['']
+
         });
 
         // Set Payment Completion Status "Calculate Charges"
@@ -220,9 +258,11 @@ export class LandingCheckoutComponent implements OnInit
                 // Set Dialing code
                 // -------------------------
                 
-                let countryId = this.store.regionCountry.id;
+                this.countryId = this.store.regionCountry.id;
+
                 
-                switch (countryId) {
+                
+                switch (this.countryId) {
                     case 'MYS':
                         this.dialingCode = '60'
                         break;
@@ -422,6 +462,40 @@ export class LandingCheckoutComponent implements OnInit
                 this._changeDetectorRef.markForCheck();
             });
     }
+      private setCurrentLocation() {
+        if ('geolocation' in navigator) {
+            navigator.geolocation.getCurrentPosition((position) => {
+              this.latitude = position.coords.latitude;
+              this.longitude = position.coords.longitude;
+              this.zoom = 8;
+              this.getAddress(this.latitude, this.longitude);
+            });
+          }
+    }
+    markerDragEnd($event: any) {
+        console.log($event);
+        this.latitude = $event.coords.lat;
+        this.longitude = $event.coords.lng;
+        this.getAddress(this.latitude, this.longitude);
+        // console.log('Marker Dragged',  'Lat' , this.latitude + ' Lng', this.longitude)
+      }
+    getAddress(latitude, longitude) {
+        this.geoCoder.geocode({ 'location': { lat: latitude, lng: longitude } }, (results, status) => {
+        //   console.log(results);
+        //   console.log(status);
+          if (status === 'OK') {
+            if (results[0]) {
+              this.zoom = 12;
+              this.address = results[0].formatted_address;
+            } else {
+              window.alert('No results found');
+            }
+          } else {
+            window.alert('Geocoder failed due to: ' + status);
+          }
+    
+        });
+      }
     
     /**
      * On destroy
@@ -685,7 +759,8 @@ export class LandingCheckoutComponent implements OnInit
         // retrieveDeliveryCharges if not store pickup
         if (this.checkoutForm.get('storePickup').value === false) {
 
-            let _selectedStateIndex = this.regionCountryStates.findIndex(item => item.id === this.checkoutForm.get('state').value)           
+            let _selectedStateIndex = this.regionCountryStates.findIndex(item => item.id === this.checkoutForm.get('state').value)  
+            let countryId = this.store.regionCountry.id;         
 
             const deliveryChargesBody = {
                 cartId: this._cartService.cartId$,
@@ -698,7 +773,8 @@ export class LandingCheckoutComponent implements OnInit
                     deliveryCountry: this.checkoutForm.get('country').value,
                     deliveryContactEmail: this.checkoutForm.get('email').value,
                     deliveryContactName: this.checkoutForm.get('fullName').value,
-                    deliveryContactPhone: this.checkoutForm.get('phoneNumber').value
+                    deliveryContactPhone: this.checkoutForm.get('phoneNumber').value,
+                    deliveryPickUp: {latitude: this.latitude , longitude: this.longitude},
                 },
                 deliveryProviderId: null,
                 storeId: this._storesService.storeId$
@@ -706,6 +782,7 @@ export class LandingCheckoutComponent implements OnInit
 
             this._checkoutService.postToRetrieveDeliveryCharges(deliveryChargesBody)
                 .subscribe((deliveryProviderResponse: DeliveryProvider[])=>{
+                   
     
                     if (deliveryProviderResponse.length === 0) {
                         // if there's no delivery provider, display error
