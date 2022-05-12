@@ -12,6 +12,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { BannerModule } from 'app/layout/common/banner/banner.module';
+import { PaginationModule } from 'app/layout/common/pagination/pagination.module';
 
 
 
@@ -30,7 +31,8 @@ import { BannerModule } from 'app/layout/common/banner/banner.module';
         MatIconModule,
         NgxGalleryModule,
         BannerModule,
-        FontAwesomeModule
+        FontAwesomeModule,
+        PaginationModule
     ]
 })
 export class LandingHomeModule 

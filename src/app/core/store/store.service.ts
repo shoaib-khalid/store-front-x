@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
 import { switchMap, take, map, tap, catchError, filter } from 'rxjs/operators';
-import { Store, StoreRegionCountry, StoreTiming, StorePagination, StoreAssets, CreateStore, StoreDeliveryDetails, StoreSelfDeliveryStateCharges, StoreDeliveryProvider, StoreCategory, StoreDiscount, StoreSnooze } from 'app/core/store/store.types';
+import { Store, StoreRegionCountry, StoreTiming, StorePagination, StoreAssets, CreateStore, StoreDeliveryDetails, StoreSelfDeliveryStateCharges, StoreDeliveryProvider, StoreCategory, StoreDiscount, StoreSnooze, CategoryPagination } from 'app/core/store/store.types';
 import { AppConfig } from 'app/config/service.config';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { takeUntil } from 'rxjs/operators';
@@ -17,15 +17,22 @@ export class StoresService
 {
     private _store: BehaviorSubject<Store | null> = new BehaviorSubject(null);
     private _stores: BehaviorSubject<Store[] | null> = new BehaviorSubject(null);
+
     private _storeCategory: BehaviorSubject<StoreCategory | null> = new BehaviorSubject(null);
     private _storeCategories: BehaviorSubject<StoreCategory[] | null> = new BehaviorSubject(null);
+
+    private _categories: BehaviorSubject<StoreCategory[] | null> = new BehaviorSubject(null);
+    private _categoriesPagination: BehaviorSubject<CategoryPagination | null> = new BehaviorSubject(null);
+
     private _storeDiscount: BehaviorSubject<StoreDiscount | null> = new BehaviorSubject(null);
     private _storeDiscounts: BehaviorSubject<StoreDiscount[] | null> = new BehaviorSubject(null);
+
     private _storeSnooze: BehaviorSubject<StoreSnooze | null> = new BehaviorSubject(null);
     private _pagination: BehaviorSubject<StorePagination | null> = new BehaviorSubject(null);
     private _storeRegionCountries: ReplaySubject<StoreRegionCountry[]> = new ReplaySubject<StoreRegionCountry[]>(1);
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     private _currentStores: Store[] = [];
+
     public storeControl: FormControl = new FormControl();
     public storeCategoryControl: FormControl = new FormControl();
 
@@ -107,6 +114,26 @@ export class StoresService
     }
 
     /**
+     * Getter for store Categories
+     *
+    */
+    get categories$(): Observable<StoreCategory[]>
+    {
+        return this._categories.asObservable();
+    }
+    
+    /**
+     * Setter for store Categories
+     *
+     * @param value
+     */
+    set categories(value: StoreCategory[])
+    {
+        // Store the value
+        this._categories.next(value);
+    }
+
+    /**
      * Getter for store Category
      *
     */
@@ -124,6 +151,14 @@ export class StoresService
     {
         // Store the value
         this._storeCategory.next(value);
+    }
+
+    /**
+    * Getter for pagination
+    */
+    get storeCategoryPagination$(): Observable<CategoryPagination>
+    {
+        return this._categoriesPagination.asObservable();
     }
 
     /**
@@ -552,7 +587,8 @@ export class StoresService
     // Store Categories Section
     // ---------------------------
 
-    getStoreCategories(name: string="", id: string = "", page: number = 0, size: number = 30, sort: string = 'name', order: 'asc' | 'desc' | '' = 'asc'): Observable<any>
+    getStoreCategories(name: string="", page: number = 0, size: number = 30, sort: string = 'name', order: 'asc' | 'desc' | '' = 'asc'): 
+    Observable<{ pagination: CategoryPagination; products: StoreCategory[] }>
     {
         let productService = this._apiServer.settings.apiServer.productService;
 
@@ -577,7 +613,59 @@ export class StoresService
                 switchMap(async (response: any) => {
                     this._logging.debug("Response from StoresService (getStoreCategories)",response);
 
+                    let _pagination = {
+                        length: response.data.totalElements,
+                        size: response.data.size,
+                        page: response.data.number,
+                        lastPage: response.data.totalPages,
+                        startIndex: response.data.pageable.offset,
+                        endIndex: response.data.pageable.offset + response.data.numberOfElements - 1
+                    }
+                    // this._categoriesPagination.next(_pagination);
                     this._storeCategories.next(response["data"].content);
+
+                    return response["data"].content;
+                })
+            );
+    }
+
+    getCategories(name: string="", page: number = 0, size: number = 8, sort: string = 'name', order: 'asc' | 'desc' | '' = 'asc'): 
+    Observable<{ pagination: CategoryPagination; categories: StoreCategory[] }>
+    {
+        let productService = this._apiServer.settings.apiServer.productService;
+
+        const header = {
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
+            params: {
+                name        : '' + name,
+                storeId     : this.storeId$,
+                page        : '' + page,
+                pageSize    : '' + size,
+                sortByCol   : '' + sort,
+                sortingOrder: '' + order.toUpperCase(),
+            }
+        };
+
+        return this._httpClient.get<any>(productService + '/store-categories', header)
+            .pipe(
+                catchError(() =>
+                    // Return false
+                    of(false)
+                ),
+                switchMap(async (response: any) => {
+                    this._logging.debug("Response from StoresService (getStoreCategories)",response);
+
+                    let _pagination = {
+                        length: response.data.totalElements,
+                        size: response.data.size,
+                        page: response.data.number,
+                        lastPage: response.data.totalPages,
+                        startIndex: response.data.pageable.offset,
+                        endIndex: response.data.pageable.offset + response.data.numberOfElements - 1
+                    }
+                    this._categoriesPagination.next(_pagination);
+
+                    this._categories.next(response["data"].content);
 
                     return response["data"].content;
                 })

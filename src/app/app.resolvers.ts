@@ -147,6 +147,11 @@ export class StoreResolver implements Resolve<any>
 
                         });
 
+                    this._storesService.getCategories()
+                        .subscribe(()=>{
+
+                        });
+
                     // -----------------------
                     // check if cart id exists
                     // -----------------------
