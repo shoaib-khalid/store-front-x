@@ -92,7 +92,6 @@ export interface ProductPagination
     endIndex: number;
 }
 
-
 /**
  * 
  * Product Category

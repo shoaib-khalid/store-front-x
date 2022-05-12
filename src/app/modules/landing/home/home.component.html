@@ -12,15 +12,62 @@
         <sliders class="flex flex-auto relative w-full"></sliders>
 
         <!-- Store Description -->
-        <div class="flex flex-row w-full h-10 w-full mt-4 justify-center items-center">
+        <div class="flex flex-row h-10 w-full mt-4 justify-center items-center">
             <p class="px-2 flex flex-row text-black text-center w-200 h-full justify-center items-center" [innerHTML]="store.storeDescription"></p>
         </div>
         
         <!-- Category -->
         <div class="flex flex-col items-center text-center w-full mt-4 mb-4">
             <p class="font-bold sm:text-lg">Please select one of the Categories</p>
-            <div class="flex flex-row w-full items-center justify-center">
-                <category-carousel class="w-full px-0"></category-carousel>
+            <div class="flex flex-row w-full items-center justify-center ">
+                <category-carousel class="w-full hidden sm:block px-0"></category-carousel>
+            </div>
+            <!-- Categories for mobileview -->
+            <!-- <div class="grid grid-cols-2 gap-2 items-center w-full justify-between sm:hidden">
+                <ng-container *ngFor="let category of storeCategories">
+                    <fuse-card class="flex flex-col justify-between w-44 h-15 p-8 pb-4 filter-listing rounded-lg border-2 border-black">
+                        <div class="w-full  overflow-hidden">
+                            <img
+                                class="w-full h-full object-cover"
+                                [src]="(category.thumbnailUrl && category.thumbnailUrl !== null) ? category.thumbnailUrl : displayStoreLogo(store.storeAssets)"
+                                alt="Card cover image">
+                        </div>
+                    </fuse-card>
+                </ng-container>
+            </div> -->
+
+            <div class="grid grid-cols-2 gap-2 items-center w-full justify-between sm:hidden p-3">
+                <ng-container *ngFor="let category of storeCategories">
+                    <div class="grid col-span-1 group">
+                        <input
+                            [id]="'category-button' + category.id"
+                            class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                            type="button"
+                            mat-icon-button>
+                        <label 
+                            class="flex flex-col items-center justify-center cursor-pointer"
+                            [for]="'category-button' + category.id"
+                            matRipple>
+                            <div class="relative w-full h-20 mx-3 rounded-md border-2 border-black group-hover:border-primary">
+                                <div class="rounded border-2 border-white group-hover:border-white absolute top-0.5 bottom-0.5 left-0.5 right-0.5">
+                                    <img
+                                    class="object-cover h-full w-full rounded opacity-40 group-hover:opacity-100 group-hover:brightness-50 overflow-hidden"
+                                    [src]="(category.thumbnailUrl && category.thumbnailUrl !== null) ? category.thumbnailUrl : displayStoreLogo(store.storeAssets)"
+                                    alt="Logo image">
+                                </div>
+                                <span class="my-5 flex w-full absolute items-center justify-center text-center font-bold text-xl group-hover:text-primary">{{category.name}}</span>
+                            </div>
+                        </label>
+                    </div>
+                </ng-container>
+            </div>
+            <div class="flex w-full mt-4 items-center sm:hidden justify-center">
+                <pagination 
+                    [itemLength]="pagination.length" 
+                    [initialPage]="pagination.page + 1"
+                    [pageSize]="pagination.size"
+                    (changePage)="onChangePage($event)"
+                    #categoryPaginator></pagination>
             </div>
         </div>
     </div>

@@ -8,6 +8,24 @@ export interface StoreCategory
     thumbnailUrl?: string;
 }
 
+
+/**
+* 
+* Category Pagination
+* 
+*/
+
+export interface CategoryPagination
+{
+    length: number;
+    size: number;
+    page: number;
+    lastPage: number;
+    startIndex: number;
+    endIndex: number;
+}
+
+
 export interface Store
 {
     id: string;
