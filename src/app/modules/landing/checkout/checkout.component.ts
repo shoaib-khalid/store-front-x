@@ -179,10 +179,12 @@ export class LandingCheckoutComponent implements OnInit
     }
 
     ngOnInit() {
+        
         this.mapsAPILoader.load().then(() => {
             this.setCurrentLocation();
+            if ( this.countryId === 'PAK' ){
             this.geoCoder = new google.maps.Geocoder;
-            
+            }
             let autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement);
             autocomplete.addListener("place_changed", () => {
               this.ngZone.run(() => {
@@ -428,6 +430,7 @@ export class LandingCheckoutComponent implements OnInit
 
     }
       private setCurrentLocation() {
+          
         if ('geolocation' in navigator) {
             navigator.geolocation.getCurrentPosition((position) => {
               this.latitude = position.coords.latitude;
