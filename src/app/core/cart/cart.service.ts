@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of, ReplaySubject } from 'rxjs';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
-import { Cart, CartItem } from 'app/core/cart/cart.types';
+import { Cart, CartItem, CustomerCart } from 'app/core/cart/cart.types';
 import { AppConfig } from 'app/config/service.config';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { LogService } from 'app/core/logging/log.service';
@@ -15,6 +15,7 @@ export class CartService
 {
     private _cart: ReplaySubject<Cart> = new ReplaySubject<Cart>(1);
     private _cartItems: ReplaySubject<CartItem[]> = new ReplaySubject<CartItem[]>(1);
+    private _customerCarts: ReplaySubject<CustomerCart> = new ReplaySubject<CustomerCart>(1);
 
     /**
      * Constructor
@@ -80,6 +81,14 @@ export class CartService
         return localStorage.getItem('cartId') ?? '';
     }
 
+    /**
+     * Getter for customerCarts
+     */
+    get customerCarts$(): Observable<CustomerCart>
+    {
+        return this._customerCarts.asObservable();
+    }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
@@ -126,6 +135,41 @@ export class CartService
                 switchMap(async (response: any) => {
                                 
                     this._logging.debug("Response from CartService (getCarts)", response);
+
+                    return response["data"];
+                })
+            );
+    }
+
+    /**
+     * (Used by app.resolver)
+     * 
+     * @param customerId 
+     * @returns 
+     */
+    getCartsByCustomerId(customerId: string): Observable<CustomerCart>
+    {
+        let orderService = this._apiServer.settings.apiServer.orderService;
+
+        const header = {  
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
+            params: {
+                customerId
+            }
+        };
+
+        return this._httpClient.get<any>(orderService + '/carts/customer', header)
+            .pipe(
+                catchError(() =>
+                    // Return false
+                    of(false)
+                ),
+                switchMap(async (response: any) => {
+                                
+                    this._logging.debug("Response from CartService (getCartsByCustomerId)", response);
+                
+                    // set customer cart
+                    this._customerCarts.next(response["data"]);
 
                     return response["data"];
                 })

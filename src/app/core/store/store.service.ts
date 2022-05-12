@@ -408,8 +408,8 @@ export class StoresService
                 switchMap(async (response: any) => {
                     this._logging.debug("Response from StoresService (getStoreByDomainName)", response);
 
-                    const store = response ? response["data"].content[0] : null;
-
+                    const store = response["data"].content.length > 0 ? response["data"].content[0] : null;
+                    
                     // Update the store
                     this._store.next(store);
 

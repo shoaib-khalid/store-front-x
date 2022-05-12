@@ -915,9 +915,14 @@ export class LandingCheckoutComponent implements OnInit
 
                     if (error['status'] === 409 && this.voucherApplied) {
 
+                        this.voucherApplied = null;
+
                         if (error.error.message) {
                             this.openVoucherModal('heroicons_outline:x','Error', error.error.message, null, true);
-                        }                        
+                        }                     
+                        
+                        // Mark for check
+                        this._changeDetectorRef.markForCheck();
                     }
                 });
 
@@ -1506,12 +1511,12 @@ export class LandingCheckoutComponent implements OnInit
 
         // this is when user is logged in and the checkoutForm is valid 
         // auto calculate charges
-        if (this.user && this.checkoutForm.valid) {
-            this.calculateCharges();
-        } else {
-            // Change button to Calculate Charges
-            this.addressFormChanges();
-        }
+        // if (this.user && this.checkoutForm.valid) {
+        //     this.calculateCharges();
+        // } else {
+        //     // Change button to Calculate Charges
+        //     this.addressFormChanges();
+        // }
     }
 
     moveArray(arr, old_index, new_index) {

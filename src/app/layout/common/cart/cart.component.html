@@ -1,24 +1,95 @@
 <!-- Cart Button -->
-<div class="relative pl-8">
-    <input
-        id="shopping-cart-button"
-        class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-        type="button"
-        [routerLink]="'/checkout'"
-        mat-icon-button>
-    <ng-container *ngIf="cartItemQuantity > 0">
-        <span class="absolute -top-1 -right-1 flex items-center justify-center h-3">
-            <span class="flex items-center justify-center flex-shrink-0 min-w-4 h-4 px-1 ml-4 mt-2.5 rounded-full bg-white text-black text-xs font-medium">
-                {{cartItemQuantity}}
+
+<ng-container *ngIf="!user">
+    <div class="relative pl-8">
+        <input
+            id="shopping-cart-button"
+            class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+            type="button"
+            [routerLink]="'/checkout'"
+            mat-icon-button>
+        <ng-container *ngIf="cartItemQuantity > 0">
+            <span class="absolute -top-1 -right-1 flex items-center justify-center h-3">
+                <span class="flex items-center justify-center flex-shrink-0 min-w-4 h-4 px-1 ml-4 mt-2.5 rounded-full bg-white text-black text-xs font-medium">
+                    {{cartItemQuantity}}
+                </span>
             </span>
+        </ng-container>
+        <label 
+            class="flex items-center justify-center w-10 h-10 rounded-full cursor-pointer bg-primary hover:bg-primary-700"
+            for="shopping-cart-button"
+            matRipple>
+            <mat-icon
+                class="text-black"
+                [svgIcon]="'heroicons_solid:shopping-cart'"></mat-icon>
+        </label>
+    </div>
+</ng-container>
+
+<ng-container *ngIf="user">
+    <button
+        [matMenuTriggerFor]="cartMenu"
+        class="cursor-pointer"
+        mat-icon-button>
+        <span class="relative pl-8">
+                <ng-container *ngIf="totalCartList > 0">
+                    <span class="absolute -top-1 -right-1 flex items-center justify-center h-3">
+                        <span class="flex items-center justify-center flex-shrink-0 min-w-4 h-4 px-1 ml-4 mt-2.5 rounded-full bg-white text-black text-xs font-medium">
+                            {{totalCartList}}
+                        </span>
+                    </span>
+                </ng-container>
+            <label 
+                for="shopping-cart-button"
+                class="flex items-center justify-center w-10 h-10 rounded-full cursor-pointer bg-primary hover:bg-primary-700"
+                matRipple>
+                <mat-icon
+                    class="icon-size-5 cursor-pointer text-black"
+                    [svgIcon]="'heroicons_solid:shopping-cart'"></mat-icon>
+            </label>
         </span>
-    </ng-container>
-    <label 
-        class="flex items-center justify-center w-10 h-10 rounded-full cursor-pointer bg-primary hover:bg-primary-700"
-        for="shopping-cart-button"
-        matRipple>
-        <mat-icon
-            class="text-black"
-            [svgIcon]="'heroicons_solid:shopping-cart'"></mat-icon>
-    </label>
-</div>
+    </button>
+
+    <mat-menu
+        class="max-w-60 overflow-hidden"
+        [ngClass]="seeMoreCarts === true ? 'h-auto' : 'max-h-[179px]'"
+        [xPosition]="'before'"
+        #cartMenu="matMenu">
+        <ng-container *ngIf="carts.length > 0, else noCarts">
+            <!-- Divider  -->
+            <div class="border-t"></div>
+            <!-- Stores  -->
+            <ng-container *ngFor="let cart of carts">
+                <div 
+                    (click)="redirectToStore(cart.store, cart.id)"
+                    class="p-4 cursor-pointer grid grid-cols-4 gap-2 justify-between hover:bg-primary-50">
+                    <!-- Logo -->
+                    <div class="flex items-center justify-center">
+                        <img
+                            class="w-5"
+                            [src]="displayStoreLogo(cart.store)"
+                            alt="Logo image">
+                    </div>
+                    <span class="col-span-3 truncate">
+                        {{cart.store.name}}
+                    </span>
+                </div>
+                <!-- Divider  -->
+                <div class="border-t"></div>
+            </ng-container>
+            <!-- See more  -->
+            <ng-container *ngIf="seeMoreCarts">
+                <div (click)="seeMoreRedirect()" class="flex justify-center p-2 font-semibold bg-gray-100 hover:bg-primary-50 cursor-pointer hover:text-primary-500">
+                    See More
+                </div>
+                <!-- Divider  -->
+                <div class="border-t"></div>
+            </ng-container>
+        </ng-container>
+    
+        <ng-template #noCarts>
+            <div (click)="seeMoreRedirect()" class="flex justify-center items-center h-full font-medium hover:bg-gray-100 cursor-pointer p-3 mt-[1px] tracking-tight">Carts are empty</div>
+        </ng-template>
+    </mat-menu>
+</ng-container>
+

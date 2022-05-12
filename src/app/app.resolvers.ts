@@ -19,6 +19,7 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { AppConfig } from 'app/config/service.config';
 import { PlatformService } from './core/platform/platform.service';
 import { HttpStatService } from './mock-api/httpstat/httpstat.service';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable({
     providedIn: 'root'
@@ -78,6 +79,7 @@ export class StoreResolver implements Resolve<any>
     };
 
     cartId: string;
+    ownerId: string = '';
 
     /**
      * Constructor
@@ -93,6 +95,7 @@ export class StoreResolver implements Resolve<any>
         private _router: Router,
         private _httpstatService: HttpStatService,
         private _activatedRoute: ActivatedRoute,
+        private _cookieService: CookieService,
 
     )
     {
@@ -103,7 +106,8 @@ export class StoreResolver implements Resolve<any>
 
         this.url.full = (this._platformLocation as any).location.origin;
         let sanatiseUrl = this.url.full.replace(/^(https?:|)\/\//, '').split(':')[0]; // this will get the domain from the URL
-
+        console.log(this.url.full);
+        
         this.url.domain = sanatiseUrl;
 
         let domainNameArr = sanatiseUrl.split('.');
@@ -136,6 +140,9 @@ export class StoreResolver implements Resolve<any>
         return forkJoin([this._storesService.getStoreByDomainName(this.url.domain).pipe(
             take(1),
             switchMap(() => {
+
+                this.ownerId = this._cookieService.get('CustomerId');
+
                 // check if store id exists
                 if (this._storesService.storeId$ && this._storesService.storeId$ !== null) {
 
@@ -162,7 +169,6 @@ export class StoreResolver implements Resolve<any>
                         if (this._activatedRoute.snapshot.queryParamMap.get('customerCartId')) {
                             this.cartId = this._activatedRoute.snapshot.queryParamMap.get('customerCartId')
 
-                            console.log('customerCartId', this.cartId);
                             // set customer cart id to local storage
                             this._cartService.cartId = this.cartId;
                             // then get cart items
@@ -182,8 +188,8 @@ export class StoreResolver implements Resolve<any>
                         let customerId = this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid ? this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid : null
 
                         
-                        if (customerId != null) {
-                            this._cartService.getCarts(customerId, this._storesService.storeId$)
+                        if (customerId != null || this.ownerId != '') {
+                            this._cartService.getCarts((customerId != null) ? customerId : this.ownerId, this._storesService.storeId$)
                                 .subscribe(response => {
 
                                     if (response['content'].length) {

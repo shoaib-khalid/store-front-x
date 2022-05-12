@@ -60,6 +60,7 @@ export interface Store
     currentStep?: number;
     storeAsset?: StoreAsset;
     storeAssets?: StoreAssets[];
+    storeLogoUrl: string;
 }
 
 export interface CreateStore
