@@ -99,6 +99,38 @@ export class CartService
             })
         );
     }
+    /**
+     * (Used by app.resolver)
+     * 
+     * @param customerId 
+     * @returns 
+     */
+    getCarts(customerId: string, storeId: string = null): Observable<Cart>
+    {
+        let orderService = this._apiServer.settings.apiServer.orderService;
+
+        const header = {  
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
+            params: {
+                customerId,
+                storeId
+            }
+        };
+
+        return this._httpClient.get<any>(orderService + '/carts', header)
+            .pipe(
+                catchError(() =>
+                    // Return false
+                    of(false)
+                ),
+                switchMap(async (response: any) => {
+                                
+                    this._logging.debug("Response from CartService (getCarts)", response);
+
+                    return response["data"];
+                })
+            );
+    }
     
     /**
      * Create the cart

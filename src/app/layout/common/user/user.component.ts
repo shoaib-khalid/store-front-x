@@ -10,6 +10,8 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { AppConfig } from 'app/config/service.config';
 import { CookieService } from 'ngx-cookie-service';
 import { CustomerAuthenticate } from 'app/core/auth/auth.types';
+import { StoresService } from 'app/core/store/store.service';
+import { CartService } from 'app/core/cart/cart.service';
 
 @Component({
     selector       : 'user',
@@ -32,6 +34,8 @@ export class UserComponent implements OnInit, OnDestroy
     sanatiseUrl: string;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
+    cartId: string;
+    storeId: string;
 
     /**
      * Constructor
@@ -44,7 +48,10 @@ export class UserComponent implements OnInit, OnDestroy
         private _router: Router,
         private _authService: AuthService,
         private _cookieService: CookieService,
-        private _userService: UserService
+        private _userService: UserService,
+        private _storesService: StoresService,
+        private _cartService: CartService,
+
     )
     {
     }
@@ -86,6 +93,16 @@ export class UserComponent implements OnInit, OnDestroy
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
+
+        if (this._cartService.cartId$) {
+                    
+            this.cartId = this._cartService.cartId$;            
+        }
+
+        if (this._storesService.storeId$) {
+                    
+            this.storeId = this._storesService.storeId$;            
+        }
 
     }
 
@@ -154,7 +171,7 @@ export class UserComponent implements OnInit, OnDestroy
         // this._cookieService.set('RefreshToken','W0JANTQwOGY0ZmU=');
 
         this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-in' +
-            '?redirectURL=' + encodeURI('https://' + this.sanatiseUrl + this._router.url);
+            '?redirectURL=' + encodeURI('https://' + this.sanatiseUrl + this._router.url) + '&guestCartId=' + this.cartId + '&storeId=' + this.storeId;
     }
 
     customerLogout(){
