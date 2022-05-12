@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRoute, ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@angular/router';
 import { forkJoin, Observable, of } from 'rxjs';
 import { switchMap, take, map, tap, catchError, filter } from 'rxjs/operators';
 import { MessagesService } from 'app/layout/common/messages/messages.service';
@@ -91,7 +91,8 @@ export class StoreResolver implements Resolve<any>
         private _jwtService: JwtService,
         private _navigationService: NavigationService,
         private _router: Router,
-        private _httpstatService: HttpStatService
+        private _httpstatService: HttpStatService,
+        private _activatedRoute: ActivatedRoute,
 
     )
     {
@@ -152,10 +153,22 @@ export class StoreResolver implements Resolve<any>
                     // -----------------------
 
                     if (this._cartService.cartId$) {
-                        
-                        this.cartId = this._cartService.cartId$;
-                        if(this.cartId && this.cartId !== '') {                            
+
+                        if (this._activatedRoute.snapshot.queryParamMap.get('customerCartId')) {
+                            this.cartId = this._activatedRoute.snapshot.queryParamMap.get('customerCartId')
+
+                            console.log('customerCartId', this.cartId);
+                            // set customer cart id to local storage
+                            this._cartService.cartId = this.cartId;
+                            // then get cart items
                             this.getCartItems(this.cartId);
+                            
+                        }
+                        else {
+                            this.cartId = this._cartService.cartId$;
+                            if(this.cartId && this.cartId !== '') {                            
+                                this.getCartItems(this.cartId);
+                            }
                         }
                         
                     } else {
@@ -167,18 +180,17 @@ export class StoreResolver implements Resolve<any>
                         if (customerId != null) {
                             this._cartService.getCarts(customerId, this._storesService.storeId$)
                                 .subscribe(response => {
+
                                     if (response['content'].length) {
                                         const customerCartId = response['content'][0].id
-                                        console.log('getCartsByCustomerId', response['content'][0]);
                                         // set cart id
                                         this._cartService.cartId = customerCartId;
                                         if(customerCartId && customerCartId !== '') {
                                             this.getCartItems(customerCartId);
                                         }
-
                                     }
                                     else {
-
+                                        
                                         const createCartBody = {
                                             customerId: customerId, 
                                             storeId: this._storesService.storeId$,
@@ -193,8 +205,6 @@ export class StoreResolver implements Resolve<any>
                                                 }
                                             });
                                     }
-                                    
-
                                 })
                                 
                             }

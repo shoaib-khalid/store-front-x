@@ -756,18 +756,17 @@ export class LandingCheckoutComponent implements OnInit
                                     
                                     }, (error) => {
 
+                                        // Set Payment Completion Status "Calculate Charges"
+                                        this.paymentCompletionStatus = { id:"CALCULATE_CHARGES", label: "Calculate Charges" };
+
                                         if (error['status'] === 409 && this.voucherApplied) {
 
                                             if (error.error.message) {
-                                                // if voucher is invalid
                                                 this.openVoucherModal('heroicons_outline:x','Error', error.error.message, null, true);
                                             }                        
                                         }
                                     }
                                     );
-
-
-
         
                             // set price (this is based on delivery service api getPrice)
                             this.paymentDetails.deliveryCharges = this.selectedDeliveryProvider.price;
@@ -832,6 +831,17 @@ export class LandingCheckoutComponent implements OnInit
 
                     // Mark for check
                     this._changeDetectorRef.markForCheck();
+                }, (error) => {
+
+                    // Set Payment Completion Status "Calculate Charges"
+                    this.paymentCompletionStatus = { id:"CALCULATE_CHARGES", label: "Calculate Charges" };
+
+                    if (error['status'] === 409 && this.voucherApplied) {
+
+                        if (error.error.message) {
+                            this.openVoucherModal('heroicons_outline:x','Error', error.error.message, null, true);
+                        }                        
+                    }
                 });
 
             // Set Loading to false
