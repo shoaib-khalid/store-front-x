@@ -384,7 +384,7 @@ export class LandingCheckoutComponent implements OnInit
 
         // auto calculate charges
         (this.checkoutForm.get('state').valueChanges && this.checkoutForm.get('city').valueChanges 
-        && this.checkoutForm.get('postCode').valueChanges && this.checkoutForm.get('address').valueChanges)
+        && this.checkoutForm.get('postCode').valueChanges && this.checkoutForm.get('address').valueChanges) 
             .pipe(
                 takeUntil(this._unsubscribeAll),
                 debounceTime(300),
@@ -395,7 +395,7 @@ export class LandingCheckoutComponent implements OnInit
 
                     // this is when user is logged in and the checkoutForm is valid 
                     // auto calculate charges
-                    if (this.user && this.checkoutForm.valid) { 
+                    if (this.user && this.checkoutForm.valid && this.cartItems.length > 0) { 
                         this.calculateCharges();
                     }
                     
@@ -758,9 +758,10 @@ export class LandingCheckoutComponent implements OnInit
 
                                         if (error['status'] === 409 && this.voucherApplied) {
 
-                                            // if voucher is invalid
-                                            this.openVoucherModal('heroicons_outline:x','Voucher cannot be used!', 'Purchase already have discount', null, true);
-                        
+                                            if (error.error.message) {
+                                                // if voucher is invalid
+                                                this.openVoucherModal('heroicons_outline:x','Error', error.error.message, null, true);
+                                            }                        
                                         }
                                     }
                                     );
@@ -1600,8 +1601,15 @@ export class LandingCheckoutComponent implements OnInit
 
                 if (error['status'] === 409) {
 
-                    // if voucher is invalid
-                    this.openVoucherModal('heroicons_outline:x','Promo code already claimed!', 'Please enter a different code', null, true);
+                    if (error.error.message) {
+                        // if voucher is invalid
+                        this.openVoucherModal('heroicons_outline:x','Error', error.error.message, null, true);
+                    }  
+                    else {
+                        // if voucher is invalid
+                        this.openVoucherModal('heroicons_outline:x','Promo code already claimed!', 'Please enter a different code', null, true);
+
+                    }
 
                 }
 
