@@ -746,7 +746,7 @@ export class LandingCheckoutComponent implements OnInit
         this.isCalculating = true;
         this.isLoading = true;
 
-        if (this.checkoutForm.get('storePickup').value === false && this.checkoutForm.get('customerAddress').value === '') {
+        if (this.checkoutForm.get('storePickup').value === false && this.checkoutForm.get('customerAddress').value === '' && this.user) {
             this.displayError('Address is empty')
             // Set Loading to false
             this.isCalculating = false;
