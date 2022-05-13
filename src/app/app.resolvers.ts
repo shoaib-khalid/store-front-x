@@ -106,7 +106,6 @@ export class StoreResolver implements Resolve<any>
 
         this.url.full = (this._platformLocation as any).location.origin;
         let sanatiseUrl = this.url.full.replace(/^(https?:|)\/\//, '').split(':')[0]; // this will get the domain from the URL
-        console.log(this.url.full);
         
         this.url.domain = sanatiseUrl;
 
