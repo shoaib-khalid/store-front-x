@@ -184,30 +184,6 @@ export class LandingCheckoutComponent implements OnInit
 
     ngOnInit() {
         
-        this.mapsAPILoader.load().then(() => {
-            this.setCurrentLocation();
-            if ( this.countryId === 'PAK' ){
-            this.geoCoder = new google.maps.Geocoder;
-            }
-            let autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement);
-            autocomplete.addListener("place_changed", () => {
-              this.ngZone.run(() => {
-                //get the place result
-                let place: google.maps.places.PlaceResult = autocomplete.getPlace();
-      
-                //verify result
-                if (place.geometry === undefined || place.geometry === null) {
-                  return;
-                }
-      
-                //set latitude, longitude and zoom
-                this.latitude = place.geometry.location.lat();
-                this.longitude = place.geometry.location.lng();
-                this.zoom = 12;
-                console.log('Location Entered', 'Lat' , this.latitude + ' Lng', this.longitude)
-              });
-            });
-          });
         // Create the support form
         this.checkoutForm = this._formBuilder.group({
             // Main Store Section
@@ -275,6 +251,35 @@ export class LandingCheckoutComponent implements OnInit
 
                     default:
                         break;
+                }
+
+                // -------------------------
+                // Set Map For PK Store Only
+                // -------------------------
+
+                if (this.countryId === 'PAK') {
+                    this.mapsAPILoader.load().then(() => {
+                        this.setCurrentLocation();
+                        this.geoCoder = new google.maps.Geocoder;
+                        let autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement);
+                        autocomplete.addListener("place_changed", () => {
+                            this.ngZone.run(() => {
+                                //get the place result
+                                let place: google.maps.places.PlaceResult = autocomplete.getPlace();
+                    
+                                //verify result
+                                if (place.geometry === undefined || place.geometry === null) {
+                                return;
+                                }
+                    
+                                //set latitude, longitude and zoom
+                                this.latitude = place.geometry.location.lat();
+                                this.longitude = place.geometry.location.lng();
+                                this.zoom = 12;
+                                // console.log('Location Entered', 'Lat' , this.latitude + ' Lng', this.longitude)
+                            });
+                        });
+                    });
                 }
 
                 // -----------------------
@@ -476,7 +481,7 @@ export class LandingCheckoutComponent implements OnInit
           }
     }
     markerDragEnd($event: any) {
-        console.log($event);
+        // console.log($event);
         this.latitude = $event.coords.lat;
         this.longitude = $event.coords.lng;
         this.getAddress(this.latitude, this.longitude);
