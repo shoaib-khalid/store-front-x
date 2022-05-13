@@ -563,7 +563,9 @@ export class LandingCheckoutComponent implements OnInit
         //To make custom pop up, and we pass the details in paramter data
         let dialogRef = this._dialog.open(ModalConfirmationDeleteItemComponent, { disableClose: true, data:{cartId:this._cartService.cartId$,itemId:cartItem.id}});
         dialogRef.afterClosed().subscribe((result) => {
-            
+
+            // Set Payment Completion Status "Calculate Charges"
+            this.paymentCompletionStatus = { id:"CALCULATE_CHARGES", label: "Calculate Charges" };
         });
     }
 
@@ -756,6 +758,16 @@ export class LandingCheckoutComponent implements OnInit
             // Set Loading to false
             this.isCalculating = false;
             this.isLoading = false;
+
+            return;
+        }
+
+        // do nothing if cart is empty and show popup error
+        if (this.cartItems.length < 1) {
+            // Set Loading to false
+            this.isCalculating = false;
+            this.isLoading = false;
+            this.displayError("Cart is empty");
 
             return;
         }

@@ -83,10 +83,12 @@ export class CartComponent implements OnInit, OnDestroy
                             this.totalCartList = carts.cartList.length;
                                                 
                             let cartArr = carts.cartList;
+
+                            // get index for cart of current store to sort the array
                             let index = carts.cartList.findIndex(x => x.storeId === this.store.id)
                             
                             if (index > -1) {
-                                // sort array 
+                                // sort carts by current store
                                 if (0 >= cartArr.length) {
                                     let k = 0 - cartArr.length + 1;
                                     while (k--) {
@@ -96,6 +98,7 @@ export class CartComponent implements OnInit, OnDestroy
                                 cartArr.splice(0, 0, cartArr.splice(index, 1)[0]);
                                 this.carts = cartArr; 
                             }
+                            // if no cart for this store
                             else this.carts = carts.cartList;
                             
                             // remove duplicate stores if any
