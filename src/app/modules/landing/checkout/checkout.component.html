@@ -26,6 +26,8 @@
                                 </mat-slide-toggle> -->
                                 <mat-radio-group
                                     class="flex flex-row"
+                                    [disabled]="isLoading" 
+                                    [ngClass]="isLoading ? 'cursor-wait' : ''"
                                     [color]="'primary'"
                                     (change)="allowPickupStore();addressFormChanges();"
                                     [formControlName]="'storePickup'">
@@ -750,7 +752,7 @@
                                 <!-- Delivery Providers -->
                                 <ng-container *ngIf="deliveryProviders.length > 0 && checkoutForm.get('storePickup').value === false">
                                     <div class="flex flex-row w-full mt-2">
-                                        <mat-form-field class="w-full rounded text-sm">
+                                        <mat-form-field class="w-full rounded text-sm fuse-mat-no-subscript fuse-mat-dense">
                                             <mat-select
                                                 [formControlName]="'deliveryProviderId'"
                                                 placeholder="Select a delivery provider"
@@ -829,10 +831,10 @@
                                 <ng-container *ngIf="store.verticalCode === 'E-Commerce' && selectedDeliveryProvidersGroup">
                                     <fieldset class="flex flex-row border border-gray-300 rounded-lg w-full p-2 mb-2">
                                         <legend class="px-2 mx-2 text-sm text-gray-400">Delivery Service</legend>
-                                        <mat-radio-group class="grid grid-cols-2 mb-2 w-full">
+                                        <mat-radio-group class="grid grid-cols-2 mb-0 w-full text-sm">
                                             <ng-container *ngFor="let deliveryPartner of selectedDeliveryProvidersGroup.deliveryProviders">
                                                 <ng-container *ngIf="deliveryPartner.isError === false">
-                                                    <div class="flex flex-row">
+                                                    <div class="flex flex-row items-center">
                                                         <mat-radio-button [checked]="checkedDeliveryRefId === deliveryPartner.refId" (change)="changeDeliveryProvider($event.value,'group')" [value]="deliveryPartner.refId">{{deliveryPartner.deliveryPeriod.name}}</mat-radio-button>
                                                         <mat-icon
                                                             [matTooltip]="deliveryPartner.deliveryPeriod.description"
@@ -892,8 +894,8 @@
 
                                     <!-- Voucher Dropdown -->
                                     <ng-container *ngIf="customerVouchers && customerVouchers.length > 0">
-                                        <mat-form-field class="fuse-mat-no-subscript fuse-mat-dense w-full mb-1" floatLabel="always">
-                                            <mat-label>Voucher Discount</mat-label>
+                                        <mat-form-field class="fuse-mat-no-subscript fuse-mat-dense w-full mb-1 text-sm" floatLabel="always">
+                                            <mat-label class="text-base ">Voucher Discount</mat-label>
                                             <mat-select 
                                                 placeholder="Select My Voucher"
                                                 (selectionChange)="selectVoucher(voucherSelector.value);"

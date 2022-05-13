@@ -549,6 +549,11 @@ export class LandingCheckoutComponent implements OnInit
                             this.paymentDetails = {...this.paymentDetails, ...response};
 
                             // this.addressFormChanges();
+                        }, (error) => {
+
+                            // Set Payment Completion Status "Calculate Charges"
+                            this.paymentCompletionStatus = { id:"CALCULATE_CHARGES", label: "Calculate Charges" };
+        
                         });
                 });
         }
@@ -678,6 +683,9 @@ export class LandingCheckoutComponent implements OnInit
         if ( type === "phoneNumber" ) {
             phoneNumber = this.sanitizePhoneNumber(phoneNumber)
             this.checkoutForm.get('phoneNumber').patchValue(phoneNumber)
+
+            // if type phone number and self pickup, just sanitize it and dont call getCustomerInfo
+            if (this.checkoutForm.get('storePickup').value === true) return
         }
                 
         this._checkoutService.getCustomerInfo(email, phoneNumber)
@@ -738,12 +746,18 @@ export class LandingCheckoutComponent implements OnInit
         this.isCalculating = true;
         this.isLoading = true;
 
+        if (this.checkoutForm.get('storePickup').value === false && this.checkoutForm.get('customerAddress').value === '') {
+            this.displayError('Address is empty')
+            return;
+        }
+        
         // Do nothing if the form is invalid
         let BreakException = {};
         try {
             Object.keys(this.checkoutForm.controls).forEach(key => {
                 const controlErrors: ValidationErrors = this.checkoutForm.get(key).errors;
                 if (controlErrors != null) {
+                    
                     Object.keys(controlErrors).forEach(keyError => {
 
                         const checkoutFormInfo = this.checkoutForm.get(key);
@@ -982,6 +996,15 @@ export class LandingCheckoutComponent implements OnInit
                     confirmation.afterClosed().subscribe((result) => {
                         // reset selectedDeliveryProvider
                         this.selectedDeliveryProvider = null;
+
+                        // set selectedDeliveryProvidersGroup to null
+                        this.selectedDeliveryProvidersGroup = null;
+
+                        // Set back delivery charges & grand total to 0
+                        this.paymentDetails.deliveryCharges = 0;
+                        this.paymentDetails.deliveryDiscount = 0;
+                        this.paymentDetails.cartGrandTotal = 0;
+
                         this.checkoutForm.get('deliveryProviderId').patchValue(null);
     
                         // Set Payment Completion Status "Calculate Charges"
@@ -1024,6 +1047,14 @@ export class LandingCheckoutComponent implements OnInit
                         // reset selectedDeliveryProvider
                         this.selectedDeliveryProvider = null;
                         this.checkoutForm.get('deliveryProviderId').patchValue(null);
+
+                        // set selectedDeliveryProvidersGroup to null
+                        this.selectedDeliveryProvidersGroup = null;
+                        
+                        // Set back delivery charges & grand total to 0
+                        this.paymentDetails.deliveryCharges = 0;
+                        this.paymentDetails.deliveryDiscount = 0;
+                        this.paymentDetails.cartGrandTotal = 0;
     
                         // Set Payment Completion Status "Calculate Charges"
                         this.paymentCompletionStatus = { id:"CALCULATE_CHARGES", label: "Calculate Charges" };
@@ -1038,6 +1069,11 @@ export class LandingCheckoutComponent implements OnInit
 
                         // Mark for check
                         this._changeDetectorRef.markForCheck();
+                    }, (error) => {
+
+                        // Set Payment Completion Status "Calculate Charges"
+                        this.paymentCompletionStatus = { id:"CALCULATE_CHARGES", label: "Calculate Charges" };
+    
                     });
 
                 // set price (this is based on delivery service api getPrice)
