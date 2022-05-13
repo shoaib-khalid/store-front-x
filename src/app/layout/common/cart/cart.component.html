@@ -1,7 +1,7 @@
 <!-- Cart Button -->
 
 <ng-container *ngIf="!user">
-    <div class="relative pl-8">
+    <div class="relative md:pl-8">
         <input
             id="shopping-cart-button"
             class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
@@ -31,11 +31,11 @@
         [matMenuTriggerFor]="cartMenu"
         class="cursor-pointer"
         mat-icon-button>
-        <span class="relative pl-8">
-                <ng-container *ngIf="totalCartList > 0">
+        <span class="relative md:pl-8">
+                <ng-container *ngIf="cartItemQuantity > 0">
                     <span class="absolute -top-1 -right-1 flex items-center justify-center h-3">
                         <span class="flex items-center justify-center flex-shrink-0 min-w-4 h-4 px-1 ml-4 mt-2.5 rounded-full bg-white text-black text-xs font-medium">
-                            {{totalCartList}}
+                            {{cartItemQuantity}}
                         </span>
                     </span>
                 </ng-container>
@@ -80,7 +80,7 @@
             <!-- See more  -->
             <ng-container *ngIf="seeMoreCarts">
                 <div (click)="seeMoreRedirect()" class="flex justify-center p-2 font-semibold bg-gray-100 hover:bg-primary-50 cursor-pointer hover:text-primary-500">
-                    See More
+                    View More Carts
                 </div>
                 <!-- Divider  -->
                 <div class="border-t"></div>
