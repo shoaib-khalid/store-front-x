@@ -784,11 +784,11 @@ export class LandingCheckoutComponent implements OnInit
                 if (controlErrors != null) {
                     
                     Object.keys(controlErrors).forEach(keyError => {
-
                         const checkoutFormInfo = this.checkoutForm.get(key);
                         checkoutFormInfo["info"] = this.checkoutInputField[key];                         
-
-                        this.displayError(CheckoutValidationService.getValidatorErrorMessage(keyError, checkoutFormInfo));
+                        
+                        this.displayError('Please fill in the required field(s)')
+                        // this.displayError(CheckoutValidationService.getValidatorErrorMessage(keyError, checkoutFormInfo));
                         throw BreakException;
                     });
                 }
