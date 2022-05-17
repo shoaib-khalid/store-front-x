@@ -722,7 +722,7 @@ export class LandingCheckoutComponent implements OnInit
                             if (type === "phoneNumber") this.checkoutForm.get('phoneNumber').patchValue(response.phoneNumber);
         
                             this.checkoutForm.get('address').patchValue(result.address);
-                            this.checkoutForm.get('postCode').patchValue(result.postCode);
+                            this.checkoutForm.get('postCode').patchValue(result.postCode.trim());
                             this.checkoutForm.get('state').patchValue(result.state);
                             this.checkoutForm.get('city').patchValue(result.city);
                             this.checkoutForm.get('country').patchValue(result.country);
@@ -953,7 +953,7 @@ export class LandingCheckoutComponent implements OnInit
                 });
         } else {
             // Get discount for store pickup    
-            this._checkoutService.getDiscountOfCart(this._cartService.cartId$, null, "PICKUP", this.voucherApplied?.voucher.voucherCode, this.user.id)
+            this._checkoutService.getDiscountOfCart(this._cartService.cartId$, null, "PICKUP", this.voucherApplied?.voucher.voucherCode, this.user?.id)
                 .subscribe((response)=>{
                     this.paymentDetails = {...this.paymentDetails, ...response};
 
@@ -1088,7 +1088,7 @@ export class LandingCheckoutComponent implements OnInit
 
             } else {
 
-                this._checkoutService.getDiscountOfCart(this._cartService.cartId$, this.selectedDeliveryProvider.refId, this.selectedDeliveryProvider.deliveryType,  this.voucherApplied?.voucher.voucherCode, this.user.id)
+                this._checkoutService.getDiscountOfCart(this._cartService.cartId$, this.selectedDeliveryProvider.refId, this.selectedDeliveryProvider.deliveryType,  this.voucherApplied?.voucher.voucherCode, this.user?.id)
                     .subscribe((response: CartDiscount)=>{
                         this.paymentDetails = {...this.paymentDetails, ...response};
 
