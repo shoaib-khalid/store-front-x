@@ -251,3 +251,14 @@ export interface UsedCustomerVoucherPagination
     startIndex  : number;
     endIndex    : number;
 }
+
+export interface PromoText
+{
+    eventId      : PromoEventId;
+    displayText  : string;
+}
+
+export enum PromoEventId {
+    Guest = 'guest-checkout',
+    Customer ='customer-checkout'
+}

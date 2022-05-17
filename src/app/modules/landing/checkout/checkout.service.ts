@@ -7,7 +7,7 @@ import { JwtService } from 'app/core/jwt/jwt.service';
 import { LogService } from 'app/core/logging/log.service';
 import { StoresService } from 'app/core/store/store.service';
 import { Customer } from 'app/core/user/user.types';
-import { CartDiscount, CustomerVoucher, CustomerVoucherPagination, DeliveryCharges, DeliveryProvider, UsedCustomerVoucherPagination } from './checkout.types';
+import { CartDiscount, CustomerVoucher, CustomerVoucherPagination, DeliveryCharges, DeliveryProvider, PromoText, UsedCustomerVoucherPagination } from './checkout.types';
 import { AuthService } from 'app/core/auth/auth.service';
 
 @Injectable({
@@ -387,49 +387,24 @@ export class CheckoutService
         //         })
         //     );
     }
-    
-    // /**
-    //  * Create the cart
-    //  *
-    //  * @param cart
-    //  */
-    // createCart(cart: Cart): Observable<any>
-    // {
-    //     let orderService = this._apiServer.settings.apiServer.orderService;
-    //  
-    //  
 
-    //     const header = {  
-    //         headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`)
-    //     };
+    getPromoTextByEventId(eventId:string): Observable<PromoText>
+    {
+        let productService = this._apiServer.settings.apiServer.productService;
+        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
+        let accessToken = "accessToken";
 
-    //     return this._httpClient.post<any>(orderService + '/carts', cart, header)
-    //         .pipe(
-    //             map((response) => {
-    //                 this._logging.debug("Response from StoresService (createCart)",response);
+        const header = {
+            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+        };
 
-    //                 // set cart id
-    //                 this.cartId = response["data"].id;
+        return this._httpClient.get<PromoText>(productService + '/promo-text/' + eventId, header)
+            .pipe(
+                map((response) => {
+                    this._logging.debug("Response from CheckoutService (getPromoTextByEventId)", response);
+                    return response["data"];
+                })
+            );
+    }
 
-    //                 // set cart
-    //                 this._cart.next(response);
-
-    //                 return response["data"];
-    //             })
-    //         );
-    // }
-
-    // /**
-    //  * Update the cart
-    //  *
-    //  * @param cart
-    //  */
-    // updateCart(cart: Cart): Observable<any>
-    // {
-    //     return this._httpClient.patch<Cart>('api/common/cart', {cart}).pipe(
-    //         map((response) => {
-    //             this._cart.next(response);
-    //         })
-    //     );
-    // }
 }

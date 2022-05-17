@@ -732,7 +732,7 @@
 
                                                 <!-- <span *ngIf="paymentDetails.voucherSubTotalDiscountDescription">&nbsp;({{paymentDetails.voucherSubTotalDiscountDescription}})</span> -->
                                             </p>
-                                            <span class="text-xs text-gray-500" *ngIf="paymentDetails.voucherDiscountMaxAmount != 0 && paymentDetails.voucherSubTotalDiscount >= paymentDetails.voucherDiscountMaxAmount
+                                            <span class="text-xs text-gray-500" *ngIf="paymentDetails.voucherDiscountMaxAmount != 0 && paymentDetails.voucherDiscountMaxAmount != null && paymentDetails.voucherSubTotalDiscount >= paymentDetails.voucherDiscountMaxAmount
                                                  && paymentDetails.voucherSubTotalDiscount != 0">
                                                 Capped at {{paymentDetails.voucherDiscountMaxAmount | currency: store.regionCountry.currencySymbol }}
                                             </span>
@@ -879,7 +879,7 @@
                                                 <span *ngIf="paymentDetails.voucherDiscountCalculationType === 'PERCENT'">&nbsp;(-{{paymentDetails.voucherDiscountCalculationValue}}%)</span>
                                                 <span *ngIf="paymentDetails.voucherDiscountCalculationType === 'FIX'">&nbsp;(-{{store.regionCountry.currencySymbol}}{{paymentDetails.voucherDiscountCalculationValue}})</span>
                                             </p>
-                                            <span class="text-xs text-gray-500" *ngIf="paymentDetails.voucherDiscountMaxAmount != 0 && paymentDetails.voucherDeliveryDiscount >= paymentDetails.voucherDiscountMaxAmount
+                                            <span class="text-xs text-gray-500" *ngIf="paymentDetails.voucherDiscountMaxAmount != 0 && paymentDetails.voucherDiscountMaxAmount != null && paymentDetails.voucherDeliveryDiscount >= paymentDetails.voucherDiscountMaxAmount
                                                  && paymentDetails.voucherDeliveryDiscount != 0">
                                                 Capped at {{paymentDetails.voucherDiscountMaxAmount | currency: store.regionCountry.currencySymbol }}
                                             </span>
@@ -972,7 +972,7 @@
                         <ng-container *ngIf="!notificationMessage && (paymentCompletionStatus.id !== 'CALCULATE_CHARGES' || currentScreenSize.includes('md') === true)">
                             <button
                                 [disabled]="isLoading" 
-                                class="my-2 w-auto font-semibold p-2 rounded"
+                                class="my-2 w-auto font-semibold p-2 rounded hover:bg-green-600"
                                 [ngClass]="isLoading ? 'cursor-wait bg-gray-200' : 'bg-green-500'"
                                 (click)="executeAction(paymentCompletionStatus.id)">
                                 <span>
@@ -985,6 +985,25 @@
                             <span class="text-white font-semibold">Calculating...</span> 
                         </div>
                     </div>
+                    <!-- Promo Text  -->
+                    <ng-container *ngIf="promoText">
+                        <div class="flex flex-col pt-4">
+                            <div
+                                class="text-lg font-medium"
+                                [innerHTML]="promoText.displayText"></div>
+                            <div>
+                                <button
+                                    [disabled]="isLoading" 
+                                    class="my-2 w-auto font-semibold p-2 rounded hover:bg-primary-600"
+                                    [ngClass]="isLoading ? 'cursor-wait bg-gray-200' : 'bg-primary'"
+                                    (click)="promoActionButton()">
+                                    <span class="tracking-tight">
+                                        {{promoActionButtonText}}
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </ng-container>
                 </div>
 
                 <!-- Spacer for small screen / store closed -->
@@ -996,7 +1015,7 @@
                 <ng-container *ngIf="!notificationMessage && paymentCompletionStatus.id === 'CALCULATE_CHARGES' && currentScreenSize.includes('md') === false">
                     <button
                         [disabled]="isLoading" 
-                        class="order-3 w-auto font-semibold p-2 rounded"
+                        class="order-3 w-auto font-semibold p-2 rounded hover:bg-green-600"
                         [ngClass]="isLoading ? 'cursor-wait bg-gray-200' : 'bg-green-500'"
                         (click)="executeAction(paymentCompletionStatus.id, checkoutContainer)"
                         (click)="scrollToTop(checkoutContainer)"

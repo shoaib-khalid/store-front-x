@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild, ViewEncapsulation, NgZone } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, NgForm, ValidationErrors, Validators } from '@angular/forms';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
-import { DOCUMENT } from '@angular/common'; 
+import { DOCUMENT, PlatformLocation } from '@angular/common'; 
 import { CartService } from 'app/core/cart/cart.service';
 import { CartItem } from 'app/core/cart/cart.types';
 import { StoresService } from 'app/core/store/store.service';
@@ -13,7 +13,7 @@ import { CheckoutService } from './checkout.service';
 import { CheckoutValidationService } from './checkout.validation.service';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ChooseDeliveryAddressComponent } from './choose-delivery-address/choose-delivery-address.component';
-import { Address, CartDiscount, CustomerVoucher, CustomerVoucherPagination, DeliveryProvider, DeliveryProviderGroup, Order, Payment, UsedCustomerVoucherPagination, CheckoutInputField, VoucherVerticalList } from './checkout.types';
+import { Address, CartDiscount, CustomerVoucher, CustomerVoucherPagination, DeliveryProvider, DeliveryProviderGroup, Order, Payment, UsedCustomerVoucherPagination, CheckoutInputField, VoucherVerticalList, PromoText, PromoEventId } from './checkout.types';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { ModalConfirmationDeleteItemComponent } from './modal-confirmation-delete-item/modal-confirmation-delete-item.component';
@@ -24,6 +24,7 @@ import { AddAddressComponent } from './add-address/add-address.component';
 import { EditAddressComponent } from './edit-address/edit-address.component';
 import { VoucherModalComponent } from './voucher-modal/voucher-modal.component';
 import { MapsAPILoader } from '@agm/core';
+import { AppConfig } from 'app/config/service.config';
 
 @Component({
     selector     : 'landing-checkout',
@@ -149,6 +150,7 @@ export class LandingCheckoutComponent implements OnInit
     voucherDiscountApplied: number = 0;
     verticalList: VoucherVerticalList[] = [];
 
+    
     // Map
     latitude: number = null;
     longitude: number = null;
@@ -159,7 +161,11 @@ export class LandingCheckoutComponent implements OnInit
     
     @ViewChild('search')
     public searchElementRef: ElementRef;
-
+    
+    // Promo
+    promoText: PromoText;
+    sanatiseUrl: string;
+    promoActionButtonText: string = '';
     /**
      * Constructor
      */
@@ -175,9 +181,12 @@ export class LandingCheckoutComponent implements OnInit
         private _dialog: MatDialog,
         private _router: Router,
         private _userService: UserService,
-        @Inject(DOCUMENT) document: Document,
         private mapsAPILoader: MapsAPILoader,
         private ngZone: NgZone,
+        private _apiServer: AppConfig,
+        private _platformLocation: PlatformLocation,
+        @Inject(DOCUMENT) private _document: Document,
+
     )
     {   
     }
@@ -223,6 +232,19 @@ export class LandingCheckoutComponent implements OnInit
                 
                 this.getCustomerAddresses(user);
             });
+
+        let fullUrl = (this._platformLocation as any).location.origin;
+        this.sanatiseUrl = fullUrl.replace(/^(https?:|)\/\//, '').split(':')[0]; // this will get the domain from the URL
+    
+        // For now, only get promo text if guest
+        if (!this.user) {
+            this.promoActionButtonText = 'Sign Up Now'
+            this._checkoutService.getPromoTextByEventId(this.user ? PromoEventId.Customer : PromoEventId.Guest)
+                .pipe(takeUntil(this._unsubscribeAll))
+                .subscribe((promoText: PromoText)=>{
+                    this.promoText = promoText;     
+                });
+        }
 
         // --------------
         // Get store
@@ -1832,5 +1854,10 @@ export class LandingCheckoutComponent implements OnInit
         {
             return false;
         }
+    }
+
+    promoActionButton() {
+        this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-up' +
+            '?redirectURL=' + encodeURI('https://' + this.sanatiseUrl  + this._router.url);
     }
 }
