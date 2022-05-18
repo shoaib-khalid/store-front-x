@@ -40,6 +40,7 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
     daysArray = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
     storeSnooze: StoreSnooze = null;
     show500: boolean;
+    errorMessage: string = '';
 
     /**
      * Constructor
@@ -208,7 +209,7 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
                 this.platform = platform;
             });
 
-        // Subscribe to platform data
+        // Subscribe to show 500
         this._error500Service.show500$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((any) => {

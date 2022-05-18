@@ -264,12 +264,14 @@ export class CartService
                     of(false)
                 ),
                 switchMap(async (response: any) => {
-                    this._logging.debug("Response from StoresService (getCartItems)",response);
+                    this._logging.debug("Response from StoresService (getCartItems)", response);
 
+                    let resp = response ? response["data"].content : null;
                     // set cart id
-                    this._cartItems.next(response["data"].content);
+                    this._cartItems.next(resp);
 
-                    return response["data"].content;
+                    return resp;
+                        
                 })
             );
     }

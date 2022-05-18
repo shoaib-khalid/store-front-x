@@ -131,15 +131,19 @@ export class CartComponent implements OnInit, OnDestroy
         this._cartService.cartItems$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((response: CartItem[]) => {
+                
                 this.cartItem = response;
 
-                // return array of quantity of each cartItem
-                let _cartItemQttyArr: number[] = this.cartItem.map(item => {
-                    return item.quantity;
-                });
+                if (this.cartItem) {
+                    // return array of quantity of each cartItem
+                    let _cartItemQttyArr: number[] = this.cartItem.map(item => {
+                        return item.quantity;
+                    });
+    
+                    // sum up the quantity in the array
+                    this.cartItemQuantity = _cartItemQttyArr.reduce((sum, a) => sum + a, 0);
 
-                // sum up the quantity in the array
-                this.cartItemQuantity = _cartItemQttyArr.reduce((sum, a) => sum + a, 0);
+                }
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();

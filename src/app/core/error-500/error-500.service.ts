@@ -8,6 +8,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class Error500Service
 {
     private _show500$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    private _errorMessage$: BehaviorSubject<string | null> = new BehaviorSubject<string>(null);
 
     /**
      * Constructor
@@ -29,6 +30,14 @@ export class Error500Service
         return this._show500$.asObservable();
     }
 
+    /**
+     * Getter for error 500 message
+     */
+     get errorMessage$(): Observable<string>
+     {
+         return this._errorMessage$.asObservable();
+     }
+
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
@@ -36,9 +45,10 @@ export class Error500Service
     /**
      * Show the error 500
      */
-    show(): void
+    show(message: string = null): void
     {        
         this._show500$.next(true);
+        this._errorMessage$.next(message)
     }
 
     /**

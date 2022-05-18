@@ -12,7 +12,7 @@ import { AnalyticService } from './analytic/analytic.service';
 import { IpAddressService } from './ip-address/ip-address.service';
 import { CookieService } from 'ngx-cookie-service';
 import { StoresService } from './store/store.service';
-import { UserService } from './user/user.service';
+import { AppConfig } from 'app/config/service.config';
 import { Customer, User } from './user/user.types';
 import { Error500Service } from './error-500/error-500.service';
 
@@ -42,7 +42,8 @@ export class CoreInterceptor implements HttpInterceptor
         private _ipAddressService: IpAddressService,
         private _storesService: StoresService,
         private _cookieService: CookieService,
-        private _error500Service: Error500Service
+        private _error500Service: Error500Service,
+        private _apiServer: AppConfig,
 
     )
     {
@@ -91,7 +92,6 @@ export class CoreInterceptor implements HttpInterceptor
                     this._error500Service.hide();
 
                     const substring =  String(error.status)[0]
-                    
                     // retry 'retryCount' amount of times
                     if (count < retryCount && error instanceof HttpErrorResponse && (substring === '5' || error.status === 0)) {
                         
@@ -100,10 +100,10 @@ export class CoreInterceptor implements HttpInterceptor
 
                     // when already retried 'retryCount' amount of times
                     else if (count === retryCount) {
-                        // set show error 500 page to true
-                        this._error500Service.show();
+                        
+                        this._error500Service.show(this._apiServer.settings.logging === 0 ? error.message : null);
                     }
-
+                    
                     // Ignore intercept for login () clients/authenticate                
                     else if (error instanceof HttpErrorResponse && !(error.status === 401 && newReq.url.indexOf("customers/authenticate") > -1)  && !(error.status === 409))
                     {
