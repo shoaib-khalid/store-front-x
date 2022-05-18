@@ -113,13 +113,15 @@ export class AppComponent
         .subscribe((response: Store)=>{            
             if (response) {
                 this.store = response;
-
+                
                 // Set Title
                 this._titleService.setTitle(this.store.name);
 
-                let haveFaviconIndex = (this.store.storeAssets.length > 0) ? this.store.storeAssets.findIndex(item => item.assetType === "FaviconUrl") : -1;
+                let haveFaviconIndex = (this.store.storeAssets.length > 0) ? this.store.storeAssets.findIndex(item => item.assetType === "FaviconUrl" && item.id != null) : -1;
 
+                // Favicon from merchant
                 if (haveFaviconIndex > -1) {
+                    
                     this.favIcon16.href = this.store.storeAssets[haveFaviconIndex].assetUrl;
                     this.favIcon32.href = this.store.storeAssets[haveFaviconIndex].assetUrl;
                 } else {
