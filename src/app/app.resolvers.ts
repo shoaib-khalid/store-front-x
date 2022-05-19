@@ -169,14 +169,12 @@ export class StoreResolver implements Resolve<any>
                     let customerId = this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid ? this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid : null
 
                     if (customerId != null || this.ownerId != '') {
-                        console.log('1');
                         
                         this._cartService.getCarts((customerId != null) ? customerId : this.ownerId, this._storesService.storeId$)
                             .subscribe(response => {
 
                                 // if got customer cart Id
                                 if (response['content'].length) {
-                                    console.log('2');
                                     const customerCartId = response['content'][0].id
                                     // set cart id
                                     this._cartService.cartId = customerCartId;
@@ -186,7 +184,6 @@ export class StoreResolver implements Resolve<any>
                                 }
                                 // if no customer cart Id
                                 else {
-                                    console.log('3');
                                     const createCartBody = {
                                         customerId: customerId, 
                                         storeId: this._storesService.storeId$,
@@ -213,7 +210,6 @@ export class StoreResolver implements Resolve<any>
 
                         // check if got cart Id
                         if (this._cartService.cartId$) {
-                            console.log('4');
 
                             if (this._activatedRoute.snapshot.queryParamMap.get('customerCartId')) {
                                 this.cartId = this._activatedRoute.snapshot.queryParamMap.get('customerCartId')
@@ -234,7 +230,6 @@ export class StoreResolver implements Resolve<any>
                         }
                         // no cart Id
                         else {
-                            console.log('5');
                             const createCartBody = {
                                 customerId: null, 
                                 storeId: this._storesService.storeId$,
