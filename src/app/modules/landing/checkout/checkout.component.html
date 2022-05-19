@@ -389,25 +389,25 @@
                             <!-- Email Address -->
                             <div class="w-full flex flex-col sm:flex-row pt-5 sm:pt-10">
                                 <!-- Email Address -->
-                                <mat-form-field class="w-full" floatLabel="always">
-                                    <mat-label>Email Address</mat-label>
-                                    <input
-                                        matInput
-                                        [formControlName]="'email'"
-                                        (change)="checkCustomerInfo('email', this.checkoutForm.get('email').value)"
-                                        [placeholder]="checkoutInputField.email.placeholder"
-                                        autocomplete="disabled"
-                                        [required]="true"
-                                        >
-                                    <mat-error *ngIf="checkoutForm.get('email').hasError('required')">
-                                        Email address is required
-                                    </mat-error>
-                                    <mat-error *ngIf="checkoutForm.get('email').hasError('email')">
-                                        Enter a valid email address
-                                    </mat-error>
-                                </mat-form-field>
-
-                                
+                                <ng-container *ngIf="!user">
+                                    <mat-form-field class="w-full" floatLabel="always">
+                                        <mat-label>Email Address</mat-label>
+                                        <input
+                                            matInput
+                                            [formControlName]="'email'"
+                                            (change)="checkCustomerInfo('email', this.checkoutForm.get('email').value)"
+                                            [placeholder]="checkoutInputField.email.placeholder"
+                                            autocomplete="disabled"
+                                            [required]="true"
+                                            >
+                                        <mat-error *ngIf="checkoutForm.get('email').hasError('required')">
+                                            Email address is required
+                                        </mat-error>
+                                        <mat-error *ngIf="checkoutForm.get('email').hasError('email')">
+                                            Enter a valid email address
+                                        </mat-error>
+                                    </mat-form-field>
+                                </ng-container>
                             </div>
 
                             <!-- Full name & Phonenumber -->
