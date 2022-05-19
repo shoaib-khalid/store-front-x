@@ -140,7 +140,8 @@ export class StoreResolver implements Resolve<any>
             take(1),
             switchMap(() => {
 
-                this.ownerId = this._cookieService.get('CustomerId');
+                
+
 
                 // check if store id exists
                 if (this._storesService.storeId$ && this._storesService.storeId$ !== null) {
@@ -160,67 +161,82 @@ export class StoreResolver implements Resolve<any>
                         });
 
                     // -----------------------
-                    // check if cart id exists
+                    // check if customer id exists
                     // -----------------------
 
-                    if (this._cartService.cartId$) {
+                    this.ownerId = this._cookieService.get('CustomerId');
+                    // if customerId null means guest
+                    let customerId = this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid ? this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid : null
 
-                        if (this._activatedRoute.snapshot.queryParamMap.get('customerCartId')) {
-                            this.cartId = this._activatedRoute.snapshot.queryParamMap.get('customerCartId')
+                    if (customerId != null || this.ownerId != '') {
+                        console.log('1');
+                        
+                        this._cartService.getCarts((customerId != null) ? customerId : this.ownerId, this._storesService.storeId$)
+                            .subscribe(response => {
 
-                            // set customer cart id to local storage
-                            this._cartService.cartId = this.cartId;
-                            // then get cart items
-                            this.getCartItems(this.cartId);
+                                // if got customer cart Id
+                                if (response['content'].length) {
+                                    console.log('2');
+                                    const customerCartId = response['content'][0].id
+                                    // set cart id
+                                    this._cartService.cartId = customerCartId;
+                                    if(customerCartId && customerCartId !== '') {
+                                        this.getCartItems(customerCartId);
+                                    }
+                                }
+                                // if no customer cart Id
+                                else {
+                                    console.log('3');
+                                    const createCartBody = {
+                                        customerId: customerId, 
+                                        storeId: this._storesService.storeId$,
+                                    }
+                                    this._cartService.createCart(createCartBody)
+                                    .subscribe((cart: Cart)=>{
+                                            // set cart id
+                                            this.cartId = cart.id;
+            
+                                            if(this.cartId && this.cartId !== '') {
+                                                this.getCartItems(this.cartId);
+                                            }
+                                        });
+                                }
+                            })
                             
                         }
-                        else {
-                            this.cartId = this._cartService.cartId$;
-                            if(this.cartId && this.cartId !== '') {                            
+                    // no customer Id aka guest
+                    else {
+                        
+                        // -----------------------
+                        // check if cart id exists
+                        // -----------------------
+
+                        // check if got cart Id
+                        if (this._cartService.cartId$) {
+                            console.log('4');
+
+                            if (this._activatedRoute.snapshot.queryParamMap.get('customerCartId')) {
+                                this.cartId = this._activatedRoute.snapshot.queryParamMap.get('customerCartId')
+    
+                                // set customer cart id to local storage
+                                this._cartService.cartId = this.cartId;
+                                // then get cart items
                                 this.getCartItems(this.cartId);
-                            }
-                        }
-                        
-                    } else {
-
-                        // if customerId null means guest
-                        let customerId = this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid ? this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid : null
-
-                        
-                        if (customerId != null || this.ownerId != '') {
-                            this._cartService.getCarts((customerId != null) ? customerId : this.ownerId, this._storesService.storeId$)
-                                .subscribe(response => {
-
-                                    if (response['content'].length) {
-                                        const customerCartId = response['content'][0].id
-                                        // set cart id
-                                        this._cartService.cartId = customerCartId;
-                                        if(customerCartId && customerCartId !== '') {
-                                            this.getCartItems(customerCartId);
-                                        }
-                                    }
-                                    else {
-                                        
-                                        const createCartBody = {
-                                            customerId: customerId, 
-                                            storeId: this._storesService.storeId$,
-                                        }
-                                        this._cartService.createCart(createCartBody)
-                                        .subscribe((cart: Cart)=>{
-                                                // set cart id
-                                                this.cartId = cart.id;
-                
-                                                if(this.cartId && this.cartId !== '') {
-                                                    this.getCartItems(this.cartId);
-                                                }
-                                            });
-                                    }
-                                })
                                 
                             }
+                            else {
+                                this.cartId = this._cartService.cartId$;
+                                if(this.cartId && this.cartId !== '') {                            
+                                    this.getCartItems(this.cartId);
+                                }
+                            }
+                            
+                        }
+                        // no cart Id
                         else {
+                            console.log('5');
                             const createCartBody = {
-                                customerId: customerId, 
+                                customerId: null, 
                                 storeId: this._storesService.storeId$,
                             }
                             this._cartService.createCart(createCartBody)
@@ -232,8 +248,86 @@ export class StoreResolver implements Resolve<any>
                                         this.getCartItems(this.cartId);
                                     }
                                 });
+
                         }
                     }
+
+
+                    // LAMA PUNYA
+
+                    // if (this._cartService.cartId$) {
+
+
+
+                    //     if (this._activatedRoute.snapshot.queryParamMap.get('customerCartId')) {
+                    //         this.cartId = this._activatedRoute.snapshot.queryParamMap.get('customerCartId')
+
+                    //         // set customer cart id to local storage
+                    //         this._cartService.cartId = this.cartId;
+                    //         // then get cart items
+                    //         this.getCartItems(this.cartId);
+                            
+                    //     }
+                    //     else {
+                    //         this.cartId = this._cartService.cartId$;
+                    //         if(this.cartId && this.cartId !== '') {                            
+                    //             this.getCartItems(this.cartId);
+                    //         }
+                    //     }
+                        
+                    // } else {
+
+                    //     // if customerId null means guest
+                    //     let customerId = this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid ? this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid : null
+
+                        
+                    //     if (customerId != null || this.ownerId != '') {
+                    //         this._cartService.getCarts((customerId != null) ? customerId : this.ownerId, this._storesService.storeId$)
+                    //             .subscribe(response => {
+
+                    //                 if (response['content'].length) {
+                    //                     const customerCartId = response['content'][0].id
+                    //                     // set cart id
+                    //                     this._cartService.cartId = customerCartId;
+                    //                     if(customerCartId && customerCartId !== '') {
+                    //                         this.getCartItems(customerCartId);
+                    //                     }
+                    //                 }
+                    //                 else {
+                                        
+                    //                     const createCartBody = {
+                    //                         customerId: customerId, 
+                    //                         storeId: this._storesService.storeId$,
+                    //                     }
+                    //                     this._cartService.createCart(createCartBody)
+                    //                     .subscribe((cart: Cart)=>{
+                    //                             // set cart id
+                    //                             this.cartId = cart.id;
+                
+                    //                             if(this.cartId && this.cartId !== '') {
+                    //                                 this.getCartItems(this.cartId);
+                    //                             }
+                    //                         });
+                    //                 }
+                    //             })
+                                
+                    //         }
+                    //     else {
+                    //         const createCartBody = {
+                    //             customerId: customerId, 
+                    //             storeId: this._storesService.storeId$,
+                    //         }
+                    //         this._cartService.createCart(createCartBody)
+                    //         .subscribe((cart: Cart)=>{
+                    //                 // set cart id
+                    //                 this.cartId = cart.id;
+    
+                    //                 if(this.cartId && this.cartId !== '') {
+                    //                     this.getCartItems(this.cartId);
+                    //                 }
+                    //             });
+                    //     }
+                    // }
 
                     // -----------------------
                     // Get Store Snooze
