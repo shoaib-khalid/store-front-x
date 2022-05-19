@@ -236,15 +236,6 @@ export class LandingCheckoutComponent implements OnInit
         let fullUrl = (this._platformLocation as any).location.origin;
         this.sanatiseUrl = fullUrl.replace(/^(https?:|)\/\//, '').split(':')[0]; // this will get the domain from the URL
     
-        // For now, only get promo text if guest
-        if (!this.user) {
-            this.promoActionButtonText = 'Sign Up Now'
-            this._checkoutService.getPromoTextByEventId(this.user ? PromoEventId.Customer : PromoEventId.Guest)
-                .pipe(takeUntil(this._unsubscribeAll))
-                .subscribe((promoText: PromoText)=>{
-                    this.promoText = promoText;     
-                });
-        }
 
         // --------------
         // Get store
@@ -446,6 +437,17 @@ export class LandingCheckoutComponent implements OnInit
                         // Mark for check
                         this._changeDetectorRef.markForCheck();
                     });
+
+                // For now, only get promo text if guest
+                if (!this.user) {
+                    this.promoActionButtonText = 'Sign Up Now'
+                    this._checkoutService.getPromoTextByEventId(this.user ? PromoEventId.Customer : PromoEventId.Guest, this.store.verticalCode)
+                        .pipe(takeUntil(this._unsubscribeAll))
+                        .subscribe((promoText: PromoText)=>{
+                            
+                            this.promoText = promoText;     
+                        });
+                }
                     
                 // Mark for check
                 this._changeDetectorRef.markForCheck();

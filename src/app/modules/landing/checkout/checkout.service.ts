@@ -7,7 +7,7 @@ import { JwtService } from 'app/core/jwt/jwt.service';
 import { LogService } from 'app/core/logging/log.service';
 import { StoresService } from 'app/core/store/store.service';
 import { Customer } from 'app/core/user/user.types';
-import { CartDiscount, CustomerVoucher, CustomerVoucherPagination, DeliveryCharges, DeliveryProvider, PromoText, UsedCustomerVoucherPagination } from './checkout.types';
+import { CartDiscount, CustomerVoucher, CustomerVoucherPagination, DeliveryCharges, DeliveryProvider, PromoText, PromoTextPagination, UsedCustomerVoucherPagination } from './checkout.types';
 import { AuthService } from 'app/core/auth/auth.service';
 
 @Injectable({
@@ -26,6 +26,11 @@ export class CheckoutService
 
     private _customerVoucherPagination: BehaviorSubject<CustomerVoucherPagination | null> = new BehaviorSubject(null);
     private _usedCustomerVoucherPagination: BehaviorSubject<UsedCustomerVoucherPagination | null> = new BehaviorSubject(null);
+
+    private _promoTextPagination: BehaviorSubject<PromoTextPagination | null> = new BehaviorSubject(null);
+    private _promoText: ReplaySubject<PromoText> = new ReplaySubject<PromoText>(1);
+    
+    
 
 
     /**
@@ -102,6 +107,23 @@ export class CheckoutService
     {
         return this._usedCustomerVoucherPagination.asObservable();
     }
+
+    /**
+     * Getter for promo text
+     */
+     get promoText$(): Observable<PromoText>
+     {
+         return this._promoText.asObservable();
+     }
+
+
+    /**
+     * Getter for promo text pagination
+     */
+     get promoTextPagination$(): Observable<PromoTextPagination>
+     {
+         return this._promoTextPagination.asObservable();
+     }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
@@ -388,7 +410,7 @@ export class CheckoutService
         //     );
     }
 
-    getPromoTextByEventId(eventId:string): Observable<PromoText>
+    getPromoTextByEventId(eventId:string, verticalCode: string = ''): Observable<PromoText>
     {
         let productService = this._apiServer.settings.apiServer.productService;
         //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
@@ -396,13 +418,31 @@ export class CheckoutService
 
         const header = {
             headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            params: {
+                "verticalCode": verticalCode,
+                "eventId": eventId,
+            }
         };
 
-        return this._httpClient.get<PromoText>(productService + '/promo-text/' + eventId, header)
+        return this._httpClient.get<PromoText>(productService + '/promo-text', header)
             .pipe(
                 map((response) => {
                     this._logging.debug("Response from CheckoutService (getPromoTextByEventId)", response);
-                    return response["data"];
+                    
+                    let promoTextPagination = {
+                            
+                        length: response["data"].totalElements,
+                        size: response["data"].size,
+                        page: response["data"].number,
+                        lastPage: response["data"].totalPages,
+                        startIndex: response["data"].pageable.offset,
+                        endIndex: response["data"].pageable.offset + response["data"].numberOfElements - 1
+                    }
+                    
+                    this._promoTextPagination.next(promoTextPagination); 
+                    this._promoText.next(response["data"].content[0])
+
+                    return response["data"].content[0];
                 })
             );
     }

@@ -256,6 +256,18 @@ export interface PromoText
 {
     eventId      : PromoEventId;
     displayText  : string;
+    id           : string;
+    verticalCode : string;
+}
+
+export interface PromoTextPagination
+{
+    length      : number;
+    size        : number;
+    page        : number;
+    lastPage    : number;
+    startIndex  : number;
+    endIndex    : number;
 }
 
 export enum PromoEventId {
