@@ -1859,7 +1859,9 @@ export class LandingCheckoutComponent implements OnInit
     }
 
     promoActionButton() {
+
+        // sign up
         this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-up' +
-            '?redirectURL=' + encodeURI('https://' + this.sanatiseUrl  + this._router.url);
+            '?redirectURL=' + encodeURI('https://' + this.sanatiseUrl  + this._router.url) + '&guestCartId=' + this._cartService.cartId$ + '&storeId=' + this.store.id;
     }
 }
