@@ -21,6 +21,8 @@ import { EditAddressComponent } from './edit-address/edit-address.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { VoucherModalComponent } from './voucher-modal/voucher-modal.component';
 import { AgmCoreModule } from '@agm/core';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+
 
 @NgModule({
     declarations: [
@@ -45,6 +47,7 @@ import { AgmCoreModule } from '@agm/core';
         MatRadioModule,
         SharedModule,
         MatExpansionModule,
+        NgxMatSelectSearchModule,
         AgmCoreModule.forRoot({  
             apiKey: 'AIzaSyCFhf1LxbPWNQSDmxpfQlx69agW-I-xBIw' ,
             libraries: ['places'] 
