@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
 import { switchMap, take, map, tap, catchError, filter } from 'rxjs/operators';
-import { Store, StoreRegionCountry, StoreTiming, StorePagination, StoreAssets, CreateStore, StoreDeliveryDetails, StoreSelfDeliveryStateCharges, StoreDeliveryProvider, StoreCategory, StoreDiscount, StoreSnooze, CategoryPagination } from 'app/core/store/store.types';
+import { Store, StoreRegionCountry, StoreTiming, StorePagination, StoreAssets, CreateStore, StoreDeliveryDetails, StoreSelfDeliveryStateCharges, StoreDeliveryProvider, StoreCategory, StoreDiscount, StoreSnooze, CategoryPagination, City } from 'app/core/store/store.types';
 import { AppConfig } from 'app/config/service.config';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { takeUntil } from 'rxjs/operators';
@@ -35,6 +35,9 @@ export class StoresService
 
     public storeControl: FormControl = new FormControl();
     public storeCategoryControl: FormControl = new FormControl();
+
+    private _city: BehaviorSubject<City | null> = new BehaviorSubject(null);
+    private _cities: BehaviorSubject<City[] | null> = new BehaviorSubject(null);
 
     /**
      * Constructor
@@ -254,6 +257,47 @@ export class StoresService
     get pagination$(): Observable<StorePagination>
     {
         return this._pagination.asObservable();
+    }
+
+    
+    /**
+    * Getter for city
+    *
+    */
+    get city$(): Observable<City>
+    {
+        return this._city.asObservable();
+    }
+        
+    /**
+     * Setter for city
+     *
+     * @param value
+     */
+    set city(value: City)
+    {
+        // Store the value
+        this._city.next(value);
+    }
+        
+    /**
+     * Getter for city
+     *
+     */
+    get cities$(): Observable<City[]>
+    {
+        return this._cities.asObservable();
+    }
+            
+    /**
+     * Setter for city
+     *
+     * @param value
+     */
+    set cities(value: City[])
+    {
+        // Store the value
+        this._cities.next(value);
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -770,6 +814,37 @@ export class StoresService
                     return response["data"].content;
                 })
             );
+    }
+
+    getStoreRegionCountryStateCity(state: string, city: string = null): Observable<any>
+    {
+        let productService = this._apiServer.settings.apiServer.productService;
+        let accessToken = "accessToken";
+        const header = {
+            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            params: {
+                "state": state,
+                "city" : city
+            }
+        };
+
+        if (!city) {delete header.params.city}
+
+        return this.cities$.pipe(
+            take(1),
+            switchMap(cities => this._httpClient.get<any>(productService + '/region-country-state-city', header).pipe(
+                map((response) => {
+                    this._logging.debug("Response from StoresService (getStoreRegionCountryStateCity)",response);
+
+                    // ---------------
+                    // Update Store
+                    // ---------------
+                    this._cities.next(response.data);
+
+                    return response.data;
+                })
+            ))
+        );    
     }
 
     // ---------------------------

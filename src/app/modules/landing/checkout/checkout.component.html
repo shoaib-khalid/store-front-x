@@ -151,7 +151,7 @@
                                                 </span>
                                             </mat-select-trigger>
                                             <div *ngFor="let state of regionCountryStates">
-                                                <mat-option [value]="state.id">{{state.name}}</mat-option>
+                                                <mat-option [value]="state.name">{{state.name}}</mat-option>
                                             </div>
                                         </mat-select>
                                         <mat-error *ngIf="checkoutForm.get('state').hasError('required')">
@@ -453,7 +453,7 @@
                             <!-- City & Postcode -->
                             <div class="w-full flex flex-wrap sm:flex-nowrap sm:flex-row mb-0">
                                 <!--City -->
-                                <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
+                                <!-- <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
                                     <mat-label>City</mat-label>
                                     <input
                                         matInput
@@ -464,6 +464,33 @@
                                         (change)="addressFormChanges()"
                                         [required]="true"
                                         >
+                                    <mat-error *ngIf="checkoutForm.get('city').hasError('required')">
+                                        City is required
+                                    </mat-error>
+                                </mat-form-field> -->
+                                <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
+                                    <mat-label>City</mat-label>
+                                    <mat-select 
+                                        [formControlName]="'city'"
+                                        [required]="true"
+                                        [value]="'city'"
+                                        [placeholder]="checkoutInputField.city.placeholder"
+                                        (selectionChange)="checkoutForm.get('city').patchValue($event.value);"
+                                        #stateCitySelector="matSelect">
+                                        <mat-select-trigger>
+                                            <span class="flex items-center">
+                                                <span>{{ stateCitySelector.triggerValue }}</span>
+                                            </span>
+                                        </mat-select-trigger>
+                                        <ngx-mat-select-search [placeholderLabel]="'Search City'" [noEntriesFoundLabel]="'No matching records found'" [formControl]="regionCountryStateCities"
+                                         ngDefaultControl></ngx-mat-select-search>
+                                        <!-- <div *ngFor="let city of storeStateCities">
+                                            <mat-option class="m-t" [value]="city.city">{{city.city}}</mat-option>
+                                        </div> -->
+                                        <mat-option class="m-t" *ngFor="let city of storeStateCities$ | async" [value]="city.city">
+                                            {{city.city}}
+                                        </mat-option>
+                                    </mat-select>
                                     <mat-error *ngIf="checkoutForm.get('city').hasError('required')">
                                         City is required
                                     </mat-error>
