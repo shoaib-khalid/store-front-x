@@ -170,7 +170,7 @@ export class StoreResolver implements Resolve<any>
                             .subscribe(response => {
 
                                 // if got customer cart Id
-                                if (response['content'].length) {
+                                if (response['content'].length > 0) {
                                     const customerCartId = response['content'][0].id
                                     // set cart id
                                     this._cartService.cartId = customerCartId;
@@ -178,7 +178,14 @@ export class StoreResolver implements Resolve<any>
                                         this.getCartItems(customerCartId);
                                     }
                                 }
-                                // if no customer cart Id
+                                // if no customer cart Id but have current cart Id
+                                else if (response['content'].length === 0 && this._cartService.cartId$) {
+                                    this.cartId = this._cartService.cartId$;
+                                    if(this.cartId && this.cartId !== '') {                            
+                                        this.getCartItems(this.cartId);
+                                    }
+                                }
+                                // if no customer cart Id and no current cart Id, create new cart
                                 else {
                                     const createCartBody = {
                                         customerId: customerId, 
@@ -193,6 +200,7 @@ export class StoreResolver implements Resolve<any>
                                                     this.getCartItems(this.cartId);
                                                 }
                                         });
+
                                 }
                             })
                             
