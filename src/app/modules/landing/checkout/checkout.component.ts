@@ -584,17 +584,21 @@ export class LandingCheckoutComponent implements OnInit
     }
 
     deleteCartItem(cartItem: CartItem){
-        
-        // this._cartService.deleteCartItem(this._cartService.cartId$, cartItem.id)
-        //     .subscribe((response)=>{                
-        //     });
 
         //To make custom pop up, and we pass the details in paramter data
-        let dialogRef = this._dialog.open(ModalConfirmationDeleteItemComponent, { disableClose: true, data:{cartId:this._cartService.cartId$,itemId:cartItem.id}});
+        let dialogRef = this._dialog.open(ModalConfirmationDeleteItemComponent, { disableClose: true, data:{ cartId:this._cartService.cartId$, itemId:cartItem.id }});
         dialogRef.afterClosed().subscribe((result) => {
-
-            // Set Payment Completion Status "Calculate Charges"
-            this.paymentCompletionStatus = { id:"CALCULATE_CHARGES", label: "Calculate Charges" };
+            
+            // if cart has items, calculate the charges
+            if (this.cartItems.length > 0) {
+                
+                this.calculateCharges()                
+            }
+            // if cart is empty, reset the values
+            else {
+                // change button to Calculate Charges
+                this.addressFormChanges();
+            }
         });
     }
 

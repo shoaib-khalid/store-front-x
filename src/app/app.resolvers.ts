@@ -92,7 +92,6 @@ export class StoreResolver implements Resolve<any>
         private _authService: AuthService,
         private _jwtService: JwtService,
         private _navigationService: NavigationService,
-        private _router: Router,
         private _httpstatService: HttpStatService,
         private _activatedRoute: ActivatedRoute,
         private _cookieService: CookieService,
@@ -140,9 +139,6 @@ export class StoreResolver implements Resolve<any>
             take(1),
             switchMap(() => {
 
-                
-
-
                 // check if store id exists
                 if (this._storesService.storeId$ && this._storesService.storeId$ !== null) {
 
@@ -189,18 +185,18 @@ export class StoreResolver implements Resolve<any>
                                         storeId: this._storesService.storeId$,
                                     }
                                     this._cartService.createCart(createCartBody)
-                                    .subscribe((cart: Cart)=>{
-                                            // set cart id
-                                            this.cartId = cart.id;
-            
-                                            if(this.cartId && this.cartId !== '') {
-                                                this.getCartItems(this.cartId);
-                                            }
+                                        .subscribe((cart: Cart)=>{
+                                                // set cart id
+                                                this.cartId = cart.id;
+                
+                                                if(this.cartId && this.cartId !== '') {
+                                                    this.getCartItems(this.cartId);
+                                                }
                                         });
                                 }
                             })
                             
-                        }
+                    }
                     // no customer Id aka guest
                     else {
                         
@@ -243,10 +239,8 @@ export class StoreResolver implements Resolve<any>
                                         this.getCartItems(this.cartId);
                                     }
                                 });
-
                         }
                     }
-
 
                     // LAMA PUNYA
 
