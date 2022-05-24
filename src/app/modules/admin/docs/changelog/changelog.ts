@@ -9,6 +9,19 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v1.4.0
+        {
+            version    : 'v1.4.0',
+            releaseDate: 'May 19, 2022',
+            changes    : [
+                {
+                    type: 'Added',
+                    list: [
+                        '(CheckoutPage) Integrate with fastpay'
+                    ]
+                }
+            ]
+        },
         // v1.3.1
         {
             version    : 'v1.3.1',
