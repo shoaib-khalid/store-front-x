@@ -1162,8 +1162,9 @@ export class LandingCheckoutComponent implements OnInit
 
                 this.order = response;
 
-                let dateTime = new Date()
-                let transactionId = this._datePipe.transform(dateTime, "yyyyMMddhhmmss")
+                let dateTime = new Date();
+                let transactionId = this._datePipe.transform(dateTime, "yyyyMMddhhmmss");
+                let dateTimeNow = this._datePipe.transform(dateTime, "yyyy-MM-dd hh:mm:ss"); //2022-05-18 09:51:36
 
                 const paymentBody = {
                     // callbackUrl: "https://bon-appetit.symplified.ai/thankyou",
@@ -1186,6 +1187,28 @@ export class LandingCheckoutComponent implements OnInit
                                 window.location.href = this.payment.paymentLink;
                             } else if (this.payment.providerId == "2") {                                                               
                                 this.postForm("post-to-senangpay", this.payment.paymentLink, {"detail" : this.payment.sysTransactionId, "amount": this.paymentDetails.cartGrandTotal.toFixed(2), "order_id": this.order.id, "name": this.order.orderShipmentDetail.receiverName, "email": this.order.orderShipmentDetail.email, "phone": this.order.orderShipmentDetail.phoneNumber, "hash": this.payment.hash },'post');
+                            } else if (this.payment.providerId == "3") {                                                               
+                                this.postForm("post-to-fastpay", this.payment.paymentLink, 
+                                    { 
+                                        "CURRENCY_CODE": "PKR", 
+                                        "MERCHANT_ID": "13464", 
+                                        "MERCHANT_NAME": "EasyDukan Pvt Ltd", 
+                                        "TOKEN": "3d815d8209e2631f337df247d5d293e255934d4ee1fed13106337f2b7746d160", 
+                                        "SUCCESS_URL": "https://dev-pk.symplified.ai/payment-redirect?name=" + this.order.orderShipmentDetail.receiverName + "&email="+ this.order.orderShipmentDetail.email + "&phone=" + this.order.orderShipmentDetail.phoneNumber + "&amount="+this.paymentDetails.cartGrandTotal.toFixed(2)+"&hash=&status_id=1&order_id="+this.order+"&transaction_id="+transactionId+"&msg=Payment_was_successful&payment_channel=fastpay", 
+                                        "FAILURE_URL": "https://dev-pk.symplified.ai/payment-redirect?name=" + this.order.orderShipmentDetail.receiverName + "&email="+ this.order.orderShipmentDetail.email + "&phone=" + this.order.orderShipmentDetail.phoneNumber + "&amount="+this.paymentDetails.cartGrandTotal.toFixed(2)+"&hash=&status_id=0&order_id="+this.order+"&transaction_id="+transactionId+"&msg=Payment_was_failed&payment_channel=fastpay", 
+                                        "CHECKOUT_URL": this.store.domain + "/checkout", 
+                                        "CUSTOMER_EMAIL_ADDRESS": this.order.orderShipmentDetail.email, 
+                                        "CUSTOMER_MOBILE_NO": this.order.orderShipmentDetail.phoneNumber, 
+                                        "TXNAMT": this.paymentDetails.cartGrandTotal.toFixed(2), 
+                                        "BASKET_ID": this.payment.sysTransactionId, 
+                                        "ORDER_DATE": dateTimeNow, 
+                                        "SIGNATURE": "SOME-RANDOM-STRING", 
+                                        "VERSION": "MERCHANT-CART-0.1", 
+                                        "TXNDESC": "Item purchased from EasyDukan", 
+                                        "PROCCODE": "00", 
+                                        "TRAN_TYPE": "ECOMM_PURCHASE", 
+                                        "STORE_ID": "", 
+                                    } , 'post');
                             } else {
                                 this.displayError("Provider id not configured");
                                 console.error("Provider id not configured");
