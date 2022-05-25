@@ -5,8 +5,8 @@ import { DOCUMENT, PlatformLocation } from '@angular/common';
 import { CartService } from 'app/core/cart/cart.service';
 import { CartItem } from 'app/core/cart/cart.types';
 import { StoresService } from 'app/core/store/store.service';
-import { Store, StoreAssets, StoreSnooze, StoreTiming } from 'app/core/store/store.types';
-import { of, Subject, Subscription, timer, interval as observableInterval } from 'rxjs';
+import { City, Store, StoreAssets, StoreSnooze, StoreTiming } from 'app/core/store/store.types';
+import { of, Subject, Subscription, timer, interval as observableInterval, Observable, ReplaySubject, take } from 'rxjs';
 import { takeWhile, scan, tap } from "rxjs/operators";
 import { map, switchMap, takeUntil, debounceTime, filter, distinctUntilChanged } from 'rxjs/operators';
 import { CheckoutService } from './checkout.service';
@@ -25,6 +25,7 @@ import { EditAddressComponent } from './edit-address/edit-address.component';
 import { VoucherModalComponent } from './voucher-modal/voucher-modal.component';
 import { MapsAPILoader } from '@agm/core';
 import { AppConfig } from 'app/config/service.config';
+import { MatSelect } from '@angular/material/select';
 
 @Component({
     selector     : 'landing-checkout',
@@ -65,10 +66,19 @@ import { AppConfig } from 'app/config/service.config';
 })
 export class LandingCheckoutComponent implements OnInit
 {
-
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     @ViewChild('checkoutNgForm') signInNgForm: NgForm;
     @ViewChild('checkoutContainer') checkoutContainer: ElementRef;
+
+    @ViewChild('stateCitySelector') stateCitySelector: MatSelect;
+    /** control for the selected bank for multi-selection */
+    public regionCountryStateCities: FormControl = new FormControl();
+
+    private _onDestroy = new Subject<void>();
+    public filteredCities: ReplaySubject<any[]> = new ReplaySubject<any[]>(1);
+
+    storeStateCities: string[] = [];
+    storeStateCities$: Observable<City[]>;
     
     checkoutForm: FormGroup;
     store: Store;
@@ -217,6 +227,42 @@ export class LandingCheckoutComponent implements OnInit
 
         });
 
+        this.setInitialValue();
+
+        // set initial selection
+        this.regionCountryStateCities.setValue([]);
+        // load the initial bank list
+        // this.filteredCities.next(this.cities.slice());
+
+        this.regionCountryStateCities.valueChanges
+            .pipe(takeUntil(this._onDestroy), debounceTime(300))
+            .subscribe((result) => {                
+                // Get states by country Z(using symplified backend)
+                this._storesService.getStoreRegionCountryStateCity(this.checkoutForm.get('state').value, result )
+                .subscribe((response)=>{
+                    // Get the products
+                    this.storeStateCities$ = this._storesService.cities$;                    
+
+                    // Mark for check
+                    this._changeDetectorRef.markForCheck();
+                });
+            });
+
+        this.checkoutForm.get('state').valueChanges
+            .pipe(takeUntil(this._onDestroy), debounceTime(300))
+            .subscribe((result) => {
+                
+                // Get states by country Z(using symplified backend)
+                this._storesService.getStoreRegionCountryStateCity(result)
+                .subscribe((response)=>{
+                    // Get the products
+                    this.storeStateCities$ = this._storesService.cities$;                    
+
+                    // Mark for check
+                    this._changeDetectorRef.markForCheck();
+                });
+            });
+
         // Set Payment Completion Status "Calculate Charges"
         this.paymentCompletionStatus = { id:"CALCULATE_CHARGES", label: "Calculate Charges" };
 
@@ -251,7 +297,7 @@ export class LandingCheckoutComponent implements OnInit
                 
                 this.countryId = this.store.regionCountry.id;
 
-                
+                let symplifiedCountryStateId = this.checkoutForm.get('state').value;
                 
                 switch (this.countryId) {
                     case 'MYS':
@@ -366,6 +412,16 @@ export class LandingCheckoutComponent implements OnInit
                         // Mark for check
                         this._changeDetectorRef.markForCheck();
                     })
+
+                // Get city by state
+                this._storesService.getStoreRegionCountryStateCity(symplifiedCountryStateId)
+                .subscribe((response)=>{
+                    // Get the products
+                    this.storeStateCities$ = this._storesService.cities$;                      
+
+                    // Mark for check
+                    this._changeDetectorRef.markForCheck();
+                });
 
                 // -----------------------
                 // Get cart item
@@ -1890,5 +1946,13 @@ export class LandingCheckoutComponent implements OnInit
         // sign up
         this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-up' +
             '?redirectURL=' + encodeURI('https://' + this.sanatiseUrl  + this._router.url) + '&guestCartId=' + this._cartService.cartId$ + '&storeId=' + this.store.id;
+    }
+
+    private setInitialValue() {
+        this.filteredCities
+            .pipe(take(1), takeUntil(this._onDestroy))
+            .subscribe(() => {
+                this.stateCitySelector.compareWith = (a: any, b: any) => a === b;
+            });
     }
 }
