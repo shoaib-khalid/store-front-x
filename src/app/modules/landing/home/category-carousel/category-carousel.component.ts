@@ -92,8 +92,6 @@ SwiperCore.use([Pagination, Navigation, EffectCoverflow]);
 export class CategoryCarouselComponent
 {    
 
-    @ViewChild('pickerPanelOrigin', {read: ElementRef}) private _pickerPanelOrigin: ElementRef;
-    @ViewChild('trackId') private trackId: ElementRef<any>;
     @ViewChild(SwiperComponent) swiper: SwiperComponent;
     
     store: Store;

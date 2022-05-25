@@ -39,7 +39,7 @@ export class BannerComponent implements OnInit
         // set galleryOptions
         this.galleryOptions = [
             {
-                width: '1440x',
+                width: '1440px',
                 height: '563px',
                 imageAnimation: NgxGalleryAnimation.Slide,
                 imageArrowsAutoHide: true, 

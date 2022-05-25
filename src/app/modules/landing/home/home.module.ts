@@ -13,13 +13,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { BannerModule } from 'app/layout/common/banner/banner.module';
 import { PaginationModule } from 'app/layout/common/pagination/pagination.module';
+import { SwiperBannerModule } from 'app/layout/common/swiper-banner/swiper-banner.module';
 
 
 
 @NgModule({
     declarations: [
         LandingHomeComponent,
-        CategoryCarouselComponent
+        CategoryCarouselComponent,
     ],
     imports     : [
         RouterModule.forChild(landingHomeRoutes),
@@ -32,7 +33,8 @@ import { PaginationModule } from 'app/layout/common/pagination/pagination.module
         NgxGalleryModule,
         BannerModule,
         FontAwesomeModule,
-        PaginationModule
+        PaginationModule,
+        SwiperBannerModule
     ]
 })
 export class LandingHomeModule 
