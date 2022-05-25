@@ -816,19 +816,19 @@ export class StoresService
             );
     }
 
-    getStoreRegionCountryStateCity(state: string, city: string = null): Observable<any>
+    getStoreRegionCountryStateCity(stateId: string, city: string = ''): Observable<any>
     {
         let productService = this._apiServer.settings.apiServer.productService;
         let accessToken = "accessToken";
         const header = {
             headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
             params: {
-                "state": state,
+                "stateId": stateId,
                 "city" : city
             }
         };
 
-        if (!city) {delete header.params.city}
+        // if (!city) {delete header.params.city}
 
         return this.cities$.pipe(
             take(1),

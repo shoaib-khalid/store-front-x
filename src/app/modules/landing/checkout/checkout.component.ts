@@ -235,7 +235,7 @@ export class LandingCheckoutComponent implements OnInit
         // this.filteredCities.next(this.cities.slice());
 
         this.regionCountryStateCities.valueChanges
-            .pipe(takeUntil(this._onDestroy))
+            .pipe(takeUntil(this._onDestroy), debounceTime(300))
             .subscribe((result) => {                
                 // Get states by country Z(using symplified backend)
                 this._storesService.getStoreRegionCountryStateCity(this.checkoutForm.get('state').value, result )
@@ -249,7 +249,7 @@ export class LandingCheckoutComponent implements OnInit
             });
 
         this.checkoutForm.get('state').valueChanges
-            .pipe(takeUntil(this._onDestroy))
+            .pipe(takeUntil(this._onDestroy), debounceTime(300))
             .subscribe((result) => {
                 
                 // Get states by country Z(using symplified backend)
