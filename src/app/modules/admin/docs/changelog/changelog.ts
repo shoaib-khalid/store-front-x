@@ -12,6 +12,25 @@ export class ChangelogComponent
         // v1.4.0
         {
             version    : 'v1.4.0',
+            releaseDate: 'May 25, 2022',
+            changes    : [
+                {
+                    type: 'Added',
+                    list: [
+                        '(HomePage) Change store banner '
+                    ]
+                },
+                {
+                    type: 'Fix',
+                    list: [
+                        '(Checkout) Fixed search cities based on state',
+                    ]
+                }
+            ]
+        },
+        // v1.4.0
+        {
+            version    : 'v1.4.0',
             releaseDate: 'May 19, 2022',
             changes    : [
                 {
