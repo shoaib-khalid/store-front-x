@@ -215,7 +215,7 @@ export class LandingCheckoutComponent implements OnInit
             address             : ['', Validators.required],
             storePickup         : [false],
             postCode            : ['', [Validators.required, Validators.minLength(5), Validators.maxLength(5), CheckoutValidationService.postcodeValidator]],
-            state               : ['Selangor', Validators.required],
+            state               : ['', Validators.required],
             city                : ['', Validators.required],
             deliveryProviderId  : ['', CheckoutValidationService.deliveryProviderValidator],
             country             : [''],
@@ -238,7 +238,7 @@ export class LandingCheckoutComponent implements OnInit
             .pipe(takeUntil(this._onDestroy), debounceTime(300))
             .subscribe((result) => {                
                 // Get states by country Z(using symplified backend)
-                this._storesService.getStoreRegionCountryStateCity(this.checkoutForm.get('state').value, result )
+                this._storesService.getStoreRegionCountryStateCity(this.checkoutForm.get('state').value, result, this.store? this.store.regionCountry.id : '' )
                 .subscribe((response)=>{
                     // Get the products
                     this.storeStateCities$ = this._storesService.cities$;                    
@@ -253,7 +253,7 @@ export class LandingCheckoutComponent implements OnInit
             .subscribe((result) => {
                 
                 // Get states by country Z(using symplified backend)
-                this._storesService.getStoreRegionCountryStateCity(result)
+                this._storesService.getStoreRegionCountryStateCity(result, '', this.store? this.store.regionCountry.id : '')
                 .subscribe((response)=>{
                     // Get the products
                     this.storeStateCities$ = this._storesService.cities$;                    
@@ -301,11 +301,13 @@ export class LandingCheckoutComponent implements OnInit
                 
                 switch (this.countryId) {
                     case 'MYS':
-                        this.dialingCode = '60'
+                        this.dialingCode = '60';
+                        this.checkoutForm.get('state').setValue('Selangor');
                         break;
                 
                     case 'PAK':
-                        this.dialingCode = '92'
+                        this.dialingCode = '92';
+                        this.checkoutForm.get('state').setValue('Federal');
                         break;
 
                     default:

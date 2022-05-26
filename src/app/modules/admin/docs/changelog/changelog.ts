@@ -24,6 +24,7 @@ export class ChangelogComponent
                     type: 'Fix',
                     list: [
                         '(Checkout) Fixed search cities based on state',
+                        '(Checkout) Set Federal as default state for PAK'
                     ]
                 }
             ]
