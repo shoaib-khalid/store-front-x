@@ -22,6 +22,7 @@ import { BreadcrumbModule } from 'app/layout/common/breadcrumb/breadcrumb.module
 import { Error404Component } from 'app/shared/error/error-404/error-404.component';
 import { MarqueeModule } from 'app/layout/common/marquee/marquee.module';
 import { Error500Component } from 'app/shared/error/error-500/error-500.component';
+import { FooterModule } from 'app/layout/common/footer/footer.module';
 
 @NgModule({
     declarations: [
@@ -47,6 +48,7 @@ import { Error500Component } from 'app/shared/error/error-500/error-500.componen
         SearchModule,
         ShortcutsModule,
         UserModule,
+        FooterModule,
         CartModule,
         SharedModule,
         MarqueeModule

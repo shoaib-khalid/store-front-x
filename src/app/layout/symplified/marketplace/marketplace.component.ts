@@ -23,24 +23,24 @@ import { Error500Service } from 'app/core/error-500/error-500.service';
 })
 export class MarketplaceLayoutComponent implements OnInit, OnDestroy
 {
-    user: User;
+    platform: Platform;
     store: Store;
+    user: User;
     
     isScreenSmall: boolean;
     navigation: Navigation;
 
     headerTitle: string;
-    displayUsername: string ='';
-
-    public version: string = environment.appVersion;
-    private _unsubscribeAll: Subject<any> = new Subject<any>();
-    platform: Platform;
+    displayUsername: string = '';
 
     message: string;
     daysArray = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
     storeSnooze: StoreSnooze = null;
     show500: boolean;
     errorMessage: string = '';
+
+    public version: string = environment.appVersion;
+    private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
      * Constructor
@@ -58,8 +58,6 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
         private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _fuseNavigationService: FuseNavigationService,
         private _error500Service: Error500Service
-
-
     )
     {
         this.headerTitle = this.getHeaderTitle(this._activatedRoute.root); 
