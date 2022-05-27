@@ -44,7 +44,6 @@ export class AppComponent
         private _titleService: Title,
         private _storesService: StoresService,
         private _analyticService: AnalyticService,
-        private _deviceService: DeviceDetectorService,
         private _ipAddressService: IpAddressService,
         private _cartService: CartService,
         private _cookieService: CookieService,
@@ -176,15 +175,6 @@ export class AppComponent
                 }
 
                 this._router.events.forEach((event) => {
-
-                    //get storeId
-                    var _storeId = this.store.id;
-        
-                    //get device info (browser info, os info, device nodel infp)
-                    var device = this._deviceService.getDeviceInfo();
-                    let _deviceBrowser = device.browser + ' ' + device.browser_version
-                    let _deviceOs = device.os_version
-                    let _deviceModel = device.deviceType + ' ' + device.device
         
                     //get ip address info
                     var _IpService = this.ipAddress;
@@ -194,16 +184,16 @@ export class AppComponent
 
                     const activityBody = 
                     {
-                        browserType : _deviceBrowser,
+                        browserType : null,
                         customerId  : this.ownerId?this.ownerId:null,
-                        deviceModel : _deviceModel,
+                        deviceModel : null,
                         errorOccur  : null,
                         errorType   : null,
                         ip          : _IpService,
-                        os          : _deviceOs,
+                        os          : null,
                         pageVisited : event["urlAfterRedirects"],
                         sessionId   : _sessionId,
-                        storeId     : _storeId
+                        storeId     : null
                     }
                     if(event instanceof RoutesRecognized) {
                         this._analyticService.postActivity(activityBody).subscribe((response) => {

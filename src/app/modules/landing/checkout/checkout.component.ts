@@ -26,6 +26,9 @@ import { VoucherModalComponent } from './voucher-modal/voucher-modal.component';
 import { MapsAPILoader } from '@agm/core';
 import { AppConfig } from 'app/config/service.config';
 import { MatSelect } from '@angular/material/select';
+import { AnalyticService } from 'app/core/analytic/analytic.service';
+import { IpAddressService } from 'app/core/ip-address/ip-address.service';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
     selector     : 'landing-checkout',
@@ -93,6 +96,9 @@ export class LandingCheckoutComponent implements OnInit
     cartItems: CartItem[] = [];
     order: Order;
     payment: Payment;
+
+    ipAddress  : string; 
+    ownerId: string;
 
     checkoutInputField: CheckoutInputField = new CheckoutInputField();
 
@@ -195,6 +201,9 @@ export class LandingCheckoutComponent implements OnInit
         private ngZone: NgZone,
         private _apiServer: AppConfig,
         private _platformLocation: PlatformLocation,
+        private _analyticService: AnalyticService,
+        private _ipAddressService: IpAddressService,
+        private _cookieService: CookieService,
         @Inject(DOCUMENT) private _document: Document,
 
     )
@@ -281,7 +290,19 @@ export class LandingCheckoutComponent implements OnInit
 
         let fullUrl = (this._platformLocation as any).location.origin;
         this.sanatiseUrl = fullUrl.replace(/^(https?:|)\/\//, '').split(':')[0]; // this will get the domain from the URL
-    
+
+        // Get User IP Address
+        this._ipAddressService.ipAdressInfo$
+        .subscribe((response:any)=>{
+            if (response) {
+                this.ipAddress = response.ip_addr;
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            }
+        });
+
+        this.ownerId = this._cookieService.get('CustomerId');
 
         // --------------
         // Get store
@@ -1245,6 +1266,7 @@ export class LandingCheckoutComponent implements OnInit
                                 window.location.href = this.payment.paymentLink;
                             } else if (this.payment.providerId == "2") {                                                               
                                 this.postForm("post-to-senangpay", this.payment.paymentLink, {"detail" : this.payment.sysTransactionId, "amount": this.paymentDetails.cartGrandTotal.toFixed(2), "order_id": this.order.id, "name": this.order.orderShipmentDetail.receiverName, "email": this.order.orderShipmentDetail.email, "phone": this.order.orderShipmentDetail.phoneNumber, "hash": this.payment.hash },'post');
+
                             } else if (this.payment.providerId == "3") {                                                               
                                 this.postForm("post-to-fastpay", this.payment.paymentLink, 
                                     { 
@@ -1346,6 +1368,25 @@ export class LandingCheckoutComponent implements OnInit
     
         document.body.appendChild(form);        
         form.submit();
+
+        //get ip address info
+        var _IpService = this.ipAddress;
+
+        var _sessionId = this._cartService.cartId$ 
+        
+        this._analyticService.postActivity({
+            "browserType" : null,
+            "customerId"  : this.ownerId?this.ownerId:null,
+            "deviceModel" : null,
+            "errorOccur"  : null,
+            "errorType"   : null,
+            "ip"          : _IpService,
+            "os"          : null,
+            "pageVisited" : path,
+            "sessionId"   : _sessionId,
+            "storeId"     : null
+        }).subscribe((response) => {
+        }); 
     }
 
     scrollToTop(el) {
