@@ -52,7 +52,7 @@ export class LandingPaymentRedirectComponent
             this.payment.msg = params['msg'];
 
             // fastPay redirect
-            if (params['payment_channel'] == "fastpay" && this.payment.status_id !== 1){
+            if (this.payment.msg !== "Payment_was_successful"){
                 this.payment.msg = params['err_code'];
                 this.payment.msg = this.payment.msg + "-" + params['err_msg'];
                 this.payment.transaction_id = params['basket_id'];
