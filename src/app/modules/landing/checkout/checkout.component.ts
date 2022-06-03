@@ -1265,7 +1265,7 @@ export class LandingCheckoutComponent implements OnInit
                             if (this.payment.providerId == "1") {
                                 window.location.href = this.payment.paymentLink;
                             } else if (this.payment.providerId == "2") {                                                               
-                                this.postForm("post-to-senangpay", this.payment.paymentLink, {"detail" : this.payment.sysTransactionId, "amount": this.paymentDetails.cartGrandTotal.toFixed(2), "order_id": this.order.id, "name": this.order.orderShipmentDetail.receiverName, "email": this.order.orderShipmentDetail.email, "phone": this.order.orderShipmentDetail.phoneNumber, "hash": this.payment.hash },'post');
+                                this.postForm("post-to-senangpay", this.payment.paymentLink, {"detail" : this.payment.sysTransactionId, "amount": this.paymentDetails.cartGrandTotal.toFixed(2), "order_id": this.order.id, "name": this.order.orderShipmentDetail.receiverName, "email": this.order.orderShipmentDetail.email, "phone": this.order.orderShipmentDetail.phoneNumber, "hash": this.payment.hash },'post', true);
 
                             } else if (this.payment.providerId == "3") {                                                               
                                 this.postForm("post-to-fastpay", this.payment.paymentLink, 
@@ -1288,7 +1288,7 @@ export class LandingCheckoutComponent implements OnInit
                                         "PROCCODE": "00", 
                                         "TRAN_TYPE": "ECOMM_PURCHASE", 
                                         "STORE_ID": "", 
-                                    } , 'post');
+                                    } , 'post', false);
                             } else {
                                 this.displayError("Provider id not configured");
                                 console.error("Provider id not configured");
@@ -1347,7 +1347,7 @@ export class LandingCheckoutComponent implements OnInit
             });
     }
 
-    postForm(id, path, params, method) {
+    postForm(id, path, params, method, encode: boolean) {
         method = method || 'post';
     
         let form = document.createElement('form');
@@ -1360,7 +1360,7 @@ export class LandingCheckoutComponent implements OnInit
                 let hiddenField = document.createElement('input');
                 hiddenField.setAttribute('type', 'hidden');
                 hiddenField.setAttribute('name', key);
-                hiddenField.setAttribute('value', encodeURI(params[key]));
+                hiddenField.setAttribute('value', encode ? encodeURI(params[key]) : params[key]);
     
                 form.appendChild(hiddenField);
             }
