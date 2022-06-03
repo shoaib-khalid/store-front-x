@@ -1273,7 +1273,7 @@ export class LandingCheckoutComponent implements OnInit
                                         "CURRENCY_CODE": "PKR", 
                                         "MERCHANT_ID": "13464", 
                                         "MERCHANT_NAME": "EasyDukan Pvt Ltd", 
-                                        "TOKEN": "3d815d8209e2631f337df247d5d293e255934d4ee1fed13106337f2b7746d160", 
+                                        "TOKEN": this.payment.token, 
                                         "SUCCESS_URL": "https://dev-pk.symplified.ai/payment-redirect?name=" + this.order.orderShipmentDetail.receiverName + "&email="+ this.order.orderShipmentDetail.email + "&phone=" + this.order.orderShipmentDetail.phoneNumber + "&amount="+this.paymentDetails.cartGrandTotal.toFixed(2)+"&hash=&status_id=1&order_id="+this.order.id+"&transaction_id="+transactionId+"&msg=Payment_was_successful&payment_channel=fastpay", 
                                         "FAILURE_URL": "https://dev-pk.symplified.ai/payment-redirect?name=" + this.order.orderShipmentDetail.receiverName + "&email="+ this.order.orderShipmentDetail.email + "&phone=" + this.order.orderShipmentDetail.phoneNumber + "&amount="+this.paymentDetails.cartGrandTotal.toFixed(2)+"&hash=&status_id=0&order_id="+this.order.id+"&transaction_id="+transactionId+"&msg=Payment_was_failed&payment_channel=fastpay", 
                                         "CHECKOUT_URL": this.store.domain + "/checkout", 

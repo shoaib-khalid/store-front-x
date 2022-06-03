@@ -91,7 +91,8 @@ export interface CartDiscount
 
 export interface Payment
 {
-    hash            : string;
+    hash?           : string;
+    token?          : string;
     isSuccess       : boolean;
     orderCreated?   : {
         createdDate : string;
