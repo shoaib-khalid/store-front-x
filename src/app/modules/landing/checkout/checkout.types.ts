@@ -30,12 +30,8 @@ export interface DeliveryDetails
     deliveryCountry         : string;
     deliveryPostcode        : string;
     deliveryState           : string;
-    deliveryPickUp          : DeliveryPickup;
-}
-export interface DeliveryPickup{
-    latitude: number;
-    longitude: number;
-
+    latitude                : number;
+    longitude               : number;
 }
 
 export interface DeliveryProviderGroup

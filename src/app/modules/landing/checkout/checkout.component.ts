@@ -918,7 +918,8 @@ export class LandingCheckoutComponent implements OnInit
                     deliveryContactEmail: this.checkoutForm.get('email').value,
                     deliveryContactName: this.checkoutForm.get('fullName').value,
                     deliveryContactPhone: this.checkoutForm.get('phoneNumber').value,
-                    deliveryPickUp: {latitude: this.latitude , longitude: this.longitude},
+                    latitude: this.latitude,
+                    longitude: this.longitude,
                 },
                 deliveryProviderId: null,
                 storeId: this._storesService.storeId$
