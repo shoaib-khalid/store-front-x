@@ -39,6 +39,8 @@ export class LandingPaymentRedirectComponent
 
     ngOnInit() {
         this._activatedRoute.queryParams.subscribe(params => {
+
+            // senangPay redirect
             this.payment.name = params['name'];
             this.payment.email = params['email'];
             this.payment.phone = params['phone'];
@@ -48,6 +50,13 @@ export class LandingPaymentRedirectComponent
             this.payment.order_id = params['order_id'];
             this.payment.transaction_id = params['transaction_id'];
             this.payment.msg = params['msg'];
+
+            // fastPay redirect
+            if (params['payment_channel'] === "fastpay"){
+                this.payment.msg = params['err_code'];
+                this.payment.msg = this.payment.msg + "-" + params['err_msg'];
+                this.payment.transaction_id = params['basket_id'];
+            }
 
             let status;
             if (this.payment.status_id == "1" || this.payment.status_id == 1) {
