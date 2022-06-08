@@ -227,16 +227,7 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
                 this.show500 = any;
             });
 
-        // Set promo banner
-        if (!this.user) {
-            let fullUrl = (this._platformLocation as any).location.origin;
-            let sanatiseUrl = fullUrl.replace(/^(https?:|)\/\//, '').split(':')[0]; // this will get the domain from the URL
-            let redirectUrl = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-up' +
-                    '?redirectURL=' + encodeURI('https://' + sanatiseUrl  + this._router.url) + '&guestCartId=' + this._cartService.cartId$ + '&storeId=' + this._storesService.storeId$;
 
-            this._floatingBannerService.setSmallBanner('assets/gif/SignUp_Now_Button_Click_GIF.gif', redirectUrl)
-            this._floatingBannerService.setBigBanner('assets/promo/Sign-Up-PopUp-Banner_400x500.png', redirectUrl)
-            }
     }
 
     /**
