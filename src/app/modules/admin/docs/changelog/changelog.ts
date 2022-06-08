@@ -12,6 +12,19 @@ export class ChangelogComponent
         // v1.4.0
         {
             version    : 'v1.4.0',
+            releaseDate: 'June 8, 2022',
+            changes    : [
+                {
+                    type: 'Added',
+                    list: [
+                        '(Layout) Floating promo banner'
+                    ]
+                }
+            ]
+        },
+        // v1.4.0
+        {
+            version    : 'v1.4.0',
             releaseDate: 'May 25, 2022',
             changes    : [
                 {
