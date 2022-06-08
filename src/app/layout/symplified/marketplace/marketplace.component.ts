@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { distinctUntilChanged, filter, Subject, takeUntil } from 'rxjs';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
@@ -12,9 +12,11 @@ import { Store, StoreAssets, StoreSnooze, StoreTiming } from 'app/core/store/sto
 import { StoresService } from 'app/core/store/store.service';
 import { PlatformService } from 'app/core/platform/platform.service';
 import { Platform } from 'app/core/platform/platform.types';
-import { DatePipe } from '@angular/common';
+import { DatePipe, DOCUMENT, PlatformLocation } from '@angular/common';
 import { AppConfig } from 'app/config/service.config';
 import { Error500Service } from 'app/core/error-500/error-500.service';
+import { FloatingBannerService } from 'app/core/floating-banner/floating-banner.service';
+import { CartService } from 'app/core/cart/cart.service';
 
 @Component({
     selector     : 'marketplace-layout',
@@ -39,6 +41,8 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
     show500: boolean;
     errorMessage: string = '';
 
+    floatingMessageData = {};
+
     public version: string = environment.appVersion;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -46,6 +50,7 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
      * Constructor
      */
     constructor(
+        @Inject(DOCUMENT) private _document: Document,
         private _apiServer: AppConfig,
         private _storesService: StoresService,
         private _changeDetectorRef: ChangeDetectorRef,
@@ -57,7 +62,11 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
         private _datePipe: DatePipe,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _fuseNavigationService: FuseNavigationService,
-        private _error500Service: Error500Service
+        private _error500Service: Error500Service,
+        private _platformLocation: PlatformLocation,
+        private _floatingBannerService: FloatingBannerService,
+        private _cartService: CartService,
+
     )
     {
         this.headerTitle = this.getHeaderTitle(this._activatedRoute.root); 
@@ -95,6 +104,10 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((response: Store) => {
                 this.store = response;
+        
+                //This is to be passed to floating-message
+                // this.floatingMessageData = { storeId: this.store.id, url: this.sanatiseUrl };
+
 
                 this._storesService.storeSnooze$
                     .subscribe((response: StoreSnooze) => {
@@ -213,6 +226,17 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
             .subscribe((any) => {
                 this.show500 = any;
             });
+
+        // Set promo banner
+        if (!this.user) {
+            let fullUrl = (this._platformLocation as any).location.origin;
+            let sanatiseUrl = fullUrl.replace(/^(https?:|)\/\//, '').split(':')[0]; // this will get the domain from the URL
+            let redirectUrl = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-up' +
+                    '?redirectURL=' + encodeURI('https://' + sanatiseUrl  + this._router.url) + '&guestCartId=' + this._cartService.cartId$ + '&storeId=' + this._storesService.storeId$;
+
+            this._floatingBannerService.setSmallBanner('assets/gif/SignUp_Now_Button_Click_GIF.gif', redirectUrl)
+            this._floatingBannerService.setBigBanner('assets/promo/Sign-Up-PopUp-Banner_400x500.png', redirectUrl)
+            }
     }
 
     /**
