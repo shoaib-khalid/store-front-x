@@ -23,6 +23,7 @@ import { Error404Component } from 'app/shared/error/error-404/error-404.componen
 import { MarqueeModule } from 'app/layout/common/marquee/marquee.module';
 import { Error500Component } from 'app/shared/error/error-500/error-500.component';
 import { FooterModule } from 'app/layout/common/footer/footer.module';
+import { FloatingMessageModule } from 'app/layout/common/_floating-message/floating-message.module';
 
 @NgModule({
     declarations: [
@@ -51,7 +52,8 @@ import { FooterModule } from 'app/layout/common/footer/footer.module';
         FooterModule,
         CartModule,
         SharedModule,
-        MarqueeModule
+        MarqueeModule,
+        FloatingMessageModule
     ],
     exports     : [
         MarketplaceLayoutComponent

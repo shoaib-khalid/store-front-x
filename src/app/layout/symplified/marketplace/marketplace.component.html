@@ -2,8 +2,11 @@
 <fuse-loading-bar></fuse-loading-bar>
 <custom-marquee [messages]="message"></custom-marquee>
 
+
 <ng-container *ngIf="show500 === false; else error">
     <ng-container *ngIf="(store && store.id !== null); else noStore">
+        <floating-message-big></floating-message-big>
+        <floating-message-small></floating-message-small>
         <!-- Navigation -->
         <ng-container *ngIf="isScreenSmall">
             <fuse-vertical-navigation
