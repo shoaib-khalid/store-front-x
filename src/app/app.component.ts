@@ -61,13 +61,13 @@ export class AppComponent
 
         // Get User IP Address
         this._ipAddressService.ipAdressInfo$
+            .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((response:any)=>{
                 if (response) {
                     this.ipAddress = response.ip_addr;
-
-                    // Mark for check
-                    this._changeDetectorRef.markForCheck();
                 }
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
             });
 
         // Set cookie for testing
@@ -87,7 +87,6 @@ export class AppComponent
 
         // set to localstorage
         if (this.ownerId && this.accessToken && this.refreshToken) {
-            
             this._userService.get(this.ownerId)
                 .subscribe((response)=>{
                     let jwtPayload = {
@@ -96,9 +95,7 @@ export class AppComponent
                         rft: this.refreshToken,
                         uid: this.ownerId
                     }
-        
                     let token = this._jwtService.generate({ alg: "HS256", typ: "JWT"}, jwtPayload, this.accessToken);
-        
                     this._authService.jwtAccessToken = token;
 
                     // Mark for check
@@ -108,108 +105,107 @@ export class AppComponent
         
         // Get current store
         this._storesService.store$
-        .pipe(takeUntil(this._unsubscribeAll))
-        .subscribe((response: Store)=>{            
-            if (response) {
-                this.store = response;
-                
-                // Set Title
-                this._titleService.setTitle(this.store.name);
-
-                let haveFaviconIndex = (this.store.storeAssets.length > 0) ? this.store.storeAssets.findIndex(item => item.assetType === "FaviconUrl" && item.id != null) : -1;
-
-                // Favicon from merchant
-                if (haveFaviconIndex > -1) {
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((response: Store) => { 
+                if (response) {
+                    this.store = response;
                     
-                    this.favIcon16.href = this.store.storeAssets[haveFaviconIndex].assetUrl;
-                    this.favIcon32.href = this.store.storeAssets[haveFaviconIndex].assetUrl;
-                } else {
-                    // Set Favicon
-                    if(this.store.verticalCode === "FnB" || this.store.verticalCode === "E-Commerce") {
-                        this.favIcon16.href = 'assets/branding/deliverin/favicon/favicon-16x16.png';
-                        this.favIcon32.href = 'assets/branding/deliverin/favicon/favicon-32x32.png';
-                    } else if (this.store.verticalCode === "FnB_PK" || this.store.verticalCode === "ECommerce_PK") {
-                        this.favIcon16.href = 'assets/branding/easydukan/favicon/favicon-16x16.png';
-                        this.favIcon32.href = 'assets/branding/easydukan/favicon/favicon-32x32.png';
+                    // Set Title
+                    this._titleService.setTitle(this.store.name);
+
+                    let haveFaviconIndex = (this.store.storeAssets.length > 0) ? this.store.storeAssets.findIndex(item => item.assetType === "FaviconUrl" && item.id != null) : -1;
+
+                    // Favicon from merchant
+                    if (haveFaviconIndex > -1) {
+                        
+                        this.favIcon16.href = this.store.storeAssets[haveFaviconIndex].assetUrl;
+                        this.favIcon32.href = this.store.storeAssets[haveFaviconIndex].assetUrl;
                     } else {
-                        this.favIcon16.href = 'favicon-16x16.png';
-                        this.favIcon32.href = 'favicon-32x32.png';
-                    }
-                }
-
-                // Set Google Analytic Code
-                if (this.store.googleAnalyticId) {
-
-                    // Remove this later
-                    // load google tag manager script
-                    // const script = document.createElement('script');
-                    // script.type = 'text/javascript';
-                    // script.async = true;
-                    // script.src = 'https://www.google-analytics.com/analytics.js';
-                    // document.head.appendChild(script);   
-                    
-                    // register google tag manager
-                    const script2 = document.createElement('script');
-                    script2.async = true;
-                    script2.src = 'https://www.googletagmanager.com/gtag/js?id=' + this.store.googleAnalyticId;
-                    document.head.appendChild(script2);
-
-                    // load custom GA script
-                    const gaScript = document.createElement('script');
-                    gaScript.innerHTML = `
-                    window.dataLayer = window.dataLayer || [];
-                    function gtag() { dataLayer.push(arguments); }
-                    gtag('js', new Date());
-                    gtag('config', '${this.store.googleAnalyticId}');
-                    `;
-                    document.head.appendChild(gaScript);
-
-                    // GA for all pages
-                    this._router.events.subscribe(event => {
-                        if(event instanceof NavigationEnd){
-                            // register google analytics            
-                            gtag('config', this.store.googleAnalyticId, {'page_path': event.urlAfterRedirects});
-                            
+                        // Set Favicon
+                        if(this.store.verticalCode === "FnB" || this.store.verticalCode === "E-Commerce") {
+                            this.favIcon16.href = 'assets/branding/deliverin/favicon/favicon-16x16.png';
+                            this.favIcon32.href = 'assets/branding/deliverin/favicon/favicon-32x32.png';
+                        } else if (this.store.verticalCode === "FnB_PK" || this.store.verticalCode === "ECommerce_PK") {
+                            this.favIcon16.href = 'assets/branding/easydukan/favicon/favicon-16x16.png';
+                            this.favIcon32.href = 'assets/branding/easydukan/favicon/favicon-32x32.png';
+                        } else {
+                            this.favIcon16.href = 'favicon-16x16.png';
+                            this.favIcon32.href = 'favicon-32x32.png';
                         }
+                    }
+
+                    // Set Google Analytic Code
+                    if (this.store.googleAnalyticId) {
+
+                        // Remove this later
+                        // load google tag manager script
+                        // const script = document.createElement('script');
+                        // script.type = 'text/javascript';
+                        // script.async = true;
+                        // script.src = 'https://www.google-analytics.com/analytics.js';
+                        // document.head.appendChild(script);   
+                        
+                        // register google tag manager
+                        const script2 = document.createElement('script');
+                        script2.async = true;
+                        script2.src = 'https://www.googletagmanager.com/gtag/js?id=' + this.store.googleAnalyticId;
+                        document.head.appendChild(script2);
+
+                        // load custom GA script
+                        const gaScript = document.createElement('script');
+                        gaScript.innerHTML = `
+                        window.dataLayer = window.dataLayer || [];
+                        function gtag() { dataLayer.push(arguments); }
+                        gtag('js', new Date());
+                        gtag('config', '${this.store.googleAnalyticId}');
+                        `;
+                        document.head.appendChild(gaScript);
+
+                        // GA for all pages
+                        this._router.events.subscribe(event => {
+                            if(event instanceof NavigationEnd){
+                                // register google analytics            
+                                gtag('config', this.store.googleAnalyticId, {'page_path': event.urlAfterRedirects});
+                                
+                            }
+                        });
+                    }
+
+                    this._router.events.forEach((event) => {
+            
+                        //get ip address info
+                        var _IpService = this.ipAddress;
+                        
+                        //get session id by get cart id
+                        var _sessionId = this._cartService.cartId$ 
+
+                        const activityBody = 
+                        {
+                            browserType : null,
+                            customerId  : this.ownerId?this.ownerId:null,
+                            deviceModel : null,
+                            errorOccur  : null,
+                            errorType   : null,
+                            ip          : _IpService,
+                            os          : null,
+                            pageVisited : event["urlAfterRedirects"],
+                            sessionId   : _sessionId,
+                            storeId     : null
+                        }
+                        if(event instanceof RoutesRecognized) {
+                            this._analyticService.postActivity(activityBody).subscribe((response) => {
+                            });           
+                        }
+                        // NavigationEnd
+                        // NavigationCancel
+                        // NavigationError
+                        // RoutesRecognized            
                     });
                 }
 
-                this._router.events.forEach((event) => {
-        
-                    //get ip address info
-                    var _IpService = this.ipAddress;
-                    
-                    //get session id by get cart id
-                    var _sessionId = this._cartService.cartId$ 
-
-                    const activityBody = 
-                    {
-                        browserType : null,
-                        customerId  : this.ownerId?this.ownerId:null,
-                        deviceModel : null,
-                        errorOccur  : null,
-                        errorType   : null,
-                        ip          : _IpService,
-                        os          : null,
-                        pageVisited : event["urlAfterRedirects"],
-                        sessionId   : _sessionId,
-                        storeId     : null
-                    }
-                    if(event instanceof RoutesRecognized) {
-                        this._analyticService.postActivity(activityBody).subscribe((response) => {
-                        });           
-                    }
-                    // NavigationEnd
-                    // NavigationCancel
-                    // NavigationError
-                    // RoutesRecognized            
-                });
-            }
-
-            // Mark for check
-            this._changeDetectorRef.markForCheck();
-        });
-        
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
     }
 
 }
