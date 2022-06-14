@@ -95,7 +95,7 @@
                                         <mat-error *ngIf="checkoutForm.get('email').hasError('required')">
                                             Email address is required
                                         </mat-error>
-                                        <mat-error *ngIf="checkoutForm.get('email').hasError('email')">
+                                        <mat-error *ngIf="checkoutForm.get('email').hasError('invalidEmailAddress')">
                                             Enter a valid email address
                                         </mat-error>
                                     </mat-form-field>
