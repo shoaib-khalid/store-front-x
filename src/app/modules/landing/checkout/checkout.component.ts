@@ -1271,24 +1271,42 @@ export class LandingCheckoutComponent implements OnInit
                             } else if (this.payment.providerId == "3") {                                                               
                                 this.postForm("post-to-fastpay", this.payment.paymentLink, 
                                     { 
-                                        "CURRENCY_CODE": "PKR", 
-                                        "MERCHANT_ID": "13464", 
-                                        "MERCHANT_NAME": "EasyDukan Pvt Ltd", 
-                                        "TOKEN": this.payment.token, 
-                                        "SUCCESS_URL": this._apiServer.settings.apiServer.paymentService + "/payments/payment-redirect?name=" + this.order.orderShipmentDetail.receiverName + "&email="+ this.order.orderShipmentDetail.email + "&phone=" + this.order.orderShipmentDetail.phoneNumber + "&amount="+this.paymentDetails.cartGrandTotal.toFixed(2)+"&hash=&status_id=1&order_id="+this.order.id+"&transaction_id="+transactionId+"&msg=Payment_was_successful&payment_channel=fastpay", 
-                                        "FAILURE_URL": this._apiServer.settings.apiServer.paymentService + "/payments/payment-redirect?name=" + this.order.orderShipmentDetail.receiverName + "&email="+ this.order.orderShipmentDetail.email + "&phone=" + this.order.orderShipmentDetail.phoneNumber + "&amount="+this.paymentDetails.cartGrandTotal.toFixed(2)+"&hash=&status_id=0&order_id="+this.order.id+"&transaction_id="+transactionId+"&msg=Payment_was_failed&payment_channel=fastpay", 
-                                        "CHECKOUT_URL": this.store.domain + "/checkout", 
-                                        "CUSTOMER_EMAIL_ADDRESS": this.order.orderShipmentDetail.email, 
-                                        "CUSTOMER_MOBILE_NO": this.order.orderShipmentDetail.phoneNumber, 
-                                        "TXNAMT": this.paymentDetails.cartGrandTotal.toFixed(2), 
-                                        "BASKET_ID": this.payment.sysTransactionId, 
-                                        "ORDER_DATE": dateTimeNow, 
-                                        "SIGNATURE": "SOME-RANDOM-STRING", 
-                                        "VERSION": "MERCHANT-CART-0.1", 
-                                        "TXNDESC": "Item purchased from EasyDukan", 
-                                        "PROCCODE": "00", 
-                                        "TRAN_TYPE": "ECOMM_PURCHASE", 
-                                        "STORE_ID": "", 
+                                        "CURRENCY_CODE" : "PKR", 
+                                        "MERCHANT_ID"   : "13464", 
+                                        "MERCHANT_NAME" : "EasyDukan Pvt Ltd", 
+                                        "TOKEN"         : this.payment.token, 
+                                        "SUCCESS_URL"   : this._apiServer.settings.apiServer.paymentService + 
+                                                            "/payments/payment-redirect?name=" + this.order.orderShipmentDetail.receiverName + 
+                                                            "&email="           + this.order.orderShipmentDetail.email + 
+                                                            "&phone="           + this.order.orderShipmentDetail.phoneNumber + 
+                                                            "&amount="          + this.paymentDetails.cartGrandTotal.toFixed(2) +
+                                                            "&hash="            + this.payment.hash +
+                                                            "&status_id=1"      +
+                                                            "&order_id="        + this.order.id+
+                                                            "&transaction_id="  + transactionId+
+                                                            "&msg=Payment_was_successful&payment_channel=fastpay", 
+                                        "FAILURE_URL"   : this._apiServer.settings.apiServer.paymentService + 
+                                                            "/payments/payment-redirect?name=" + this.order.orderShipmentDetail.receiverName + 
+                                                            "&email="           + this.order.orderShipmentDetail.email + 
+                                                            "&phone="           + this.order.orderShipmentDetail.phoneNumber + 
+                                                            "&amount="          + this.paymentDetails.cartGrandTotal.toFixed(2)+ 
+                                                            "&hash="            + this.payment.hash +
+                                                            "&status_id=0"      +
+                                                            "&order_id="        + this.order.id+
+                                                            "&transaction_id="  + transactionId+
+                                                            "&msg=Payment_was_failed&payment_channel=fastpay", 
+                                        "CHECKOUT_URL"  : this.store.domain + "/checkout", 
+                                        "CUSTOMER_EMAIL_ADDRESS"    : this.order.orderShipmentDetail.email, 
+                                        "CUSTOMER_MOBILE_NO"        : this.order.orderShipmentDetail.phoneNumber, 
+                                        "TXNAMT"        : this.paymentDetails.cartGrandTotal.toFixed(2), 
+                                        "BASKET_ID"     : this.payment.sysTransactionId, 
+                                        "ORDER_DATE"    : dateTimeNow, 
+                                        "SIGNATURE"     : "SOME-RANDOM-STRING", 
+                                        "VERSION"       : "MERCHANT-CART-0.1", 
+                                        "TXNDESC"       : "Item purchased from EasyDukan", 
+                                        "PROCCODE"      : "00", 
+                                        "TRAN_TYPE"     : "ECOMM_PURCHASE", 
+                                        "STORE_ID"      : "", 
                                     } , 'post', false);
                             } else {
                                 this.displayError("Provider id not configured");
