@@ -5,8 +5,10 @@
 
 <ng-container *ngIf="show500 === false; else error">
     <ng-container *ngIf="(store && store.id !== null); else noStore">
-        <floating-message-big></floating-message-big>
-        <floating-message-small></floating-message-small>
+        <ng-container *ngIf="store && (store.verticalCode === 'FnB' || store.verticalCode === 'E-Commerce')">
+            <floating-message-big></floating-message-big>
+            <floating-message-small></floating-message-small>
+        </ng-container>
         <!-- Navigation -->
         <ng-container *ngIf="isScreenSmall">
             <fuse-vertical-navigation
@@ -25,7 +27,7 @@
                                 [src]="platform.logoDark">
                         </div>
                         <!-- Components -->
-                        <div class="flex items-center ml-auto">
+                        <div *ngIf="store && (store.verticalCode === 'FnB' || store.verticalCode === 'E-Commerce')" class="flex items-center ml-auto">
                             <user [showAvatar]="true"></user>
                             <notifications class="ml-2"></notifications>
                         </div>
@@ -97,11 +99,13 @@
                                 <p>{{ store.phoneNumber}}</p>
                             </div>
                             <cart></cart>
-                            <user *ngIf="!isScreenSmall"></user>
-                            <ng-container *ngIf="!isScreenSmall">
-                                <div class="ml-4 text-medium font-medium leading-5 truncate">
-                                    {{displayUsername}}
-                                </div>
+                            <ng-container *ngIf="store && (store.verticalCode === 'FnB' || store.verticalCode === 'E-Commerce')">
+                                <user *ngIf="!isScreenSmall"></user>
+                                <ng-container *ngIf="!isScreenSmall">
+                                    <div class="ml-4 text-medium font-medium leading-5 truncate">
+                                        {{displayUsername}}
+                                    </div>
+                                </ng-container>
                             </ng-container>
                         </div>
                     </div>
