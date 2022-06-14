@@ -1292,8 +1292,8 @@ export class LandingCheckoutComponent implements OnInit
                                                             "&amount="          + this.paymentDetails.cartGrandTotal.toFixed(2)+ 
                                                             "&hash="            + this.payment.hash +
                                                             "&status_id=0"      +
-                                                            "&order_id="        + this.order.id+
-                                                            "&transaction_id="  + transactionId+
+                                                            "&order_id="        + this.order.id +
+                                                            "&transaction_id="  + transactionId +
                                                             "&msg=Payment_was_failed&payment_channel=fastpay", 
                                         "CHECKOUT_URL"  : this.store.domain + "/checkout", 
                                         "CUSTOMER_EMAIL_ADDRESS"    : this.order.orderShipmentDetail.email, 

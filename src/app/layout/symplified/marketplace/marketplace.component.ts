@@ -510,4 +510,12 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
         }
     }
 
+    goToMarketplace() {
+        // this._router.navigate(['/']);
+
+        // Navigate to the external redirect url (temporary)
+        const redirectURL = this.platform.name === "DeliverIn" ? "https://www.deliverin.my" : "https://www.easydukan.co";
+        this._document.location.href = redirectURL;
+    }
+
 }
