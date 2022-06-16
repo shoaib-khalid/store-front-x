@@ -141,6 +141,9 @@ export class CoreInterceptor implements HttpInterceptor
                         //get ip address info
                         var _IpService = this.ipAddress;
 
+                        //get domain
+                        var domain = this._apiServer.settings.marketplaceDomain;
+
                         //get session id by get cart id
                         var _sessionId = this._cartService.cartId$ 
 
@@ -153,7 +156,7 @@ export class CoreInterceptor implements HttpInterceptor
                             errorType   : "error " + error.error.status,
                             ip          : _IpService,
                             os          : _deviceOs,
-                            pageVisited : this._event,
+                            pageVisited : 'https://' + domain + this._event,
                             sessionId   : _sessionId,
                             storeId     : _storeId
                         }

@@ -12,6 +12,7 @@ import { AuthService } from './core/auth/auth.service';
 import { JwtService } from './core/jwt/jwt.service';
 import { UserService } from './core/user/user.service';
 import { Subject, takeUntil } from 'rxjs';
+import { AppConfig } from './config/service.config';
 
 declare let gtag: Function;
 
@@ -49,7 +50,8 @@ export class AppComponent
         private _cookieService: CookieService,
         private _authService: AuthService,
         private _jwtService: JwtService,
-        private _userService: UserService
+        private _userService: UserService,
+        private _apiServer: AppConfig,
     )
     {
     
@@ -175,6 +177,9 @@ export class AppComponent
             
                         //get ip address info
                         var _IpService = this.ipAddress;
+
+                        //get domain
+                        var domain = this._apiServer.settings.marketplaceDomain;
                         
                         //get session id by get cart id
                         var _sessionId = this._cartService.cartId$ 
@@ -188,7 +193,7 @@ export class AppComponent
                             errorType   : null,
                             ip          : _IpService,
                             os          : null,
-                            pageVisited : event["urlAfterRedirects"],
+                            pageVisited : 'https://' + domain + event["urlAfterRedirects"],
                             sessionId   : _sessionId,
                             storeId     : null
                         }
