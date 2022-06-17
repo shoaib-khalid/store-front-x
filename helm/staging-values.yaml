@@ -46,11 +46,11 @@ imagePullSecrets:
 ingress:
   annotations: {}
   className: ""
-  enabled: true
+  enabled: false
   hosts:
-  - host: dev-my.symplified.ai
+  - host: payment.dev-my.symplified.ai
     paths:
-    - path: /payment-redirect
+    - path: /
       pathType: Prefix
   - host: '*.dev-my.symplified.ai'
     paths:
@@ -58,7 +58,7 @@ ingress:
       pathType: Prefix
   tls:
   - hosts:
-    - dev-my.symplified.ai
+    - payment.dev-my.symplified.ai
     - '*.dev-my.symplified.ai'
     secretName: secret-tls-ai
 nameOverride: ""
