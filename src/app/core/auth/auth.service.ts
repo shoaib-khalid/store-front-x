@@ -7,6 +7,7 @@ import { AppConfig } from 'app/config/service.config';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { LogService } from 'app/core/logging/log.service'
 import { CustomerAuthenticate } from './auth.types';
+import { CookieService } from 'ngx-cookie-service';
 
 @Injectable()
 export class AuthService
@@ -19,8 +20,9 @@ export class AuthService
      */
     constructor(
         private _httpClient: HttpClient,
+        private _cookieService: CookieService,
         private _apiServer: AppConfig,
-        private _jwt: JwtService,
+        private _jwtService: JwtService,
         private _logging: LogService
     )
     {        
@@ -156,7 +158,7 @@ export class AuthService
                         uid: response.data.session.ownerId
                     }
 
-                    let token = this._jwt.generate({ alg: "HS256", typ: "JWT"}, jwtPayload, response.data.session.accessToken);
+                    let token = this._jwtService.generate({ alg: "HS256", typ: "JWT"}, jwtPayload, response.data.session.accessToken);
 
                     // Store the access token in the local storage
                     this.jwtAccessToken = token;
@@ -187,7 +189,7 @@ export class AuthService
             headers: new HttpHeaders().set("Authorization", this.publicToken)
         };        
         
-        return this._httpClient.post(userService + '/customers/session/refresh', this._jwt.getJwtPayload(this.jwtAccessToken).rft, header)
+        return this._httpClient.post(userService + '/customers/session/refresh', this._jwtService.getJwtPayload(this.jwtAccessToken).rft, header)
             .pipe(
                 catchError(() =>
                     // Return false
@@ -208,7 +210,7 @@ export class AuthService
                     }
                     
                     // this._genJwt.generate(jwtheader,jwtpayload,secret)
-                    let token = this._jwt.generate({ alg: "HS256", typ: "JWT"},jwtPayload,response.data.session.accessToken);
+                    let token = this._jwtService.generate({ alg: "HS256", typ: "JWT"},jwtPayload,response.data.session.accessToken);
 
                     // Store the access token in the local storage
                     this.jwtAccessToken = token;
@@ -222,11 +224,60 @@ export class AuthService
             );
     }
 
+    signInUsingCookies(): Observable<any>
+    {
+        return of(true).pipe(
+            map((response: any) => {
+
+                this._logging.debug("Response from UserService (signInUsingCookies)",response);
+
+                // Set cookie for testing
+                // this._cookieService.set('CustomerId','bd421a78-fc36-4691-a5e5-38278e0a4245');
+                // this._cookieService.set('AccessToken','W0JAMTI5ZTE3NDg=');
+                // this._cookieService.set('RefreshToken','W0JANTQwOGY0ZmU=');
+        
+                // google sign in customer id
+                // this._cookieService.set('CustomerId','cdeaab82-49a5-4773-b4fb-fd9016d6f8f0');
+                // this._cookieService.set('AccessToken','W0JAZmE3N2Y3NA==');
+                // this._cookieService.set('RefreshToken','W0JANTg1NmM2OTk=');
+        
+                // Get cookie
+                let ownerId = this._cookieService.get('CustomerId');
+                let accessToken = this._cookieService.get('AccessToken');
+                let refreshToken = this._cookieService.get('RefreshToken');
+        
+                if (ownerId && accessToken && refreshToken) {
+                    // set to localstorage
+                    let jwtPayload = {
+                        iss: 'Fuse',
+                        role: 'CUSTOMER',
+                        act: accessToken,
+                        rft: refreshToken,
+                        uid: ownerId
+                    }
+    
+                    // this._genJwt.generate(jwtheader,jwtpayload,secret)
+                    let token = this._jwtService.generate({ alg: "HS256", typ: "JWT"}, jwtPayload, accessToken);
+    
+                    // Store the access token in the local storage
+                    this.jwtAccessToken = token;
+    
+                    // Set the authenticated flag to true
+                    this._authenticated = true;
+    
+                    this._customerAuthenticate = response.data;
+    
+                    return jwtPayload;
+                }
+            })
+        );
+    }
+
     /**
      * Sign out
      */
     signOut(): Observable<any>
-    {
+    {        
         // Remove the access token from the local storage
         localStorage.removeItem('jwtAccessToken');
         localStorage.removeItem('cartId');

@@ -168,37 +168,42 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
                         
                     });
 
-                    // Subscribe to the user service
-                    this._userService.user$
-                    .pipe((takeUntil(this._unsubscribeAll)))
-                    .subscribe((user: User) => {
-                        this.user = user;
-                        this.displayUsername = this.textTruncate(user.username, 12);
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
 
-                        // if the navigation already exist dont push a new one
-                        let index = this.navigation.default.findIndex(item => (item.id === 'orders' ||  item.id === 'orders'));
+        // Subscribe to the user service
+        this._userService.user$
+            .pipe((takeUntil(this._unsubscribeAll)))
+            .subscribe((user: User) => {
+                if (user) {
+                    this.user = user;
+                    this.displayUsername = this.textTruncate(user.username, 12);
 
-                        if (this.user && index < 0) {                            
-                            this.navigation.default.unshift(
-                                {
-                                    id   : 'orders',
-                                    title: 'My Orders',
-                                    type : 'basic',
-                                    icon : 'heroicons_outline:shopping-cart',
-                                    externalLink: true,
-                                    link : 'https://' + this._apiServer.settings.marketplaceDomain + '/orders'
-                                },
-                                {
-                                    id   : 'vouchers',
-                                    title: 'My Vouchers',
-                                    type : 'basic',
-                                    icon : 'heroicons_outline:ticket',
-                                    externalLink: true,
-                                    link : 'https://' + this._apiServer.settings.marketplaceDomain + '/vouchers'
-                                }
-                            );
-                        }
-                    });
+                    // if the navigation already exist dont push a new one
+                    let index = this.navigation.default.findIndex(item => (item.id === 'orders' ||  item.id === 'orders'));
+
+                    if (this.user && index < 0) {                            
+                        this.navigation.default.unshift(
+                            {
+                                id   : 'orders',
+                                title: 'My Orders',
+                                type : 'basic',
+                                icon : 'heroicons_outline:shopping-cart',
+                                externalLink: true,
+                                link : 'https://' + this._apiServer.settings.marketplaceDomain + '/orders'
+                            },
+                            {
+                                id   : 'vouchers',
+                                title: 'My Vouchers',
+                                type : 'basic',
+                                icon : 'heroicons_outline:ticket',
+                                externalLink: true,
+                                link : 'https://' + this._apiServer.settings.marketplaceDomain + '/vouchers'
+                            }
+                        );
+                    }
+                }                
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
@@ -322,7 +327,7 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
           if (ending == null) {
             ending = '...';
           }
-          if (str.length > length) {
+          if (str && str.length > length) {
             return str.substring(0, length - ending.length) + ending;
           } else {
             return str;

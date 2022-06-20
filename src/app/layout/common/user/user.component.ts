@@ -9,7 +9,6 @@ import { DOCUMENT, PlatformLocation } from '@angular/common';
 import { AuthService } from 'app/core/auth/auth.service';
 import { AppConfig } from 'app/config/service.config';
 import { CookieService } from 'ngx-cookie-service';
-import { CustomerAuthenticate } from 'app/core/auth/auth.types';
 import { StoresService } from 'app/core/store/store.service';
 import { CartService } from 'app/core/cart/cart.service';
 
@@ -29,7 +28,6 @@ export class UserComponent implements OnInit, OnDestroy
     @Input() showAvatar: boolean = true;
     user: User;
     customer:any;
-    customerAuthenticate: CustomerAuthenticate;
 
     sanatiseUrl: string;
 
@@ -72,35 +70,18 @@ export class UserComponent implements OnInit, OnDestroy
         this._userService.user$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((user: User) => {
-                this.user = user;
-
-                // Mark for check
-                this._changeDetectorRef.markForCheck();
-            });
-
-        this._authService.customerAuthenticate$
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((response: CustomerAuthenticate) => {
-                this.customerAuthenticate = response;
-
-                if (this.customerAuthenticate) {
-                    this._userService.get(this.customerAuthenticate.session.ownerId)
-                        .subscribe((response)=>{
-                            this.customer = response.data;
-                        });
+                if (user) {
+                    this.user = user;
                 }
-
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
 
         if (this._cartService.cartId$) {
-                    
             this.cartId = this._cartService.cartId$;            
         }
 
         if (this._storesService.storeId$) {
-                    
             this.storeId = this._storesService.storeId$;            
         }
 
