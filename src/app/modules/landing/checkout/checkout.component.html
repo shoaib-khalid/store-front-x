@@ -665,7 +665,7 @@
                                             </div>
                                             <div class="flex flex-col justify-between py-1 w-full h-20 pr-1">
                                                 <div class="flex flex-row justify-between">
-                                                    <h1 class="font-semibold pb-1 line-clamp-3 cursor-pointer"
+                                                    <h1 class="font-semibold mb-0 line-clamp-2 cursor-pointer"
                                                         (click)="redirect(cartItem.productInventory.product.seoUrl)">
                                                         {{cartItem.productName}}
                                                     </h1>
@@ -674,7 +674,7 @@
                                                         class="text-gray-500 icon-size-4 cursor-pointer"
                                                         [svgIcon]="'heroicons_solid:trash'"></mat-icon>
                                                 </div>
-                                                <div class="flex flex-row justify-between items-center w-full">
+                                                <div class="flex flex-row justify-between items-center w-full mt-1">
                                                     <div class="flex flex-col">
                                                         <div class="flex flex-row mb-1 truncate max-w-36 sm:max-w-full md:max-w-36">
                                                             <!-- Display variants -->
@@ -916,7 +916,9 @@
                                         <span class="font-semibold">-{{paymentDetails.voucherDeliveryDiscount | currency: store.regionCountry.currencySymbol}}</span>
                                     </div>
                                 </ng-container>
-                                <ng-container *ngIf="user">
+
+                                <!-- User voucher  -->
+                                <ng-container *ngIf="user; else guestVoucher">
                                     
                                     <!-- Divider -->
                                     <div class="my-2 border-t"></div>
@@ -959,7 +961,7 @@
                                     <ng-container *ngIf="displayRedeem; else displayHavePromo">
                                         <div class="flex flex-row w-full justify-between items-center">
                                             <!-- Input Promo Code -->
-                                            <mat-form-field class="w-full fuse-mat-dense fuse-mat-no-subscript" floatLabel="always">
+                                            <mat-form-field class="w-full fuse-mat-dense fuse-mat-no-subscript text-sm" floatLabel="always">
                                                 <input
                                                     matInput
                                                     [(ngModel)]="promoCode"
@@ -990,6 +992,86 @@
                                     </ng-template>
 
                                 </ng-container>
+
+                                <!-- Guest voucher  -->
+                                <ng-template #guestVoucher>
+                                    <ng-container *ngIf="false">
+                                        <!-- Divider -->
+                                        <div class="my-2 border-t"></div>
+    
+                                        <!-- Voucher Dropdown -->
+                                        <ng-container>
+                                            <mat-form-field class="fuse-mat-no-subscript fuse-mat-dense w-full mb-1 text-sm" floatLabel="always">
+                                                <mat-label class="text-base ">Voucher Discount</mat-label>
+                                                <mat-select 
+                                                    placeholder="Select My Voucher"
+                                                    (selectionChange)="selectVoucher(voucherSelector.value);"
+                                                    [(ngModel)]="voucherApplied"
+                                                    [ngModelOptions]="{standalone: true}"
+                                                    #voucherSelector="matSelect">
+                                                    <mat-select-trigger>
+                                                        <span class="flex items-center">
+                                                            <span>{{ voucherSelector.triggerValue }}</span>
+                                                        </span>
+                                                    </mat-select-trigger>
+                                                    <div *ngFor="let voucher of guestVouchers">
+                                                        <ng-container *ngIf="(voucher.voucher.storeId === null || voucher.voucher.storeId === store.id ) && validateVoucher(voucher)">
+                                                            <mat-option [value]="voucher">{{voucher.voucher.name}}</mat-option>
+                                                        </ng-container>
+                                                    </div>
+                                                </mat-select>
+                                                <button
+                                                    mat-icon-button
+                                                    type="button"
+                                                    *ngIf="voucherApplied"
+                                                    (click)="deselectVoucher(); $event.stopPropagation()"
+                                                    matSuffix>
+                                                    <mat-icon
+                                                        class="text-gray-500 icon-size-4 ml-2"
+                                                        [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                                                </button>                                              
+                                            </mat-form-field>
+                                        </ng-container>
+    
+                                        <!-- Input Promo Code & Claim button  -->
+                                        <ng-container *ngIf="displayRedeem; else displayHavePromo">
+                                            <div class="flex flex-row w-full justify-between items-center">
+                                                <!-- Input Promo Code -->
+                                                <mat-form-field class="w-full fuse-mat-dense fuse-mat-no-subscript text-sm" floatLabel="always">
+                                                    <input
+                                                        matInput
+                                                        [(ngModel)]="promoCode"
+                                                        placeholder="Enter Promo Code"
+                                                        [ngModelOptions]="{standalone: true}"
+                                                        autocomplete="disabled">
+                                                </mat-form-field>
+                                                <!-- Claim Voucher Button -->
+                                                <button
+                                                    [disabled]="isLoading" 
+                                                    class="ml-2 w-auto font-semibold py-2 px-3 rounded"
+                                                    [ngClass]="isLoading ? 'cursor-wait bg-gray-200' : 'bg-primary-500 hover:bg-primary-600'"
+                                                    (click)="claimPromoCode()">
+                                                    <span class="tracking-tight">
+                                                        Redeem
+                                                    </span>
+                                                </button>
+                                            </div>
+                                        </ng-container>
+                                        <ng-template #displayHavePromo>
+                                            <div class="text-xs">
+                                                <span>Having a Promo Code? Redeem </span>
+                                                <span class="underline cursor-pointer text-primary" 
+                                                    (click)="displayRedeem = true">
+                                                here
+                                                </span>
+                                            </div>
+                                        </ng-template>
+
+                                    </ng-container>
+
+
+
+                                </ng-template>
                             </div>
                             <!-- grand total -->
                             <div class="flex flex-row w-full border-t justify-between py-2">
