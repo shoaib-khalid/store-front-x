@@ -358,8 +358,9 @@ export class StoreResolver implements Resolve<any>
                 return of(true);
             })
         ),
+        // For Error Simulation
         this._navigationService.get(),
-        // this._httpstatService.get(500)
+        // this._httpstatService.get(418)
         ]);
     }
 

@@ -984,7 +984,8 @@ export class LandingCheckoutComponent implements OnInit
                                         if (error['status'] === 409 && this.voucherApplied) {
 
                                             if (error.error.message) {
-                                                this.openVoucherModal('heroicons_outline:x','Error', error.error.message, null, true);
+                                                this.openVoucherModal('heroicons_outline:exclamation-circle','Oops!', error.error.message, null, true);
+                                                this.voucherApplied = null;
                                             }                        
                                         }
                                     }
