@@ -13,7 +13,7 @@ import { CheckoutService } from './checkout.service';
 import { CheckoutValidationService } from './checkout.validation.service';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ChooseDeliveryAddressComponent } from './choose-delivery-address/choose-delivery-address.component';
-import { Address, CartDiscount, CustomerVoucher, CustomerVoucherPagination, DeliveryProvider, DeliveryProviderGroup, Order, Payment, UsedCustomerVoucherPagination, CheckoutInputField, VoucherVerticalList, PromoText, PromoEventId } from './checkout.types';
+import { Address, CartDiscount, CustomerVoucher, CustomerVoucherPagination, DeliveryProvider, DeliveryProviderGroup, Order, Payment, UsedCustomerVoucherPagination, CheckoutInputField, VoucherVerticalList, PromoText, PromoEventId, GuestVoucher } from './checkout.types';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { ModalConfirmationDeleteItemComponent } from './modal-confirmation-delete-item/modal-confirmation-delete-item.component';
@@ -154,7 +154,11 @@ export class LandingCheckoutComponent implements OnInit
     panelOpenState: boolean = false;
     dialingCode: string;
 
+    // -------------------------
     // Voucher
+    // -------------------------
+
+    // Member Voucher
     customerVouchers: CustomerVoucher[] = [] ;
     customerVoucherPagination: CustomerVoucherPagination;
 
@@ -165,6 +169,9 @@ export class LandingCheckoutComponent implements OnInit
     voucherDiscountAppliedMax: number = 0;
     voucherDiscountApplied: number = 0;
     verticalList: VoucherVerticalList[] = [];
+
+    // Guest Voucher
+    guestVouchers: GuestVoucher[] = [];
 
     
     // Map
@@ -718,7 +725,7 @@ export class LandingCheckoutComponent implements OnInit
 
     addressFormChanges() {
 
-        if(this.checkoutForm.get('storePickup').value){
+        if(this.checkoutForm.get('storePickup').value === true){
             this.checkoutForm.get('state').setErrors(null);
             this.checkoutForm.get('city').setErrors(null);
             this.checkoutForm.get('postCode').setErrors(null);
@@ -870,7 +877,7 @@ export class LandingCheckoutComponent implements OnInit
                     
                     Object.keys(controlErrors).forEach(keyError => {
                         const checkoutFormInfo = this.checkoutForm.get(key);
-                        checkoutFormInfo["info"] = this.checkoutInputField[key];                         
+                        checkoutFormInfo["info"] = this.checkoutInputField[key];  
                         
                         this.displayError('Please fill in the required field(s)')
                         // this.displayError(CheckoutValidationService.getValidatorErrorMessage(keyError, checkoutFormInfo));

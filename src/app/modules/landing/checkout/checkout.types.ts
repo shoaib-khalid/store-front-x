@@ -249,6 +249,16 @@ export interface UsedCustomerVoucherPagination
     endIndex    : number;
 }
 
+export interface GuestVoucher
+{
+    id          : string;
+    customerId  : string;
+    voucherId   : string;
+    isUsed      : boolean;
+    created     : string;
+    voucher     : Voucher;
+}
+
 export interface PromoText
 {
     eventId      : PromoEventId;
