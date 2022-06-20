@@ -90,18 +90,18 @@ export class AuthSignInComponent implements OnInit
                         this._userService.get(customerAuthenticateResponse.session.ownerId)
                             .subscribe((response)=>{
                                 let user = {
-                                    "id": response.id,
-                                    "name": response.name,
-                                    "username": response.username,
-                                    "locked": response.locked,
-                                    "deactivated": response.deactivated,
-                                    "created": response.created,
-                                    "updated": response.updated,
-                                    "roleId": response.roleId,
-                                    "email": response.email,
-                                    "avatar": "assets/images/logo/logo_default_bg.jpg",
-                                    "status": "online",
-                                    "role": response.roleId
+                                    id: response.id,
+                                    name: response.name,
+                                    username: response.username,
+                                    locked: response.locked,
+                                    deactivated: response.deactivated,
+                                    created: response.created,
+                                    updated: response.updated,
+                                    roleId: response.roleId,
+                                    email: response.email,
+                                    avatar: "assets/images/logo/logo_default_bg.jpg",
+                                    status: "online",
+                                    role: response.roleId
                                 };
     
                                 this._userService.user = user;

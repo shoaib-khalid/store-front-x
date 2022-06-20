@@ -128,7 +128,7 @@ export class CoreInterceptor implements HttpInterceptor
                         });
 
                         // get storeId
-                        var _storeId = this.store.id;
+                        var _storeId = this._storesService.storeId$;
                         // get customerId
                         var _customerId = this.ownerId
 

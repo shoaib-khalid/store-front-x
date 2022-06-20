@@ -12,7 +12,6 @@ import { StoresService } from './core/store/store.service';
 import { PlatformLocation } from '@angular/common';
 import { CartService } from 'app/core/cart/cart.service';
 import { Cart } from 'app/core/cart/cart.types';
-import { NotificationService } from 'app/core/notification/notification.service';
 import { IpAddressService } from 'app/core/ip-address/ip-address.service';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { AuthService } from 'app/core/auth/auth.service';
@@ -31,14 +30,11 @@ export class InitialDataResolver implements Resolve<any>
      * Constructor
      */
     constructor(
-        private _jwtService: JwtService,
-        private _authService: AuthService,
         private _messagesService: MessagesService,
         private _navigationService: NavigationService,
         private _notificationsService: NotificationsService,
         private _quickChatService: QuickChatService,
         private _shortcutsService: ShortcutsService,
-        private _userService: UserService
     )
     {
     }
@@ -61,8 +57,7 @@ export class InitialDataResolver implements Resolve<any>
             this._messagesService.getAll(),
             this._notificationsService.getAll(),
             this._quickChatService.getChats(),
-            this._shortcutsService.getAll(),
-            this._userService.get(this._authService.jwtAccessToken ? this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid : "" )
+            this._shortcutsService.getAll()
         ]);
     }
 }
@@ -163,13 +158,12 @@ export class StoreResolver implements Resolve<any>
                     // check if customer id exists
                     // -----------------------
 
-                    this.ownerId = this._cookieService.get('CustomerId');
                     // if customerId null means guest
-                    let customerId = this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid ? this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid : null
+                    this.ownerId = this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid ? this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid : null
 
-                    if (customerId != null || this.ownerId != '') {
+                    if (this.ownerId) {
                         
-                        this._cartService.getCarts((customerId != null) ? customerId : this.ownerId, this._storesService.storeId$)
+                        this._cartService.getCarts(this.ownerId, this._storesService.storeId$)
                             .subscribe(response => {
 
                                 // if got customer cart Id
@@ -191,7 +185,7 @@ export class StoreResolver implements Resolve<any>
                                 // if no customer cart Id and no current cart Id, create new cart
                                 else {
                                     const createCartBody = {
-                                        customerId: customerId, 
+                                        customerId: this.ownerId, 
                                         storeId: this._storesService.storeId$,
                                     }
                                     this._cartService.createCart(createCartBody)
@@ -383,6 +377,9 @@ export class MainDataResolver implements Resolve<any>
      */
     constructor(
         private _ipAddressService: IpAddressService,
+        private _jwtService: JwtService,
+        private _authService: AuthService,
+        private _userService: UserService
     )
     {
     }
@@ -402,6 +399,7 @@ export class MainDataResolver implements Resolve<any>
         // Fork join multiple API endpoint calls to wait all of them to finish
         return forkJoin([
             this._ipAddressService.getIPAddress(),
+            this._userService.get(this._authService.jwtAccessToken ? this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid : "" )
         ]);
     }
 }

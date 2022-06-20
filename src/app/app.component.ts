@@ -47,11 +47,8 @@ export class AppComponent
         private _analyticService: AnalyticService,
         private _ipAddressService: IpAddressService,
         private _cartService: CartService,
-        private _cookieService: CookieService,
-        private _authService: AuthService,
-        private _jwtService: JwtService,
-        private _userService: UserService,
         private _apiServer: AppConfig,
+        private _authService: AuthService
     )
     {
     
@@ -60,6 +57,9 @@ export class AppComponent
     ngOnInit() {
 
         console.log("navigator",navigator.userAgent);
+
+        this._authService.signInUsingCookies()
+            .subscribe((response)=>{});
 
         // Get User IP Address
         this._ipAddressService.ipAdressInfo$
@@ -71,39 +71,6 @@ export class AppComponent
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
-
-        // Set cookie for testing
-        // this._cookieService.set('CustomerId','bd421a78-fc36-4691-a5e5-38278e0a4245');
-        // this._cookieService.set('AccessToken','W0JAMTI5ZTE3NDg=');
-        // this._cookieService.set('RefreshToken','W0JANTQwOGY0ZmU=');
-
-        // google sign in customer id
-        // this._cookieService.set('CustomerId','94bd7555-c7f4-4bc5-ae02-402f250775f5');
-        // this._cookieService.set('AccessToken','W0JAMTI5ZTE3NDg=');
-        // this._cookieService.set('RefreshToken','W0JANTQwOGY0ZmU=');
-
-        // Get cookie
-        this.ownerId = this._cookieService.get('CustomerId');
-        this.accessToken = this._cookieService.get('AccessToken');
-        this.refreshToken = this._cookieService.get('RefreshToken');
-
-        // set to localstorage
-        if (this.ownerId && this.accessToken && this.refreshToken) {
-            this._userService.get(this.ownerId)
-                .subscribe((response)=>{
-                    let jwtPayload = {
-                        iss: 'Fuse',
-                        act: this.accessToken,
-                        rft: this.refreshToken,
-                        uid: this.ownerId
-                    }
-                    let token = this._jwtService.generate({ alg: "HS256", typ: "JWT"}, jwtPayload, this.accessToken);
-                    this._authService.jwtAccessToken = token;
-
-                    // Mark for check
-                    this._changeDetectorRef.markForCheck();
-                });
-        }
         
         // Get current store
         this._storesService.store$
