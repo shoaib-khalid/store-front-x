@@ -988,12 +988,11 @@ export class LandingCheckoutComponent implements OnInit
                                         // Set Payment Completion Status "Calculate Charges"
                                         this.paymentCompletionStatus = { id:"CALCULATE_CHARGES", label: "Calculate Charges" };
 
-                                        if (error['status'] === 409 && this.voucherApplied) {
-
-                                            if (error.error.message) {
-                                                this.openVoucherModal('heroicons_outline:exclamation-circle','Oops!', error.error.message, null, true);
-                                                this.voucherApplied = null;
-                                            }                        
+                                        if (error['status'] === 417 && this.voucherApplied) {
+                                            // if (error.error.message) {
+                                            //     this.openVoucherModal('heroicons_outline:exclamation-circle','Oops!', error.error.message, null, true);
+                                            this.voucherApplied = null;
+                                            // }                        
                                         }
                                     }
                                     );

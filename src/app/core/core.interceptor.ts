@@ -109,12 +109,12 @@ export class CoreInterceptor implements HttpInterceptor
                     {
                         // Show a error message
                         const confirmation = this._fuseConfirmationService.open({
-                            title  : error.error.error ? 'Error ' + error.error.error + ' (' + error.error.status + ')': 'Error',
+                            title  : error.error.error ? 'Error ' + error.error.error + ' (' + error.error.status + ')': 'Oops!',
                             message: error.error.message ? error.error.message : error.message,
                             icon: {
                                 show: true,
                                 name: "heroicons_outline:exclamation",
-                                color: "warn"
+                                color: "primary"
                             },
                             actions: {
                                 confirm: {
