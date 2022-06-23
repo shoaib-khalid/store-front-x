@@ -17,19 +17,17 @@ import { ShortcutsModule } from 'app/layout/common/shortcuts/shortcuts.module';
 import { UserModule } from 'app/layout/common/user/user.module';
 import { CartModule } from 'app/layout/common/cart/cart.module';
 import { SharedModule } from 'app/shared/shared.module';
-import { MarketplaceLayoutComponent } from 'app/layout/symplified/marketplace/marketplace.component';
+import { Fnb01LayoutComponent } from 'app/layout/symplified/fnb-01/fnb-01.component';
 import { BreadcrumbModule } from 'app/layout/common/breadcrumb/breadcrumb.module';
-import { Error404Component } from 'app/shared/error/error-404/error-404.component';
 import { MarqueeModule } from 'app/layout/common/marquee/marquee.module';
-import { Error500Component } from 'app/shared/error/error-500/error-500.component';
 import { FooterModule } from 'app/layout/common/footer/footer.module';
 import { FloatingMessageModule } from 'app/layout/common/_floating-message/floating-message.module';
+import { DatePipe } from '@angular/common';
+import { DisplayErrorModule } from 'app/layout/common/_display-error/display-error.module';
 
 @NgModule({
     declarations: [
-        MarketplaceLayoutComponent,
-        Error404Component,
-        Error500Component
+        Fnb01LayoutComponent
     ],
     imports     : [
         HttpClientModule,
@@ -39,6 +37,7 @@ import { FloatingMessageModule } from 'app/layout/common/_floating-message/float
         MatIconModule,
         MatMenuModule,
         BreadcrumbModule,
+        DisplayErrorModule,
         FuseFullscreenModule,
         FuseLoadingBarModule,
         FuseNavigationModule,
@@ -56,9 +55,12 @@ import { FloatingMessageModule } from 'app/layout/common/_floating-message/float
         FloatingMessageModule
     ],
     exports     : [
-        MarketplaceLayoutComponent
+        Fnb01LayoutComponent
+    ],
+    providers   : [
+        DatePipe
     ]
 })
-export class MarketplaceLayoutModule
+export class Fnb01LayoutModule
 {
 }

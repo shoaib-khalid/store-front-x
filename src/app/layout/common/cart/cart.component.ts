@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { BooleanInput } from '@angular/cdk/coercion';
 import { Subject, takeUntil } from 'rxjs';
 import { Cart, CartItem, CustomerCart } from 'app/core/cart/cart.types';
-import { AuthService } from 'app/core/auth/auth.service';
 import { CartService } from 'app/core/cart/cart.service';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
@@ -44,11 +43,9 @@ export class CartComponent implements OnInit, OnDestroy
         private _changeDetectorRef: ChangeDetectorRef,
         private _router: Router,
         private _cartService: CartService,
-        private _authService: AuthService,
         private _userService: UserService,
-        private _storeService: StoresService,
+        private _storesService: StoresService,
         private _apiServer: AppConfig,
-
     )
     {
     }
@@ -63,7 +60,7 @@ export class CartComponent implements OnInit, OnDestroy
     ngOnInit(): void
     {
 
-        this._storeService.store$
+        this._storesService.store$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((store: Store)=>{
                 this.store = store;     
@@ -166,10 +163,17 @@ export class CartComponent implements OnInit, OnDestroy
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
-    redirectToStore(store: Store, cartId: string) {
-
+    redirectToStore(store: Store, cartId?: string) {
         if (store.id === this.store.id) {
-            this._router.navigate(['/checkout']);
+            let storeFrontDomain = this._apiServer.settings.storeFrontDomain;
+            if (this.store.verticalCode === 'FnB' || this.store.verticalCode === 'E-Commerce') {
+                this._router.navigate(['/checkout']);
+            } else if (this.store.verticalCode === 'FnB_PK' || this.store.verticalCode === 'ECommerce_PK') {
+                let paymentUrl = "https://payment" + storeFrontDomain + "?storeId=" + this._storesService.storeId$ + "&cartId=" + this._cartService.cartId$;
+                this._document.location.href = paymentUrl;
+            } else {
+                console.error("verticalCode not recognised")
+            }
         }
         else {
             this._document.location.href = 'https://' + store.domain + '/checkout' +

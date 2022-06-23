@@ -1,8 +1,6 @@
 import { Route } from '@angular/router';
-import { AuthGuard } from 'app/core/auth/guards/auth.guard';
-import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
-import { InitialDataResolver, MainDataResolver, PlatformSetupResolver, StoreResolver } from 'app/app.resolvers';
+import { MainDataResolver, PlatformSetupResolver, StoreResolver } from 'app/app.resolvers';
 import { CartItemsResolver, ProductsResolver, StoreCategoriesResolver } from './modules/landing/landing.resolver';
 
 // @formatter:off
@@ -60,7 +58,7 @@ export const appRoutes: Route[] = [
         path: '',
         component  : LayoutComponent,
         data: {
-            layout: 'marketplace'
+            layout: 'fnb1'
         },
         resolve    : {
             products: ProductsResolver,

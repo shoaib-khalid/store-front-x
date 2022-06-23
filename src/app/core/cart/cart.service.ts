@@ -97,15 +97,21 @@ export class CartService
     // Resolve Carts
     // ------------------
 
-    resolveCart(storeId: string): Observable<any>
+    resolveCart(storeId: string, cartId: string = null): Observable<any>
     {
+        
+        // this is parameterised , for scario payment.symplified.biz
+        if (cartId) {
+            this.cartId = cartId;
+        }
+
         let userId = this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid;
         return of(true).pipe(
             map(()=>{
                 // First check if user is logged in
                 if (userId) {
                     this._logging.debug("userId detected (logged in user)");
-                    this.getCarts(userId, storeId).subscribe((result)=> {
+                    this.getCarts(null, userId, storeId).subscribe((result)=> {
                         // check if logged in user already have the cart from the store
                         if (result.length) {
                             this._logging.debug("userId detected (logged in user), cartId EXISTS in user profile");
@@ -130,7 +136,16 @@ export class CartService
                 } else if (this.cartId$) {
                     // For Guess
                     this._logging.debug("Guess user detected, cartId already EXISTS");
-                    this.getCartItems(this.cartId$).subscribe();
+
+                    this.getCarts(this.cartId$).subscribe((result)=>{                        
+                        if (result.length) {
+                            this._logging.debug("cartId EXISTS on backend");
+                            this.getCartItems(this.cartId$).subscribe();
+                        } else {
+                            this._logging.debug("cartId NOT EXISTS on backend");
+                        }
+                    });
+
                 } else {
                     this._logging.debug("Guess user detected, NO cartId FOUND!");
                     const createCartBody = {
@@ -157,17 +172,29 @@ export class CartService
      * @param customerId 
      * @returns 
      */
-    getCarts(customerId?: string, storeId?: string): Observable<Cart[]>
+    getCarts(cartId?: string, customerId?: string, storeId?: string): Observable<Cart[]>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
 
         const header = {  
             headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
             params: {
+                cartId,
                 customerId,
                 storeId,
             }
         };
+
+        // Delete empty value
+        Object.keys(header.params).forEach(key => {
+
+            if (Array.isArray(header.params[key])) {
+                header.params[key] = header.params[key].filter(element => element !== null)
+            }
+            if (!header.params[key]) {
+                delete header.params[key];
+            }
+        });
 
         return this._httpClient.get<any>(orderService + '/carts', header)
             .pipe(

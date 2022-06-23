@@ -164,7 +164,7 @@
                                     id="go-checkout-button"
                                     type="button"
                                     class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                    [routerLink]="['/checkout']"
+                                    (click)="goToCheckout()"
                                     mat-button>
                                 <label 
                                     class="flex items-center justify-center w-5/12 sm:w-2/5 h-10 px-2 border rounded-lg border-green-300 bg-green-500 hover:border-green-500 cursor-pointer"

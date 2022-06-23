@@ -33,7 +33,6 @@ export class LandingHomeComponent implements OnInit
      */
     constructor(
         private _storesService: StoresService,
-        private _storeService: StoresService,
         private _changeDetectorRef: ChangeDetectorRef
     )
     {
@@ -64,7 +63,7 @@ export class LandingHomeComponent implements OnInit
             });
 
         // Get the products pagination
-        this._storeService.storeCategoryPagination$
+        this._storesService.storeCategoryPagination$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((pagination: CategoryPagination) => {
                 if (pagination) {
@@ -91,7 +90,7 @@ export class LandingHomeComponent implements OnInit
                 merge(this._paginator.page).pipe(
                     switchMap(() => {
                         this.isLoading = true;
-                        return this._storeService.getCategories("",this.pageOfItems['currentPage'] - 1, this.pageOfItems['pageSize'], this.sortName, this.sortOrder);
+                        return this._storesService.getCategories("",this.pageOfItems['currentPage'] - 1, this.pageOfItems['pageSize'], this.sortName, this.sortOrder);
                     }),
                     map(() => {
                         this.isLoading = false;
@@ -112,7 +111,7 @@ export class LandingHomeComponent implements OnInit
                 // set loading to true
                 this.isLoading = true;
     
-                this._storeService.getCategories("", this.pageOfItems['currentPage'] - 1, this.pageOfItems['pageSize'], this.sortName, this.sortOrder)
+                this._storesService.getCategories("", this.pageOfItems['currentPage'] - 1, this.pageOfItems['pageSize'], this.sortName, this.sortOrder)
                     .subscribe(()=>{
                         // set loading to false
                         this.isLoading = false;

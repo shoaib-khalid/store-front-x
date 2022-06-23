@@ -14,20 +14,26 @@ import { PlatformService } from 'app/core/platform/platform.service';
 import { Platform } from 'app/core/platform/platform.types';
 import { DatePipe, DOCUMENT, PlatformLocation } from '@angular/common';
 import { AppConfig } from 'app/config/service.config';
-import { Error500Service } from 'app/core/error-500/error-500.service';
 import { FloatingBannerService } from 'app/core/floating-banner/floating-banner.service';
 import { CartService } from 'app/core/cart/cart.service';
+import { DisplayErrorService } from 'app/core/display-error/display-error.service';
 
 @Component({
-    selector     : 'marketplace-layout',
-    templateUrl  : './marketplace.component.html',
+    selector     : 'fnb-01-layout',
+    templateUrl  : './fnb-01.component.html',
     encapsulation: ViewEncapsulation.None
 })
-export class MarketplaceLayoutComponent implements OnInit, OnDestroy
+export class Fnb01LayoutComponent implements OnInit, OnDestroy
 {
     platform: Platform;
     store: Store;
     user: User;
+
+    displayError: {
+        type: string,
+        title: string;
+        message: string;
+    } = null;
     
     isScreenSmall: boolean;
     navigation: Navigation;
@@ -39,6 +45,7 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
     daysArray = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
     storeSnooze: StoreSnooze = null;
     show500: boolean = false;
+    show400: boolean = false;
     errorMessage: string = '';
 
     floatingMessageData = {};
@@ -62,7 +69,7 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
         private _datePipe: DatePipe,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _fuseNavigationService: FuseNavigationService,
-        private _error500Service: Error500Service,
+        private _displayErrorService: DisplayErrorService,
         private _platformLocation: PlatformLocation,
         private _floatingBannerService: FloatingBannerService,
         private _cartService: CartService,
@@ -102,26 +109,36 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
 
         this._storesService.store$
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((response: Store) => {
-                if (response) {                    
+            .subscribe((response: Store) => {                
+                if (response) {
                     this.store = response;
-        
+
+                    this._displayErrorService.hide();
+
                     //This is to be passed to floating-message
                     // this.floatingMessageData = { storeId: this.store.id, url: this.sanatiseUrl };
 
                     this._storesService.storeSnooze$
                         .pipe(takeUntil(this._unsubscribeAll))
-                        .subscribe((response: StoreSnooze) => {
-                            this.storeSnooze = response;
-                            
-                            if (this.store && this.storeSnooze) {
-                                // check store timings
-                                this.checkStoreTiming(this.store.storeTiming, this.storeSnooze);
+                        .subscribe((storeSnoozeResponse: StoreSnooze) => {
+                            if (storeSnoozeResponse) {
+                                this.storeSnooze = storeSnoozeResponse;
+                                if (this.store && this.storeSnooze) {
+                                    // check store timings
+                                    this.checkStoreTiming(this.store.storeTiming, this.storeSnooze);
+                                }
                             }
-            
                             // Mark for check
                             this._changeDetectorRef.markForCheck();
                         });
+
+                } else {
+                    this._displayErrorService.show({
+                        type: '4xx',
+                        code: '404',
+                        title: "Page Not Found!",
+                        message: "The store you are looking for might have been removed, had its name changed or is temporarily unavailable."
+                    });
                 }
 
                 // Mark for check
@@ -231,16 +248,14 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
                 this._changeDetectorRef.markForCheck();
             });
 
-        // Subscribe to show 500
-        this._error500Service.show500$
+        // Subscribe to show 400
+        this._displayErrorService.errorMessage$
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((response: boolean) => {
-                if(response) {
-                    this.show500 = response;
-                }
+            .subscribe((response) => {
+                this.displayError = response;
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
-            })
+            });
     }
 
     /**
@@ -344,13 +359,14 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
 
     checkStoreTiming(storeTiming: StoreTiming[], storeSnooze: StoreSnooze): void
     {
+
         // the only thing that this function required is this.store.storeTiming
 
         let todayDate = new Date();
         let today = this.daysArray[todayDate.getDay()];
 
         // check if store closed for all days
-        let isStoreCloseAllDay = storeTiming.map(item => item.isOff);
+        let isStoreCloseAllDay = storeTiming.map(item => item.isOff);        
 
         // --------------------
         // Check store timing

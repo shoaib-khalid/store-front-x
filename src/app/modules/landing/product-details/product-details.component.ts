@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CartService } from 'app/core/cart/cart.service';
 import { ProductsService } from 'app/core/product/product.service';
@@ -6,10 +6,10 @@ import { Product } from 'app/core/product/product.types';
 import { StoresService } from 'app/core/store/store.service';
 import { Store, StoreCategory } from 'app/core/store/store.types';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
-
 import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from 'ngx-gallery-9';
-import { debounceTime, fromEvent, map, switchMap, takeUntil } from 'rxjs';
-import { FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { AppConfig } from 'app/config/service.config';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
     selector     : 'landing-product-details',
@@ -39,7 +39,7 @@ import { FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/f
             position: relative;
             z-index: 10;
 
-            @screen sm {
+            @screen md {
                 position: relative;
                 z-index: 50;
             }
@@ -54,7 +54,7 @@ import { FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/f
     ]
 })
 export class LandingProductDetailsComponent implements OnInit
-{ 
+{
 
     store: Store;
     product: Product;
@@ -96,11 +96,13 @@ export class LandingProductDetailsComponent implements OnInit
      * Constructor
      */
     constructor(
+        @Inject(DOCUMENT) private _document: Document,
         private _storesService: StoresService,
         private _productsService: ProductsService,
         private _cartService: CartService,
         private _fuseConfirmationService: FuseConfirmationService,
         private _router: Router,
+        private _apiServer: AppConfig,
         private _formBuilder: FormBuilder,
         private _changeDetectorRef: ChangeDetectorRef
 
@@ -623,6 +625,19 @@ export class LandingProductDetailsComponent implements OnInit
                 this.quantity = this.minQuantity;
             else if (this.quantity > this.maxQuantity)
                 this.quantity = this.maxQuantity;
+        }
+    }
+
+    goToCheckout() {
+        let storeFrontDomain = this._apiServer.settings.storeFrontDomain;
+        
+        if (this.store.verticalCode === 'FnB' || this.store.verticalCode === 'E-Commerce') {
+            this._router.navigate(['/checkout']);
+        } else if (this.store.verticalCode === 'FnB_PK' || this.store.verticalCode === 'ECommerce_PK') {
+            let paymentUrl = "https://payment" + storeFrontDomain + "?storeId=" + this._storesService.storeId$ + "&cartId=" + this._cartService.cartId$;
+            this._document.location.href = paymentUrl;
+        } else {
+            console.error("verticalCode not recognised")
         }
     }
 }

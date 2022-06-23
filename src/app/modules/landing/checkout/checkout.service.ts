@@ -1,14 +1,18 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
-import { map, switchMap, take, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, ReplaySubject, Subject } from 'rxjs';
+import { map, switchMap, take, takeUntil } from 'rxjs/operators';
 import { AppConfig } from 'app/config/service.config';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { LogService } from 'app/core/logging/log.service';
 import { StoresService } from 'app/core/store/store.service';
 import { Customer } from 'app/core/user/user.types';
-import { CartDiscount, CustomerVoucher, CustomerVoucherPagination, DeliveryCharges, DeliveryProvider, PromoText, PromoTextPagination, UsedCustomerVoucherPagination } from './checkout.types';
+import { CartDiscount, CustomerVoucher, CustomerVoucherPagination, DeliveryCharges, DeliveryProvider, 
+         PromoText, PromoTextPagination, UsedCustomerVoucherPagination } from './checkout.types';
 import { AuthService } from 'app/core/auth/auth.service';
+import { CartService } from 'app/core/cart/cart.service';
+import { Store } from 'app/core/store/store.types';
+import { DOCUMENT } from '@angular/common';
 
 @Injectable({
     providedIn: 'root'
@@ -30,18 +34,19 @@ export class CheckoutService
     private _promoTextPagination: BehaviorSubject<PromoTextPagination | null> = new BehaviorSubject(null);
     private _promoText: ReplaySubject<PromoText> = new ReplaySubject<PromoText>(1);
     
-    
-
+    private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
      * Constructor
      */
     constructor(
+        @Inject(DOCUMENT) private _document: Document,
         private _authService: AuthService,
         private _httpClient: HttpClient,
         private _apiServer: AppConfig,
-        private _storeService: StoresService,
+        private _storesService: StoresService,
         private _jwt: JwtService,
+        private _cartService: CartService,
         private _logging: LogService
     )
     {
@@ -129,6 +134,27 @@ export class CheckoutService
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
+    resolveCheckout(): Observable<any>
+    {
+        return of(true).pipe(
+            map(()=>{
+                let storeFrontDomain = this._apiServer.settings.storeFrontDomain;
+                this._storesService.store$
+                    .pipe(takeUntil(this._unsubscribeAll))
+                    .subscribe((store: Store)=>{
+                        if(store && (store.verticalCode === 'FnB_PK' || store.verticalCode === 'ECommerce_PK')) {
+                            this._logging.debug("PAK checkout WILL BE redirect)");
+
+                            let paymentUrl = "https://payment" + storeFrontDomain + "?storeId=" + this._storesService.storeId$ + "&cartId=" + this._cartService.cartId$;
+                            this._document.location.href = paymentUrl;
+                        } else {
+                            this._logging.debug("MYS checkout WILL NOT redirect)");
+                        }
+                    });
+            })
+        );
+    }
+
     /**
      * Get the Customer Info
      */
@@ -147,7 +173,7 @@ export class CheckoutService
         if (header.params.email === null) delete header.params.email;
         if (header.params.phoneNumber === null) delete header.params.phoneNumber;
 
-        return this._httpClient.get<any>(userService + '/stores/' + this._storeService.storeId$ + '/customers/', header)
+        return this._httpClient.get<any>(userService + '/stores/' + this._storesService.storeId$ + '/customers/', header)
             .pipe(
                 map((response) => {
                     this._logging.debug("Response from StoresService (getCustomerInfo)",response);

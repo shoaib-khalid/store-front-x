@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, of, ReplaySubject, Subject, throwError } from 'rxjs';
 import { switchMap, take, map, tap, catchError, filter } from 'rxjs/operators';
-import { Store, StoreRegionCountry, StoreTiming, StorePagination, StoreAssets, CreateStore, StoreDeliveryDetails, StoreSelfDeliveryStateCharges, StoreDeliveryProvider, StoreCategory, StoreDiscount, StoreSnooze, CategoryPagination, City } from 'app/core/store/store.types';
+import { Store, StoreRegionCountry, StoreTiming, StorePagination, CreateStore, 
+         StoreDeliveryDetails, StoreSelfDeliveryStateCharges, StoreDeliveryProvider, StoreCategory, 
+         StoreDiscount, StoreSnooze, CategoryPagination, City } from 'app/core/store/store.types';
 import { AppConfig } from 'app/config/service.config';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { takeUntil } from 'rxjs/operators';
@@ -75,7 +77,7 @@ export class StoresService
      * @param value
      */
     set store(value: Store)
-    {
+    {        
         // Store the value
         this._store.next(value);
     }
@@ -308,6 +310,35 @@ export class StoresService
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
+    resolveStore(): Observable<any>
+    {
+        // ----------------------
+        // Get store by URL
+        // ----------------------
+
+        let fullUrl = (this._platformLocation as any).location.origin;
+        let domain = fullUrl.replace(/^(https?:|)\/\//, '').split(':')[0]; // this will get the domain from the URL
+
+        let domainNameArr = domain.split('.'); domainNameArr.shift();
+        let domainName = domainNameArr.join("."); 
+        let subDomainName = domain.split('.')[0];
+
+        let isImpersonate = this._apiServer.settings.env.impersonate;
+        
+        // hardcord localhost to cinema-online (for now)
+        if (isImpersonate === true) {
+            // check for local development
+            domain = domain.split('.')[0] + this._apiServer.settings.env.impersonateUrl;
+        }
+        
+        return of(true).pipe(
+            map((response)=>{                                
+                if (subDomainName !== "payment") {
+                    this.getStoreByDomainName().subscribe();
+                }
+            })
+        );
+    }
 
     // ---------------------------
     // Store Section
@@ -394,7 +425,7 @@ export class StoresService
                 // Find the store
                 const store = stores.find(item => item.id === id) || null;
 
-                this._logging.debug("Response from StoresService (getStoresById)",store);
+                this._logging.debug("Response from StoresService (getStoresById)",store);                
 
                 // Update the store
                 this._store.next(store);
@@ -414,7 +445,7 @@ export class StoresService
         );
     }
 
-    getStoreById(id: string): Observable<Store>
+    getStoreById(id: string, cartId: string = null): Observable<Store>
     {
         let productService = this._apiServer.settings.apiServer.productService;
 
@@ -423,17 +454,51 @@ export class StoresService
         };
         
         return this._httpClient.get<Store>(productService + '/stores/' + id , header)
-        .pipe(
-            map((response) => {
-                this._logging.debug("Response from StoresService (getStoreById)",response);
-                this._store.next(response["data"]);
+            .pipe(
+                catchError(() => {
+                    // Return false
+                    return of(null);
+                }),
+                switchMap(async (response: any) => {
+                    this._logging.debug("Response from StoresService (getStoreById)",response);
 
-                // set this
-                this.storeControl.setValue(response["data"]);
+                    if (response) {
+                        let store = response["data"];
+                        if (store) {
+                            // Update local storage
+                            this.storeId = store.id;
+    
+                            // Get Store Categories (for hamburger navigation)
+                            this.getStoreCategories().subscribe();
+    
+                            // Get Store Categories (for home navigation)
+                            this.getCategories().subscribe();
+    
+                            // Resolve cart 
+                            this._cartService.resolveCart(store.id, cartId).subscribe();
+    
+                            // Get Store Snooze
+                            this.getStoreSnooze().subscribe();
+                            
+                        } else {
+                            // Update local storage
+                            this.storeId = "";
+                        }
+                            
+                        // Update the store
+                        this._store.next(store);
+    
+                        // set this
+                        this.storeControl.setValue(response["data"]);
 
-                return response["data"];
-            })
-        )
+                        return response["data"];
+                    } else {
+                        // Update the store
+                        this._store.next(null);
+                    }
+
+                })
+            )
     }
 
     getStoreByDomainName(): Observable<Store>
@@ -495,7 +560,7 @@ export class StoresService
                     } else {
                         // Update local storage
                         this.storeId = "";
-                    }
+                    }                    
                     
                     // Update the store
                     this._store.next(store);
@@ -599,8 +664,7 @@ export class StoresService
                 switchMap(response => this.store$.pipe(
                     take(1),
                     filter(item => item && item.id === storeId),
-                    tap(() => {
-
+                    tap(() => {                        
                         // Update the product if it's selected
                         this._store.next(response);
 

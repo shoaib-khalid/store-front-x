@@ -70,6 +70,8 @@ export class LandingPaymentRedirectComponent
                     let storeId = response.storeId;
                     let paymentType = response.paymentType;
     
+                    // getStoreById(storeId, cartId) , does not need cartId here 
+                    // since we're redirecting to another page (SF of the store)
                     this._storesService.getStoreById(storeId)
                         .subscribe((storeResponse) => {
                             let storeDomain = storeResponse.domain;

@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild, ViewEncapsulation, NgZone } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Inject, OnInit, ViewChild, NgZone } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, NgForm, ValidationErrors, Validators } from '@angular/forms';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { DOCUMENT, PlatformLocation } from '@angular/common'; 
@@ -6,14 +6,15 @@ import { CartService } from 'app/core/cart/cart.service';
 import { CartItem } from 'app/core/cart/cart.types';
 import { StoresService } from 'app/core/store/store.service';
 import { City, Store, StoreAssets, StoreSnooze, StoreTiming } from 'app/core/store/store.types';
-import { of, Subject, Subscription, timer, interval as observableInterval, Observable, ReplaySubject, take } from 'rxjs';
-import { takeWhile, scan, tap } from "rxjs/operators";
-import { map, switchMap, takeUntil, debounceTime, filter, distinctUntilChanged } from 'rxjs/operators';
+import { of, Subject, Observable, ReplaySubject, take } from 'rxjs';
+import { map, switchMap, takeUntil, debounceTime } from 'rxjs/operators';
 import { CheckoutService } from './checkout.service';
 import { CheckoutValidationService } from './checkout.validation.service';
-import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { ChooseDeliveryAddressComponent } from './choose-delivery-address/choose-delivery-address.component';
-import { Address, CartDiscount, CustomerVoucher, CustomerVoucherPagination, DeliveryProvider, DeliveryProviderGroup, Order, Payment, UsedCustomerVoucherPagination, CheckoutInputField, VoucherVerticalList, PromoText, PromoEventId, GuestVoucher } from './checkout.types';
+import { Address, CartDiscount, CustomerVoucher, CustomerVoucherPagination, 
+         DeliveryProvider, DeliveryProviderGroup, Order, Payment, UsedCustomerVoucherPagination, 
+         CheckoutInputField, VoucherVerticalList, PromoText, PromoEventId, GuestVoucher } from './checkout.types';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { ModalConfirmationDeleteItemComponent } from './modal-confirmation-delete-item/modal-confirmation-delete-item.component';
@@ -365,7 +366,6 @@ export class LandingCheckoutComponent implements OnInit
                                 this.latitude = place.geometry.location.lat();
                                 this.longitude = place.geometry.location.lng();
                                 this.zoom = 12;
-                                // console.log('Location Entered', 'Lat' , this.latitude + ' Lng', this.longitude)
                             });
                         });
                     });
@@ -579,41 +579,6 @@ export class LandingCheckoutComponent implements OnInit
                 this._changeDetectorRef.markForCheck();
             });
     }
-      private setCurrentLocation() {
-          
-        if ('geolocation' in navigator) {
-            navigator.geolocation.getCurrentPosition((position) => {
-              this.latitude = position.coords.latitude;
-              this.longitude = position.coords.longitude;
-              this.zoom = 8;
-              this.getAddress(this.latitude, this.longitude);
-            });
-          }
-    }
-    markerDragEnd($event: any) {
-        // console.log($event);
-        this.latitude = $event.coords.lat;
-        this.longitude = $event.coords.lng;
-        this.getAddress(this.latitude, this.longitude);
-        // console.log('Marker Dragged',  'Lat' , this.latitude + ' Lng', this.longitude)
-      }
-    getAddress(latitude, longitude) {
-        this.geoCoder.geocode({ 'location': { lat: latitude, lng: longitude } }, (results, status) => {
-        //   console.log(results);
-        //   console.log(status);
-          if (status === 'OK') {
-            if (results[0]) {
-              this.zoom = 12;
-              this.address = results[0].formatted_address;
-            } else {
-              window.alert('No results found');
-            }
-          } else {
-            window.alert('Geocoder failed due to: ' + status);
-          }
-    
-        });
-      }
     
     /**
      * On destroy
@@ -787,7 +752,7 @@ export class LandingCheckoutComponent implements OnInit
         else {
             return phoneNumber;
         }
-      }
+    }
 
     checkCustomerInfo(type: string, data: string) {
         const email =  type === "email" ? data : null;
@@ -1692,14 +1657,6 @@ export class LandingCheckoutComponent implements OnInit
         }
     }
 
-    // checkPickupOrder(){
-    //     if
-    //     this.checkoutForm.get('state').setErrors({required: false});
-    //     this.checkoutForm.get('city').setErrors({required: false});
-    //     this.checkoutForm.get('postCode').setErrors({required: false});
-    //     this.checkoutForm.get('address').setErrors({required: false});
-    // }
-
     setDefaultAddress(address: Address, index?: any){
         
         address.isDefault = true;
@@ -2023,5 +1980,37 @@ export class LandingCheckoutComponent implements OnInit
             .subscribe(() => {
                 this.stateCitySelector.compareWith = (a: any, b: any) => a === b;
             });
+    }
+
+    private setCurrentLocation() {
+        if ('geolocation' in navigator) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                this.latitude = position.coords.latitude;
+                this.longitude = position.coords.longitude;
+                this.zoom = 8;
+                this.getAddress(this.latitude, this.longitude);
+            });
+        }
+    }
+
+    markerDragEnd($event: any) {
+        this.latitude = $event.coords.lat;
+        this.longitude = $event.coords.lng;
+        this.getAddress(this.latitude, this.longitude);
+    }
+
+    getAddress(latitude, longitude) {
+        this.geoCoder.geocode({ 'location': { lat: latitude, lng: longitude } }, (results, status) => {
+            if (status === 'OK') {
+                if (results[0]) {
+                    this.zoom = 12;
+                    this.address = results[0].formatted_address;
+                } else {
+                    window.alert('No results found');
+                }
+            } else {
+                window.alert('Geocoder failed due to: ' + status);
+            }
+        });
     }
 }

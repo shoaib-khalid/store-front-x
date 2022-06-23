@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
-import { forkJoin, Observable, of } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { MessagesService } from 'app/layout/common/messages/messages.service';
 import { NavigationService } from 'app/core/navigation/navigation.service';
 import { NotificationsService } from 'app/layout/common/notifications/notifications.service';
@@ -8,11 +8,11 @@ import { QuickChatService } from 'app/layout/common/quick-chat/quick-chat.servic
 import { ShortcutsService } from 'app/layout/common/shortcuts/shortcuts.service';
 import { UserService } from 'app/core/user/user.service';
 import { StoresService } from './core/store/store.service';
-import { CartService } from 'app/core/cart/cart.service';
 import { IpAddressService } from 'app/core/ip-address/ip-address.service';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { AuthService } from 'app/core/auth/auth.service';
 import { PlatformService } from './core/platform/platform.service';
+import { PlatformLocation } from '@angular/common';
 
 @Injectable({
     providedIn: 'root'
@@ -65,7 +65,7 @@ export class StoreResolver implements Resolve<any>
      */
     constructor(
         private _storesService: StoresService,
-        private _cartService: CartService,
+        private _platformLocation: PlatformLocation,
         private _navigationService: NavigationService,
     )
     {
@@ -82,12 +82,35 @@ export class StoreResolver implements Resolve<any>
      * @param state
      */
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any>
-    {     
+    {   
+        
+        // ----------------------
+        // Get store by URL
+        // ----------------------
+
+        let fullUrl = (this._platformLocation as any).location.origin;
+        let domain = fullUrl.replace(/^(https?:|)\/\//, '').split(':')[0]; // this will get the domain from the URL
+
+        let domainNameArr = domain.split('.'); domainNameArr.shift();
+        let domainName = domainNameArr.join("."); 
+        let subDomainName = domain.split('.')[0];
+
+        let paramsArr = state.url.indexOf("?") > -1 ? state.url.split("?")[1].split("&").map(item=>{
+            return {
+                key :  item.split("=")[0],
+                value :  item.split("=")[1]
+            }
+        }) : null;
+
+        let storeIdIndex = paramsArr ? paramsArr.findIndex(item => item.key === "storeId") : -1;
+        let cartIdIndex = paramsArr ? paramsArr.findIndex(item => item.key === "cartId") : -1;
+        let storeId = storeIdIndex > -1 ? paramsArr[storeIdIndex].value : null;
+        let cartId = cartIdIndex > -1 ? paramsArr[cartIdIndex].value : null;
+         
         return forkJoin([
-            this._storesService.getStoreByDomainName(),
-            // For Error Simulation
+            (storeId && cartId && subDomainName === "payment") ? this._storesService.getStoreById(storeId, cartId) : this._storesService.getStoreByDomainName(),
             this._navigationService.get(),
-            // this._httpstatService.get(418)
+            // this._httpstatService.get(418) // For Error Simulation
         ]);
     }
 }

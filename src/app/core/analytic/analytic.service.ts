@@ -4,11 +4,9 @@ import { Observable, ReplaySubject } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { CustomerActivity } from './analytic.types';
 import { AppConfig } from 'app/config/service.config';
-import { JwtService } from 'app/core/jwt/jwt.service';
 import { LogService } from 'app/core/logging/log.service';
 import { AuthService } from '../auth/auth.service';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { IpAddressService } from '../ip-address/ip-address.service';
 import { StoresService } from '../store/store.service';
 
 @Injectable({
@@ -25,13 +23,9 @@ export class AnalyticService
         private _httpClient: HttpClient,
         private _apiServer: AppConfig,
         private _authService: AuthService,
-        private _jwt: JwtService,
         private _logging: LogService,
         private _deviceService: DeviceDetectorService,
-        private _ipAddressService: IpAddressService,
-        private _storeService: StoresService,
-
-
+        private _storesService: StoresService,
     )
     {
     }
@@ -72,7 +66,7 @@ export class AnalyticService
     postActivity(bodyActivity: CustomerActivity): Observable<any>
     {
         //get storeId
-        var _storeId = this._storeService.storeId$;
+        var _storeId = this._storesService.storeId$;
 
         //get device info (browser info, os info, device nodel infp)
         var device = this._deviceService.getDeviceInfo();

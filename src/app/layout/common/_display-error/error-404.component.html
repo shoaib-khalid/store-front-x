@@ -5,8 +5,10 @@
         <div class="flex flex-col w-full sm:w-1/2 flex-auto items-center justify-center">
             <div class="mt-10 text-4xl md:text-7xl font-extrabold tracking-tight leading-tight md:leading-none text-center">Oops!</div>
             <div class="mt-2 text-4xl md:text-10xl font-semibold tracking-tight leading-tight md:leading-none text-primary text-center">404</div>
-            <div class="mt-2 text-4xl md:text-5xl font-semibold tracking-tight leading-tight md:leading-none text-center">Page Not Found !</div>
-            <div class="mt-4 max-w-120 text-lg md:text-xl font-medium tracking-tight text-center text-secondary">The store you are looking for might have been removed, had its name changed or is temporarily unavailable.</div>
+            <div class="mt-2 text-4xl md:text-5xl font-semibold tracking-tight leading-tight md:leading-none text-center">{{ error ? error.title : "Page Not Found !"}}</div>
+            <div class="mt-4 max-w-120 text-lg md:text-xl font-medium tracking-tight text-center text-secondary">
+                {{ error ? error.message : "The store you are looking for might have been removed, had its name changed or is temporarily unavailable." }}
+            </div>
             <a
                 class="flex flex-row items-center mt-12 font-medium bg-primary-500 py-2 px-4 rounded"
                 href="https://www.symplified.biz">

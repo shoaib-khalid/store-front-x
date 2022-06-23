@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Observable, of, Subject, throwError } from 'rxjs';
-import { catchError, takeUntil, delay, retryWhen, concatMap } from 'rxjs/operators';
-import { JwtService } from 'app/core/jwt/jwt.service';
+import { takeUntil, delay, retryWhen, concatMap } from 'rxjs/operators';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { CartService } from 'app/core/cart/cart.service';
-import { Router, RoutesRecognized } from '@angular/router';
+import { Router } from '@angular/router';
 import { Store } from './store/store.types';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { AnalyticService } from './analytic/analytic.service';
@@ -13,8 +12,7 @@ import { IpAddressService } from './ip-address/ip-address.service';
 import { CookieService } from 'ngx-cookie-service';
 import { StoresService } from './store/store.service';
 import { AppConfig } from 'app/config/service.config';
-import { Customer, User } from './user/user.types';
-import { Error500Service } from './error-500/error-500.service';
+import { DisplayErrorService } from './display-error/display-error.service';
 
 export const retryCount = 3;
 export const retryDelay = 1000;
@@ -42,26 +40,27 @@ export class CoreInterceptor implements HttpInterceptor
         private _ipAddressService: IpAddressService,
         private _storesService: StoresService,
         private _cookieService: CookieService,
-        private _error500Service: Error500Service,
-        private _apiServer: AppConfig,
-
+        private _displayErrorService: DisplayErrorService,
+        private _apiServer: AppConfig
     )
     {
         // Get User IP Address
         this._ipAddressService.ipAdressInfo$
-        .subscribe((response:any)=>{
-            if (response) {
-                this.ipAddress = response.ip_addr;                
-            }
-        });
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((response:any)=>{
+                if (response) {
+                    this.ipAddress = response.ip_addr;                
+                }
+            });
 
         // Get current store
         this._storesService.store$
-        .pipe(takeUntil(this._unsubscribeAll))
-        .subscribe((response: Store)=>{ 
-            this.store = response
-
-        });
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((response: Store)=>{ 
+                if (response) {
+                    this.store = response
+                }
+            });
 
         //get customer id
         this.ownerId = this._cookieService.get('CustomerId');
@@ -89,7 +88,7 @@ export class CoreInterceptor implements HttpInterceptor
                   concatMap((error, count) => {
 
                     // set show error 500 page to false
-                    this._error500Service.hide();
+                    this._displayErrorService.hide();
 
                     const substring =  String(error.status)[0]
                     // retry 'retryCount' amount of times
@@ -99,8 +98,8 @@ export class CoreInterceptor implements HttpInterceptor
                     }
 
                     // when already retried 'retryCount' amount of times
-                    else if (count === retryCount) {
-                        this._error500Service.show(this._apiServer.settings.logging === 0 ? error.message : null);
+                    else if (count === retryCount) {                        
+                        this._displayErrorService.show(this._apiServer.settings.logging === 0 ? { title: "Internal Server Error", code: error.status , message: error.message, type: '5xx'} : null);
                     }
                     
                     // Ignore intercept for login () clients/authenticate                
