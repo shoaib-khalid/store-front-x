@@ -16,6 +16,21 @@ export interface Cart
     store?: Store;
 }
 
+export interface CartById
+{
+    id?                 : string;
+    customerId?         : string;
+    storeId?            : string;
+    storeVoucherCode    : string;
+    deliveryQuotationId : string;
+    deliveryType        : string;
+    created             : string;
+    updated             : string;
+    store               : Store;
+    isOpen              : boolean;
+    stage               : string;
+}
+
 export interface CartItem
 {
     id?: string;

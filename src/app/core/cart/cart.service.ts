@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of, ReplaySubject } from 'rxjs';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
-import { Cart, CartItem, CustomerCart } from 'app/core/cart/cart.types';
+import { Cart, CartItem, CustomerCart, CartById } from 'app/core/cart/cart.types';
 import { AppConfig } from 'app/config/service.config';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { LogService } from 'app/core/logging/log.service';
@@ -106,8 +106,8 @@ export class CartService
                 // and userId belong to the same owner
                 if (userId && this.cartId$) {
                     this._logging.debug("userId detected (logged in user), and cartId already exists");
-                    this.getCarts(this.cartId$, userId, storeId).subscribe((result)=>{
-                        if (result.length) {
+                    this.getCartsById(this.cartId$).subscribe((result)=>{                        
+                        if (result.customerId === this.cartId$) {
                             this._logging.debug("cartId matched to userId, loading the getCartItems()");
                             this.getCartItems(this.cartId$).subscribe();
                         } else {
@@ -126,7 +126,9 @@ export class CartService
                     });
                 } else if (this.cartId$) {
                     this._logging.debug("Guess user detected, cartId already exists");
-                    this.getCartItems(this.cartId$).subscribe();
+                    this.getCartItems(this.cartId$).subscribe((result) => {
+                        console.log("cartId: " + this.cartId$, result);
+                    });
                 } else {
                     userId ? this._logging.debug("User detected, no cartId found!") : this._logging.debug("Guess user detected, no cartId found!");
                     const createCartBody = {
@@ -134,10 +136,7 @@ export class CartService
                         storeId     : storeId,
                     }
                     this.createCart(createCartBody).subscribe((result)=>{
-                        // set to local storage
-                        this.cartId = result.id;
-                        // get cart items
-                        this.getCartItems(this.cartId$).subscribe();
+                        console.log("new cart created", result);
                     });
                 }
             })
@@ -160,9 +159,9 @@ export class CartService
         const header = {  
             headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
             params: {
-                id,
                 customerId,
-                storeId
+                storeId,
+                id
             }
         };
 
@@ -174,6 +173,36 @@ export class CartService
                 ),
                 switchMap(async (response: any) => {
                     this._logging.debug("Response from CartService (getCarts)", response);
+
+                    return response["data"].content;
+                })
+            );
+    }
+
+    /**
+     * 
+     * @param customerId 
+     * @returns 
+     */
+    getCartsById(id: string): Observable<CartById>
+    {
+        let orderService = this._apiServer.settings.apiServer.orderService;
+
+        const header = {  
+            headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
+            params: {
+                id
+            }
+        };
+
+        return this._httpClient.get<any>(orderService + '/carts/' + id, header)
+            .pipe(
+                catchError(() =>
+                    // Return false
+                    of(false)
+                ),
+                switchMap(async (response: any) => {
+                    this._logging.debug("Response from CartService (getCartsById)", response);
 
                     return response["data"].content;
                 })
