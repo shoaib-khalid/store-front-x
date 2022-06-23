@@ -107,11 +107,11 @@ export class CartService
                 if (userId && this.cartId$) {
                     this._logging.debug("userId detected (logged in user), and cartId already exists");
                     this.getCartsById(this.cartId$).subscribe((result)=>{                        
-                        if (result.customerId === this.cartId$) {
+                        if (result.customerId === userId) {
                             this._logging.debug("cartId matched to userId, loading the getCartItems()");
                             this.getCartItems(this.cartId$).subscribe();
                         } else {
-                            this._logging.debug("cartId does not belong to the userId, deleting the cartId and re-creating a new one");
+                            this._logging.debug("local cartId does not belong to the userId, deleting the cartId and re-creating a new one");
                             const createCartBody = {
                                 customerId  : userId, 
                                 storeId     : storeId,
@@ -204,7 +204,7 @@ export class CartService
                 switchMap(async (response: any) => {
                     this._logging.debug("Response from CartService (getCartsById)", response);
 
-                    return response["data"].content;
+                    return response["data"];
                 })
             );
     }

@@ -1534,7 +1534,7 @@ export class LandingCheckoutComponent implements OnInit
                         let closeTime = new Date();
                         closeTime.setHours(Number(item.closeTime.split(":")[0]), Number(item.closeTime.split(":")[1]), 0);
 
-                        if(todayDate >= openTime && todayDate < closeTime ) {
+                        if(storeSnooze && todayDate >= openTime && todayDate < closeTime ) {
                             // console.info("We are OPEN today!");
 
                             // --------------------
