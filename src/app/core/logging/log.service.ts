@@ -73,7 +73,7 @@ export class LogService {
                 if (params.length > 1) {
                     value += "\nExtra Info: " + this.formatParams(params);
                 }
-                console.log(value);
+                console.log('%c' + value, 'color: #ADFF2F');
             }
             
             // Log the value

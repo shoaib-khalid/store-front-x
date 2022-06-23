@@ -38,7 +38,7 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
     message: string;
     daysArray = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
     storeSnooze: StoreSnooze = null;
-    show500: boolean;
+    show500: boolean = false;
     errorMessage: string = '';
 
     floatingMessageData = {};
@@ -103,24 +103,26 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
         this._storesService.store$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((response: Store) => {
-                this.store = response;
+                if (response) {                    
+                    this.store = response;
         
-                //This is to be passed to floating-message
-                // this.floatingMessageData = { storeId: this.store.id, url: this.sanatiseUrl };
+                    //This is to be passed to floating-message
+                    // this.floatingMessageData = { storeId: this.store.id, url: this.sanatiseUrl };
 
-
-                this._storesService.storeSnooze$
-                    .subscribe((response: StoreSnooze) => {
-                        this.storeSnooze = response;
-                        
-                        if (this.store && this.storeSnooze) {
-                            // check store timings
-                            this.checkStoreTiming(this.store.storeTiming, this.storeSnooze);
-                        }
-        
-                        // Mark for check
-                        this._changeDetectorRef.markForCheck();
-                    });
+                    this._storesService.storeSnooze$
+                        .pipe(takeUntil(this._unsubscribeAll))
+                        .subscribe((response: StoreSnooze) => {
+                            this.storeSnooze = response;
+                            
+                            if (this.store && this.storeSnooze) {
+                                // check store timings
+                                this.checkStoreTiming(this.store.storeTiming, this.storeSnooze);
+                            }
+            
+                            // Mark for check
+                            this._changeDetectorRef.markForCheck();
+                        });
+                }
 
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
@@ -130,44 +132,46 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
         this._navigationService.navigation$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((navigation: Navigation) => {
-                
-                this.navigation = navigation;                
+                if (navigation) {
+                    this.navigation = navigation;                
 
-                let navigationObjectIndex =  navigation.default.findIndex(item => item.id === 'product-categories');
-                this._storesService.storeCategories$
-                    .pipe(takeUntil(this._unsubscribeAll))
-                    .subscribe((categories: any) => {
-                        
-                        this.navigation.default[navigationObjectIndex].children = [
-                            {
-                                id: 'all-products',
-                                title: 'All Products',
-                                type: "basic",
-                                exactMatch: true,
-                                link : '/catalogue/all-products',
-                                function: ()=> this.reload(),
-                                
-                            }
-                        ];
-
-                        if (categories) {
-                            categories.forEach(category => {
-                                let categorySlug = this.getCategorySlug(category.name)
-                                this.navigation.default[navigationObjectIndex].children.push( 
+                    let navigationObjectIndex =  navigation.default.findIndex(item => item.id === 'product-categories');
+                    this._storesService.storeCategories$
+                        .pipe(takeUntil(this._unsubscribeAll))
+                        .subscribe((categories: any) => {
+                            if (categories) {
+                                this.navigation.default[navigationObjectIndex].children = [
                                     {
-                                        id: categorySlug,
-                                        title: category.name,
+                                        id: 'all-products',
+                                        title: 'All Products',
                                         type: "basic",
                                         exactMatch: true,
-                                        link : '/catalogue/' + categorySlug,
-                                        function: ()=> this.reload()
-                                    } 
-                                 ) 
-                            })
-                        }
-                        
-                    });
-
+                                        link : '/catalogue/all-products',
+                                        function: ()=> this.reload(),
+                                        
+                                    }
+                                ];
+        
+                                if (categories) {
+                                    categories.forEach(category => {
+                                        let categorySlug = this.getCategorySlug(category.name)
+                                        this.navigation.default[navigationObjectIndex].children.push( 
+                                            {
+                                                id: categorySlug,
+                                                title: category.name,
+                                                type: "basic",
+                                                exactMatch: true,
+                                                link : '/catalogue/' + categorySlug,
+                                                function: ()=> this.reload()
+                                            } 
+                                         ) 
+                                    })
+                                }
+                            }
+                            // Mark for check
+                            this._changeDetectorRef.markForCheck();
+                        });
+                }
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
@@ -204,7 +208,6 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
                         );
                     }
                 }                
-
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
@@ -213,7 +216,6 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
         this._fuseMediaWatcherService.onMediaChange$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe(({matchingAliases}) => {
-
                 // Check if the screen is small
                 this.isScreenSmall = !matchingAliases.includes('md');
             });
@@ -222,17 +224,23 @@ export class MarketplaceLayoutComponent implements OnInit, OnDestroy
         this._platformsService.platform$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((platform: Platform) => {
-                this.platform = platform;
+                if (platform) {
+                    this.platform = platform;
+                }
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
             });
 
         // Subscribe to show 500
         this._error500Service.show500$
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((any) => {
-                this.show500 = any;
-            });
-
-
+            .subscribe((response: boolean) => {
+                if(response) {
+                    this.show500 = response;
+                }
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            })
     }
 
     /**

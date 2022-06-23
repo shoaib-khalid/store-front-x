@@ -45,44 +45,34 @@ export class LandingHomeComponent implements OnInit
         this._storesService.store$
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((storeResponse) => {
-                this.store = storeResponse;
-
+                if (storeResponse) {
+                    this.store = storeResponse;
+                }
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
 
-            // Get store categories data
-            this._storesService.categories$
+        // Get store categories data
+        this._storesService.categories$
+            .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((response) => {
-                
                 if (response) {
-                    this.storeCategories = response;
-                                        
+                    this.storeCategories = response;                       
                 }
-
-                // this.storeCategories.forEach(item => {
-                //     this.images.push({
-                //         path: item.thumbnailUrl
-                //     });
-                // });
-
-                // this.onResize();
-                
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
 
         // Get the products pagination
         this._storeService.storeCategoryPagination$
-        .pipe(takeUntil(this._unsubscribeAll))
-        .subscribe((pagination: CategoryPagination) => {
-            
-            // Update the pagination
-            this.pagination = pagination;                   
-
-            // Mark for check
-            this._changeDetectorRef.markForCheck();
-        });
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((pagination: CategoryPagination) => {
+                if (pagination) {
+                    this.pagination = pagination;                   
+                }
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
     }
 
     

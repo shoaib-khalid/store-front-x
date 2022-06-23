@@ -9,6 +9,8 @@ import { takeUntil } from 'rxjs/operators';
 import { LogService } from 'app/core/logging/log.service';
 import { FormControl } from '@angular/forms';
 import { AuthService } from '../auth/auth.service';
+import { PlatformLocation } from '@angular/common';
+import { CartService } from '../cart/cart.service';
 
 @Injectable({
     providedIn: 'root'
@@ -43,6 +45,8 @@ export class StoresService
      * Constructor
      */
     constructor(
+        private _platformLocation: PlatformLocation,
+        private _cartService: CartService,
         private _authService: AuthService,
         private _httpClient: HttpClient,
         private _apiServer: AppConfig,
@@ -432,14 +436,33 @@ export class StoresService
         )
     }
 
-    getStoreByDomainName(domainName: string): Observable<Store>
+    getStoreByDomainName(): Observable<Store>
     {
+        // ----------------------
+        // Get store by URL
+        // ----------------------
+
+        let fullUrl = (this._platformLocation as any).location.origin;
+        let domain = fullUrl.replace(/^(https?:|)\/\//, '').split(':')[0]; // this will get the domain from the URL
+
+        let domainNameArr = domain.split('.'); domainNameArr.shift();
+        let domainName = domainNameArr.join("."); 
+        let subDomainName = domain.split('.')[0];
+
+        let isImpersonate = this._apiServer.settings.env.impersonate;
+        
+        // hardcord localhost to cinema-online (for now)
+        if (isImpersonate === true) {
+            // check for local development
+            domain = domain.split('.')[0] + this._apiServer.settings.env.impersonateUrl;
+        }
+
         let productService = this._apiServer.settings.apiServer.productService;
 
         const header = {
             headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
             params: {
-                "domain": domainName
+                "domain": domain
             }
         };
         
@@ -452,13 +475,30 @@ export class StoresService
                 switchMap(async (response: any) => {
                     this._logging.debug("Response from StoresService (getStoreByDomainName)", response);
 
-                    const store = response["data"].content.length > 0 ? response["data"].content[0] : null;
+                    let store = response["data"].content[0];
+                    if (store) {
+                        // Update local storage
+                        this.storeId = store.id;
+
+                        // Get Store Categories (for hamburger navigation)
+                        this.getStoreCategories().subscribe();
+
+                        // Get Store Categories (for home navigation)
+                        this.getCategories().subscribe();
+
+                        // Resolve cart 
+                        this._cartService.resolveCart(store.id).subscribe();
+
+                        // Get Store Snooze
+                        this.getStoreSnooze().subscribe();
+                        
+                    } else {
+                        // Update local storage
+                        this.storeId = "";
+                    }
                     
                     // Update the store
                     this._store.next(store);
-
-                    // Update local storage
-                    this.storeId = store !== null ? store.id : '';
 
                     // Return the store
                     return store;

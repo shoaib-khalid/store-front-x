@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRoute, ActivatedRouteSnapshot, Resolve, Router, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
 import { forkJoin, Observable, of } from 'rxjs';
-import { switchMap, take, map, tap, catchError, filter } from 'rxjs/operators';
 import { MessagesService } from 'app/layout/common/messages/messages.service';
 import { NavigationService } from 'app/core/navigation/navigation.service';
 import { NotificationsService } from 'app/layout/common/notifications/notifications.service';
@@ -9,17 +8,11 @@ import { QuickChatService } from 'app/layout/common/quick-chat/quick-chat.servic
 import { ShortcutsService } from 'app/layout/common/shortcuts/shortcuts.service';
 import { UserService } from 'app/core/user/user.service';
 import { StoresService } from './core/store/store.service';
-import { PlatformLocation } from '@angular/common';
 import { CartService } from 'app/core/cart/cart.service';
-import { Cart } from 'app/core/cart/cart.types';
 import { IpAddressService } from 'app/core/ip-address/ip-address.service';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { AuthService } from 'app/core/auth/auth.service';
-import { AppConfig } from 'app/config/service.config';
 import { PlatformService } from './core/platform/platform.service';
-import { HttpStatService } from './mock-api/httpstat/httpstat.service';
-import { CookieService } from 'ngx-cookie-service';
-import { FloatingBannerService } from './core/floating-banner/floating-banner.service';
 
 @Injectable({
     providedIn: 'root'
@@ -67,58 +60,15 @@ export class InitialDataResolver implements Resolve<any>
 })
 export class StoreResolver implements Resolve<any>
 {
-    url = {
-        full: null,
-        domain: null,
-        domainName: null,
-        subDomainName: null,
-    };
-
-    cartId: string;
-    ownerId: string = '';
-
     /**
      * Constructor
      */
     constructor(
-        private _apiServer: AppConfig,
         private _storesService: StoresService,
         private _cartService: CartService,
-        private _platformLocation: PlatformLocation,
-        private _authService: AuthService,
-        private _jwtService: JwtService,
         private _navigationService: NavigationService,
-        private _httpstatService: HttpStatService,
-        private _activatedRoute: ActivatedRoute,
-        private _cookieService: CookieService,
-        private _floatingBannerService: FloatingBannerService,
-        private _router: Router
-
     )
     {
-
-        // ----------------------
-        // Get store by URL
-        // ----------------------
-
-        this.url.full = (this._platformLocation as any).location.origin;
-        let sanatiseUrl = this.url.full.replace(/^(https?:|)\/\//, '').split(':')[0]; // this will get the domain from the URL
-        
-        this.url.domain = sanatiseUrl;
-
-        let domainNameArr = sanatiseUrl.split('.');
-        domainNameArr.shift();
-
-        this.url.domainName = domainNameArr.join("."); 
-        this.url.subDomainName = sanatiseUrl.split('.')[0];
-
-        let isImpersonate = this._apiServer.settings.env.impersonate;
-        
-        // hardcord localhost to cinema-online (for now)
-        if (isImpersonate === true) {
-            // check for local development
-            this.url.domain = this.url.domain.split('.')[0] + this._apiServer.settings.env.impersonateUrl;
-        }
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -133,237 +83,12 @@ export class StoreResolver implements Resolve<any>
      */
     resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<any>
     {     
-        return forkJoin([this._storesService.getStoreByDomainName(this.url.domain).pipe(
-            take(1),
-            switchMap(() => {
-
-                // check if store id exists
-                if (this._storesService.storeId$ && this._storesService.storeId$ !== null) {
-
-                    // -----------------------
-                    // Get Store Category
-                    // -----------------------
-
-                    this._storesService.getStoreCategories()
-                        .subscribe(()=>{
-
-                        });
-
-                    this._storesService.getCategories()
-                        .subscribe(()=>{
-
-                        });
-
-                    // -----------------------
-                    // check if customer id exists
-                    // -----------------------
-
-                    // if customerId null means guest
-                    this.ownerId = this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid ? this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid : null
-
-                    if (this.ownerId) {
-                        
-                        this._cartService.getCarts(this.ownerId, this._storesService.storeId$)
-                            .subscribe(response => {
-
-                                // if got customer cart Id
-                                if (response['content'].length > 0) {
-                                    const customerCartId = response['content'][0].id
-                                    // set cart id
-                                    this._cartService.cartId = customerCartId;
-                                    if(customerCartId && customerCartId !== '') {
-                                        this.getCartItems(customerCartId);
-                                    }
-                                }
-                                // if no customer cart Id but have current cart Id
-                                else if (response['content'].length === 0 && this._cartService.cartId$) {
-                                    this.cartId = this._cartService.cartId$;
-                                    if(this.cartId && this.cartId !== '') {                            
-                                        this.getCartItems(this.cartId);
-                                    }
-                                }
-                                // if no customer cart Id and no current cart Id, create new cart
-                                else {
-                                    const createCartBody = {
-                                        customerId: this.ownerId, 
-                                        storeId: this._storesService.storeId$,
-                                    }
-                                    this._cartService.createCart(createCartBody)
-                                        .subscribe((cart: Cart)=>{
-                                                // set cart id
-                                                this.cartId = cart.id;
-                
-                                                if(this.cartId && this.cartId !== '') {
-                                                    this.getCartItems(this.cartId);
-                                                }
-                                        });
-
-                                }
-                            })
-                            
-                    }
-                    // no customer Id aka guest
-                    else {
-                        
-                        // Set promo banner
-                        let fullUrl = (this._platformLocation as any).location.origin;
-                        let sanatiseUrl = fullUrl.replace(/^(https?:|)\/\//, '').split(':')[0]; // this will get the domain from the URL
-                        let redirectUrl = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-up' +
-                                '?redirectURL=' + encodeURI('https://' + sanatiseUrl  + this._router.url) + '&guestCartId=' + this._cartService.cartId$ + '&storeId=' + this._storesService.storeId$;
-
-                        this._floatingBannerService.setSmallBanner('assets/gif/SignUp_Now_Button_Click_GIF.gif', redirectUrl)
-                        this._floatingBannerService.setBigBanner('assets/promo/Sign-Up-PopUp-Banner_400x500.png', redirectUrl)
-                        
-                        // -----------------------
-                        // check if cart id exists
-                        // -----------------------
-
-                        // check if got cart Id
-                        if (this._cartService.cartId$) {
-
-                            if (this._activatedRoute.snapshot.queryParamMap.get('customerCartId')) {
-                                this.cartId = this._activatedRoute.snapshot.queryParamMap.get('customerCartId')
-    
-                                // set customer cart id to local storage
-                                this._cartService.cartId = this.cartId;
-                                // then get cart items
-                                this.getCartItems(this.cartId);
-                                
-                            }
-                            else {
-                                this.cartId = this._cartService.cartId$;
-                                if(this.cartId && this.cartId !== '') {                            
-                                    this.getCartItems(this.cartId);
-                                }
-                            }
-                            
-                        }
-                        // no cart Id
-                        else {
-                            const createCartBody = {
-                                customerId: null, 
-                                storeId: this._storesService.storeId$,
-                            }
-                            this._cartService.createCart(createCartBody)
-                            .subscribe((cart: Cart)=>{
-                                    // set cart id
-                                    this.cartId = cart.id;
-    
-                                    if(this.cartId && this.cartId !== '') {
-                                        this.getCartItems(this.cartId);
-                                    }
-                                });
-                        }
-                    }
-
-                    // LAMA PUNYA
-
-                    // if (this._cartService.cartId$) {
-
-
-
-                    //     if (this._activatedRoute.snapshot.queryParamMap.get('customerCartId')) {
-                    //         this.cartId = this._activatedRoute.snapshot.queryParamMap.get('customerCartId')
-
-                    //         // set customer cart id to local storage
-                    //         this._cartService.cartId = this.cartId;
-                    //         // then get cart items
-                    //         this.getCartItems(this.cartId);
-                            
-                    //     }
-                    //     else {
-                    //         this.cartId = this._cartService.cartId$;
-                    //         if(this.cartId && this.cartId !== '') {                            
-                    //             this.getCartItems(this.cartId);
-                    //         }
-                    //     }
-                        
-                    // } else {
-
-                    //     // if customerId null means guest
-                    //     let customerId = this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid ? this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid : null
-
-                        
-                    //     if (customerId != null || this.ownerId != '') {
-                    //         this._cartService.getCarts((customerId != null) ? customerId : this.ownerId, this._storesService.storeId$)
-                    //             .subscribe(response => {
-
-                    //                 if (response['content'].length) {
-                    //                     const customerCartId = response['content'][0].id
-                    //                     // set cart id
-                    //                     this._cartService.cartId = customerCartId;
-                    //                     if(customerCartId && customerCartId !== '') {
-                    //                         this.getCartItems(customerCartId);
-                    //                     }
-                    //                 }
-                    //                 else {
-                                        
-                    //                     const createCartBody = {
-                    //                         customerId: customerId, 
-                    //                         storeId: this._storesService.storeId$,
-                    //                     }
-                    //                     this._cartService.createCart(createCartBody)
-                    //                     .subscribe((cart: Cart)=>{
-                    //                             // set cart id
-                    //                             this.cartId = cart.id;
-                
-                    //                             if(this.cartId && this.cartId !== '') {
-                    //                                 this.getCartItems(this.cartId);
-                    //                             }
-                    //                         });
-                    //                 }
-                    //             })
-                                
-                    //         }
-                    //     else {
-                    //         const createCartBody = {
-                    //             customerId: customerId, 
-                    //             storeId: this._storesService.storeId$,
-                    //         }
-                    //         this._cartService.createCart(createCartBody)
-                    //         .subscribe((cart: Cart)=>{
-                    //                 // set cart id
-                    //                 this.cartId = cart.id;
-    
-                    //                 if(this.cartId && this.cartId !== '') {
-                    //                     this.getCartItems(this.cartId);
-                    //                 }
-                    //             });
-                    //     }
-                    // }
-
-                    // -----------------------
-                    // Get Store Snooze
-                    // -----------------------
-                    
-                    this._storesService.getStoreSnooze()
-                        .subscribe(() => {
-                             
-                        });
-
-                } else if (this.url.subDomainName === "symplified" && state.url.indexOf("/payment-redirect") > -1) {
-                    // redirecting
-                } else {
-                    // this._router.navigate(['home']);
-                    // alert("no store id");
-                    console.error("No store found");
-                }
-
-                return of(true);
-            })
-        ),
-        // For Error Simulation
-        this._navigationService.get(),
-        // this._httpstatService.get(418)
+        return forkJoin([
+            this._storesService.getStoreByDomainName(),
+            // For Error Simulation
+            this._navigationService.get(),
+            // this._httpstatService.get(418)
         ]);
-    }
-
-    getCartItems(cartId: string){        
-        if (cartId) {
-            this._cartService.getCartItems(cartId)
-                .subscribe((response)=>{
-                });
-        }
     }
 }
 

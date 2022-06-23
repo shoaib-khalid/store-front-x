@@ -24,7 +24,7 @@ export class CartService
         private _httpClient: HttpClient,
         private _apiServer: AppConfig,
         private _authService: AuthService,
-        private _jwt: JwtService,
+        private _jwtService: JwtService,
         private _logging: LogService
     )
     {
@@ -67,14 +67,14 @@ export class CartService
     }
 
     /**
-     * Setter for cartId
+     * Setter for cartId local storage
      */
     set cartId(value: string) {
         localStorage.setItem('cartId', value);
     }
 
     /**
-     * Getter for cartId
+     * Getter for cartId local storage
      */
     get cartId$(): string
     {
@@ -93,34 +93,73 @@ export class CartService
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
+    // ------------------
+    // Resolve Carts
+    // ------------------
+
+    resolveCart(storeId: string): Observable<any>
+    {
+        let userId = this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid;
+        return of(true).pipe(
+            map(()=>{
+                // If both userId and cartId exists, check whether the cartId 
+                // and userId belong to the same owner
+                if (userId && this.cartId$) {
+                    this._logging.debug("userId detected (logged in user), and cartId already exists");
+                    this.getCarts(this.cartId$, userId, storeId).subscribe((result)=>{
+                        if (result.length) {
+                            this._logging.debug("cartId matched to userId, loading the getCartItems()");
+                            this.getCartItems(this.cartId$).subscribe();
+                        } else {
+                            this._logging.debug("cartId does not belong to the userId, deleting the cartId and re-creating a new one");
+                            const createCartBody = {
+                                customerId  : userId, 
+                                storeId     : storeId,
+                            }
+                            this.createCart(createCartBody).subscribe((result)=>{
+                                // set to local storage
+                                this.cartId = result.id;
+                                // get cart items
+                                this.getCartItems(this.cartId$).subscribe();
+                            });
+                        }
+                    });
+                } else if (this.cartId$) {
+                    this._logging.debug("Guess user detected, cartId already exists");
+                    this.getCartItems(this.cartId$).subscribe((result) => {
+                        console.log("cartId: " + this.cartId$, result);
+                    });
+                } else {
+                    userId ? this._logging.debug("User detected, no cartId found!") : this._logging.debug("Guess user detected, no cartId found!");
+                    const createCartBody = {
+                        customerId  : userId, 
+                        storeId     : storeId,
+                    }
+                    this.createCart(createCartBody).subscribe((result)=>{
+                        console.log("new cart created", result);
+                    });
+                }
+            })
+        );
+    }
+
     // -------------
     // Cart
     // -------------
 
     /**
-     * Get the current logged in cart data
-     */
-    getCart(): Observable<Cart>
-    {
-        return this._httpClient.get<Cart>('api/common/cart').pipe(
-            tap((cart) => {
-                this._cart.next(cart);
-            })
-        );
-    }
-    /**
-     * (Used by app.resolver)
      * 
      * @param customerId 
      * @returns 
      */
-    getCarts(customerId: string, storeId: string = null): Observable<Cart>
+    getCarts(id: string, customerId?: string, storeId?: string): Observable<Cart[]>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
 
         const header = {  
             headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
             params: {
+                id,
                 customerId,
                 storeId
             }
@@ -133,10 +172,9 @@ export class CartService
                     of(false)
                 ),
                 switchMap(async (response: any) => {
-                                
                     this._logging.debug("Response from CartService (getCarts)", response);
 
-                    return response["data"];
+                    return response["data"].content;
                 })
             );
     }

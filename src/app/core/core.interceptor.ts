@@ -100,7 +100,6 @@ export class CoreInterceptor implements HttpInterceptor
 
                     // when already retried 'retryCount' amount of times
                     else if (count === retryCount) {
-                        
                         this._error500Service.show(this._apiServer.settings.logging === 0 ? error.message : null);
                     }
                     
