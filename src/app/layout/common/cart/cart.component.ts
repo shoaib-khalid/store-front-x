@@ -169,7 +169,7 @@ export class CartComponent implements OnInit, OnDestroy
             if (this.store.verticalCode === 'FnB' || this.store.verticalCode === 'E-Commerce') {
                 this._router.navigate(['/checkout']);
             } else if (this.store.verticalCode === 'FnB_PK' || this.store.verticalCode === 'ECommerce_PK') {
-                let paymentUrl = "https://payment" + storeFrontDomain + "?storeId=" + this._storesService.storeId$ + "&cartId=" + this._cartService.cartId$;
+                let paymentUrl = "https://payment" + storeFrontDomain + "/checkout?storeId=" + this._storesService.storeId$ + "&cartId=" + this._cartService.cartId$;
                 this._document.location.href = paymentUrl;
             } else {
                 console.error("verticalCode not recognised")

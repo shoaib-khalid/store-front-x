@@ -145,7 +145,7 @@ export class CheckoutService
                         if(store && (store.verticalCode === 'FnB_PK' || store.verticalCode === 'ECommerce_PK')) {
                             this._logging.debug("PAK checkout WILL BE redirect)");
 
-                            let paymentUrl = "https://payment" + storeFrontDomain + "?storeId=" + this._storesService.storeId$ + "&cartId=" + this._cartService.cartId$;
+                            let paymentUrl = "https://payment" + storeFrontDomain + "/checkout?storeId=" + this._storesService.storeId$ + "&cartId=" + this._cartService.cartId$;
                             this._document.location.href = paymentUrl;
                         } else {
                             this._logging.debug("MYS checkout WILL NOT redirect)");
