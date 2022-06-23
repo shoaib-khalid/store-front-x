@@ -13,6 +13,7 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { CartService } from 'app/core/cart/cart.service';
 import { Store } from 'app/core/store/store.types';
 import { DOCUMENT } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 
 @Injectable({
     providedIn: 'root'
@@ -41,6 +42,7 @@ export class CheckoutService
      */
     constructor(
         @Inject(DOCUMENT) private _document: Document,
+        private _activatedRoute: ActivatedRoute,
         private _authService: AuthService,
         private _httpClient: HttpClient,
         private _apiServer: AppConfig,
@@ -143,10 +145,18 @@ export class CheckoutService
                     .pipe(takeUntil(this._unsubscribeAll))
                     .subscribe((store: Store)=>{
                         if(store && (store.verticalCode === 'FnB_PK' || store.verticalCode === 'ECommerce_PK')) {
-                            this._logging.debug("PAK checkout WILL BE redirect)");
-
-                            let paymentUrl = "https://payment" + storeFrontDomain + "/checkout?storeId=" + this._storesService.storeId$ + "&cartId=" + this._cartService.cartId$;
-                            this._document.location.href = paymentUrl;
+                            this._activatedRoute.queryParams
+                                .subscribe(params => {
+                                    let storeId = params['storeId'];
+                                    let cartId = params['cartId'];
+                                    if (storeId && cartId) {
+                                        this._logging.debug("checkout already have storeId & cartId, WILL NOT redirect");
+                                    } else {
+                                        this._logging.debug("PAK checkout WILL BE redirect)");
+                                        let paymentUrl = "https://payment" + storeFrontDomain + "/checkout?storeId=" + this._storesService.storeId$ + "&cartId=" + this._cartService.cartId$;
+                                        this._document.location.href = paymentUrl;
+                                    }
+                                });
                         } else {
                             this._logging.debug("MYS checkout WILL NOT redirect)");
                         }
