@@ -1,7 +1,7 @@
 <div *ngIf="breadcrumbs.length > 0" class="flex flex-col items-center justify-center bg-primary w-full h-16">
     <div class="w-full flex flex-row flex-auto items-center max-w-280 px-5 truncate">
         <div>
-            <a [routerLink]="['']" class="whitespace-nowrap text-white font-semibold cursor-pointer">Home</a>
+            <a (click)="goToHome()" class="whitespace-nowrap text-white font-semibold cursor-pointer">Home</a>
         </div>
         <ng-container *ngFor="let breadcrumb of breadcrumbs; let i = index;">
             <div class="flex items-center ml-1 whitespace-nowrap">

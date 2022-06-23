@@ -87,7 +87,7 @@
                                 alt="Logo image"> -->
                             <img
                                 class="h-18 w-auto cursor-pointer"
-                                [routerLink]="'/home'"
+                                (click)="goToHome()"
                                 [src]="displayStoreLogo(store.storeAssets)"
                                 alt="Logo image">
                             <span class="block md:hidden">{{headerTitle}}</span>

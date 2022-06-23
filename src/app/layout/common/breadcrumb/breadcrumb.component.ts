@@ -1,7 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, NavigationEnd  } from '@angular/router';
 import { IBreadCrumb } from './breadcrumb.types';
-import { filter, distinctUntilChanged } from 'rxjs/operators';
+import { filter, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { DOCUMENT, PlatformLocation } from '@angular/common';
+import { Store } from 'app/core/store/store.types';
+import { StoresService } from 'app/core/store/store.service';
+import { Subject } from 'rxjs';
 
 @Component({
     selector       : 'breadcrumb',
@@ -11,11 +15,18 @@ export class BreadcrumbComponent implements OnInit
 {
 
     public breadcrumbs: IBreadCrumb[]
+    private store: Store;
+
+    private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
      * Constructor
      */
     constructor(
+        @Inject(DOCUMENT) private _document: Document,
+        private _storesService: StoresService,
+        private _platformLocation: PlatformLocation,
+        private _changeDetectorRef: ChangeDetectorRef,
         private _router: Router,
         private _activatedRoute: ActivatedRoute
     )
@@ -37,7 +48,17 @@ export class BreadcrumbComponent implements OnInit
             distinctUntilChanged(),
         ).subscribe(() => {
             this.breadcrumbs = this.buildBreadCrumb(this._activatedRoute.root);            
-        })
+        });
+
+        this._storesService.store$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((store: Store)=>{
+                if (store) {
+                    this.store = store;
+                }
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -97,6 +118,27 @@ export class BreadcrumbComponent implements OnInit
             return this.buildBreadCrumb(route.firstChild, nextUrl, newBreadcrumbs);
         }
         return newBreadcrumbs;
+    }
+
+    goToHome()
+    {
+        // ----------------------
+        // Get store by URL
+        // ----------------------
+
+        let fullUrl = (this._platformLocation as any).location.origin;
+        let domain = fullUrl.replace(/^(https?:|)\/\//, '').split(':')[0]; // this will get the domain from the URL
+
+        let domainNameArr = domain.split('.'); domainNameArr.shift();
+        let domainName = domainNameArr.join("."); 
+        let subDomainName = domain.split('.')[0];
+                
+        if (subDomainName === "payment") {
+            let homeUrl = "https://" + this.store.domain + "/home";
+            this._document.location.href = homeUrl;
+        } else {
+            this._router.navigate(['/home']);
+        }
     }
 
 }

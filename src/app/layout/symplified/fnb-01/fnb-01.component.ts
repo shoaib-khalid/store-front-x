@@ -547,4 +547,25 @@ export class Fnb01LayoutComponent implements OnInit, OnDestroy
         this._document.location.href = redirectURL;
     }
 
+    goToHome() {
+        
+        // ----------------------
+        // Get store by URL
+        // ----------------------
+
+        let fullUrl = (this._platformLocation as any).location.origin;
+        let domain = fullUrl.replace(/^(https?:|)\/\//, '').split(':')[0]; // this will get the domain from the URL
+
+        let domainNameArr = domain.split('.'); domainNameArr.shift();
+        let domainName = domainNameArr.join("."); 
+        let subDomainName = domain.split('.')[0];
+                
+        if (subDomainName === "payment") {
+            let homeUrl = "https://" + this.store.domain + "/home";
+            this._document.location.href = homeUrl;
+        } else {
+            this._router.navigate(['/home']);
+        }
+    }
+
 }
