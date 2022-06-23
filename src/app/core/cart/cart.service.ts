@@ -102,16 +102,19 @@ export class CartService
         let userId = this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid;
         return of(true).pipe(
             map(()=>{
-                // If both userId and cartId exists, check whether the cartId 
-                // and userId belong to the same owner
-                if (userId && this.cartId$) {
-                    this._logging.debug("userId detected (logged in user), and cartId already exists");
-                    this.getCartsById(this.cartId$).subscribe((result)=>{                        
-                        if (result.customerId === userId) {
-                            this._logging.debug("cartId matched to userId, loading the getCartItems()");
-                            this.getCartItems(this.cartId$).subscribe();
+                // First check if user is logged in
+                if (userId) {
+                    this._logging.debug("userId detected (logged in user)");
+                    this.getCarts(userId, storeId).subscribe((result)=> {
+                        // check if logged in user already have the cart from the store
+                        if (result.length) {
+                            this._logging.debug("userId detected (logged in user), cartId EXISTS in user profile");
+                            // set to local storage
+                            this.cartId = result[0].id;
+                            // get cart items
+                            this.getCartItems(result[0].id).subscribe();
                         } else {
-                            this._logging.debug("local cartId does not belong to the userId, deleting the cartId and re-creating a new one");
+                            this._logging.debug("userId detected (logged in user), cartId NOT EXISTS in user profile");
                             const createCartBody = {
                                 customerId  : userId, 
                                 storeId     : storeId,
@@ -125,12 +128,13 @@ export class CartService
                         }
                     });
                 } else if (this.cartId$) {
-                    this._logging.debug("Guess user detected, cartId already exists");
+                    // For Guess
+                    this._logging.debug("Guess user detected, cartId already EXISTS");
                     this.getCartItems(this.cartId$).subscribe();
                 } else {
-                    userId ? this._logging.debug("User detected, no cartId found!") : this._logging.debug("Guess user detected, no cartId found!");
+                    this._logging.debug("Guess user detected, NO cartId FOUND!");
                     const createCartBody = {
-                        customerId  : userId, 
+                        customerId  : null, 
                         storeId     : storeId,
                     }
                     this.createCart(createCartBody).subscribe((result)=>{
@@ -153,7 +157,7 @@ export class CartService
      * @param customerId 
      * @returns 
      */
-    getCarts(id: string, customerId?: string, storeId?: string): Observable<Cart[]>
+    getCarts(customerId?: string, storeId?: string): Observable<Cart[]>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
 
@@ -162,7 +166,6 @@ export class CartService
             params: {
                 customerId,
                 storeId,
-                id
             }
         };
 
