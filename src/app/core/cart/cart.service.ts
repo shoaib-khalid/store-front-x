@@ -126,9 +126,7 @@ export class CartService
                     });
                 } else if (this.cartId$) {
                     this._logging.debug("Guess user detected, cartId already exists");
-                    this.getCartItems(this.cartId$).subscribe((result) => {
-                        console.log("cartId: " + this.cartId$, result);
-                    });
+                    this.getCartItems(this.cartId$).subscribe();
                 } else {
                     userId ? this._logging.debug("User detected, no cartId found!") : this._logging.debug("Guess user detected, no cartId found!");
                     const createCartBody = {
@@ -136,7 +134,10 @@ export class CartService
                         storeId     : storeId,
                     }
                     this.createCart(createCartBody).subscribe((result)=>{
-                        console.log("new cart created", result);
+                        // set to local storage
+                        this.cartId = result.id;
+                        // get cart items
+                        this.getCartItems(this.cartId$).subscribe();
                     });
                 }
             })
