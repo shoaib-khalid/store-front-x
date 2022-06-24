@@ -47,14 +47,14 @@
                             class="flex flex-col items-center justify-center cursor-pointer"
                             [for]="'category-button' + category.id"
                             matRipple>
-                            <div class="relative w-full h-20 mx-3 rounded-md border-2 border-black group-hover:border-primary">
+                            <div class="p-1 flex relative w-full h-20 mx-3 rounded-md border-2 border-black group-hover:border-primary">
                                 <div class="rounded border-2 border-white group-hover:border-white absolute top-0.5 bottom-0.5 left-0.5 right-0.5">
                                     <img
                                     class="object-cover h-full w-full rounded opacity-40 group-hover:opacity-100 group-hover:brightness-50 overflow-hidden"
                                     [src]="(category.thumbnailUrl && category.thumbnailUrl !== null) ? category.thumbnailUrl : displayStoreLogo(store.storeAssets)"
                                     alt="Logo image">
                                 </div>
-                                <span class="my-5 flex w-full absolute items-center justify-center text-center font-bold text-xl group-hover:text-primary">{{category.name}}</span>
+                                <span class="z-10 flex w-full items-center justify-center text-center font-bold text-lg group-hover:text-primary line-clamp-2 self-center">{{category.name}}</span>
                             </div>
                         </label>
                     </div>

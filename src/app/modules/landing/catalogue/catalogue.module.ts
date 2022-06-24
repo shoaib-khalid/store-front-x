@@ -12,6 +12,8 @@ import { LandingCatalogueComponent } from 'app/modules/landing/catalogue/catalog
 import { landingCatalogueRoutes } from 'app/modules/landing/catalogue/catalogue.routing';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { PaginationModule } from 'app/layout/common/pagination/pagination.module';
+import { _StoreProductsModule } from 'app/layout/common/_store-products/store-products.module';
+import { _StoreCategoriesModule } from 'app/layout/common/_store-categories/store-categories.module';
 
 @NgModule({
     declarations: [
@@ -28,7 +30,9 @@ import { PaginationModule } from 'app/layout/common/pagination/pagination.module
         MatPaginatorModule,
         MatMenuModule,
         PaginationModule,
-        SharedModule
+        SharedModule,
+        _StoreProductsModule,
+        _StoreCategoriesModule
     ]
 })
 export class LandingCatalogueModule

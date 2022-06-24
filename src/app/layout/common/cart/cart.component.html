@@ -1,7 +1,7 @@
 <!-- Cart Button -->
 
 <ng-container *ngIf="!user">
-    <div class="relative md:pl-8">
+    <div class="relative">
         <input
             id="shopping-cart-button"
             class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
@@ -9,18 +9,18 @@
             (click)="redirectToStore(store)"
             mat-icon-button>
         <ng-container *ngIf="cartItemQuantity > 0">
-            <span class="absolute -top-1 -right-1 flex items-center justify-center h-3">
-                <span class="flex items-center justify-center flex-shrink-0 min-w-4 h-4 px-1 ml-4 mt-2.5 rounded-full bg-white text-black text-xs font-medium">
+            <span class="absolute top-0 right-0 flex items-center justify-center h-3">
+                <span class="flex items-center justify-center flex-shrink-0 min-w-4 h-4 px-1 rounded-full bg-primary text-white text-xs font-medium">
                     {{cartItemQuantity}}
                 </span>
             </span>
         </ng-container>
         <label 
-            class="flex items-center justify-center w-10 h-10 rounded-full cursor-pointer bg-primary hover:bg-primary-700"
             for="shopping-cart-button"
+            class="flex items-center justify-center w-10 h-10 rounded-full cursor-pointer hover:bg-default group"
             matRipple>
             <mat-icon
-                class="text-black"
+                class="icon-size-5 cursor-pointer text-primary"
                 [svgIcon]="'heroicons_solid:shopping-cart'"></mat-icon>
         </label>
     </div>
@@ -31,20 +31,20 @@
         [matMenuTriggerFor]="cartMenu"
         class="cursor-pointer"
         mat-icon-button>
-        <span class="relative md:pl-8">
-                <ng-container *ngIf="cartItemQuantity > 0">
-                    <span class="absolute -top-1 -right-1 flex items-center justify-center h-3">
-                        <span class="flex items-center justify-center flex-shrink-0 min-w-4 h-4 px-1 ml-4 mt-2.5 rounded-full bg-white text-black text-xs font-medium">
-                            {{cartItemQuantity}}
-                        </span>
+        <span class="relative">
+            <ng-container *ngIf="cartItemQuantity > 0">
+                <span class="absolute top-0 right-0 flex items-center justify-center h-3">
+                    <span class="flex items-center justify-center flex-shrink-0 min-w-4 h-4 px-1 rounded-full bg-primary text-white text-xs font-medium">
+                        {{cartItemQuantity}}
                     </span>
-                </ng-container>
+                </span>
+            </ng-container>
             <label 
                 for="shopping-cart-button"
-                class="flex items-center justify-center w-10 h-10 rounded-full cursor-pointer bg-primary hover:bg-primary-700"
+                class="flex items-center justify-center w-10 h-10 rounded-full cursor-pointer hover:bg-default group"
                 matRipple>
                 <mat-icon
-                    class="icon-size-5 cursor-pointer text-black"
+                    class="icon-size-5 cursor-pointer text-primary"
                     [svgIcon]="'heroicons_solid:shopping-cart'"></mat-icon>
             </label>
         </span>

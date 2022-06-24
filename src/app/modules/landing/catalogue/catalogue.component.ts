@@ -333,51 +333,6 @@ export class LandingCatalogueComponent implements OnInit
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
-    // chooseCategory(id: string = null) {
-
-    //     if (id){
-    //         let index = this.storeCategories.findIndex(item => item.id === id);
-    //         if (index > -1) {
-    //             let slug = this.storeCategories[index].name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '');
-    //             this._router.navigate(['/catalogue/' + slug]);
-    //         } else {
-    //             console.error("Invalid category: Category not found");
-    //         }
-    //     } else {
-    //         this._router.navigate(['/catalogue/all-products']);
-    //     }
-
-    // }
-
-    getCategorySlug(categoryName: string) {
-        return categoryName.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '');
-    }
-
-    changeCatalogue(value, event = null) {
-
-        // find if categoty exists
-        let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === value);
-        // since all-product is not a real category, it will set to null
-        this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
-        // catalogue slug will be use in url
-        this.catalogueSlug = value;
-        
-        this._router.navigate(['catalogue/' + value]);
-
-        this.reload();
-
-        // Mark for check
-        this._changeDetectorRef.markForCheck();
-    }
-
-    decrement() {
-        this.quantity --;
-    }
-    
-    increment() {
-        this.quantity ++;
-    }
-
     onChangePage(pageOfItems: Array<any>) {
         
         // update current page of items
@@ -397,61 +352,4 @@ export class LandingCatalogueComponent implements OnInit
         this._changeDetectorRef.markForCheck();
     }
 
-    isProductOutOfStock(product: Product): boolean
-    {
-        if (product.allowOutOfStockPurchases === true) {
-            return true;
-        } else {
-            if (product.productInventories.length > 0) {
-                let productInventoryQuantities = product.productInventories.map(item => item.quantity);
-                let totalProductInventoryQuantity = productInventoryQuantities.reduce((partialSum, a) => partialSum + a, 0);
-    
-                if (totalProductInventoryQuantity > 0) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                return false;
-            }
-        }
-    }
-
-    viewProduct(productSeo: string)
-    {
-        this._router.navigate(['catalogue/' + productSeo]);
-    }
-
-    /**
-     * 
-     * This function will return display see more based on height of 
-     * div container
-     * 
-     * @param productDescription 
-     * @returns 
-     */
-    displaySeeMore(productDescription){
-
-        var div = document.createElement("div")
-        div.innerHTML = productDescription
-        div.style.width ="15rem";
-        document.body.appendChild(div)
-
-        if (div.offsetHeight > 120) {
-            div.setAttribute("class","hidden")
-            return true;
-        } else {
-            div.setAttribute("class","hidden")
-            return false;
-        }
-    }
-
-    displayStoreLogo(storeAssets: StoreAssets[]) {
-        let storeAssetsIndex = storeAssets.findIndex(item => item.assetType === 'LogoUrl');
-        if (storeAssetsIndex > -1) {
-            return storeAssets[storeAssetsIndex].assetUrl;
-        } else {
-            return 'assets/branding/symplified/logo/symplified.png'
-        }
-    }
 }

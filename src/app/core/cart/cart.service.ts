@@ -7,6 +7,7 @@ import { AppConfig } from 'app/config/service.config';
 import { JwtService } from 'app/core/jwt/jwt.service';
 import { LogService } from 'app/core/logging/log.service';
 import { AuthService } from 'app/core/auth/auth.service';
+import { FloatingBannerService } from '../floating-banner/floating-banner.service';
 
 @Injectable({
     providedIn: 'root'
@@ -25,7 +26,8 @@ export class CartService
         private _apiServer: AppConfig,
         private _authService: AuthService,
         private _jwtService: JwtService,
-        private _logging: LogService
+        private _logging: LogService,
+        private _floatingBannerService: FloatingBannerService
     )
     {
     }
@@ -134,8 +136,8 @@ export class CartService
                         }
                     });
                 } else if (this.cartId$) {
-                    // For Guess
-                    this._logging.debug("Guess user detected, cartId already EXISTS");
+                    // For Guest
+                    this._logging.debug("Guest user detected, cartId already EXISTS");
 
                     this.getCarts(this.cartId$).subscribe((result)=>{                        
                         if (result.length) {
@@ -145,9 +147,11 @@ export class CartService
                             this._logging.debug("cartId NOT EXISTS on backend");
                         }
                     });
-
+                    // Set floating banner
+                    this._floatingBannerService.setBanners(this.cartId$, storeId);
+                    
                 } else {
-                    this._logging.debug("Guess user detected, NO cartId FOUND!");
+                    this._logging.debug("Guest user detected, NO cartId FOUND!");
                     const createCartBody = {
                         customerId  : null, 
                         storeId     : storeId,
@@ -157,6 +161,9 @@ export class CartService
                         this.cartId = result.id;
                         // get cart items
                         this.getCartItems(this.cartId$).subscribe();
+
+                        // Set floating banner
+                        this._floatingBannerService.setBanners(result.id, storeId);
                     });
                 }
             })

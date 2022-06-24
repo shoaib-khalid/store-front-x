@@ -16,7 +16,7 @@
         <!-- Navigation -->
         <ng-container *ngIf="isScreenSmall">
             <fuse-vertical-navigation
-                class="dark bg-black print:hidden"
+                class="dark bg-black print:hidden sticky-top-0"
                 [mode]="'over'"
                 [name]="'mainNavigation'"
                 [navigation]="navigation.default"
@@ -34,7 +34,7 @@
                         <!-- Components -->
                         <div *ngIf="store && (store.verticalCode === 'FnB' || store.verticalCode === 'E-Commerce')" class="flex items-center ml-auto">
                             <user [showAvatar]="true"></user>
-                            <notifications class="ml-2"></notifications>
+                            <notifications></notifications>
                         </div>
                     </div>
                     <!-- User -->
@@ -67,8 +67,8 @@
             <!-- Header -->
             <div class=" flex flex-col flex-0 justify-center w-full overflow-hidden z-49 shadow dark:shadow-none print:hidden sticky top-0 md:relative">
                 <!-- Top bar -->
-                <div class="relative dark flex flex-auto justify-center w-full bg-black dark:bg-gray-900">
-                    <div class="flex flex-row justify-between items-center w-full px-5 max-w-280 h-16 sm:h-20 max-w-280">
+                <div class="relative dark flex flex-auto justify-center w-full bg-black dark:bg-gray-900 px-4 md:px-8">
+                    <div class="flex flex-row justify-between items-center w-full max-w-360 h-16 sm:h-20">
                         
                         <!-- Navigation toggle button -->
                         <ng-container *ngIf="isScreenSmall">
@@ -81,10 +81,6 @@
         
                         <!-- Logo -->
                         <div class="flex items-center md:ml-0">
-                            <!-- <img
-                                class="hidden md:block w-24"
-                                [src]="platform.logo"
-                                alt="Logo image"> -->
                             <img
                                 class="h-18 w-auto cursor-pointer"
                                 (click)="goToHome()"
@@ -94,13 +90,13 @@
                         </div>
                         
                         <!-- Components -->
-                        <div class="flex items-center pl-0 space-x-0.5 sm:space-x-2">
+                        <div class="flex items-center pl-2 space-x-0.5 sm:space-x-2">
                             <!-- <search [appearance]="'bar'"></search> -->
                             <!-- Phonenumber -->
-                            <div class="hidden sm:block flex flex-col text-right">
+                            <!-- <div class="hidden sm:block flex flex-col text-right">
                                 <p>Call Us!</p>
                                 <p>{{ store.phoneNumber}}</p>
-                            </div>
+                            </div> -->
                             <cart></cart>
                             <ng-container *ngIf="store && (store.verticalCode === 'FnB' || store.verticalCode === 'E-Commerce')">
                                 <user *ngIf="!isScreenSmall"></user>
@@ -131,8 +127,8 @@
             </div>
         
             <!-- Content -->
-            <div class="flex flex-auto justify-center w-full sm:px-5 max-w-280">
-                <div class="flex flex-col flex-auto w-full sm:overflow-hidden bg-card">
+            <div class="flex flex-auto justify-center w-full sm:p-6 md:p-8">
+                <div class="flex flex-col flex-auto w-full sm:max-w-360 sm:overflow-hidden bg-card">
                     <!-- *ngIf="true" hack is required here for router-outlet to work correctly.
                          Otherwise, layout changes won't be registered and the view won't be updated! -->
                     <router-outlet *ngIf="true"></router-outlet>

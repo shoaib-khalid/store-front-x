@@ -1,12 +1,12 @@
-import { Inject, Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
-import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, ReplaySubject } from 'rxjs';
 import { AppConfig } from 'app/config/service.config';
 import { LogService } from 'app/core/logging/log.service';
 import { AuthService } from '../auth/auth.service';
 import { Router } from '@angular/router';
 import { Promo } from './floating-banner.types';
+import { PlatformLocation } from '@angular/common';
 
 @Injectable({
     providedIn: 'root'
@@ -21,11 +21,10 @@ export class FloatingBannerService
      * Constructor
      */
     constructor(
-        private _httpClient: HttpClient,
         private _apiServer: AppConfig,
-        private _authService: AuthService,
         private _router: Router,
-        private _logging: LogService
+        private _platformLocation: PlatformLocation,
+
     )
     {
     }
@@ -120,6 +119,23 @@ export class FloatingBannerService
     closeSmallBanner(): void
     {
         this._promoSmall.next(null);
+    }
+
+    /**
+     * Set floating banners
+     * 
+     * @param cartId 
+     * @param storeId 
+     */
+    setBanners(cartId: string, storeId: string) {
+
+        let fullUrl = (this._platformLocation as any).location.origin;
+        let sanatiseUrl = fullUrl.replace(/^(https?:|)\/\//, '').split(':')[0]; // this will get the domain from the URL
+        let redirectUrl = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-up' +
+                '?redirectURL=' + encodeURI('https://' + sanatiseUrl  + this._router.url) + '&guestCartId=' + cartId + '&storeId=' + storeId;
+
+        this.setSmallBanner('assets/gif/SignUp_Now_Button_Click_GIF.gif', redirectUrl);
+        this.setBigBanner('assets/promo/Sign-Up-PopUp-Banner_400x500.png', redirectUrl);
     }
 
 }
