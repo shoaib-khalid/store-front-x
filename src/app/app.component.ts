@@ -4,13 +4,10 @@ import { NavigationEnd, Router, RoutesRecognized } from '@angular/router';
 import { AnalyticService } from './core/analytic/analytic.service';
 import { StoresService } from './core/store/store.service';
 import { Store } from './core/store/store.types';
-import { DeviceDetectorService } from 'ngx-device-detector';
 import { IpAddressService } from './core/ip-address/ip-address.service';
 import { CartService } from './core/cart/cart.service';
-import { CookieService } from 'ngx-cookie-service'
 import { AuthService } from './core/auth/auth.service';
 import { JwtService } from './core/jwt/jwt.service';
-import { UserService } from './core/user/user.service';
 import { Subject, takeUntil } from 'rxjs';
 import { AppConfig } from './config/service.config';
 
@@ -49,7 +46,7 @@ export class AppComponent
         private _cartService: CartService,
         private _apiServer: AppConfig,
         private _authService: AuthService,
-        private _cookieService: CookieService
+        private _jwtService: JwtService,
     )
     {
     
@@ -58,7 +55,6 @@ export class AppComponent
     ngOnInit() {
 
         console.log("navigator",navigator.userAgent);
-        this.ownerId = this._cookieService.get('CustomerId');
 
         this._authService.signInUsingCookies()
             .subscribe((response)=>{});
@@ -73,20 +69,7 @@ export class AppComponent
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
-
-        // Set cookie for testing
-        // this._cookieService.set('CustomerId','bd421a78-fc36-4691-a5e5-38278e0a4245');
-        // this._cookieService.set('AccessToken','W0JAMTI5ZTE3NDg=');
-        // this._cookieService.set('RefreshToken','W0JANTQwOGY0ZmU=');
-
-        // google sign in customer id
-        // this._cookieService.set('CustomerId','94bd7555-c7f4-4bc5-ae02-402f250775f5');
-        // this._cookieService.set('AccessToken','W0JAMTI5ZTE3NDg=');
-        // this._cookieService.set('RefreshToken','W0JANTQwOGY0ZmU=');
-
-        // Get cookie
-        this.ownerId = this._cookieService.get('CustomerId');
-        
+   
         // Get current store
         this._storesService.store$
             .pipe(takeUntil(this._unsubscribeAll))
@@ -155,6 +138,8 @@ export class AppComponent
                         });
                     }
 
+                    this.ownerId = this._authService.jwtAccessToken ? this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid : null;
+
                     this._router.events.forEach((event) => {
 
                         //get ip address info
@@ -169,7 +154,7 @@ export class AppComponent
                         const activityBody = 
                         {
                             browserType : null,
-                            customerId  : this.ownerId?this.ownerId:null,
+                            customerId  : this.ownerId,
                             deviceModel : null,
                             errorOccur  : null,
                             errorType   : null,
