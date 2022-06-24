@@ -4,13 +4,10 @@ import { NavigationEnd, Router, RoutesRecognized } from '@angular/router';
 import { AnalyticService } from './core/analytic/analytic.service';
 import { StoresService } from './core/store/store.service';
 import { Store } from './core/store/store.types';
-import { DeviceDetectorService } from 'ngx-device-detector';
 import { IpAddressService } from './core/ip-address/ip-address.service';
 import { CartService } from './core/cart/cart.service';
-import { CookieService } from 'ngx-cookie-service'
 import { AuthService } from './core/auth/auth.service';
 import { JwtService } from './core/jwt/jwt.service';
-import { UserService } from './core/user/user.service';
 import { Subject, takeUntil } from 'rxjs';
 import { AppConfig } from './config/service.config';
 
@@ -48,7 +45,8 @@ export class AppComponent
         private _ipAddressService: IpAddressService,
         private _cartService: CartService,
         private _apiServer: AppConfig,
-        private _authService: AuthService
+        private _authService: AuthService,
+        private _jwtService: JwtService,
     )
     {
     
@@ -71,7 +69,7 @@ export class AppComponent
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
-        
+   
         // Get current store
         this._storesService.store$
             .pipe(takeUntil(this._unsubscribeAll))
@@ -140,8 +138,10 @@ export class AppComponent
                         });
                     }
 
+                    this.ownerId = this._authService.jwtAccessToken ? this._jwtService.getJwtPayload(this._authService.jwtAccessToken).uid : null;
+
                     this._router.events.forEach((event) => {
-            
+
                         //get ip address info
                         var _IpService = this.ipAddress;
 
@@ -154,7 +154,7 @@ export class AppComponent
                         const activityBody = 
                         {
                             browserType : null,
-                            customerId  : this.ownerId?this.ownerId:null,
+                            customerId  : this.ownerId,
                             deviceModel : null,
                             errorOccur  : null,
                             errorType   : null,
