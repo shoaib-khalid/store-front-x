@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, ViewEncapsulation } from '@angular/core';
 import { DisplayErrorService } from 'app/core/display-error/display-error.service';
 import { Subject, takeUntil } from 'rxjs';
+import { AppConfig } from 'app/config/service.config';
 
 @Component({
     selector       : 'display-error',
@@ -23,6 +24,7 @@ export class DisplayErrorComponent
      */
     constructor(
         private _displayErrorService: DisplayErrorService,
+        private _apiServer: AppConfig,
         private _changeDetectorRef: ChangeDetectorRef
     )
     {
@@ -31,7 +33,11 @@ export class DisplayErrorComponent
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((response) => {
                 if (response) {
-                    this.error = response;                    
+                    this.error = response;
+                    let loggingLevel = this._apiServer.settings.logging;
+                    if (response.code.toString().match(/^5\d{2}/) && loggingLevel === 6){
+                        this.error.message = "Server Error "+ response.code +". Our staff has been notified, thank you for your understanding.";
+                    }              
                 }
                 // Mark for check
                 this._changeDetectorRef.markForCheck();

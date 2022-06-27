@@ -99,7 +99,7 @@ export class CoreInterceptor implements HttpInterceptor
 
                     // when already retried 'retryCount' amount of times
                     else if (count === retryCount) {                        
-                        this._displayErrorService.show(this._apiServer.settings.logging === 0 ? { title: "Internal Server Error", code: error.status , message: error.message, type: '5xx'} : null);
+                        this._displayErrorService.show({title: "Internal Server Error", code: error.status , message: error.message, type: '5xx'});
                     }
                     
                     // Ignore intercept for login () clients/authenticate                
