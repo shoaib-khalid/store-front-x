@@ -1,22 +1,25 @@
 import { PlatformLocation } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ChangeDetectorRef, Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { MatSelect } from '@angular/material/select';
 import { AuthService } from 'app/core/auth/auth.service';
 import { CustomerAuthenticate } from 'app/core/auth/auth.types';
 import { StoresService } from 'app/core/store/store.service';
-import { Store } from 'app/core/store/store.types';
+import { City, Store } from 'app/core/store/store.types';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
+import { debounceTime, Observable, ReplaySubject, Subject, take, takeUntil } from 'rxjs';
 import { CheckoutService } from '../checkout.service';
 import { Address } from '../checkout.types';
 import { CheckoutValidationService } from '../checkout.validation.service';
 
 @Component({
   selector: 'edit-address',
-  templateUrl: './edit-address.component.html'
+  templateUrl: './edit-address.component.html',
 })
 export class EditAddressComponent implements OnInit {
+  @ViewChild('stateCitySelector') stateCitySelector: MatSelect;
 
   editAddressForm: FormGroup;
   addressId: string;
@@ -32,8 +35,13 @@ export class EditAddressComponent implements OnInit {
   store: Store;
   dialingCode: string;
   flashMessage: 'success' | 'error' | 'warning' | null = null;
+  
+  storeStateCities$: Observable<City[]>;
+  public filteredCities: ReplaySubject<any[]> = new ReplaySubject<any[]>(1);
 
-
+  private _unsubscribeAll: Subject<any> = new Subject<any>();
+  public regionCountryStateCities: FormControl = new FormControl();
+  
   constructor(
     private dialogRef: MatDialogRef<EditAddressComponent>,
     private _formBuilder: FormBuilder,
@@ -64,6 +72,37 @@ export class EditAddressComponent implements OnInit {
       isDefault           : [false]
     });
 
+
+    this.setInitialValue();
+
+    this.regionCountryStateCities.valueChanges
+        .pipe(takeUntil(this._unsubscribeAll), debounceTime(300))
+        .subscribe((result) => {                
+            // Get states by country Z(using symplified backend)
+            this._storesService.getStoreRegionCountryStateCity(this.editAddressForm.get('state').value, result, this.store? this.store.regionCountry.id : '' )
+            .subscribe((response)=>{
+                
+                this.storeStateCities$ = this._storesService.cities$;                    
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
+        });
+
+    this.editAddressForm.get('state').valueChanges
+        .pipe(takeUntil(this._unsubscribeAll), debounceTime(300))
+        .subscribe((result) => {
+            
+            // Get states by country Z(using symplified backend)
+            this._storesService.getStoreRegionCountryStateCity(result, '', this.store? this.store.regionCountry.id : '')
+            .subscribe((response)=>{
+                this.storeStateCities$ = this._storesService.cities$;                    
+
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
+        });
+
     // -------------------------
     // Set Dialing code
     // -------------------------
@@ -76,7 +115,7 @@ export class EditAddressComponent implements OnInit {
     this._userService.getCustomerAddressById(this.addressId)
     .subscribe((response: Address) => {
  
-      const selectedAddress = response["data"];      
+      const selectedAddress = response;      
 
       // Fill the form step 1
       this.editAddressForm.patchValue(selectedAddress);
@@ -102,6 +141,26 @@ export class EditAddressComponent implements OnInit {
     );
 
   }
+
+  /**
+   * On destroy
+   */
+  ngOnDestroy(): void
+  {
+      // Unsubscribe from all subscriptions
+      this._unsubscribeAll.next(null);
+      this._unsubscribeAll.complete();
+  }
+
+  private setInitialValue() {
+    this.filteredCities
+        .pipe(take(1), takeUntil(this._unsubscribeAll))
+        .subscribe(() => {
+            this.stateCitySelector.compareWith = (a: any, b: any) => a === b;
+        });
+        this.regionCountryStateCities.setValue([]);
+
+}
 
   cancel() {
     this.dialogRef.close({isAddress: false});

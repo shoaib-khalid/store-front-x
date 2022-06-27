@@ -180,10 +180,16 @@ export class UserService
    
         };
 
-        let response = this._httpClient.get<Address>(userService + '/customer/' + customerId + '/address/' + addressId, header);
-        this._logging.debug("Response from UserService (getAddressById)", response);
+        return this._httpClient.get<Address>(userService + '/customer/' + customerId + '/address/' + addressId, header)
+            .pipe(
+                map((response) => {
+                    this._logging.debug("Response from UserService (getAddressById)", response);
 
-        return response;
+                    return response["data"];
+                })
+            );
+        
+
 
     }
 

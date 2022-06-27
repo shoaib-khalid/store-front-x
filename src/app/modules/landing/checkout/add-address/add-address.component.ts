@@ -1,14 +1,15 @@
 import { PlatformLocation } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ChangeDetectorRef, Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { MatSelect } from '@angular/material/select';
 import { AuthService } from 'app/core/auth/auth.service';
 import { CustomerAuthenticate } from 'app/core/auth/auth.types';
 import { StoresService } from 'app/core/store/store.service';
-import { Store } from 'app/core/store/store.types';
+import { City, Store } from 'app/core/store/store.types';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
-import { Subject, takeUntil } from 'rxjs';
+import { debounceTime, Observable, ReplaySubject, Subject, take, takeUntil } from 'rxjs';
 import { CheckoutService } from '../checkout.service';
 import { CheckoutValidationService } from '../checkout.validation.service';
 
@@ -17,9 +18,10 @@ import { CheckoutValidationService } from '../checkout.validation.service';
     templateUrl: './add-address.component.html'
 })
 export class AddAddressComponent implements OnInit {
+    @ViewChild('stateCitySelector') stateCitySelector: MatSelect;
 
     createAddressForm: FormGroup;
-
+    public regionCountryStateCities: FormControl = new FormControl();
     showButton: boolean = false;
     addresses: string[];
     selectedAddressId: string;
@@ -31,6 +33,8 @@ export class AddAddressComponent implements OnInit {
     store: Store;
     dialingCode: string;
     flashMessage: 'success' | 'error' | 'warning' | null = null;
+    storeStateCities$: Observable<City[]>;
+    public filteredCities: ReplaySubject<any[]> = new ReplaySubject<any[]>(1);
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -47,6 +51,8 @@ export class AddAddressComponent implements OnInit {
 
     ngOnInit(): void {
 
+        
+
         // Create the support form
         this.createAddressForm = this._formBuilder.group({
             // Main Store Section
@@ -55,9 +61,39 @@ export class AddAddressComponent implements OnInit {
             phoneNumber         : ['', CheckoutValidationService.phonenumberValidator],
             address             : ['', Validators.required],
             postCode            : ['', [Validators.required, Validators.minLength(5), Validators.maxLength(5), CheckoutValidationService.postcodeValidator]],
-            state               : ['Selangor', Validators.required],
+            state               : ['', Validators.required],
             city                : ['', Validators.required],
         });
+
+        this.setInitialValue();
+
+        this.regionCountryStateCities.valueChanges
+            .pipe(takeUntil(this._unsubscribeAll), debounceTime(300))
+            .subscribe((result) => {                
+                // Get states by country Z(using symplified backend)
+                this._storesService.getStoreRegionCountryStateCity(this.createAddressForm.get('state').value, result, this.store? this.store.regionCountry.id : '' )
+                .subscribe((response)=>{
+                    
+                    this.storeStateCities$ = this._storesService.cities$;                    
+
+                    // Mark for check
+                    this._changeDetectorRef.markForCheck();
+                });
+            });
+
+        this.createAddressForm.get('state').valueChanges
+            .pipe(takeUntil(this._unsubscribeAll), debounceTime(300))
+            .subscribe((result) => {
+                
+                // Get states by country Z(using symplified backend)
+                this._storesService.getStoreRegionCountryStateCity(result, '', this.store? this.store.regionCountry.id : '')
+                .subscribe((response)=>{
+                    this.storeStateCities$ = this._storesService.cities$;                    
+
+                    // Mark for check
+                    this._changeDetectorRef.markForCheck();
+                });
+            });
 
         this.store = this.data['store'];
 
@@ -69,11 +105,13 @@ export class AddAddressComponent implements OnInit {
 
         switch (countryId) {
             case 'MYS':
-                this.dialingCode = '60'
+                this.dialingCode = '60';
+                this.createAddressForm.get('state').setValue('Selangor');
                 break;
 
             case 'PAK':
-                this.dialingCode = '92'
+                this.dialingCode = '92';
+                this.createAddressForm.get('state').setValue('Federal');
                 break;
 
             default:
@@ -100,11 +138,31 @@ export class AddAddressComponent implements OnInit {
         );
 
     }
+
+    /**
+     * On destroy
+     */
+    ngOnDestroy(): void
+    {
+        // Unsubscribe from all subscriptions
+        this._unsubscribeAll.next(null);
+        this._unsubscribeAll.complete();
+    }
     
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
 
+    private setInitialValue() {
+        this.filteredCities
+            .pipe(take(1), takeUntil(this._unsubscribeAll))
+            .subscribe(() => {
+                this.stateCitySelector.compareWith = (a: any, b: any) => a === b;
+            });
+            this.regionCountryStateCities.setValue([]);
+
+    }
+    
     cancel() {
         this.dialogRef.close({isAddress: false});
     }

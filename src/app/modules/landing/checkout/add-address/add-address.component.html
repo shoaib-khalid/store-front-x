@@ -88,6 +88,33 @@
                 <!--City -->
                 <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
                     <mat-label>City</mat-label>
+                    <mat-select 
+                        [formControlName]="'city'"
+                        [required]="true"
+                        [value]="'city'"
+                        placeholder="Enter city"
+                        (selectionChange)="createAddressForm.get('city').patchValue($event.value);"
+                        #stateCitySelector="matSelect">
+                        <mat-select-trigger>
+                            <span class="flex items-center">
+                                <span>{{ stateCitySelector.triggerValue }}</span>
+                            </span>
+                        </mat-select-trigger>
+                        <mat-option>
+                            <ngx-mat-select-search [placeholderLabel]="'Search City'" [noEntriesFoundLabel]="'No matching records found'" [formControl]="regionCountryStateCities"
+                             ngDefaultControl></ngx-mat-select-search>
+                        </mat-option>
+                        <mat-option class="m-t" *ngFor="let city of storeStateCities$ | async" [value]="city.name">
+                            {{city.name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="createAddressForm.get('city').hasError('required')">
+                        City is required
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
+                    <mat-label>City</mat-label>
                     <input
                         matInput
                         [formControlName]="'city'"
@@ -98,7 +125,7 @@
                     <mat-error *ngIf="createAddressForm.get('city').hasError('required')">
                         City is required
                     </mat-error>
-                </mat-form-field>
+                </mat-form-field> -->
                 <!-- Postcode -->
                 <mat-form-field class="w-full sm:w-1/2 sm:pl-1" floatLabel="always">
                     <mat-label>Postcode</mat-label>
