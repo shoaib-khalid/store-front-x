@@ -457,7 +457,7 @@ export class LandingCheckoutComponent implements OnInit
                 // Get cart item
                 // -----------------------
 
-                this._cartService.cartItems$
+                this._cartService.getCartItems(this._cartService.cartId$)
                     .pipe(takeUntil(this._unsubscribeAll))
                     .subscribe((response: CartItem[])=>{
                         this.cartItems = response;
@@ -639,7 +639,7 @@ export class LandingCheckoutComponent implements OnInit
         //To make custom pop up, and we pass the details in paramter data
         let dialogRef = this._dialog.open(ModalConfirmationDeleteItemComponent, { disableClose: true, data:{ cartId:this._cartService.cartId$, itemId:cartItem.id }});
         dialogRef.afterClosed().subscribe((result) => {
-            
+
             // if cart has items, calculate the charges
             if (this.cartItems.length > 0) {
                 

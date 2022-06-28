@@ -355,7 +355,7 @@ export class CartService
     /**
      * Get the current logged in cart data
      */
-    getCartItems(id: string): Observable<Cart>
+    getCartItems(id: string): Observable<CartItem[]>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
 
