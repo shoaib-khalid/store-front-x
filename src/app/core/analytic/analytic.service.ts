@@ -14,6 +14,10 @@ import { StoresService } from '../store/store.service';
 })
 export class AnalyticService
 {
+    //get current location
+    currentLat  : any = 0;
+    currentLong : any = 0;
+
     private _analytic: ReplaySubject<CustomerActivity> = new ReplaySubject<CustomerActivity>(1);
 
     /**
@@ -74,10 +78,20 @@ export class AnalyticService
         let _deviceOs = device.os_version
         let _deviceModel = device.deviceType + ' ' + device.device
 
+        //to implement get current location first to be display if in db is null
+        navigator.geolocation.getCurrentPosition((position) => {
+            var crd = position.coords;
+            this.currentLat = crd.latitude;
+            this.currentLong = crd.longitude;
+
+        });
+
         bodyActivity["browserType"] = _deviceBrowser;
         bodyActivity["deviceModel"] = _deviceModel;
         bodyActivity["os"] = _deviceOs;
         bodyActivity["storeId"] = _storeId;
+        bodyActivity["latitude"] = this.currentLat
+        bodyActivity["longitude"] = this.currentLong
 
         let analyticService = this._apiServer.settings.apiServer.analyticService;
 
