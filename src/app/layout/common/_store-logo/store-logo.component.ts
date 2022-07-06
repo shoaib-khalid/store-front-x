@@ -8,7 +8,17 @@ import { PlatformService } from 'app/core/platform/platform.service';
     selector       : 'store-logo',
     templateUrl    : './store-logo.component.html',
     encapsulation  : ViewEncapsulation.None,
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    styles         : [
+        `
+            .store-name {
+                // -webkit-text-fill-color: white; 
+                // -webkit-text-stroke-width: 1px;
+                // -webkit-text-stroke-color: black;
+                text-shadow: 3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+            }
+        `
+    ]
 })
 export class _StoreLogoComponent implements OnInit
 {
