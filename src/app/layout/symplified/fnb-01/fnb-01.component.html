@@ -65,11 +65,10 @@
         <!-- Wrapper -->
         <div class="flex flex-col flex-auto items-center w-full min-w-0 bg-card dark:bg-card">    
             <!-- Header -->
-            <div class=" flex flex-col flex-0 justify-center w-full overflow-hidden z-49 shadow dark:shadow-none print:hidden sticky top-0 md:relative">
+            <div class="flex flex-col flex-0 justify-center w-full overflow-hidden z-49 shadow dark:shadow-none print:hidden sticky top-0 md:relative lg:items-center bg-primary">
                 <!-- Top bar -->
                 <div class="relative dark flex flex-auto justify-center w-full bg-black dark:bg-gray-900 px-4 md:px-8">
-                    <div class="flex flex-row justify-between items-center w-full max-w-360 h-16 sm:h-20">
-                        
+                    <div class="flex flex-row justify-between items-center w-full max-w-360 h-16 sm:h-20 lg:max-w-280">               
                         <!-- Navigation toggle button -->
                         <ng-container *ngIf="isScreenSmall">
                             <button
@@ -78,7 +77,6 @@
                                 <mat-icon [svgIcon]="'heroicons_outline:menu'"></mat-icon>
                             </button>
                         </ng-container>
-        
                         <!-- Logo -->
                         <div class="flex items-center md:ml-0">
                             <img
@@ -88,7 +86,6 @@
                                 alt="Logo image">
                             <span class="block md:hidden">{{headerTitle}}</span>
                         </div>
-                        
                         <!-- Components -->
                         <div class="flex items-center pl-2 space-x-0.5 sm:space-x-2">
                             <!-- <search [appearance]="'bar'"></search> -->
@@ -110,7 +107,7 @@
                     </div>
                 </div>
                 <!-- Breadcrumbs -->
-                <div class="hidden sm:block flex items-center w-full">
+                <div class="hidden sm:block flex items-center w-full lg:max-w-280">
                     <breadcrumb class="w-full"></breadcrumb>
                 </div>
                 <!-- Bottom bar -->
@@ -127,7 +124,7 @@
             </div>
         
             <!-- Content -->
-            <div class="flex flex-auto justify-center w-full sm:p-6 md:p-8">
+            <div class="flex flex-auto justify-center w-full sm:p-6 md:p-8 lg:px-0 lg:max-w-280">
                 <div class="flex flex-col flex-auto w-full sm:max-w-360 sm:overflow-hidden bg-card">
                     <!-- *ngIf="true" hack is required here for router-outlet to work correctly.
                          Otherwise, layout changes won't be registered and the view won't be updated! -->
