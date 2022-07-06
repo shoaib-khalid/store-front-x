@@ -1,6 +1,6 @@
 <!-- Cart Button -->
 
-<ng-container *ngIf="!user">
+<!-- <ng-container *ngIf="!user"> -->
     <div class="relative md:pl-8">
         <input
             id="shopping-cart-button"
@@ -24,9 +24,10 @@
                 [svgIcon]="'heroicons_solid:shopping-cart'"></mat-icon>
         </label>
     </div>
-</ng-container>
+<!-- </ng-container> -->
 
-<ng-container *ngIf="user">
+<!-- <ng-container *ngIf="user"> -->
+<ng-container *ngIf="false">
     <button
         [matMenuTriggerFor]="cartMenu"
         class="cursor-pointer"
@@ -55,6 +56,7 @@
         [ngClass]="seeMoreCarts === true ? 'h-auto' : 'max-h-[179px]'"
         [xPosition]="'before'"
         #cartMenu="matMenu">
+        
         <ng-container *ngIf="carts.length > 0, else noCarts">
             <!-- Divider  -->
             <div class="border-t"></div>

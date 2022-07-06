@@ -25,12 +25,12 @@
                 <ng-container fuseVerticalNavigationContentHeader>
                     <div class="flex items-center w-full p-4 pl-6">
                         <!-- Logo -->
-                        <div class="flex items-center justify-start">
+                        <!-- <div class="flex items-center justify-start">
                             <img
                                 (click)="goToMarketplace()"
                                 class="w-1/2 py-1 cursor-pointer"
                                 [src]="platform.logoDark">
-                        </div>
+                        </div> -->
                         <!-- Components -->
                         <div *ngIf="store && (store.verticalCode === 'FnB' || store.verticalCode === 'E-Commerce')" class="flex items-center ml-auto">
                             <user [showAvatar]="true"></user>
@@ -79,10 +79,15 @@
                         </ng-container>
                         <!-- Logo -->
                         <div class="flex items-center md:ml-0">
-                            <img
-                                class="h-18 w-auto cursor-pointer"
+                            <!-- <img
+                                class="block sm:hidden h-18 w-auto cursor-pointer"
                                 (click)="goToHome()"
                                 [src]="displayStoreLogo(store.storeAssets)"
+                                alt="Logo image"> -->
+                            <img
+                                class="h-8 w-auto cursor-pointer"
+                                (click)="goToMarketplace()"
+                                [src]="platform.logoDark"
                                 alt="Logo image">
                             <span class="block md:hidden">{{headerTitle}}</span>
                         </div>
@@ -133,9 +138,7 @@
             </div>
         
             <!-- Footer -->
-            <div class="flex w-full bg-black justify-center">
-                <footer class="w-full max-w-300"></footer>
-            </div>
+            <footer class="w-full"></footer>
         </div>
     </ng-container>
 </ng-template>
