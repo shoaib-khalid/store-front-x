@@ -35,7 +35,7 @@
                     [value]="getCategorySlug(_category.name)"
                     [disabled]="catalogueSlug === getCategorySlug(_category.name) ? true : false"
                     (change)="changeCatalogue($event.source.value)"
-                    class="flex items-center h-10 min-h-10 px-4"
+                    class="flex items-center h-10 min-h-10 px-4 line-clamp-2"
                     [color]="'primary'">
                     {{textTruncate(_category.name, 32)}}
                 </mat-checkbox>
