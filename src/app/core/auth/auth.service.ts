@@ -231,15 +231,17 @@ export class AuthService
 
                 this._logging.debug("Response from UserService (signInUsingCookies)",response);
 
-                // Set cookie for testing
-                // this._cookieService.set('CustomerId','bd421a78-fc36-4691-a5e5-38278e0a4245');
-                // this._cookieService.set('AccessToken','W0JAMTI5ZTE3NDg=');
-                // this._cookieService.set('RefreshToken','W0JANTQwOGY0ZmU=');
-        
-                // google sign in customer id
-                // this._cookieService.set('CustomerId','cdeaab82-49a5-4773-b4fb-fd9016d6f8f0');
-                // this._cookieService.set('AccessToken','W0JAZmE3N2Y3NA==');
-                // this._cookieService.set('RefreshToken','W0JANTg1NmM2OTk=');
+                if (this._apiServer.settings.env.name === "dev") {
+                    // Set cookie for testing
+                    // this._cookieService.set('CustomerId','bd421a78-fc36-4691-a5e5-38278e0a4245');
+                    // this._cookieService.set('AccessToken','W0JAMTI5ZTE3NDg=');
+                    // this._cookieService.set('RefreshToken','W0JANTQwOGY0ZmU=');
+            
+                    // google sign in customer id
+                    // this._cookieService.set('CustomerId','cdeaab82-49a5-4773-b4fb-fd9016d6f8f0');
+                    // this._cookieService.set('AccessToken','W0JAZmE3N2Y3NA==');
+                    // this._cookieService.set('RefreshToken','W0JANTg1NmM2OTk=');
+                }
         
                 // Get cookie
                 let ownerId = this._cookieService.get('CustomerId');
