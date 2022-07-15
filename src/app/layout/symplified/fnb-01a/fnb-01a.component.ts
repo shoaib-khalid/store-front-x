@@ -294,7 +294,7 @@ export class Fnb01aLayoutComponent implements OnInit, OnDestroy
         if (storeAssetsIndex > -1) {            
             return storeAssets[storeAssetsIndex].assetUrl;
         } else {
-            return this.platform.logoDark;
+            return this.platform.logoDark + '?original=true';
         }
     }
 
