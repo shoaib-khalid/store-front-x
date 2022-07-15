@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewEncapsulation, Inject, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
+import { PlatformService } from 'app/core/platform/platform.service';
+import { Platform } from 'app/core/platform/platform.types';
 import { StoresService } from 'app/core/store/store.service';
 import { CategoryPagination, Store, StoreAssets, StoreCategory } from 'app/core/store/store.types';
 import { map, merge, Subject, takeUntil } from 'rxjs';
@@ -16,6 +18,7 @@ export class LandingHomeComponent implements OnInit
 {
     @ViewChild("categoryPaginator", {read: MatPaginator}) private _paginator: MatPaginator;
 
+    platform: Platform;
     store: Store;
     storeCategories: StoreCategory[] = [];
     isLoading: boolean = false;
@@ -32,6 +35,7 @@ export class LandingHomeComponent implements OnInit
      * Constructor
      */
     constructor(
+        private _platformService: PlatformService,
         private _storesService: StoresService,
         private _changeDetectorRef: ChangeDetectorRef
     )
@@ -39,6 +43,17 @@ export class LandingHomeComponent implements OnInit
     }
 
     ngOnInit() {
+
+        // Get platform data
+        this._platformService.platform$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((platform: Platform)=>{
+                if (platform) {
+                    this.platform = platform;
+                }
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
         
         // Get store data
         this._storesService.store$

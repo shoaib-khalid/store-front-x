@@ -302,7 +302,7 @@ export class CartService
                     of(false)
                 ),
                 switchMap(async (response: any) => {
-                    this._logging.debug("Response from StoresService (createCart)",response);
+                    this._logging.debug("Response from CartService (createCart)",response);
 
                     // set cart id
                     this.cartId = response["data"].id;
@@ -340,7 +340,7 @@ export class CartService
         return this._httpClient.delete<any>(orderService + '/carts/' + cartId, header)
             .pipe(
                 map((response) => {
-                    this._logging.debug("Response from StoresService (deleteCart)",response);
+                    this._logging.debug("Response from CartService (deleteCart)",response);
 
                     return response["data"];
                 })
@@ -370,7 +370,7 @@ export class CartService
                     of(false)
                 ),
                 switchMap(async (response: any) => {
-                    this._logging.debug("Response from StoresService (getCartItems)", response);
+                    this._logging.debug("Response from CartService (getCartItems)", response);
 
                     let resp = response ? response["data"].content : null;
                     // set cart id
@@ -395,7 +395,7 @@ export class CartService
             switchMap(cartItems => this._httpClient.post<any>(orderService + '/carts/' + cartId + '/items', cartItem, header)
             .pipe(
                 map((response) => {
-                    this._logging.debug("Response from StoresService (postCartItem)",response);
+                    this._logging.debug("Response from CartService (postCartItem)",response);
 
                     let index = cartItems.findIndex(item => item.id === response["data"].id);
 
@@ -427,7 +427,7 @@ export class CartService
             switchMap(cartItems => this._httpClient.put<any>(orderService + '/carts/' + cartId + '/items/' + itemId, cartItem, header)
             .pipe(
                 map((response) => {
-                    this._logging.debug("Response from StoresService (postCartItem)",response);
+                    this._logging.debug("Response from CartService (postCartItem)",response);
 
                     let index = cartItems.findIndex(item => item.id === response["data"].id);
 
@@ -459,7 +459,7 @@ export class CartService
             switchMap(cartItems => this._httpClient.delete<any>(orderService + '/carts/' + cartId + '/items/' + itemId, header)
             .pipe(
                 map((response) => {
-                    this._logging.debug("Response from StoresService (deleteCartItem)",response);
+                    this._logging.debug("Response from CartService (deleteCartItem)",response);
 
                     let index = cartItems.findIndex(item => item.id === itemId);
 
