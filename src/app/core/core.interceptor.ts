@@ -170,7 +170,13 @@ export class CoreInterceptor implements HttpInterceptor
                     if ( error instanceof HttpErrorResponse && error.status === 404 && newReq.url.match(regex)) {
                         this._cartService.cartId = '';
                         // Reload the app
-                        location.reload();
+                        // location.reload();
+                        this._displayErrorService.show({
+                            type: '4xx',
+                            code: '404',
+                            title: "Cart Not Found!",
+                            message: "The cart you are looking for might have been removed, had its name changed or is temporarily unavailable."
+                        });
                     }
 
                     return throwError(error);

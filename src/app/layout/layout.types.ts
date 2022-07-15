@@ -14,4 +14,5 @@ export type Layout =
     | 'thin'
     // SYMplified
     | 'fnb1'
+    | 'fnb1a'
     ;

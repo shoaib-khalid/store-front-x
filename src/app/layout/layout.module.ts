@@ -19,6 +19,7 @@ import { SharedModule } from 'app/shared/shared.module';
 
 // SYMplified 
 import { Fnb01LayoutModule } from 'app/layout/symplified/fnb-01/fnb-01.module';
+import { Fnb01aLayoutModule } from './symplified/fnb-01a/fnb-01a.module';
 import { HamburgerMenuModule } from './common/hamburger-menu/hamburger-menu.module';
 
 const layoutModules = [
@@ -40,7 +41,8 @@ const layoutModules = [
     ThinLayoutModule,
 
     // SYMplified 
-    Fnb01LayoutModule
+    Fnb01LayoutModule,
+    Fnb01aLayoutModule
 ];
 
 @NgModule({
