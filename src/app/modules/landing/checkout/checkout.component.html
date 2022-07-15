@@ -649,7 +649,7 @@
                         <h1 class="text-xl font-bold py-2">Cart Summary</h1>
                         <!-- image & payment value details -->
                         <div class="flex flex-col">
-                            <ng-container *ngIf="cartItems.length > 0 ;else noCartItems">
+                            <ng-container *ngIf="cartItems && cartItems.length > 0 ;else noCartItems">
                                 <!-- cart item details -->
                                 <div class="h-60 leading-none overflow-y-auto">
                                     <ng-container *ngFor="let cartItem of cartItems">

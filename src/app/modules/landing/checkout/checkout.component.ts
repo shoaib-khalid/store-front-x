@@ -462,12 +462,14 @@ export class LandingCheckoutComponent implements OnInit
                     .subscribe((response: CartItem[])=>{
                         this.cartItems = response;
 
-                        let subTotalArr = this.cartItems.map(item => {
-                            return item.price;
-                        });
+                        if (this.cartItems && this.cartItems.length) {
+                            let subTotalArr = this.cartItems.map(item => {
+                                return item.price;
+                            });
 
-                        // sum up the quantity in the array
-                        this.paymentDetails.cartSubTotal = subTotalArr.reduce((sum, a) => sum + a, 0);                    
+                            // sum up the quantity in the array
+                            this.paymentDetails.cartSubTotal = subTotalArr.reduce((sum, a) => sum + a, 0);                    
+                        }
 
                         // Mark for check
                         this._changeDetectorRef.markForCheck();
@@ -1499,7 +1501,7 @@ export class LandingCheckoutComponent implements OnInit
                         let closeTime = new Date();
                         closeTime.setHours(Number(item.closeTime.split(":")[0]), Number(item.closeTime.split(":")[1]), 0);
 
-                        if(storeSnooze && todayDate >= openTime && todayDate < closeTime ) {
+                        if(todayDate >= openTime && todayDate < closeTime ) {
                             // console.info("We are OPEN today!");
 
                             // --------------------

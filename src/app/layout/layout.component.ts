@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit, Renderer2, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, Renderer2, ViewEncapsulation } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { combineLatest, Subject } from 'rxjs';
@@ -8,6 +8,8 @@ import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { FUSE_VERSION } from '@fuse/version';
 import { Layout } from 'app/layout/layout.types';
 import { AppConfig } from 'app/core/config/app.config';
+import { PlatformService } from 'app/core/platform/platform.service';
+import { Platform } from 'app/core/platform/platform.types';
 
 @Component({
     selector     : 'layout',
@@ -28,11 +30,13 @@ export class LayoutComponent implements OnInit, OnDestroy
      */
     constructor(
         private _activatedRoute: ActivatedRoute,
+        private _platformService: PlatformService,
         @Inject(DOCUMENT) private _document: any,
         private _renderer2: Renderer2,
         private _router: Router,
         private _fuseConfigService: FuseConfigService,
-        private _fuseMediaWatcherService: FuseMediaWatcherService
+        private _changeDetectorRef: ChangeDetectorRef,
+        private _fuseMediaWatcherService: FuseMediaWatcherService,
     )
     {
     }
@@ -82,8 +86,8 @@ export class LayoutComponent implements OnInit, OnDestroy
         // Subscribe to config changes
         this._fuseConfigService.config$
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((config: AppConfig) => {
-
+            .subscribe((config: AppConfig) => {   
+                             
                 // Store the config
                 this.config = config;
 
@@ -92,14 +96,26 @@ export class LayoutComponent implements OnInit, OnDestroy
             });
 
         // Subscribe to NavigationEnd event
-        this._router.events.pipe(
-            filter(event => event instanceof NavigationEnd),
-            takeUntil(this._unsubscribeAll)
-        ).subscribe(() => {
+        // this._router.events.pipe(
+        //     filter(event => event instanceof NavigationEnd),
+        //     takeUntil(this._unsubscribeAll)
+        // ).subscribe(() => {
 
-            // Update the layout
-            this._updateLayout();
-        });
+        //     // Update the layout
+        //     this._updateLayout();
+        // });
+
+        this._platformService.platform$
+            // .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((platform: Platform) => {
+                if (platform) {
+                    if (platform.country === 'PAK') {
+                        this.layout = 'fnb1a';
+                    }
+                }
+                // Mark for check
+                this._changeDetectorRef.markForCheck();
+            });
 
         // Set the app version
         this._renderer2.setAttribute(this._document.querySelector('[ng-version]'), 'fuse-version', FUSE_VERSION);
