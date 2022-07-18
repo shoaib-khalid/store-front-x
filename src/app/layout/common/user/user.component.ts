@@ -147,9 +147,9 @@ export class UserComponent implements OnInit, OnDestroy
 
     customerLogin(){
         // // Set cookie for testing
-        this._cookieService.set('CustomerId','bd421a78-fc36-4691-a5e5-38278e0a4245');
-        this._cookieService.set('AccessToken','W0JAMTI5ZTE3NDg=');
-        this._cookieService.set('RefreshToken','W0JANTQwOGY0ZmU=');
+        // this._cookieService.set('CustomerId','bd421a78-fc36-4691-a5e5-38278e0a4245');
+        // this._cookieService.set('AccessToken','W0JAMTI5ZTE3NDg=');
+        // this._cookieService.set('RefreshToken','W0JANTQwOGY0ZmU=');
 
         this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/sign-in' +
             '?redirectURL=' + encodeURI('https://' + this.sanatiseUrl + this._router.url) + '&guestCartId=' + this.cartId + '&storeId=' + this.storeId;
