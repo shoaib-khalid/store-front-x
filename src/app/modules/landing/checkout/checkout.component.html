@@ -780,7 +780,7 @@
                                 <!-- Delivery Section -->
                                 <!-- Delivery Providers -->
                                 <ng-container *ngIf="deliveryProviders.length > 0 && checkoutForm.get('storePickup').value === false">
-                                    <div class="flex flex-row w-full mt-2">
+                                    <div *ngIf="deliveryProviders[0].deliveryType !== 'SELF'" class="flex flex-row w-full mt-2">
                                         <mat-form-field class="w-full rounded text-sm fuse-mat-no-subscript fuse-mat-dense">
                                             <mat-select
                                                 [formControlName]="'deliveryProviderId'"
@@ -853,6 +853,11 @@
                                                 Required
                                             </mat-error>
                                         </mat-form-field>
+                                    </div>
+                                    <div *ngIf="deliveryProviders[0].deliveryType === 'SELF'" 
+                                        class="flex flex-row w-full items-center mt-2">
+                                        <mat-label class="flex w-full px-4 items-center h-10 rounded-md border border-gray-300 text-sm">
+                                            Self Delivery</mat-label>
                                     </div>
                                 </ng-container>
                                 
