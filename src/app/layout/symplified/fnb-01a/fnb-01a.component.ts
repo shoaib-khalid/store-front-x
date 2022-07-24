@@ -527,6 +527,7 @@ export class Fnb01aLayoutComponent implements OnInit, OnDestroy
                                     array.length = iteration + 1;
                                 }
                             } else {
+                                this.message = "Sorry for the inconvenience, We are closed today";
                                 console.warn("Store close on this " + object.day);
                             }
                         });

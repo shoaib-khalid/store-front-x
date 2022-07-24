@@ -1639,6 +1639,7 @@ export class LandingCheckoutComponent implements OnInit
                                     array.length = iteration + 1;
                                 }
                             } else {
+                                this.notificationMessage = "Sorry for the inconvenience, We are closed today";
                                 console.warn("Store close on this " + object.day);
                             }
                         });
