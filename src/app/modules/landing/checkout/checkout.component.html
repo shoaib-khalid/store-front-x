@@ -769,6 +769,25 @@
                                         <span class="font-semibold">-{{paymentDetails.voucherSubTotalDiscount | currency: store.regionCountry.currencySymbol}}</span>
                                     </div>
                                 </ng-container>
+                                <!-- Store Voucher Discount -->
+                                <ng-container *ngIf="paymentDetails.storeVoucherSubTotalDiscount">
+                                    <div class="flex flex-row w-full justify-between py-1">
+                                        <div class="flex flex-col">
+                                            <p class="font-semibold text-gray-500">
+                                                <span>Store Voucher Discount</span>
+                                                <span *ngIf="paymentDetails.storeVoucherDiscountCalculationType === 'PERCENT'">&nbsp;(-{{paymentDetails.storeVoucherDiscountCalculationValue}}%)</span>
+                                                <span *ngIf="paymentDetails.storeVoucherDiscountCalculationType === 'FIX'">&nbsp;(-{{store.regionCountry.currencySymbol}}{{paymentDetails.storeVoucherDiscountCalculationValue}})</span>
+
+                                                <!-- <span *ngIf="paymentDetails.voucherSubTotalDiscountDescription">&nbsp;({{paymentDetails.voucherSubTotalDiscountDescription}})</span> -->
+                                            </p>
+                                            <span class="text-xs text-gray-500" *ngIf="paymentDetails.storeVoucherDiscountMaxAmount != 0 && paymentDetails.storeVoucherDiscountMaxAmount != null && paymentDetails.storeVoucherSubTotalDiscount >= paymentDetails.storeVoucherDiscountMaxAmount
+                                                 && paymentDetails.storeVoucherSubTotalDiscount != 0">
+                                                Capped at {{paymentDetails.storeVoucherDiscountMaxAmount | currency: store.regionCountry.currencySymbol }}
+                                            </span>
+                                        </div>
+                                        <span class="font-semibold">-{{paymentDetails.storeVoucherSubTotalDiscount | currency: store.regionCountry.currencySymbol}}</span>
+                                    </div>
+                                </ng-container>
                                 <!-- Service Charges -->
                                 <ng-container *ngIf="paymentDetails.storeServiceChargePercentage">
                                     <div class="flex flex-row w-full justify-between py-1">

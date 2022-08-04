@@ -14,7 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ChooseDeliveryAddressComponent } from './choose-delivery-address/choose-delivery-address.component';
 import { Address, CartDiscount, CustomerVoucher, CustomerVoucherPagination, 
          DeliveryProvider, DeliveryProviderGroup, Order, Payment, UsedCustomerVoucherPagination, 
-         CheckoutInputField, VoucherVerticalList, PromoText, PromoEventId, GuestVoucher } from './checkout.types';
+         CheckoutInputField, VoucherVerticalList, PromoText, PromoEventId, GuestVoucher, Voucher } from './checkout.types';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { ModalConfirmationDeleteItemComponent } from './modal-confirmation-delete-item/modal-confirmation-delete-item.component';
@@ -126,6 +126,14 @@ export class LandingCheckoutComponent implements OnInit
         voucherDiscountType: null,
         voucherSubTotalDiscount: 0,
         voucherSubTotalDiscountDescription: null,
+        storeVoucherDeliveryDiscount: null,
+        storeVoucherDeliveryDiscountDescription: null,
+        storeVoucherDiscountCalculationType: null,
+        storeVoucherDiscountCalculationValue: null,
+        storeVoucherDiscountMaxAmount: null,
+        storeVoucherDiscountType: null,
+        storeVoucherSubTotalDiscount: null,
+        storeVoucherSubTotalDiscountDescription: null
     }
 
     paymentCompletionStatus: {id: "CALCULATE_CHARGES", label: "Calculate Charges"} | {id: "PLACE_ORDER", label: "Place Order"} | {id: "ONLINE_PAY", label: "Pay Now"};
@@ -166,7 +174,7 @@ export class LandingCheckoutComponent implements OnInit
     usedCustomerVouchers: CustomerVoucher[] = [] ;
     usedCustomerVoucherPagination: UsedCustomerVoucherPagination;
     promoCode: string = '';
-    voucherApplied: any = null;
+    voucherApplied: CustomerVoucher = null;
     voucherDiscountAppliedMax: number = 0;
     voucherDiscountApplied: number = 0;
     verticalList: VoucherVerticalList[] = [];
@@ -620,8 +628,22 @@ export class LandingCheckoutComponent implements OnInit
             this._cartService.putCartItem(this._cartService.cartId$, cartItemBody, cartItem.id)
                 .subscribe((response)=>{
 
+                    const voucherCode = {
+                        platformVoucher: this.voucherApplied && this.voucherApplied.voucher.voucherType === 'PLATFORM' ? this.voucherApplied.voucher.voucherCode : null,
+                        storeVoucher: this.voucherApplied && this.voucherApplied.voucher.voucherType === 'STORE' ? this.voucherApplied.voucher.voucherCode : null,
+                    }
+
+                    let discountParams = {
+                        id: this._cartService.cartId$,
+                        deliveryQuotationId: this.selectedDeliveryProvider?.refId,
+                        deliveryType: this.selectedDeliveryProvider?.deliveryType,
+                        voucherCode: voucherCode.platformVoucher,
+                        storeVoucherCode: voucherCode.storeVoucher,
+                        customerId: this.user?.id,
+                    }
+
                     // recheck the getDiscountOfCart
-                    this._checkoutService.getDiscountOfCart(this._cartService.cartId$, this.selectedDeliveryProvider?.refId, this.selectedDeliveryProvider?.deliveryType, this.voucherApplied?.voucher.voucherCode, this.user?.id)
+                    this._checkoutService.getDiscountOfCart(discountParams)
                         .subscribe((response)=>{
                             this.paymentDetails = {...this.paymentDetails, ...response};
 
@@ -719,6 +741,7 @@ export class LandingCheckoutComponent implements OnInit
         // Set back voucher related field to 0
         this.paymentDetails.voucherSubTotalDiscount = 0;
         this.paymentDetails.voucherDeliveryDiscount = 0;
+        this.paymentDetails.storeVoucherSubTotalDiscount = 0;
 
         // Mark for check
         this._changeDetectorRef.markForCheck();
@@ -945,8 +968,22 @@ export class LandingCheckoutComponent implements OnInit
                             });
                         } else {
 
+                            const voucherCode = {
+                                platformVoucher: this.voucherApplied && this.voucherApplied.voucher.voucherType === 'PLATFORM' ? this.voucherApplied.voucher.voucherCode : null,
+                                storeVoucher: this.voucherApplied && this.voucherApplied.voucher.voucherType === 'STORE' ? this.voucherApplied.voucher.voucherCode : null,
+                            }
+        
+                            let discountParams = {
+                                id: this._cartService.cartId$,
+                                deliveryQuotationId: this.selectedDeliveryProvider?.refId,
+                                deliveryType: this.selectedDeliveryProvider?.deliveryType,
+                                voucherCode: voucherCode.platformVoucher,
+                                storeVoucherCode: voucherCode.storeVoucher,
+                                customerId: this.user?.id,
+                            }
+
                             // get getDiscountOfCart
-                            this._checkoutService.getDiscountOfCart(this._cartService.cartId$, this.selectedDeliveryProvider.refId, this.selectedDeliveryProvider.deliveryType, this.voucherApplied?.voucher.voucherCode, this.user?.id)
+                            this._checkoutService.getDiscountOfCart(discountParams)
                                 .subscribe((response)=>{
                                     this.paymentDetails = {...this.paymentDetails, ...response};
                                     
@@ -1013,8 +1050,22 @@ export class LandingCheckoutComponent implements OnInit
 
                 });
         } else {
+
+            const voucherCode = {
+                platformVoucher: this.voucherApplied && this.voucherApplied.voucher.voucherType === 'PLATFORM' ? this.voucherApplied.voucher.voucherCode : null,
+                storeVoucher: this.voucherApplied && this.voucherApplied.voucher.voucherType === 'STORE' ? this.voucherApplied.voucher.voucherCode : null,
+            }
+
+            let discountParams = {
+                id: this._cartService.cartId$,
+                deliveryQuotationId: null,
+                deliveryType: 'PICKUP',
+                voucherCode: voucherCode.platformVoucher,
+                storeVoucherCode: voucherCode.storeVoucher,
+                customerId: this.user?.id,
+            }
             // Get discount for store pickup    
-            this._checkoutService.getDiscountOfCart(this._cartService.cartId$, null, "PICKUP", this.voucherApplied?.voucher.voucherCode, this.user?.id)
+            this._checkoutService.getDiscountOfCart(discountParams)
                 .subscribe((response)=>{
                     this.paymentDetails = {...this.paymentDetails, ...response};
 
@@ -1149,7 +1200,21 @@ export class LandingCheckoutComponent implements OnInit
 
             } else {
 
-                this._checkoutService.getDiscountOfCart(this._cartService.cartId$, this.selectedDeliveryProvider.refId, this.selectedDeliveryProvider.deliveryType,  this.voucherApplied?.voucher.voucherCode, this.user?.id)
+                const voucherCode = {
+                    platformVoucher: this.voucherApplied && this.voucherApplied.voucher.voucherType === 'PLATFORM' ? this.voucherApplied.voucher.voucherCode : null,
+                    storeVoucher: this.voucherApplied && this.voucherApplied.voucher.voucherType === 'STORE' ? this.voucherApplied.voucher.voucherCode : null,
+                }
+
+                let discountParams = {
+                    id: this._cartService.cartId$,
+                    deliveryQuotationId: null,
+                    deliveryType: 'PICKUP',
+                    voucherCode: voucherCode.platformVoucher,
+                    storeVoucherCode: voucherCode.storeVoucher,
+                    customerId: this.user?.id,
+                }
+
+                this._checkoutService.getDiscountOfCart(discountParams)
                     .subscribe((response: CartDiscount)=>{
                         this.paymentDetails = {...this.paymentDetails, ...response};
 
@@ -1188,11 +1253,17 @@ export class LandingCheckoutComponent implements OnInit
         // Set Loading to true
         this.isLoading = true;
 
+        const voucherCode = {
+            platformVoucher: this.voucherApplied && this.voucherApplied.voucher.voucherType === 'PLATFORM' ? this.voucherApplied.voucher.voucherCode : null,
+            storeVoucher: this.voucherApplied && this.voucherApplied.voucher.voucherType === 'STORE' ? this.voucherApplied.voucher.voucherCode : null,
+        }
+
         const orderBody = {
             cartId: this._cartService.cartId$,
             customerId: this.checkoutForm.get("id").value, 
             customerNotes: this.checkoutForm.get("specialInstruction").value,
-            voucherCode: this.voucherApplied ? this.voucherApplied.voucher.voucherCode : '',
+            voucherCode: voucherCode.platformVoucher,
+            storeVoucherCode: voucherCode.storeVoucher,            
             orderPaymentDetails: {
                 accountName: this.checkoutForm.get('fullName').value, // ni mace saloh
                 deliveryQuotationReferenceId: (this.checkoutForm.get('storePickup').value === false) ? this.selectedDeliveryProvider.refId : null, // deliveryQuotationReferenceId not needed if it's a store pickup
@@ -1916,7 +1987,7 @@ export class LandingCheckoutComponent implements OnInit
         
     }
 
-    selectVoucher(voucher: any) {
+    selectVoucher(voucher: CustomerVoucher) {
         
         this.voucherApplied = voucher;
 

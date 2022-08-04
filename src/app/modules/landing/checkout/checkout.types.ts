@@ -83,6 +83,14 @@ export interface CartDiscount
     voucherDiscountCalculationType      : string;
     voucherDiscountCalculationValue     : number;
     voucherSubTotalDiscountDescription  : string;
+    storeVoucherDeliveryDiscount: number
+    storeVoucherDeliveryDiscountDescription: string
+    storeVoucherDiscountCalculationType: string
+    storeVoucherDiscountCalculationValue: number
+    storeVoucherDiscountMaxAmount: number
+    storeVoucherDiscountType: string
+    storeVoucherSubTotalDiscount: number
+    storeVoucherSubTotalDiscountDescription: string
 }
 
 export interface Payment

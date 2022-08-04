@@ -207,25 +207,40 @@ export class CheckoutService
     /**
      * Get Discount
      */
-    getDiscountOfCart(id: string, deliveryQuotationId: string = null, deliveryType: string, voucherCode: string = null, customerId: string = null): Observable<CartDiscount>
+    getDiscountOfCart(params: { 
+            id                  : string,
+            deliveryQuotationId : string,
+            deliveryType        : string,
+            voucherCode         : string,
+            storeVoucherCode    : string,
+            customerId          : string,
+        } = {
+            id                  : null,
+            deliveryQuotationId : null,
+            deliveryType        : null,
+            voucherCode         : null,
+            storeVoucherCode    : null,
+            customerId          : null,
+        }): Observable<CartDiscount>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
 
         const header = {  
             headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
-            params: {
-                deliveryQuotationId,
-                deliveryType,
-                voucherCode,
-                customerId
-            }
+            params: params
         };
 
-        if (deliveryQuotationId === null) { delete header.params.deliveryQuotationId; }
-        if (voucherCode === null) { delete header.params.voucherCode; }
-        if (customerId === null) { delete header.params.customerId; }
+        // Delete empty value
+        Object.keys(header.params).forEach(key => {
+            if (Array.isArray(header.params[key])) {
+                header.params[key] = header.params[key].filter(element => element !== null)
+            }
+            if (header.params[key] === null || (header.params[key].constructor === Array && header.params[key].length === 0)) {
+                delete header.params[key];
+            }
+        });
 
-        return this._httpClient.get<any>(orderService + '/carts/'+ id +'/discount', header)
+        return this._httpClient.get<any>(orderService + '/carts/'+ params.id +'/discount', header)
             .pipe(
                 map((response) => {
                     this._logging.debug("Response from StoresService (getDiscountOfCart)",response);
