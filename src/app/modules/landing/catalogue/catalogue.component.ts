@@ -168,7 +168,10 @@ export class LandingCatalogueComponent implements OnInit
                             this.catalogueSlug = this.catalogueSlug ? this.catalogueSlug : this._activatedRoute.snapshot.paramMap.get('catalogue-slug');
                             let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === this.catalogueSlug);
                             this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
-                         
+                            
+                            // move selected category to the front
+                            this.storeCategories = this.moveArray(this.storeCategories, index, 0)
+
                             // we'll get the previous url, any url split by / that have length more than 3 will considered product page
                             // after user click back from product page , we'll maintain it's previous pagination 
                             if (this._catalogueService.getPreviousUrl() && this._catalogueService.getPreviousUrl().split("/").length > 3) {                            
@@ -351,5 +354,16 @@ export class LandingCatalogueComponent implements OnInit
         // Mark for check
         this._changeDetectorRef.markForCheck();
     }
+
+    moveArray(arr, old_index, new_index) {
+        if (new_index >= arr.length) {
+            var k = new_index - arr.length + 1;
+            while (k--) {
+                arr.push(undefined);
+            }
+        }
+        arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+        return arr; 
+    };
 
 }

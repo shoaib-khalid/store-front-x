@@ -204,6 +204,8 @@ export interface Voucher
     endDate           : string;
     isNewUserVoucher  : boolean;
     voucherVerticalList : VoucherVerticalList[];
+    voucherStoreList    : VoucherStoreList[];
+    requireToClaim      : boolean;
 }
 
 export interface VoucherVerticalList
@@ -224,6 +226,13 @@ export interface VoucherVerticalList
         thumbnailUrl: string;
     };
     verticalCode: string;
+    voucherId: string;
+}
+
+export interface VoucherStoreList
+{
+    id: string;
+    storeId: string;
     voucherId: string;
 }
 

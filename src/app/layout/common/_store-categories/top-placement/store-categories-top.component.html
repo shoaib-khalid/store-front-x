@@ -1,6 +1,6 @@
 <!-- categories for xs view mobile -->
-<div class="w-full truncate pt-2">
-    <div class="grid grid-flow-col grid-rows-1 items-center overflow-x-scroll pb-1">
+<div class="w-full truncate">
+    <div class="grid grid-flow-col grid-rows-1 items-center overflow-x-scroll pb-1 gap-1">
         <div class="flex flex-wrap items-center p-0.5">
             <input 
                 [id]="'categories-btn-all-product'" 
@@ -8,7 +8,7 @@
                 class="w-0 h-0 invisible"
                 (click)="changeCatalogue('')">
             <label
-                class="font-bold p-2.5 rounded-full cursor-pointer"
+                class="font-semibold text-sm p-2.5 rounded-full cursor-pointer"
                 [ngClass]="{'bg-primary text-black' : !category,
                             'bg-gray-300 text-black' : category}"
                 [for]="'categories-btn-all-product'"
@@ -16,7 +16,7 @@
                 <span class="">All Products</span>
             </label>
         </div>
-        <div *ngFor="let _category of categories" class="justify-around pl-3">
+        <div *ngFor="let _category of categories" class="justify-around">
             <input 
                 [id]="'categories-btn' + _category.id" 
                 [value]="getCategorySlug(_category.name)"
@@ -24,7 +24,7 @@
                 class="w-0 h-0 invisible"
                 (click)="changeCatalogue($event.target.value, $event)">
             <label
-                class="font-bold p-3 rounded-full cursor-pointer"
+                class="font-semibold text-sm p-3 rounded-full cursor-pointer"
                 [ngClass]="{
                             'bg-slate-300 text-black max-w-30' : !category,
                             'bg-primary text-black max-w-30' : (category && category.id === _category.id),

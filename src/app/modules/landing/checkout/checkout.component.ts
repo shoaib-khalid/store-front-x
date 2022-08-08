@@ -1931,15 +1931,16 @@ export class LandingCheckoutComponent implements OnInit
         }
 
         this._checkoutService.postCustomerClaimVoucher(this.user.id, this.promoCode)
-            .subscribe((response) => {
+            .subscribe((response: CustomerVoucher) => {
 
                 this.promoCode = '';
 
                 // find the verticalcode in the voucher list
                 // if index -1 mean that the voucher can't be used in current store
                 let index = response.voucher.voucherVerticalList.findIndex(item => item.verticalCode === this.store.verticalCode)
+                let indexStoreList = response.voucher.voucherStoreList.findIndex(item => item.id === this.store.id);
 
-                if ((response.voucher.storeId === null || response.voucher.storeId === this.store.id ) && (index > -1 && response.voucher.voucherVerticalList[index].verticalCode === this.store.verticalCode)) {
+                if ((indexStoreList > -1) && (index > -1)) {
 
                     // if voucher is valid
                     this.openVoucherModal('mat_solid:check_circle','Congratulations!', 'Promo code successfully claimed', null, true);
@@ -2030,10 +2031,11 @@ export class LandingCheckoutComponent implements OnInit
         dialogRef.afterClosed().subscribe();
     }
 
-    validateVoucher(voucher: any) {
-        let index = voucher.voucher.voucherVerticalList.findIndex(item => item.verticalCode === this.store.verticalCode);
+    validateVoucher(voucher: CustomerVoucher) {
+        let indexVerticalCode = voucher.voucher.voucherVerticalList.findIndex(item => item.verticalCode === this.store.verticalCode);
+        let indexStoreList = voucher.voucher.voucherStoreList.findIndex(item => item.storeId === this.store.id);
 
-        if (index > -1) {
+        if ((indexVerticalCode > -1) && (indexStoreList > -1)) {
             return true;
         }
         else

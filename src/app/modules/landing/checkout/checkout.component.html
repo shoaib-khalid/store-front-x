@@ -963,7 +963,7 @@
                                                     </span>
                                                 </mat-select-trigger>
                                                 <div *ngFor="let voucher of customerVouchers">
-                                                    <ng-container *ngIf="(voucher.voucher.storeId === null || voucher.voucher.storeId === store.id ) && validateVoucher(voucher)">
+                                                    <ng-container *ngIf="validateVoucher(voucher)">
                                                         <mat-option [value]="voucher">{{voucher.voucher.name}}</mat-option>
                                                     </ng-container>
                                                 </div>
