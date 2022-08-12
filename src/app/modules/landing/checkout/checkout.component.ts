@@ -24,12 +24,13 @@ import { User } from 'app/core/user/user.types';
 import { AddAddressComponent } from './add-address/add-address.component';
 import { EditAddressComponent } from './edit-address/edit-address.component';
 import { VoucherModalComponent } from './voucher-modal/voucher-modal.component';
-import { MapsAPILoader } from '@agm/core';
+import { MapsAPILoader, MouseEvent, LatLngLiteral } from '@agm/core';
 import { AppConfig } from 'app/config/service.config';
 import { MatSelect } from '@angular/material/select';
 import { AnalyticService } from 'app/core/analytic/analytic.service';
 import { IpAddressService } from 'app/core/ip-address/ip-address.service';
 import { CookieService } from 'ngx-cookie-service';
+//import { MouseEvent } from '@agm/core/services/google-maps-types';
 
 @Component({
     selector     : 'landing-checkout',
@@ -184,16 +185,18 @@ export class LandingCheckoutComponent implements OnInit
 
     
     // Map
-    latitude: number = null;
-    longitude: number = null;
-    zoom: number = null;
-    address: string;
-    private geoCoder;
-    countryId: String
-    
-    @ViewChild('search')
-    public searchElementRef: ElementRef;
-    
+    countryId: String;
+  isNameValid: boolean;
+  zoom: number = 5;
+  lat: number = 30.3753;
+  lng: number = 69.3451; 
+  markers: any;
+  geoCoder: google.maps.Geocoder;
+  map: google.maps.Map<HTMLElement>;
+  address: string;
+  centerLatitude = this.lat;
+  centerLongitude = this.lng;
+  searchElementRef: any;
     // Promo
     promoText: PromoText;
     sanatiseUrl: string;
@@ -357,9 +360,14 @@ export class LandingCheckoutComponent implements OnInit
 
                 if (this.countryId === 'PAK') {
                     this.mapsAPILoader.load().then(() => {
+                        this.map = new google.maps.Map(
+                          document.getElementById("map") as HTMLElement 
+                        );
                         this.setCurrentLocation();
-                        this.geoCoder = new google.maps.Geocoder;
-                        let autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement);
+                        this.geoCoder = new google.maps.Geocoder();
+                        let autocomplete = new google.maps.places.Autocomplete(
+                          this.searchElementRef.nativeElement
+                        );
                         autocomplete.addListener("place_changed", () => {
                             this.ngZone.run(() => {
                                 //get the place result
@@ -369,14 +377,14 @@ export class LandingCheckoutComponent implements OnInit
                                 if (place.geometry === undefined || place.geometry === null) {
                                 return;
                                 }
-                    
                                 //set latitude, longitude and zoom
-                                this.latitude = place.geometry.location.lat();
-                                this.longitude = place.geometry.location.lng();
+                                this.lat = place.geometry.location.lat();
+                                this.lng = place.geometry.location.lng();
                                 this.zoom = 12;
+                                // console.log('Location Entered', 'Lat' , this.latitude + ' Lng', this.longitude)
                             });
                         });
-                    });
+                      });
                 }
 
                 // -----------------------
@@ -915,8 +923,8 @@ export class LandingCheckoutComponent implements OnInit
                     deliveryContactEmail: this.checkoutForm.get('email').value,
                     deliveryContactName: this.checkoutForm.get('fullName').value,
                     deliveryContactPhone: this.checkoutForm.get('phoneNumber').value,
-                    latitude: this.latitude,
-                    longitude: this.longitude,
+                    latitude: this.lat,
+                    longitude: this.lng,
                 },
                 deliveryProviderId: null,
                 storeId: this._storesService.storeId$
@@ -2060,34 +2068,39 @@ export class LandingCheckoutComponent implements OnInit
     }
 
     private setCurrentLocation() {
-        if ('geolocation' in navigator) {
-            navigator.geolocation.getCurrentPosition((position) => {
-                this.latitude = position.coords.latitude;
-                this.longitude = position.coords.longitude;
-                this.zoom = 8;
-                this.getAddress(this.latitude, this.longitude);
-            });
+        if ("geolocation" in navigator) {
+          navigator.geolocation.getCurrentPosition((position) => {
+            this.lat = position.coords.latitude;
+            this.lng = position.coords.longitude;
+            this.zoom = 8;
+            //this.getAddress(this.lat, this.lng);
+          });
+      }
+    }
+
+    markerDragEnd($event: MouseEvent ){
+        console.log($event);
+        this.lat = $event.coords.lat;
+        this.lng = $event.coords.lng;
+        this.getAddress(this.lat, this.lng);
+        // console.log('Marker Dragged',  'Lat' , this.latitude + ' Lng', this.longitude)
+      }
+    getAddress(lat: number, lng: number) {
+        const geocoder = new google.maps.Geocoder();
+        const latlng = new google.maps.LatLng(lat, lng);
+        const request: any = {
+          latLng: latlng
         }
-    }
-
-    markerDragEnd($event: any) {
-        this.latitude = $event.coords.lat;
-        this.longitude = $event.coords.lng;
-        this.getAddress(this.latitude, this.longitude);
-    }
-
-    getAddress(latitude, longitude) {
-        this.geoCoder.geocode({ 'location': { lat: latitude, lng: longitude } }, (results, status) => {
-            if (status === 'OK') {
-                if (results[0]) {
-                    this.zoom = 12;
-                    this.address = results[0].formatted_address;
-                } else {
-                    window.alert('No results found');
-                }
-            } else {
-                window.alert('Geocoder failed due to: ' + status);
-            }
-        });
-    }
+        return new Promise((resolve, reject) => {
+          geocoder.geocode(request, results => {
+            results.length ? resolve(results[0].formatted_address) : reject(null);
+          });
+        })
+     }
+     
+      centerChange(coords: LatLngLiteral) {
+        //console.log(event);
+        this.centerLatitude = coords.lat;
+        this.centerLongitude = coords.lng;
+      }
 }

@@ -1,15 +1,12 @@
 <div class="flex flex-col items-center w-full h-full">
-    
+
     <!-- Main menu -->
     <div class="flex flex-col items-center w-full h-auto p-2 sm:px-0">
-        
+
         <!-- Container -->
         <div class="flex flex-col md:flex-row justify-between w-full md:mt-14 md:mb-6">
             <!-- Contact information part -->
-            <form
-                class="flex justify-between flex-col md:flex-row w-full"
-                [formGroup]="checkoutForm"
-                #checkoutNgForm="ngForm">
+            <form class="flex justify-between flex-col md:flex-row w-full" [formGroup]="checkoutForm" #checkoutNgForm="ngForm">
 
                 <ng-container *ngIf="!notificationMessage; else storeClosed">
                     <!-- Checkout form section -->
@@ -24,21 +21,11 @@
                                     (change)="allowPickupStore();addressFormChanges();"
                                     >
                                 </mat-slide-toggle> -->
-                                <mat-radio-group
-                                    class="flex flex-row"
-                                    [disabled]="isLoading" 
-                                    [ngClass]="isLoading ? 'cursor-wait' : ''"
-                                    [color]="'primary'"
-                                    (change)="allowPickupStore();addressFormChanges();"
-                                    [formControlName]="'storePickup'">
-                                    <mat-radio-button
-                                        class="ml-2"
-                                        [value]="true">
+                                <mat-radio-group class="flex flex-row" [disabled]="isLoading" [ngClass]="isLoading ? 'cursor-wait' : ''" [color]="'primary'" (change)="allowPickupStore();addressFormChanges();" [formControlName]="'storePickup'">
+                                    <mat-radio-button class="ml-2" [value]="true">
                                         Self Pick-Up
                                     </mat-radio-button>
-                                    <mat-radio-button
-                                        class="ml-6"
-                                        [value]="false">
+                                    <mat-radio-button class="ml-6" [value]="false">
                                         Deliver
                                     </mat-radio-button>
                                 </mat-radio-group>
@@ -79,19 +66,12 @@
                                             Required
                                         </mat-error>
                                     </mat-form-field> -->
-            
+
                                     <!-- Start New Design Here -->
                                     <!-- Email Address -->
                                     <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
                                         <mat-label>Email Address</mat-label>
-                                        <input
-                                            matInput
-                                            [formControlName]="'email'"
-                                            (change)="checkCustomerInfo('email', this.checkoutForm.get('email').value)"
-                                            [placeholder]="checkoutInputField.email.placeholder"
-                                            autocomplete="disabled"
-                                            [required]="true"
-                                            >
+                                        <input matInput [formControlName]="'email'" (change)="checkCustomerInfo('email', this.checkoutForm.get('email').value)" [placeholder]="checkoutInputField.email.placeholder" autocomplete="disabled" [required]="true">
                                         <mat-error *ngIf="checkoutForm.get('email').hasError('required')">
                                             Email address is required
                                         </mat-error>
@@ -102,32 +82,19 @@
                                     <!-- Full name -->
                                     <mat-form-field class="w-full sm:w-1/2 sm:pl-1" floatLabel="always">
                                         <mat-label>Full Name</mat-label>
-                                        <input
-                                            matInput
-                                            [formControlName]="'fullName'"
-                                            [placeholder]="checkoutInputField.fullName.placeholder"
-                                            autocomplete="disabled"
-                                            [required]="true"
-                                            >
-                                            <mat-error *ngIf="checkoutForm.get('fullName').hasError('required')">
-                                                Full name is required
-                                            </mat-error>
+                                        <input matInput [formControlName]="'fullName'" [placeholder]="checkoutInputField.fullName.placeholder" autocomplete="disabled" [required]="true">
+                                        <mat-error *ngIf="checkoutForm.get('fullName').hasError('required')">
+                                            Full name is required
+                                        </mat-error>
                                     </mat-form-field>
-            
+
                                 </div>
                                 <!-- Phone number & State -->
                                 <div class="w-full flex flex-col sm:flex-row mb-4 sm:mb-0">
                                     <!--Phone Number -->
                                     <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
                                         <mat-label>Phone Number</mat-label>
-                                        <input
-                                            matInput
-                                            (change)="checkCustomerInfo('phoneNumber', this.checkoutForm.get('phoneNumber').value)"
-                                            [formControlName]="'phoneNumber'"
-                                            [placeholder]="dialingCode + '123456789'"
-                                            autocomplete="disabled"
-                                            [required]="true"
-                                            >
+                                        <input matInput (change)="checkCustomerInfo('phoneNumber', this.checkoutForm.get('phoneNumber').value)" [formControlName]="'phoneNumber'" [placeholder]="dialingCode + '123456789'" autocomplete="disabled" [required]="true">
                                         <mat-error *ngIf="checkoutForm.get('phoneNumber').hasError('required')">
                                             Phone number is required
                                         </mat-error>
@@ -135,16 +102,11 @@
                                             Invalid phone number
                                         </mat-error>
                                     </mat-form-field>
-            
+
                                     <!-- State -->
                                     <mat-form-field class="fuse-mat-no-subscript w-full sm:w-1/2 sm:pl-1" floatLabel="always">
                                         <mat-label>State</mat-label>
-                                        <mat-select 
-                                            [formControlName]="'state'"
-                                            [required]="true"
-                                            [placeholder]="checkoutInputField.state.placeholder"
-                                            (selectionChange)="checkoutForm.get('state').patchValue($event.value);"
-                                            #stateSelector="matSelect">
+                                        <mat-select [formControlName]="'state'" [required]="true" [placeholder]="checkoutInputField.state.placeholder" (selectionChange)="checkoutForm.get('state').patchValue($event.value);" #stateSelector="matSelect">
                                             <mat-select-trigger>
                                                 <span class="flex items-center">
                                                     <span>{{ stateSelector.triggerValue }}</span>
@@ -162,37 +124,25 @@
                             </div>
 
                             <!-- If logged in  -->
-                            <div *ngIf="user"
-                                class="py-5 pl-0">
+                            <div *ngIf="user" class="py-5 pl-0">
                                 <container *ngIf="false">
-                                    
+
                                     <div class="p-1">
-                                        <fuse-card class="flex flex-col w-80 h-48 rounded-lg p-4 border border-primary-300 cursor-pointer"
-                                            >
+                                        <fuse-card class="flex flex-col w-80 h-48 rounded-lg p-4 border border-primary-300 cursor-pointer">
                                             <div class="flex flex-row justify-between">
                                                 <div class="flex flex-col md:max-w-[200px]">
                                                     <h3 class="text-lg font-semibold leading-tight truncate">{{checkoutForm.get('customerAddress').value.name}}</h3>
                                                     <h3 class="font-medium">{{checkoutForm.get('customerAddress').value.phoneNumber}}</h3>
                                                 </div>
-                                                <div 
-                                                    class="flex flex-row"
-                                                    [ngClass]="checkoutForm.get('customerAddress').value.id === defaultAddress ? 'visible':'invisible'">
+                                                <div class="flex flex-row" [ngClass]="checkoutForm.get('customerAddress').value.id === defaultAddress ? 'visible':'invisible'">
                                                     <h3 class="text-primary font-bold pt-[0.1rem]">Default</h3>
                                                     <mat-icon class="text-primary pl-1" svgIcon="mat_solid:verified"></mat-icon>
                                                 </div>
                                             </div>
                                             <div class="mt-4 w-full h-full line-clamp-3">{{checkoutForm.get('customerAddress').value.address}}, {{checkoutForm.get('customerAddress').value.postCode}}, {{checkoutForm.get('customerAddress').value.city}}, {{checkoutForm.get('customerAddress').value.state}}</div>
                                             <div class="flex flex-row justify-end pt-0">
-                                                <input
-                                                id="change-address"
-                                                type="button"
-                                                (click)="changeAddress()"
-                                                class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
-                                                mat-button>
-                                                <label 
-                                                    class="flex items-center justify-center h-8 px-1 border border-gray-300 rounded cursor-pointer hover:bg-hover"
-                                                    for="change-address"
-                                                    matRipple>
+                                                <input id="change-address" type="button" (click)="changeAddress()" class="absolute h-0 w-0 opacity-0 invisible pointer-events-none" mat-button>
+                                                <label class="flex items-center justify-center h-8 px-1 border border-gray-300 rounded cursor-pointer hover:bg-hover" for="change-address" matRipple>
                                                     <mat-icon
                                                         class="sm:mr-1 icon-size-5 text-primary"
                                                         [svgIcon]="'mat_solid:location_on'">
@@ -210,25 +160,18 @@
                                             <ng-container *ngFor="let address of customerAddresses; let i = index;">
                                                 <ng-container *ngIf="address">
                                                     <div class="hidden sm:block flex-wrap items-center p-1">
-                                                        <fuse-card class="flex flex-col w-80 h-48 rounded-lg p-4 border border-primary-300 cursor-pointer hover:bg-primary-50 hover:border-primary-600"
-                                                            [ngClass]="address.id === checkoutForm.get('customerAddress').value.id ? 'bg-primary-50 border-primary-600':'bg-white'"
+                                                        <fuse-card class="flex flex-col w-80 h-48 rounded-lg p-4 border border-primary-300 cursor-pointer hover:bg-primary-50 hover:border-primary-600" [ngClass]="address.id === checkoutForm.get('customerAddress').value.id ? 'bg-primary-50 border-primary-600':'bg-white'"
                                                             (click)="selectAddress(address, i); scrollToLeft(addressContainer);">
                                                             <div class="flex flex-row justify-between">
                                                                 <div class="flex flex-col max-w-[200px]">
                                                                     <h3 class="text-lg font-semibold leading-tight truncate">{{address.name}}</h3>
                                                                     <h3 class="font-medium">{{address.phoneNumber}}</h3>
                                                                 </div>
-                                                                <div 
-                                                                    class="flex flex-row mt-1"
-                                                                    *ngIf="address.id === defaultAddress">
+                                                                <div class="flex flex-row mt-1" *ngIf="address.id === defaultAddress">
                                                                     <h3 class="text-primary font-bold pt-[0.1rem]">Default</h3>
                                                                     <mat-icon class="text-primary pl-1" svgIcon="mat_solid:verified"></mat-icon>
                                                                 </div>
-                                                                <button 
-                                                                    type="button"
-                                                                    *ngIf="address.id != defaultAddress"
-                                                                    (click)="setDefaultAddress(address, i); $event.stopPropagation()"
-                                                                    class="bg-transparent hover:bg-primary-500 font-semibold hover:text-white p-1 h-8 hover:border-transparent rounded text-sm">
+                                                                <button type="button" *ngIf="address.id != defaultAddress" (click)="setDefaultAddress(address, i); $event.stopPropagation()" class="bg-transparent hover:bg-primary-500 font-semibold hover:text-white p-1 h-8 hover:border-transparent rounded text-sm">
                                                                     Set Default
                                                                   </button>
                                                             </div>
@@ -255,9 +198,7 @@
                                             </ng-container>
                                         </ng-container>
                                         <div class="hidden sm:block flex-wrap items-center p-1">
-                                            <fuse-card
-                                                (click)="addNewAddress(addressContainer)" 
-                                                class="flex flex-col w-80 h-48 rounded-lg border border-gray-300 hover:border-primary-300 hover:bg-primary-50 cursor-pointer">
+                                            <fuse-card (click)="addNewAddress(addressContainer)" class="flex flex-col w-80 h-48 rounded-lg border border-gray-300 hover:border-primary-300 hover:bg-primary-50 cursor-pointer">
                                                 <div class="w-full pt-14 items-center justify-center flex flex-col">
                                                     <mat-icon class="text-primary w-10 h-10 items-center" svgIcon="add"></mat-icon>
                                                     <span class="text-primary text-center text-lg">Add New Address</span>
@@ -268,24 +209,17 @@
                                     <!-- Mobile view  -->
                                     <div #addressContainerMobile class="w-full block sm:hidden flex-col">
                                         <div *ngIf="checkoutForm.get('customerAddress').value">
-                                            <fuse-card class="mb-2 flex flex-col w-auto h-48 rounded-lg p-4 border cursor-pointer bg-primary-50 border-primary-600"
-                                                >
+                                            <fuse-card class="mb-2 flex flex-col w-auto h-48 rounded-lg p-4 border cursor-pointer bg-primary-50 border-primary-600">
                                                 <div class="flex flex-row justify-between">
                                                     <div class="flex flex-col max-w-[200px]">
                                                         <h3 class="text-lg font-semibold leading-tight truncate">{{checkoutForm.get('customerAddress').value.name}}</h3>
                                                         <h3 class="font-medium">{{checkoutForm.get('customerAddress').value.phoneNumber}}</h3>
                                                     </div>
-                                                    <div 
-                                                        class="flex flex-row mt-1"
-                                                        *ngIf="checkoutForm.get('customerAddress').value.id === defaultAddress">
+                                                    <div class="flex flex-row mt-1" *ngIf="checkoutForm.get('customerAddress').value.id === defaultAddress">
                                                         <h3 class="text-primary font-bold pt-[0.1rem]">Default</h3>
                                                         <mat-icon class="text-primary pl-1" svgIcon="mat_solid:verified"></mat-icon>
                                                     </div>
-                                                    <button 
-                                                        type="button"
-                                                        *ngIf="checkoutForm.get('customerAddress').value.id != defaultAddress"
-                                                        (click)="setDefaultAddress(checkoutForm.get('customerAddress').value, i); $event.stopPropagation()"
-                                                        class="bg-transparent hover:bg-primary-500 font-semibold hover:text-white p-1 h-8 hover:border-transparent rounded text-sm">
+                                                    <button type="button" *ngIf="checkoutForm.get('customerAddress').value.id != defaultAddress" (click)="setDefaultAddress(checkoutForm.get('customerAddress').value, i); $event.stopPropagation()" class="bg-transparent hover:bg-primary-500 font-semibold hover:text-white p-1 h-8 hover:border-transparent rounded text-sm">
                                                         Set Default
                                                         </button>
                                                 </div>
@@ -303,10 +237,7 @@
                                             </fuse-card>
 
                                         </div>
-                                        <fuse-card
-                                            *ngIf="customerAddresses.length === 0"
-                                            (click)="addNewAddress(addressContainerMobile)" 
-                                            class="mb-2 justify-center flex flex-col w-auto h-[48px] rounded-lg border border-gray-300 hover:border-primary-300 hover:bg-primary-50 cursor-pointer">
+                                        <fuse-card *ngIf="customerAddresses.length === 0" (click)="addNewAddress(addressContainerMobile)" class="mb-2 justify-center flex flex-col w-auto h-[48px] rounded-lg border border-gray-300 hover:border-primary-300 hover:bg-primary-50 cursor-pointer">
                                             <div class="w-full items-center justify-center flex flex-row">
                                                 <mat-icon class="text-primary w-8 h-8 pr-1 items-center" svgIcon="add"></mat-icon>
                                                 <span class="text-primary text-center ">Add New Address</span>
@@ -314,38 +245,28 @@
                                         </fuse-card>
                                         <mat-accordion class="max-w-4xl mt-8">
                                             <ng-container *ngIf="customerAddresses.length > 0">
-                                                <mat-expansion-panel [expanded]="panelOpenState" (opened)="panelOpenState = true"
-                                                (closed)="panelOpenState = false" class="border-gray-300 border">
+                                                <mat-expansion-panel [expanded]="panelOpenState" (opened)="panelOpenState = true" (closed)="panelOpenState = false" class="border-gray-300 border">
                                                     <mat-expansion-panel-header [collapsedHeight]="'48px'">
                                                         <mat-panel-title class="font-medium leading-tight justify-center">Change Address</mat-panel-title>
                                                     </mat-expansion-panel-header>
                                                     <ng-container *ngFor="let address of customerAddresses; let i = index;">
                                                         <ng-container *ngIf="address">
                                                             <div class="flex-wrap items-center m-1">
-                                                                <fuse-card 
-                                                                    *ngIf="address.id != checkoutForm.get('customerAddress').value.id" 
-                                                                    class="flex flex-col w-auto h-48 rounded-lg p-4 border border-primary-300 cursor-pointer"
-                                                                    [ngClass]="address.id === checkoutForm.get('customerAddress').value.id? 'bg-primary-50 border-primary-600':'bg-white'"
+                                                                <fuse-card *ngIf="address.id != checkoutForm.get('customerAddress').value.id" class="flex flex-col w-auto h-48 rounded-lg p-4 border border-primary-300 cursor-pointer" [ngClass]="address.id === checkoutForm.get('customerAddress').value.id? 'bg-primary-50 border-primary-600':'bg-white'"
                                                                     (click)="selectAddress(address, i);">
                                                                     <div class="flex flex-row justify-between">
                                                                         <div class="flex flex-col max-w-[200px]">
                                                                             <h3 class="text-lg font-semibold leading-tight truncate">{{address.name}}</h3>
                                                                             <h3 class="font-medium">{{address.phoneNumber}}</h3>
                                                                         </div>
-                                                                        <div 
-                                                                            class="flex flex-row mt-1"
-                                                                            *ngIf="address.id === defaultAddress">
+                                                                        <div class="flex flex-row mt-1" *ngIf="address.id === defaultAddress">
                                                                             <h3 class="text-primary font-bold pt-[0.1rem]">Default</h3>
                                                                             <mat-icon class="text-primary pl-1" svgIcon="mat_solid:verified"></mat-icon>
                                                                         </div>
-                                                                        <button 
-                                                                            type="button"
-                                                                            *ngIf="address.id != defaultAddress"
-                                                                            (click)="setDefaultAddress(address, i); $event.stopPropagation()"
-                                                                            class="bg-transparent hover:bg-primary-500 font-semibold hover:text-white p-1 h-8 hover:border-transparent rounded text-sm">
+                                                                        <button type="button" *ngIf="address.id != defaultAddress" (click)="setDefaultAddress(address, i); $event.stopPropagation()" class="bg-transparent hover:bg-primary-500 font-semibold hover:text-white p-1 h-8 hover:border-transparent rounded text-sm">
                                                                             Set Default
                                                                           </button>
-                                                                        
+
                                                                     </div>
                                                                     <div class="mt-4 w-full h-full line-clamp-3">{{address.address}}, {{address.postCode}}, {{address.city}}, {{address.state}}</div>
                                                                     <div class="flex flex-row justify-between pt-4">
@@ -357,17 +278,14 @@
                                                                             <mat-icon class="text-primary group-hover:text-primary-600" svgIcon="heroicons_outline:pencil-alt"></mat-icon>
                                                                             <span class="pl-1 pt-0.5 font-bold text-primary group-hover:text-primary-600 pr-2">Edit</span>
                                                                         </div>
-                                                                        
+
                                                                     </div>
                                                                 </fuse-card>
                                                             </div>
                                                         </ng-container>
                                                     </ng-container>
-                                                    <div class="mx-1 mb-1"> 
-                                                        <fuse-card
-                                                            *ngIf="customerAddresses.length > 0"
-                                                            (click)="addNewAddress(addressContainerMobile)" 
-                                                            class=" justify-center flex flex-col w-auto h-[56px] rounded-lg border border-gray-300 hover:border-primary-300 hover:bg-primary-50 cursor-pointer">
+                                                    <div class="mx-1 mb-1">
+                                                        <fuse-card *ngIf="customerAddresses.length > 0" (click)="addNewAddress(addressContainerMobile)" class=" justify-center flex flex-col w-auto h-[56px] rounded-lg border border-gray-300 hover:border-primary-300 hover:bg-primary-50 cursor-pointer">
                                                             <div class="w-full items-center justify-center flex flex-row">
                                                                 <mat-icon class="text-primary w-8 h-8 pr-1 items-center" svgIcon="add"></mat-icon>
                                                                 <span class="text-primary text-center ">Add New Address</span>
@@ -382,7 +300,7 @@
                             </div>
                         </ng-container>
 
-                        
+
 
                         <!-- For store pickup -->
                         <ng-container *ngIf="checkoutForm.get('storePickup').value">
@@ -392,14 +310,7 @@
                                 <ng-container *ngIf="!user">
                                     <mat-form-field class="w-full" floatLabel="always">
                                         <mat-label>Email Address</mat-label>
-                                        <input
-                                            matInput
-                                            [formControlName]="'email'"
-                                            (change)="checkCustomerInfo('email', this.checkoutForm.get('email').value)"
-                                            [placeholder]="checkoutInputField.email.placeholder"
-                                            autocomplete="disabled"
-                                            [required]="true"
-                                            >
+                                        <input matInput [formControlName]="'email'" (change)="checkCustomerInfo('email', this.checkoutForm.get('email').value)" [placeholder]="checkoutInputField.email.placeholder" autocomplete="disabled" [required]="true">
                                         <mat-error *ngIf="checkoutForm.get('email').hasError('required')">
                                             Email address is required
                                         </mat-error>
@@ -415,29 +326,16 @@
                                 <!-- Full name -->
                                 <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
                                     <mat-label>Full Name</mat-label>
-                                    <input
-                                        matInput
-                                        [formControlName]="'fullName'"
-                                        [placeholder]="checkoutInputField.fullName.placeholder"
-                                        autocomplete="disabled"
-                                        [required]="true"
-                                        >
-                                        <mat-error *ngIf="checkoutForm.get('fullName').hasError('required')">
-                                            Full name is required
-                                        </mat-error>
+                                    <input matInput [formControlName]="'fullName'" [placeholder]="checkoutInputField.fullName.placeholder" autocomplete="disabled" [required]="true">
+                                    <mat-error *ngIf="checkoutForm.get('fullName').hasError('required')">
+                                        Full name is required
+                                    </mat-error>
                                 </mat-form-field>
 
                                 <!--Phone Number -->
                                 <mat-form-field class="w-full sm:w-1/2 sm:pl-1" floatLabel="always">
                                     <mat-label>Phone Number</mat-label>
-                                    <input
-                                        matInput
-                                        (change)="checkCustomerInfo('phoneNumber', this.checkoutForm.get('phoneNumber').value)"
-                                        [formControlName]="'phoneNumber'"
-                                        [placeholder]="dialingCode + '123456789'"
-                                        autocomplete="disabled"
-                                        [required]="true"
-                                        >
+                                    <input matInput (change)="checkCustomerInfo('phoneNumber', this.checkoutForm.get('phoneNumber').value)" [formControlName]="'phoneNumber'" [placeholder]="dialingCode + '123456789'" autocomplete="disabled" [required]="true">
                                     <mat-error *ngIf="checkoutForm.get('phoneNumber').hasError('required')">
                                         Phone number is required
                                     </mat-error>
@@ -470,21 +368,14 @@
                                 </mat-form-field> -->
                                 <mat-form-field class="w-full sm:w-1/2 sm:pr-1" floatLabel="always">
                                     <mat-label>City</mat-label>
-                                    <mat-select 
-                                        [formControlName]="'city'"
-                                        [required]="true"
-                                        [value]="'city'"
-                                        [placeholder]="checkoutInputField.city.placeholder"
-                                        (selectionChange)="checkoutForm.get('city').patchValue($event.value);"
-                                        #stateCitySelector="matSelect">
+                                    <mat-select [formControlName]="'city'" [required]="true" [value]="'city'" [placeholder]="checkoutInputField.city.placeholder" (selectionChange)="checkoutForm.get('city').patchValue($event.value);" #stateCitySelector="matSelect">
                                         <mat-select-trigger>
                                             <span class="flex items-center">
                                                 <span>{{ stateCitySelector.triggerValue }}</span>
                                             </span>
                                         </mat-select-trigger>
                                         <mat-option>
-                                            <ngx-mat-select-search [placeholderLabel]="'Search City'" [noEntriesFoundLabel]="'No matching records found'" [formControl]="regionCountryStateCities"
-                                             ngDefaultControl></ngx-mat-select-search>
+                                            <ngx-mat-select-search [placeholderLabel]="'Search City'" [noEntriesFoundLabel]="'No matching records found'" [formControl]="regionCountryStateCities" ngDefaultControl></ngx-mat-select-search>
                                         </mat-option>
                                         <!-- <div *ngFor="let city of storeStateCities">
                                             <mat-option class="m-t" [value]="city.city">{{city.city}}</mat-option>
@@ -500,30 +391,19 @@
                                 <!-- Postcode -->
                                 <mat-form-field class="w-full sm:w-1/2 sm:pl-1" floatLabel="always">
                                     <mat-label>Postcode</mat-label>
-                                    <input
-                                        matInput
-                                        [formControlName]="'postCode'"
-                                        [placeholder]="checkoutInputField.postCode.placeholder"
-                                        autocomplete="disabled"
-                                        (input)="addressFormChanges()"
-                                        (change)="addressFormChanges()"
-                                        [required]="true"
-                                        maxlength="5"
-                                        >
-                                        <mat-error *ngIf="checkoutForm.get('postCode').hasError('required')">
-                                            Postcode is required.
-                                        </mat-error>
-                                        <mat-error *ngIf="checkoutForm.get('postCode').hasError('invalidPostcode')">
-                                            Invalid postcode{{checkoutForm.get('postCode').hasError('minlength') ? 
-                                            '. Does not meet minimum length' : 
-                                            checkoutForm.get('postCode').hasError('maxlength') ? '. Exceeded maximum length' : ''}}
-                                        </mat-error>
-                                        <mat-error *ngIf="!checkoutForm.get('postCode').hasError('invalidPostcode') && checkoutForm.get('postCode').hasError('minlength')">
-                                            Does not meet minimum length
-                                        </mat-error>
-                                        <mat-error *ngIf="!checkoutForm.get('postCode').hasError('invalidPostcode') && checkoutForm.get('postCode').hasError('maxlength')">
-                                            Exceeded maximum length
-                                        </mat-error>
+                                    <input matInput [formControlName]="'postCode'" [placeholder]="checkoutInputField.postCode.placeholder" autocomplete="disabled" (input)="addressFormChanges()" (change)="addressFormChanges()" [required]="true" maxlength="5">
+                                    <mat-error *ngIf="checkoutForm.get('postCode').hasError('required')">
+                                        Postcode is required.
+                                    </mat-error>
+                                    <mat-error *ngIf="checkoutForm.get('postCode').hasError('invalidPostcode')">
+                                        Invalid postcode{{checkoutForm.get('postCode').hasError('minlength') ? '. Does not meet minimum length' : checkoutForm.get('postCode').hasError('maxlength') ? '. Exceeded maximum length' : ''}}
+                                    </mat-error>
+                                    <mat-error *ngIf="!checkoutForm.get('postCode').hasError('invalidPostcode') && checkoutForm.get('postCode').hasError('minlength')">
+                                        Does not meet minimum length
+                                    </mat-error>
+                                    <mat-error *ngIf="!checkoutForm.get('postCode').hasError('invalidPostcode') && checkoutForm.get('postCode').hasError('maxlength')">
+                                        Exceeded maximum length
+                                    </mat-error>
                                 </mat-form-field>
                             </div>
                         </ng-container>
@@ -531,21 +411,9 @@
                         <!-- Address -->
                         <div class="w-full">
                             <!-- Address for normal delivery-->
-                            <mat-form-field *ngIf="!checkoutForm.get('storePickup').value && !user"
-                                class="w-full" 
-                                floatLabel="always" 
-                                >
+                            <mat-form-field *ngIf="!checkoutForm.get('storePickup').value && !user" class="w-full" floatLabel="always">
                                 <mat-label>Address</mat-label>
-                                <input
-                                    matInput
-                                    [formControlName]="'address'"
-                                    [placeholder]="checkoutInputField.address.placeholder"
-                                    autocomplete="disabled"
-                                    (change)="addressFormChanges()"
-                                    [required]="true"
-                                    (keydown.enter)="$event.preventDefault()"
-                                    (change)="addressFormChanges()"
-                                    #search>
+                                <input matInput [formControlName]="'address'" [placeholder]="checkoutInputField.address.placeholder" autocomplete="disabled" (change)="addressFormChanges()" [required]="true" (keydown.enter)="$event.preventDefault()" (change)="addressFormChanges()" #search>
                                 <mat-error *ngIf="checkoutForm.get('address').hasError('required')">
                                     Address information is required
                                 </mat-error>
@@ -587,16 +455,14 @@
                                     matInput></textarea>
                             </mat-form-field> -->
                         </div>
-                        
-                         <!-- Map (mapClick)="onMapClicked($event)" -->
-                         
-                         <div *ngIf="countryId === 'PAK'" class="w-full mb-2">
-                            <mat-label>Drag the pin on the location of your address.</mat-label>
-                            <agm-map style=" height: 250px; width: 100%;" 
-                            [latitude]="latitude" [longitude]="longitude"  [zoom]="zoom">
-                            <agm-marker [latitude]="latitude" [longitude]="longitude" [markerDraggable]="true"
-                            (dragEnd)="markerDragEnd($event)">    
-                            </agm-marker>
+
+                        <!-- Map (mapClick)="onMapClicked($event)" -->
+
+                        <div *ngIf="countryId === 'PAK'" class="w-full mb-2">
+                            <mat-label>Drag the pin to the location of your address.</mat-label>
+                            <agm-map style=" height: 250px; width: 100%;" [latitude]="lat" [longitude]="lng" [zoom]="zoom" [disableDefaultUI]="true" [zoomControl]="true" (centerChange)="centerChange($event)">
+                                <agm-marker [latitude]="lat" [longitude]="lng" [markerDraggable]="true" (dragEnd)="markerDragEnd($event)">
+                                </agm-marker>
                             </agm-map>
                         </div>
 
@@ -604,23 +470,11 @@
                         <div class="w-full">
                             <!-- Additional info -->
                             <mat-form-field class="w-full pt-0" floatLabel="always">
-                                <textarea
-                                    matInput
-                                    [formControlName]="'specialInstruction'"
-                                    placeholder="Tell us when you prefer this order to be delivered or any special request you may have"
-                                    [rows]="full"
-                                    maxlength="100"
-                                    class="h-20"
-                                    autocomplete="disabled"
-                                    matTextareaAutosize></textarea>
-                                <mat-label>Delivery schedule / instruction</mat-label>  
+                                <textarea matInput [formControlName]="'specialInstruction'" placeholder="Tell us when you prefer this order to be delivered or any special request you may have" [rows]="full" maxlength="100" class="h-20" autocomplete="disabled" matTextareaAutosize></textarea>
+                                <mat-label>Delivery schedule / instruction</mat-label>
                             </mat-form-field>
                             <!-- Save future order -->
-                            <mat-checkbox
-                                *ngIf="!user"
-                                [formControlName]="'saveMyInfo'"
-                                color="primary"
-                                class="font-semibold pb-4">
+                            <mat-checkbox *ngIf="!user" [formControlName]="'saveMyInfo'" color="primary" class="font-semibold pb-4">
                                 Save my information for future orders
                             </mat-checkbox>
                         </div>
@@ -655,24 +509,16 @@
                                     <ng-container *ngFor="let cartItem of cartItems">
                                         <div class="flex items-center py-2 border-b">
                                             <div class="relative flex flex-0 items-center justify-center w-16 h-16 mr-4 rounded overflow-hidden border">
-                                                <img
-                                                    class="w-32"
-                                                    [alt]="'Product thumbnail image of ' + cartItem.productName"
-                                                    [src]="cartItem.productAsset ? cartItem.productAsset.url : cartItem.productInventory.product.thumbnailUrl ? cartItem.productInventory.product.thumbnailUrl : displayStoreLogo(store.storeAssets)">
-                                                <div
-                                                    class="flex items-center justify-center w-full h-full text-xs font-semibold leading-none text-center uppercase">
+                                                <img class="w-32" [alt]="'Product thumbnail image of ' + cartItem.productName" [src]="cartItem.productAsset ? cartItem.productAsset.url : cartItem.productInventory.product.thumbnailUrl ? cartItem.productInventory.product.thumbnailUrl : displayStoreLogo(store.storeAssets)">
+                                                <div class="flex items-center justify-center w-full h-full text-xs font-semibold leading-none text-center uppercase">
                                                 </div>
                                             </div>
                                             <div class="flex flex-col justify-between py-1 w-full h-20 pr-1">
                                                 <div class="flex flex-row justify-between">
-                                                    <h1 class="font-semibold mb-0 line-clamp-2 cursor-pointer"
-                                                        (click)="redirect(cartItem.productInventory.product.seoUrl)">
+                                                    <h1 class="font-semibold mb-0 line-clamp-2 cursor-pointer" (click)="redirect(cartItem.productInventory.product.seoUrl)">
                                                         {{cartItem.productName}}
                                                     </h1>
-                                                    <mat-icon
-                                                        (click)="deleteCartItem(cartItem)"
-                                                        class="text-gray-500 icon-size-4 cursor-pointer"
-                                                        [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                                                    <mat-icon (click)="deleteCartItem(cartItem)" class="text-gray-500 icon-size-4 cursor-pointer" [svgIcon]="'heroicons_solid:trash'"></mat-icon>
                                                 </div>
                                                 <div class="flex flex-row justify-between items-center w-full mt-1">
                                                     <div class="flex flex-col">
@@ -685,7 +531,7 @@
                                                             </ng-container>
                                                             <!-- Display Combo -->
                                                             <ng-container *ngIf="cartItem.cartSubItem.length > 0">
-                                                                <ng-container  *ngFor="let combo of cartItem.cartSubItem">
+                                                                <ng-container *ngFor="let combo of cartItem.cartSubItem">
                                                                     <span class="px-1 py-0.5 mr-1 text-sm font-semibold rounded-lg bg-primary-400">{{combo.productName}}</span>
                                                                 </ng-container>
                                                             </ng-container>
@@ -698,12 +544,8 @@
                                                         <button (click)="updateQuantity(cartItem, cartItem.quantity, 'decrement')" type="button" class="pb-[0.1rem] text-gray-700 hover:bg-primary h-full w-14 rounded-l-lg cursor-pointer outline-none">
                                                             <span class="text-xl">−</span>
                                                         </button>
-                                                        <input 
-                                                            class="outline-none focus:outline-none text-center w-full font-semibold text-md text-gray-700 focus:text-gray-700 md:text-basecursor-default flex items-center outline-none" 
-                                                            name="custom-input-number"
-                                                            (change)="updateQuantity(cartItem, $event.target.value)"
-                                                            type="number" 
-                                                            [value]="cartItem.quantity"/>
+                                                        <input class="outline-none focus:outline-none text-center w-full font-semibold text-md text-gray-700 focus:text-gray-700 md:text-basecursor-default flex items-center outline-none" name="custom-input-number" (change)="updateQuantity(cartItem, $event.target.value)"
+                                                            type="number" [value]="cartItem.quantity" />
                                                         <button (click)="updateQuantity(cartItem, cartItem.quantity, 'increment')" type="button" class="pb-[0.1rem] text-gray-700 hover:bg-primary items-center h-full w-14 rounded-r-lg cursor-pointer">
                                                             <span class="text-xl">+</span>
                                                         </button>
@@ -718,9 +560,7 @@
                             <!-- No Cart Items -->
                             <ng-template #noCartItems>
                                 <div class="flex flex-auto h-80 flex-col items-center justify-center rounded dark:bg-transparent">
-                                    <mat-icon
-                                        class="text-gray-400 icon-size-20"
-                                        [svgIcon]="'heroicons_solid:shopping-cart'"></mat-icon>
+                                    <mat-icon class="text-gray-400 icon-size-20" [svgIcon]="'heroicons_solid:shopping-cart'"></mat-icon>
                                     <div class="mt-6 text-2xl font-semibold tracking-tight text-secondary">No item in cart</div>
                                 </div>
                             </ng-template>
@@ -732,7 +572,7 @@
                                 <!-- Order Section -->
                                 <!-- Subtotal -->
                                 <div class="flex flex-row w-full justify-between py-1">
-                                    <p class="font-semibold text-gray-500">Sub Total</p> 
+                                    <p class="font-semibold text-gray-500">Sub Total</p>
                                     <span class="font-semibold">{{paymentDetails.cartSubTotal | currency: store.regionCountry.currencySymbol}}</span>
                                 </div>
                                 <!-- Order Discount -->
@@ -791,7 +631,7 @@
                                 <!-- Service Charges -->
                                 <ng-container *ngIf="paymentDetails.storeServiceChargePercentage">
                                     <div class="flex flex-row w-full justify-between py-1">
-                                        <p class="font-semibold text-gray-500">Service Charges ({{paymentDetails.storeServiceChargePercentage | number}}%)</p> 
+                                        <p class="font-semibold text-gray-500">Service Charges ({{paymentDetails.storeServiceChargePercentage | number}}%)</p>
                                         <span class="font-semibold">{{paymentDetails.storeServiceCharge | currency: store.regionCountry.currencySymbol}}</span>
                                     </div>
                                 </ng-container>
@@ -801,68 +641,41 @@
                                 <ng-container *ngIf="deliveryProviders.length > 0 && checkoutForm.get('storePickup').value === false">
                                     <div *ngIf="deliveryProviders[0].deliveryType !== 'SELF'" class="flex flex-row w-full mt-2">
                                         <mat-form-field class="w-full rounded text-sm fuse-mat-no-subscript fuse-mat-dense">
-                                            <mat-select
-                                                [formControlName]="'deliveryProviderId'"
-                                                placeholder="Select a delivery provider"
-                                                (selectionChange)="changeDeliveryProvider(deliveryProviderSelector.value)"
-                                                #deliveryProviderSelector="matSelect"
-                                                >
+                                            <mat-select [formControlName]="'deliveryProviderId'" placeholder="Select a delivery provider" (selectionChange)="changeDeliveryProvider(deliveryProviderSelector.value)" #deliveryProviderSelector="matSelect">
                                                 <mat-select-trigger>
-                                                     <!-- For all vertical except E-Commerce MYS -->
+                                                    <!-- For all vertical except E-Commerce MYS -->
                                                     <ng-container *ngIf="store.verticalCode !== 'E-Commerce'">
                                                         <span class="flex items-center justify-between w-full">
                                                             <span>{{ deliveryProviderSelector.triggerValue }}</span>
-                                                            <img
-                                                                matSuffix
-                                                                class="w-1/3 max-h-10"
-                                                                *ngIf="selectedDeliveryProvider && selectedDeliveryProvider.providerImage"
-                                                                [alt]="'Delivery provider image'"
-                                                                [src]="selectedDeliveryProvider.providerImage">
+                                                        <img matSuffix class="w-1/3 max-h-10" *ngIf="selectedDeliveryProvider && selectedDeliveryProvider.providerImage" [alt]="'Delivery provider image'" [src]="selectedDeliveryProvider.providerImage">
                                                         </span>
                                                     </ng-container>
                                                     <!-- For vertical E-Commerce MYS -->
                                                     <ng-container *ngIf="store.verticalCode === 'E-Commerce'">
                                                         <span class="flex items-center justify-between w-full">
                                                             <span>{{ deliveryProviderSelector.triggerValue }}</span>
-                                                            <img
-                                                                matSuffix
-                                                                class="w-1/3 max-h-10"
-                                                                *ngIf="selectedDeliveryProvidersGroup && selectedDeliveryProvidersGroup.deliveryProviders[0].providerImage"
-                                                                [alt]="'Delivery provider image'"
-                                                                [src]="selectedDeliveryProvidersGroup.deliveryProviders[0].providerImage">
+                                                        <img matSuffix class="w-1/3 max-h-10" *ngIf="selectedDeliveryProvidersGroup && selectedDeliveryProvidersGroup.deliveryProviders[0].providerImage" [alt]="'Delivery provider image'" [src]="selectedDeliveryProvidersGroup.deliveryProviders[0].providerImage">
                                                         </span>
                                                     </ng-container>
                                                 </mat-select-trigger>
                                                 <!-- For all vertical except E-Commerce MYS -->
                                                 <ng-container *ngIf="store.verticalCode !== 'E-Commerce'">
                                                     <ng-container *ngFor="let deliveryProvider of deliveryProviders">
-                                                            <mat-option 
-                                                                [value]="deliveryProvider.providerId">
-                                                                <div class="flex flex-row justify-between">
-                                                                    <span class="w-2/3">{{deliveryProvider.providerName}}</span>
-                                                                    <img
-                                                                        matSuffix
-                                                                        class="w-1/3 max-h-10"
-                                                                        *ngIf="deliveryProvider.providerImage"
-                                                                        [alt]="'Delivery provider image'"
-                                                                        [src]="deliveryProvider.providerImage">
-                                                                </div>
-                                                            </mat-option>
+                                                        <mat-option [value]="deliveryProvider.providerId">
+                                                            <div class="flex flex-row justify-between">
+                                                                <span class="w-2/3">{{deliveryProvider.providerName}}</span>
+                                                                <img matSuffix class="w-1/3 max-h-10" *ngIf="deliveryProvider.providerImage" [alt]="'Delivery provider image'" [src]="deliveryProvider.providerImage">
+                                                            </div>
+                                                        </mat-option>
                                                     </ng-container>
                                                 </ng-container>
                                                 <!-- For vertical E-Commerce MYS -->
                                                 <ng-container *ngIf="store.verticalCode === 'E-Commerce'">
                                                     <ng-container *ngFor="let deliveryProviderGroup of deliveryProvidersGroup">
-                                                        <mat-option 
-                                                            [value]="deliveryProviderGroup.providerId">
+                                                        <mat-option [value]="deliveryProviderGroup.providerId">
                                                             <div class="flex flex-row items-center justify-between">
                                                                 <span class="w-2/3">{{deliveryProviderGroup.deliveryProviders[0].providerName}}</span>
-                                                                <img
-                                                                    matSuffix
-                                                                    class="w-24 h-8"
-                                                                    *ngIf="deliveryProviderGroup.deliveryProviders[0].providerImage"
-                                                                    [alt]="'Delivery provider image'"
-                                                                    [src]="deliveryProviderGroup.deliveryProviders[0].providerImage">
+                                                                <img matSuffix class="w-24 h-8" *ngIf="deliveryProviderGroup.deliveryProviders[0].providerImage" [alt]="'Delivery provider image'" [src]="deliveryProviderGroup.deliveryProviders[0].providerImage">
                                                             </div>
                                                         </mat-option>
                                                     </ng-container>
@@ -873,13 +686,12 @@
                                             </mat-error>
                                         </mat-form-field>
                                     </div>
-                                    <div *ngIf="deliveryProviders[0].deliveryType === 'SELF'" 
-                                        class="flex flex-row w-full items-center mt-2">
+                                    <div *ngIf="deliveryProviders[0].deliveryType === 'SELF'" class="flex flex-row w-full items-center mt-2">
                                         <mat-label class="flex w-full px-4 items-center h-10 rounded-md border border-gray-300 text-sm">
                                             Self Delivery</mat-label>
                                     </div>
                                 </ng-container>
-                                
+
                                 <!-- Delivery Periods -->
                                 <ng-container *ngIf="store.verticalCode === 'E-Commerce' && selectedDeliveryProvidersGroup">
                                     <fieldset class="flex flex-row border border-gray-300 rounded-lg w-full p-2 mb-2">
@@ -889,10 +701,7 @@
                                                 <ng-container *ngIf="deliveryPartner.isError === false">
                                                     <div class="flex flex-row items-center">
                                                         <mat-radio-button [checked]="checkedDeliveryRefId === deliveryPartner.refId" (change)="changeDeliveryProvider($event.value,'group')" [value]="deliveryPartner.refId">{{deliveryPartner.deliveryPeriod.name}}</mat-radio-button>
-                                                        <mat-icon
-                                                            [matTooltip]="deliveryPartner.deliveryPeriod.description"
-                                                            class="flex flex-wrap transform scale-75"
-                                                            [svgIcon]="'heroicons_solid:question-mark-circle'">
+                                                        <mat-icon [matTooltip]="deliveryPartner.deliveryPeriod.description" class="flex flex-wrap transform scale-75" [svgIcon]="'heroicons_solid:question-mark-circle'">
                                                         </mat-icon>
                                                     </div>
                                                 </ng-container>
@@ -905,7 +714,7 @@
                                 </ng-container>
                                 <!-- Delivery Charges -->
                                 <div class="flex flex-row w-full justify-between py-1">
-                                    <span class="font-semibold text-gray-500">Delivery Charges</span> 
+                                    <span class="font-semibold text-gray-500">Delivery Charges</span>
                                     <span class="font-semibold">{{paymentDetails.deliveryCharges | currency: store.regionCountry.currencySymbol}}</span>
                                 </div>
                                 <!-- Delivery Discount -->
@@ -943,7 +752,7 @@
 
                                 <!-- User voucher  -->
                                 <ng-container *ngIf="user; else guestVoucher">
-                                    
+
                                     <!-- Divider -->
                                     <div class="my-2 border-t"></div>
 
@@ -951,12 +760,7 @@
                                     <ng-container *ngIf="customerVouchers && customerVouchers.length > 0">
                                         <mat-form-field class="fuse-mat-no-subscript fuse-mat-dense w-full mb-1 text-sm" floatLabel="always">
                                             <mat-label class="text-base ">Voucher Discount</mat-label>
-                                            <mat-select 
-                                                placeholder="Select My Voucher"
-                                                (selectionChange)="selectVoucher(voucherSelector.value);"
-                                                [(ngModel)]="voucherApplied"
-                                                [ngModelOptions]="{standalone: true}"
-                                                #voucherSelector="matSelect">
+                                            <mat-select placeholder="Select My Voucher" (selectionChange)="selectVoucher(voucherSelector.value);" [(ngModel)]="voucherApplied" [ngModelOptions]="{standalone: true}" #voucherSelector="matSelect">
                                                 <mat-select-trigger>
                                                     <span class="flex items-center">
                                                         <span>{{ voucherSelector.triggerValue }}</span>
@@ -968,16 +772,11 @@
                                                     </ng-container>
                                                 </div>
                                             </mat-select>
-                                            <button
-                                                mat-icon-button
-                                                type="button"
-                                                *ngIf="voucherApplied"
-                                                (click)="deselectVoucher(); $event.stopPropagation()"
-                                                matSuffix>
+                                            <button mat-icon-button type="button" *ngIf="voucherApplied" (click)="deselectVoucher(); $event.stopPropagation()" matSuffix>
                                                 <mat-icon
                                                     class="text-gray-500 icon-size-4 ml-2"
                                                     [svgIcon]="'heroicons_solid:trash'"></mat-icon>
-                                            </button>                                              
+                                            </button>
                                         </mat-form-field>
                                     </ng-container>
 
@@ -986,19 +785,10 @@
                                         <div class="flex flex-row w-full justify-between items-center">
                                             <!-- Input Promo Code -->
                                             <mat-form-field class="w-full fuse-mat-dense fuse-mat-no-subscript text-sm" floatLabel="always">
-                                                <input
-                                                    matInput
-                                                    [(ngModel)]="promoCode"
-                                                    placeholder="Enter Promo Code"
-                                                    [ngModelOptions]="{standalone: true}"
-                                                    autocomplete="disabled">
+                                                <input matInput [(ngModel)]="promoCode" placeholder="Enter Promo Code" [ngModelOptions]="{standalone: true}" autocomplete="disabled">
                                             </mat-form-field>
                                             <!-- Claim Voucher Button -->
-                                            <button
-                                                [disabled]="isLoading" 
-                                                class="ml-2 w-auto font-semibold py-2 px-3 rounded"
-                                                [ngClass]="isLoading ? 'cursor-wait bg-gray-200' : 'bg-primary-500 hover:bg-primary-600'"
-                                                (click)="claimPromoCode()">
+                                            <button [disabled]="isLoading" class="ml-2 w-auto font-semibold py-2 px-3 rounded" [ngClass]="isLoading ? 'cursor-wait bg-gray-200' : 'bg-primary-500 hover:bg-primary-600'" (click)="claimPromoCode()">
                                                 <span class="tracking-tight">
                                                     Redeem
                                                 </span>
@@ -1008,8 +798,7 @@
                                     <ng-template #displayHavePromo>
                                         <div class="text-xs">
                                             <span>Having a Promo Code? Redeem </span>
-                                            <span class="underline cursor-pointer text-primary" 
-                                                (click)="displayRedeem = true">
+                                            <span class="underline cursor-pointer text-primary" (click)="displayRedeem = true">
                                             here
                                             </span>
                                         </div>
@@ -1022,17 +811,12 @@
                                     <ng-container *ngIf="false">
                                         <!-- Divider -->
                                         <div class="my-2 border-t"></div>
-    
+
                                         <!-- Voucher Dropdown -->
                                         <ng-container>
                                             <mat-form-field class="fuse-mat-no-subscript fuse-mat-dense w-full mb-1 text-sm" floatLabel="always">
                                                 <mat-label class="text-base ">Voucher Discount</mat-label>
-                                                <mat-select 
-                                                    placeholder="Select My Voucher"
-                                                    (selectionChange)="selectVoucher(voucherSelector.value);"
-                                                    [(ngModel)]="voucherApplied"
-                                                    [ngModelOptions]="{standalone: true}"
-                                                    #voucherSelector="matSelect">
+                                                <mat-select placeholder="Select My Voucher" (selectionChange)="selectVoucher(voucherSelector.value);" [(ngModel)]="voucherApplied" [ngModelOptions]="{standalone: true}" #voucherSelector="matSelect">
                                                     <mat-select-trigger>
                                                         <span class="flex items-center">
                                                             <span>{{ voucherSelector.triggerValue }}</span>
@@ -1044,37 +828,23 @@
                                                         </ng-container>
                                                     </div>
                                                 </mat-select>
-                                                <button
-                                                    mat-icon-button
-                                                    type="button"
-                                                    *ngIf="voucherApplied"
-                                                    (click)="deselectVoucher(); $event.stopPropagation()"
-                                                    matSuffix>
+                                                <button mat-icon-button type="button" *ngIf="voucherApplied" (click)="deselectVoucher(); $event.stopPropagation()" matSuffix>
                                                     <mat-icon
                                                         class="text-gray-500 icon-size-4 ml-2"
                                                         [svgIcon]="'heroicons_solid:trash'"></mat-icon>
-                                                </button>                                              
+                                                </button>
                                             </mat-form-field>
                                         </ng-container>
-    
+
                                         <!-- Input Promo Code & Claim button  -->
                                         <ng-container *ngIf="displayRedeem; else displayHavePromo">
                                             <div class="flex flex-row w-full justify-between items-center">
                                                 <!-- Input Promo Code -->
                                                 <mat-form-field class="w-full fuse-mat-dense fuse-mat-no-subscript text-sm" floatLabel="always">
-                                                    <input
-                                                        matInput
-                                                        [(ngModel)]="promoCode"
-                                                        placeholder="Enter Promo Code"
-                                                        [ngModelOptions]="{standalone: true}"
-                                                        autocomplete="disabled">
+                                                    <input matInput [(ngModel)]="promoCode" placeholder="Enter Promo Code" [ngModelOptions]="{standalone: true}" autocomplete="disabled">
                                                 </mat-form-field>
                                                 <!-- Claim Voucher Button -->
-                                                <button
-                                                    [disabled]="isLoading" 
-                                                    class="ml-2 w-auto font-semibold py-2 px-3 rounded"
-                                                    [ngClass]="isLoading ? 'cursor-wait bg-gray-200' : 'bg-primary-500 hover:bg-primary-600'"
-                                                    (click)="claimPromoCode()">
+                                                <button [disabled]="isLoading" class="ml-2 w-auto font-semibold py-2 px-3 rounded" [ngClass]="isLoading ? 'cursor-wait bg-gray-200' : 'bg-primary-500 hover:bg-primary-600'" (click)="claimPromoCode()">
                                                     <span class="tracking-tight">
                                                         Redeem
                                                     </span>
@@ -1084,8 +854,7 @@
                                         <ng-template #displayHavePromo>
                                             <div class="text-xs">
                                                 <span>Having a Promo Code? Redeem </span>
-                                                <span class="underline cursor-pointer text-primary" 
-                                                    (click)="displayRedeem = true">
+                                                <span class="underline cursor-pointer text-primary" (click)="displayRedeem = true">
                                                 here
                                                 </span>
                                             </div>
@@ -1099,17 +868,13 @@
                             </div>
                             <!-- grand total -->
                             <div class="flex flex-row w-full border-t justify-between py-2">
-                                <span class="font-semibold text-gray-500">Grand Total</span> 
+                                <span class="font-semibold text-gray-500">Grand Total</span>
                                 <span class="font-semibold">{{paymentDetails.cartGrandTotal | currency: store.regionCountry.currencySymbol}}</span>
                             </div>
                         </div>
                         <!-- Pay now / Calculate price button -->
                         <ng-container *ngIf="!notificationMessage && (paymentCompletionStatus.id !== 'CALCULATE_CHARGES' || currentScreenSize.includes('md') === true)">
-                            <button
-                                [disabled]="isLoading" 
-                                class="my-2 w-auto font-semibold p-2 "
-                                [ngClass]="isLoading ? 'cursor-wait bg-gray-200' : 'bg-green-500 rounded hover:bg-green-600'"
-                                (click)="executeAction(paymentCompletionStatus.id)">
+                            <button [disabled]="isLoading" class="my-2 w-auto font-semibold p-2 " [ngClass]="isLoading ? 'cursor-wait bg-gray-200' : 'bg-green-500 rounded hover:bg-green-600'" (click)="executeAction(paymentCompletionStatus.id)">
                                 <span>
                                     {{ paymentCompletionStatus.label }}
                                 </span>
@@ -1117,21 +882,15 @@
                         </ng-container>
                         <div *ngIf="isCalculating === true && currentScreenSize.includes('md') === false" class="absolute flex justify-center items-center w-full h-full top-0 bottom-0 left-0 right-0 bg-black opacity-60 rounded-lg">
                             <img class="w-6 pr-2" src="assets/gif/loading.gif" alt="loading">
-                            <span class="text-white font-semibold">Calculating...</span> 
+                            <span class="text-white font-semibold">Calculating...</span>
                         </div>
                     </div>
                     <!-- Promo Text  -->
                     <ng-container *ngIf="promoText">
                         <div class="flex flex-col pt-4">
-                            <div
-                                class="text-lg font-medium"
-                                [innerHTML]="promoText.displayText"></div>
+                            <div class="text-lg font-medium" [innerHTML]="promoText.displayText"></div>
                             <div>
-                                <button
-                                    [disabled]="isLoading" 
-                                    class="my-2 w-auto font-semibold p-2 rounded"
-                                    [ngClass]="isLoading ? 'cursor-wait bg-gray-200' : 'bg-primary hover:bg-primary-600'"
-                                    (click)="promoActionButton(); $event.preventDefault()">
+                                <button [disabled]="isLoading" class="my-2 w-auto font-semibold p-2 rounded" [ngClass]="isLoading ? 'cursor-wait bg-gray-200' : 'bg-primary hover:bg-primary-600'" (click)="promoActionButton(); $event.preventDefault()">
                                     <span class="tracking-tight">
                                         {{promoActionButtonText}}
                                     </span>
@@ -1148,13 +907,7 @@
 
                 <!-- Calculate price button -->
                 <ng-container *ngIf="!notificationMessage && paymentCompletionStatus.id === 'CALCULATE_CHARGES' && currentScreenSize.includes('md') === false">
-                    <button
-                        [disabled]="isLoading" 
-                        class="order-3 w-auto font-semibold p-2 rounded"
-                        [ngClass]="isLoading ? 'cursor-wait bg-gray-200' : 'bg-green-500 hover:bg-green-600'"
-                        (click)="executeAction(paymentCompletionStatus.id, checkoutContainer)"
-                        (click)="scrollToTop(checkoutContainer)"
-                    >
+                    <button [disabled]="isLoading" class="order-3 w-auto font-semibold p-2 rounded" [ngClass]="isLoading ? 'cursor-wait bg-gray-200' : 'bg-green-500 hover:bg-green-600'" (click)="executeAction(paymentCompletionStatus.id, checkoutContainer)" (click)="scrollToTop(checkoutContainer)">
                         <span>
                             {{ paymentCompletionStatus.label }}
                         </span>
