@@ -1019,46 +1019,35 @@
 
                                 <!-- Guest voucher  -->
                                 <ng-template #guestVoucher>
-                                    <ng-container *ngIf="false">
-                                        <!-- Divider -->
-                                        <div class="my-2 border-t"></div>
-    
-                                        <!-- Voucher Dropdown -->
-                                        <ng-container>
-                                            <mat-form-field class="fuse-mat-no-subscript fuse-mat-dense w-full mb-1 text-sm" floatLabel="always">
-                                                <mat-label class="text-base ">Voucher Discount</mat-label>
-                                                <mat-select 
-                                                    placeholder="Select My Voucher"
-                                                    (selectionChange)="selectVoucher(voucherSelector.value);"
-                                                    [(ngModel)]="voucherApplied"
-                                                    [ngModelOptions]="{standalone: true}"
-                                                    #voucherSelector="matSelect">
-                                                    <mat-select-trigger>
-                                                        <span class="flex items-center">
-                                                            <span>{{ voucherSelector.triggerValue }}</span>
-                                                        </span>
-                                                    </mat-select-trigger>
-                                                    <div *ngFor="let voucher of guestVouchers">
-                                                        <ng-container *ngIf="(voucher.voucher.storeId === null || voucher.voucher.storeId === store.id ) && validateVoucher(voucher)">
-                                                            <mat-option [value]="voucher">{{voucher.voucher.name}}</mat-option>
-                                                        </ng-container>
-                                                    </div>
-                                                </mat-select>
-                                                <button
-                                                    mat-icon-button
-                                                    type="button"
-                                                    *ngIf="voucherApplied"
-                                                    (click)="deselectVoucher(); $event.stopPropagation()"
-                                                    matSuffix>
-                                                    <mat-icon
-                                                        class="text-gray-500 icon-size-4 ml-2"
-                                                        [svgIcon]="'heroicons_solid:trash'"></mat-icon>
-                                                </button>                                              
-                                            </mat-form-field>
-                                        </ng-container>
-    
-                                        <!-- Input Promo Code & Claim button  -->
-                                        <ng-container *ngIf="displayRedeem; else displayHavePromo">
+                                    <!-- Divider -->
+                                    <div class="my-2 border-t"></div>
+
+                                    <!-- Voucher Dropdown -->
+                                    <ng-container *ngIf="guestVouchers">
+                                        <mat-form-field class="fuse-mat-no-subscript fuse-mat-dense w-full mt-1 text-sm" floatLabel="always">
+                                            <mat-label class="text-base ">Voucher Discount</mat-label>
+                                            <input
+                                            matInput
+                                            readonly
+                                            [(ngModel)]="guestVouchers.voucher.name"
+                                            [ngModelOptions]="{standalone: true}"
+                                            >
+                                            <button
+                                                mat-icon-button
+                                                type="button"
+                                                *ngIf="voucherApplied"
+                                                (click)="deselectVoucher(); $event.stopPropagation()"
+                                                matSuffix>
+                                                <mat-icon
+                                                    class="text-gray-500 icon-size-4 ml-2"
+                                                    [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                                            </button>                                              
+                                        </mat-form-field>
+                                    </ng-container>
+
+                                    <!-- Input Promo Code & Claim button  -->
+                                    <ng-container *ngIf="guestVouchers === null">
+                                        <ng-container *ngIf="true; else displayHavePromo">
                                             <div class="flex flex-row w-full justify-between items-center">
                                                 <!-- Input Promo Code -->
                                                 <mat-form-field class="w-full fuse-mat-dense fuse-mat-no-subscript text-sm" floatLabel="always">
@@ -1090,11 +1079,7 @@
                                                 </span>
                                             </div>
                                         </ng-template>
-
                                     </ng-container>
-
-
-
                                 </ng-template>
                             </div>
                             <!-- grand total -->
