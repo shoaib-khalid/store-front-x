@@ -20,9 +20,8 @@ import { AddAddressComponent } from './add-address/add-address.component';
 import { EditAddressComponent } from './edit-address/edit-address.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { VoucherModalComponent } from './voucher-modal/voucher-modal.component';
-import { AgmCoreModule } from '@agm/core';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
-
+import { GoogleMapsModule } from '@angular/google-maps';
 
 @NgModule({
     declarations: [
@@ -31,9 +30,9 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
         ModalConfirmationDeleteItemComponent,
         AddAddressComponent,
         EditAddressComponent,
-        VoucherModalComponent
+        VoucherModalComponent,
     ],
-    imports     : [
+    imports: [
         RouterModule.forChild(landingCheckoutRoutes),
         MatButtonModule,
         MatIconModule,
@@ -48,15 +47,12 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
         SharedModule,
         MatExpansionModule,
         NgxMatSelectSearchModule,
-        AgmCoreModule.forRoot({  
-            apiKey: 'AIzaSyCFhf1LxbPWNQSDmxpfQlx69agW-I-xBIw' ,
-            libraries: ['places'] 
-          }), 
+        GoogleMapsModule,
+        // AgmCoreModule.forRoot({
+        //     apiKey: 'AIzaSyCFhf1LxbPWNQSDmxpfQlx69agW-I-xBIw' ,
+        //     libraries: ['places']
+        //   }),
     ],
-    providers   : [
-        DatePipe
-    ]
+    providers: [DatePipe],
 })
-export class LandingCheckoutModule
-{
-}
+export class LandingCheckoutModule {}

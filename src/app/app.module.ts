@@ -14,28 +14,32 @@ import { AppComponent } from 'app/app.component';
 import { appRoutes } from 'app/app.routing';
 import { AppConfig } from 'app/config/service.config';
 import * as Hammer from 'hammerjs';
-import { HammerGestureConfig, HAMMER_GESTURE_CONFIG, HammerModule } from '@angular/platform-browser';
+import {
+    HammerGestureConfig,
+    HAMMER_GESTURE_CONFIG,
+    HammerModule,
+} from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
+// import { GoogleMapsModule } from '@angular/google-maps';
 
 const routerConfig: ExtraOptions = {
-    preloadingStrategy       : PreloadAllModules,
+    preloadingStrategy: PreloadAllModules,
     scrollPositionRestoration: 'enabled',
     // useHash: true
 };
 
 @Injectable()
 export class MyHammerConfig extends HammerGestureConfig {
-    overrides = <any> {
-      swipe: { direction: Hammer.DIRECTION_ALL }
+    overrides = <any>{
+        swipe: { direction: Hammer.DIRECTION_ALL },
     };
 }
 
 @NgModule({
-    declarations: [
-        AppComponent
-    ],
-    imports     : [
+    declarations: [AppComponent],
+    imports: [
         BrowserModule,
+        // GoogleMapsModule,
         BrowserAnimationsModule,
         RouterModule.forRoot(appRoutes, routerConfig),
 
@@ -56,28 +60,24 @@ export class MyHammerConfig extends HammerGestureConfig {
         HttpClientModule,
 
         // 3rd party modules that require global configuration via forRoot
-        MarkdownModule.forRoot({})
+        MarkdownModule.forRoot({}),
     ],
     providers: [
         AppConfig,
-        { 
+        {
             provide: APP_INITIALIZER,
             useFactory: initializeApp,
-            deps: [AppConfig], 
-            multi: true 
+            deps: [AppConfig],
+            multi: true,
         },
         {
             provide: HAMMER_GESTURE_CONFIG,
             useClass: MyHammerConfig,
         },
     ],
-    bootstrap   : [
-        AppComponent
-    ]
+    bootstrap: [AppComponent],
 })
-export class AppModule
-{
-}
+export class AppModule {}
 
 export function initializeApp(appConfig: AppConfig) {
     return () => appConfig.load();
