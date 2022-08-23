@@ -12,7 +12,7 @@ import { CartDiscount, CustomerVoucher, CustomerVoucherPagination, DeliveryCharg
 import { AuthService } from 'app/core/auth/auth.service';
 import { CartService } from 'app/core/cart/cart.service';
 import { Store } from 'app/core/store/store.types';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, PlatformLocation } from '@angular/common';
 
 @Injectable({
     providedIn: 'root'
@@ -41,6 +41,7 @@ export class CheckoutService
      */
     constructor(
         @Inject(DOCUMENT) private _document: Document,
+        private _platformLocation: PlatformLocation,
         private _authService: AuthService,
         private _httpClient: HttpClient,
         private _apiServer: AppConfig,
@@ -138,7 +139,8 @@ export class CheckoutService
     {
         return of(true).pipe(
             map(()=>{
-                let storeFrontDomain = this._apiServer.settings.storeFrontDomain;
+                let fullUrl = (this._platformLocation as any).location.origin;            
+                let storeFrontDomain = (this._apiServer.settings.env.name === "dev") ? fullUrl : "https://payment" + this._apiServer.settings.storeFrontDomain;  
                 this._storesService.store$
                     .pipe(takeUntil(this._unsubscribeAll))
                     .subscribe((store: Store)=>{
@@ -147,7 +149,7 @@ export class CheckoutService
                                 this._logging.debug("checkout have paramStoreId & paramCartId. Thus, WILL NOT redirect)");
                             } else {
                                 this._logging.debug("PAK checkout WILL BE redirect)");
-                                let paymentUrl = "https://payment" + storeFrontDomain + "/checkout?storeId=" + this._storesService.storeId$ + "&cartId=" + this._cartService.cartId$;
+                                let paymentUrl = storeFrontDomain + "/checkout?storeId=" + this._storesService.storeId$ + "&cartId=" + this._cartService.cartId$;
                                 this._document.location.href = paymentUrl;
                             }
                         } else {
