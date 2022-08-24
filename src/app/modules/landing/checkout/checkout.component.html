@@ -1304,9 +1304,7 @@
                             </mat-form-field>
 
                             <button
-                                *ngIf="
-                                    countryId === 'PAK' && mapsApiLoaded | async
-                                "
+                                *ngIf="mapsApiLoaded | async"
                                 [disabled]="isLoading"
                                 class="ml-2 w-auto font-semibold py-2 px-3 rounded"
                                 [ngClass]="
@@ -1316,7 +1314,6 @@
                                 "
                                 (click)="searchAddress()"
                             >
-                                <!-- (click)="" -->
                                 <span>Find</span>
                             </button>
 
@@ -1375,10 +1372,7 @@
                             </ul>
                         </div>
 
-                        <div
-                            *ngIf="countryId === 'PAK' && mapsApiLoaded | async"
-                            class="w-full mb-2"
-                        >
+                        <div *ngIf="mapsApiLoaded | async" class="w-full mb-2">
                             <google-map
                                 height="500px"
                                 width="100%"
