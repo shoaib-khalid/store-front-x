@@ -121,7 +121,7 @@ export class PlatformService
         const header = {
             headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
             params:{
-                domain:this.url.domainName
+                domain: "." + this.url.domainName
             }
         };
         

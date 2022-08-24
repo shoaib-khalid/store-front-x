@@ -7,7 +7,7 @@ import { CartService } from 'app/core/cart/cart.service';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
 import { Store } from 'app/core/store/store.types';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, PlatformLocation } from '@angular/common';
 import { StoresService } from 'app/core/store/store.service';
 import { AppConfig } from 'app/config/service.config';
 
@@ -46,6 +46,7 @@ export class CartComponent implements OnInit, OnDestroy
         private _userService: UserService,
         private _storesService: StoresService,
         private _apiServer: AppConfig,
+        private _platformLocation: PlatformLocation
     )
     {
     }
@@ -145,8 +146,6 @@ export class CartComponent implements OnInit, OnDestroy
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
-
-        
     }
 
     /**
@@ -165,11 +164,13 @@ export class CartComponent implements OnInit, OnDestroy
 
     redirectToStore(store: Store, cartId?: string) {
         if (store.id === this.store.id) {
-            let storeFrontDomain = this._apiServer.settings.storeFrontDomain;
+            let fullUrl = (this._platformLocation as any).location.origin;            
+            let storeFrontDomain = (this._apiServer.settings.env.name === "dev") ? fullUrl : "https://payment" + this._apiServer.settings.storeFrontDomain;
+
             if (this.store.verticalCode === 'FnB' || this.store.verticalCode === 'E-Commerce') {
                 this._router.navigate(['/checkout']);
             } else if (this.store.verticalCode === 'FnB_PK' || this.store.verticalCode === 'ECommerce_PK') {
-                let paymentUrl = "https://payment" + storeFrontDomain + "/checkout?storeId=" + this._storesService.storeId$ + "&cartId=" + this._cartService.cartId$;
+                let paymentUrl = storeFrontDomain + "/checkout?storeId=" + this._storesService.storeId$ + "&cartId=" + this._cartService.cartId$;
                 this._document.location.href = paymentUrl;
             } else {
                 console.error("verticalCode not recognised")
@@ -193,7 +194,6 @@ export class CartComponent implements OnInit, OnDestroy
     seeMoreRedirect(): void
     {
         // this._router.navigate(['/profile']);
-
         this._document.location.href = 'https://' + this._apiServer.settings.marketplaceDomain + '/carts';
     }
     

@@ -8,11 +8,11 @@ import { LogService } from 'app/core/logging/log.service';
 import { StoresService } from 'app/core/store/store.service';
 import { Customer } from 'app/core/user/user.types';
 import { CartDiscount, CustomerVoucher, CustomerVoucherPagination, DeliveryCharges, DeliveryProvider, 
-         PromoText, PromoTextPagination, UsedCustomerVoucherPagination } from './checkout.types';
+         PromoText, PromoTextPagination, UsedCustomerVoucherPagination, Voucher } from './checkout.types';
 import { AuthService } from 'app/core/auth/auth.service';
 import { CartService } from 'app/core/cart/cart.service';
 import { Store } from 'app/core/store/store.types';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, PlatformLocation } from '@angular/common';
 
 @Injectable({
     providedIn: 'root'
@@ -41,6 +41,7 @@ export class CheckoutService
      */
     constructor(
         @Inject(DOCUMENT) private _document: Document,
+        private _platformLocation: PlatformLocation,
         private _authService: AuthService,
         private _httpClient: HttpClient,
         private _apiServer: AppConfig,
@@ -138,7 +139,8 @@ export class CheckoutService
     {
         return of(true).pipe(
             map(()=>{
-                let storeFrontDomain = this._apiServer.settings.storeFrontDomain;
+                let fullUrl = (this._platformLocation as any).location.origin;            
+                let storeFrontDomain = (this._apiServer.settings.env.name === "dev") ? fullUrl : "https://payment" + this._apiServer.settings.storeFrontDomain;  
                 this._storesService.store$
                     .pipe(takeUntil(this._unsubscribeAll))
                     .subscribe((store: Store)=>{
@@ -147,7 +149,7 @@ export class CheckoutService
                                 this._logging.debug("checkout have paramStoreId & paramCartId. Thus, WILL NOT redirect)");
                             } else {
                                 this._logging.debug("PAK checkout WILL BE redirect)");
-                                let paymentUrl = "https://payment" + storeFrontDomain + "/checkout?storeId=" + this._storesService.storeId$ + "&cartId=" + this._cartService.cartId$;
+                                let paymentUrl = storeFrontDomain + "/checkout?storeId=" + this._storesService.storeId$ + "&cartId=" + this._cartService.cartId$;
                                 this._document.location.href = paymentUrl;
                             }
                         } else {
@@ -235,7 +237,8 @@ export class CheckoutService
             if (Array.isArray(header.params[key])) {
                 header.params[key] = header.params[key].filter(element => element !== null)
             }
-            if (header.params[key] === null || (header.params[key].constructor === Array && header.params[key].length === 0)) {
+            
+            if (!header.params[key] || (Array.isArray(header.params[key]) && header.params[key].length === 0)) {
                 delete header.params[key];
             }
         });
@@ -334,24 +337,33 @@ export class CheckoutService
     //                                             Voucher
     // -----------------------------------------------------------------------------------------------------
 
-    getAvailableVoucher () {
+    getAvailableVoucher(params: { voucherCode: string } = { voucherCode : null }) : Observable<Voucher[]> 
+    {
         let orderService = this._apiServer.settings.apiServer.orderService;
-        //let accessToken = this._jwt.getJwtPayload(this.accessToken).act;
         let accessToken = "accessToken";
-        let customerId = this._jwt.getJwtPayload(this._authService.jwtAccessToken).uid;
 
         const header = {  
-            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`)
+            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+            params: params
         };
+
+        // Delete empty value
+        Object.keys(header.params).forEach(key => {
+            if (Array.isArray(header.params[key])) {
+                header.params[key] = header.params[key].filter(element => element !== null)
+            }
+            
+            if (!header.params[key] || (Array.isArray(header.params[key]) && header.params[key].length === 0)) {
+                delete header.params[key];
+            }
+        });  
 
         return this._httpClient.get<any>(orderService + '/voucher/available', header)
             .pipe(
                 map((response) => {
-                    this._logging.debug("Response from OrderService (getAvailableVoucher)",response);
+                    this._logging.debug("Response from OrderService (getAvailableVoucher)", response);
 
                     return response["data"].content
-
-                    // this._vouchers.next(response["data"].content);
                 })
             );
     }
@@ -415,12 +427,12 @@ export class CheckoutService
             );
     }
 
-    postCustomerClaimVoucher(id: string, voucherCode: string) : Observable<any>
+    postCustomerClaimVoucher(customerId: string, voucherCode: string) : Observable<any>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
         // let accessToken = this._jwt.getJwtPayload(this._authService.jwtAccessToken).act;
         let accessToken = "accessToken";
-        let customerId = this._jwt.getJwtPayload(this._authService.jwtAccessToken).uid;
+        // let customerId = this._jwt.getJwtPayload(this._authService.jwtAccessToken).uid;
 
         const header = {  
             headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`)
@@ -428,7 +440,7 @@ export class CheckoutService
 
         return this.customerVouchers$.pipe(
             take(1),
-            switchMap( customerVouchers => this._httpClient.post<any>(orderService + '/voucher/claim/' + id + '/' + voucherCode, {"voucherCode": voucherCode}, header)
+            switchMap( customerVouchers => this._httpClient.post<any>(orderService + '/voucher/claim/' + customerId + '/' + voucherCode, {"voucherCode": voucherCode}, header)
             .pipe(
                 map((response) => {
                     this._logging.debug("Response from OrderService (postCustomerClaimVoucher)", response);

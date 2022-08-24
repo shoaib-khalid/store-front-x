@@ -87,7 +87,7 @@ export class LandingCheckoutComponent implements OnInit
     
     checkoutForm: FormGroup;
     store: Store;
-    user: User;
+    user: User = null;
     storeSnooze: StoreSnooze = null;
     notificationMessage: string;
     daysArray = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
@@ -181,7 +181,7 @@ export class LandingCheckoutComponent implements OnInit
     verticalList: VoucherVerticalList[] = [];
 
     // Guest Voucher
-    guestVouchers: GuestVoucher[] = [];
+    guestVouchers: CustomerVoucher = null;
 
     
     // Map
@@ -647,9 +647,9 @@ export class LandingCheckoutComponent implements OnInit
                         deliveryType: this.selectedDeliveryProvider?.deliveryType,
                         voucherCode: voucherCode.platformVoucher,
                         storeVoucherCode: voucherCode.storeVoucher,
-                        customerId: this.user?.id,
+                        customerId: this.user ? this.user.id : null,
+                        email: this.user ? null : this.checkoutForm.get('email').value
                     }
-
                     // recheck the getDiscountOfCart
                     this._checkoutService.getDiscountOfCart(discountParams)
                         .subscribe((response)=>{
@@ -980,14 +980,15 @@ export class LandingCheckoutComponent implements OnInit
                                 platformVoucher: this.voucherApplied && this.voucherApplied.voucher.voucherType === 'PLATFORM' ? this.voucherApplied.voucher.voucherCode : null,
                                 storeVoucher: this.voucherApplied && this.voucherApplied.voucher.voucherType === 'STORE' ? this.voucherApplied.voucher.voucherCode : null,
                             }
-        
+
                             let discountParams = {
                                 id: this._cartService.cartId$,
                                 deliveryQuotationId: this.selectedDeliveryProvider?.refId,
                                 deliveryType: this.selectedDeliveryProvider?.deliveryType,
                                 voucherCode: voucherCode.platformVoucher,
                                 storeVoucherCode: voucherCode.storeVoucher,
-                                customerId: this.user?.id,
+                                customerId: this.user ? this.user.id : null,
+                                email: this.user ? null : this.checkoutForm.get('email').value
                             }
 
                             // get getDiscountOfCart
@@ -1070,7 +1071,8 @@ export class LandingCheckoutComponent implements OnInit
                 deliveryType: 'PICKUP',
                 voucherCode: voucherCode.platformVoucher,
                 storeVoucherCode: voucherCode.storeVoucher,
-                customerId: this.user?.id,
+                customerId: this.user ? this.user.id : null,
+                email: this.user ? null : this.checkoutForm.get('email').value
             }
             // Get discount for store pickup    
             this._checkoutService.getDiscountOfCart(discountParams)
@@ -1219,7 +1221,8 @@ export class LandingCheckoutComponent implements OnInit
                     deliveryType: 'PICKUP',
                     voucherCode: voucherCode.platformVoucher,
                     storeVoucherCode: voucherCode.storeVoucher,
-                    customerId: this.user?.id,
+                    customerId: this.user ? this.user.id : null,
+                    email: this.user ? null : this.checkoutForm.get('email').value
                 }
 
                 this._checkoutService.getDiscountOfCart(discountParams)
@@ -1938,62 +1941,109 @@ export class LandingCheckoutComponent implements OnInit
             return;
         }
 
-        this._checkoutService.postCustomerClaimVoucher(this.user.id, this.promoCode)
-            .subscribe((response: CustomerVoucher) => {
+        if (this.user) {
+            this._checkoutService.postCustomerClaimVoucher(this.user.id, this.promoCode)
+                .subscribe((response: CustomerVoucher) => {
+    
+                    this.promoCode = '';
+    
+                    // find the verticalcode in the voucher list
+                    // if index -1 mean that the voucher can't be used in current store
+                    let indexVerticalList = response.voucher.voucherVerticalList.findIndex(item => item.verticalCode === this.store.verticalCode)
+                    let indexStoreList = response.voucher.voucherStoreList.findIndex(item => item.storeId === this.store.id);
+    
+                    if ((response.voucher.voucherType === 'STORE' ? indexStoreList > -1 : true) && (indexVerticalList > -1)) {
+    
+                        // if voucher is valid
+                        this.openVoucherModal('mat_solid:check_circle','Congratulations!', 'Promo code successfully claimed', null, true);
+    
+                        this.selectVoucher(response);
+                    }
+    
+                    else {
+                        // if voucher is invalid for this store
+                        this.openVoucherModal('mat_solid:check_circle','Congratulations!', 'Promo code successfully claimed', null, false);
+                    }
+    
+                    
+                }, (error) => {
+    
+                    // if voucher is invalid
+                    this.promoCode = '';
+    
+                    if (error['status'] === 409) {
+    
+                        if (error.error.message) {
+                            // if voucher is invalid
+                            this.openVoucherModal('heroicons_outline:x','Error', error.error.message, null, true);
+                        }  
+                        else {
+                            // if voucher is invalid
+                            this.openVoucherModal('heroicons_outline:x','Promo code already claimed!', 'Please enter a different code', null, true);
+    
+                        }
+    
+                    }
+    
+                    // if voucher is invalid
+                    // if (error['status'] === 404) {
+                    //     this.openVoucherModal('heroicons_outline:x','Invalid Code!', 'Invalid code, please try again', null, true);
+    
+                    // } else if (error['status'] === 409) {
+                    //     this.openVoucherModal('heroicons_outline:x','Oops...', 'Sorry, you have claimed this voucher', null, true);
+    
+                    // } 
+                    // else if (error['status'] === 417) {
+                    //     this.openVoucherModal('heroicons_outline:x','Oops...', 'Sorry, this promo code has expired', null, true);
+                    // }
+                });
+        }
+        else {
+            this._checkoutService.getAvailableVoucher({voucherCode : this.promoCode})
+                .subscribe((vouchers: Voucher[]) => {
 
-                this.promoCode = '';
+                    if (vouchers.length > 0) {
+                        let voucher = vouchers[0];
+                        this.promoCode = '';
+        
+                        // find the verticalcode in the voucher list
+                        // if index -1 mean that the voucher can't be used in current store
+                        let indexVerticalList = voucher.voucherVerticalList.findIndex(item => item.verticalCode === this.store.verticalCode)
+                        let indexStoreList = voucher.voucherStoreList.findIndex(item => item.storeId === this.store.id);
+        
+                        if ((voucher.voucherType === 'STORE' ? indexStoreList > -1 : true) && (indexVerticalList > -1)) {                        
+        
+                            // if voucher is valid
+                            this.openVoucherModal('mat_solid:check_circle','Congratulations!', 'Promo code successfully claimed', null, true);
+        
+                            this.displayRedeem = false;
 
-                // find the verticalcode in the voucher list
-                // if index -1 mean that the voucher can't be used in current store
-                let index = response.voucher.voucherVerticalList.findIndex(item => item.verticalCode === this.store.verticalCode)
-                let indexStoreList = response.voucher.voucherStoreList.findIndex(item => item.id === this.store.id);
-
-                if ((indexStoreList > -1) && (index > -1)) {
-
-                    // if voucher is valid
-                    this.openVoucherModal('mat_solid:check_circle','Congratulations!', 'Promo code successfully claimed', null, true);
-
-                    this.selectVoucher(response);
-                }
-
-                else {
-                    // if voucher is invalid for this store
-                    this.openVoucherModal('mat_solid:check_circle','Congratulations!', 'Promo code successfully claimed', null, false);
-                }
-
-                
-            }, (error) => {
-
-                // if voucher is invalid
-                this.promoCode = '';
-
-                if (error['status'] === 409) {
-
-                    if (error.error.message) {
-                        // if voucher is invalid
-                        this.openVoucherModal('heroicons_outline:x','Error', error.error.message, null, true);
-                    }  
+                            this.guestVouchers = {
+                                id          : null,
+                                customerId  : null,
+                                voucherId   : voucher.id,
+                                isUsed      : false,
+                                created     : null,
+                                voucher     : voucher
+                            };
+                            this.selectVoucher(this.guestVouchers);
+    
+                        }
+        
+                        else {
+                            // if voucher is invalid for this store
+                            this.openVoucherModal('mat_solid:check_circle','Congratulations!', 'Promo code successfully claimed', null, false);
+                        }
+                    }
                     else {
                         // if voucher is invalid
-                        this.openVoucherModal('heroicons_outline:x','Promo code already claimed!', 'Please enter a different code', null, true);
+                        this.openVoucherModal('heroicons_outline:x','Promo code does not exist!', 'Please enter a different code', null, true);
 
+                        this.promoCode = '';
                     }
+                })
 
-                }
-
-                // if voucher is invalid
-                // if (error['status'] === 404) {
-                //     this.openVoucherModal('heroicons_outline:x','Invalid Code!', 'Invalid code, please try again', null, true);
-
-                // } else if (error['status'] === 409) {
-                //     this.openVoucherModal('heroicons_outline:x','Oops...', 'Sorry, you have claimed this voucher', null, true);
-
-                // } 
-                // else if (error['status'] === 417) {
-                //     this.openVoucherModal('heroicons_outline:x','Oops...', 'Sorry, this promo code has expired', null, true);
-                // }
-            });
-        
+        }
     }
 
     selectVoucher(voucher: CustomerVoucher) {
@@ -2013,6 +2063,7 @@ export class LandingCheckoutComponent implements OnInit
     deselectVoucher() {
         this.voucherApplied = null;
         this.voucherDiscountAppliedMax = 0;
+        this.guestVouchers = null;
 
         // change button to Calculate Charges
         this.addressFormChanges();
@@ -2040,10 +2091,10 @@ export class LandingCheckoutComponent implements OnInit
     }
 
     validateVoucher(voucher: CustomerVoucher) {
-        let indexVerticalCode = voucher.voucher.voucherVerticalList.findIndex(item => item.verticalCode === this.store.verticalCode);
+        let indexVerticalList = voucher.voucher.voucherVerticalList.findIndex(item => item.verticalCode === this.store.verticalCode);
         let indexStoreList = voucher.voucher.voucherStoreList.findIndex(item => item.storeId === this.store.id);
 
-        if ((indexVerticalCode > -1) && (indexStoreList > -1)) {
+        if ((voucher.voucher.voucherType === 'STORE' ? indexStoreList > -1 : true) && (indexVerticalList > -1)) {
             return true;
         }
         else

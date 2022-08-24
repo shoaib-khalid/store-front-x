@@ -9,7 +9,7 @@ import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from 'ngx-gallery-9';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { AppConfig } from 'app/config/service.config';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, PlatformLocation } from '@angular/common';
 
 @Component({
     selector     : 'landing-product-details',
@@ -97,6 +97,7 @@ export class LandingProductDetailsComponent implements OnInit
      */
     constructor(
         @Inject(DOCUMENT) private _document: Document,
+        private _platformLocation: PlatformLocation,
         private _storesService: StoresService,
         private _productsService: ProductsService,
         private _cartService: CartService,
@@ -629,12 +630,13 @@ export class LandingProductDetailsComponent implements OnInit
     }
 
     goToCheckout() {
-        let storeFrontDomain = this._apiServer.settings.storeFrontDomain;
-        
+        let fullUrl = (this._platformLocation as any).location.origin;            
+        let storeFrontDomain = (this._apiServer.settings.env.name === "dev") ? fullUrl : "https://payment" + this._apiServer.settings.storeFrontDomain;  
+
         if (this.store.verticalCode === 'FnB' || this.store.verticalCode === 'E-Commerce') {
             this._router.navigate(['/checkout']);
         } else if (this.store.verticalCode === 'FnB_PK' || this.store.verticalCode === 'ECommerce_PK') {
-            let paymentUrl = "https://payment" + storeFrontDomain + "/checkout?storeId=" + this._storesService.storeId$ + "&cartId=" + this._cartService.cartId$;
+            let paymentUrl = storeFrontDomain + "/checkout?storeId=" + this._storesService.storeId$ + "&cartId=" + this._cartService.cartId$;
             this._document.location.href = paymentUrl;
         } else {
             console.error("verticalCode not recognised")
