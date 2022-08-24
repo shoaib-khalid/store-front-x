@@ -30,7 +30,14 @@ import {
     StoreSnooze,
     StoreTiming,
 } from 'app/core/store/store.types';
-import { of, Subject, Observable, ReplaySubject, take } from 'rxjs';
+import {
+    of,
+    Subject,
+    Observable,
+    ReplaySubject,
+    take,
+    ConnectableObservable,
+} from 'rxjs';
 import {
     map,
     switchMap,
@@ -73,6 +80,7 @@ import { MatSelect } from '@angular/material/select';
 import { AnalyticService } from 'app/core/analytic/analytic.service';
 import { IpAddressService } from 'app/core/ip-address/ip-address.service';
 import { CookieService } from 'ngx-cookie-service';
+import { GoogleMap } from '@angular/google-maps';
 
 @Component({
     selector: 'landing-checkout',
@@ -239,10 +247,14 @@ export class LandingCheckoutComponent implements OnInit {
     // Guest Voucher
     guestVouchers: CustomerVoucher = null;
 
+    // Promo
+    promoText: PromoText;
+    sanatiseUrl: string;
+    promoActionButtonText: string = '';
+
     // Map
     countryId: String;
     isNameValid: boolean;
-    zoom: number = 5;
     lat: number = 30.3753;
     lng: number = 69.3451;
     markers: any;
@@ -250,12 +262,29 @@ export class LandingCheckoutComponent implements OnInit {
     centerLatitude = this.lat;
     centerLongitude = this.lng;
     searchElementRef: any;
-    // Promo
-    promoText: PromoText;
-    sanatiseUrl: string;
-    promoActionButtonText: string = '';
 
     mapsApiLoaded: Observable<boolean>;
+    mapZoom: number = 6;
+    mapCenter: google.maps.LatLngLiteral = {
+        lat: 29.863823279065763,
+        lng: 69.66914923422128,
+    };
+    mapOptions: google.maps.MapOptions = {
+        mapTypeId: 'roadmap',
+        disableDefaultUI: true,
+        zoomControl: true,
+        fullscreenControl: true,
+        scaleControl: true,
+    };
+
+    marker: google.maps.Marker;
+    markerPosition: object;
+    markerLabel: object;
+
+    geocoder: google.maps.Geocoder;
+    mapSearchService: google.maps.places.AutocompleteService;
+    addressSearchPredictions: google.maps.places.QueryAutocompletePrediction[];
+    isAddressLoading: boolean = false;
     /**
      * Constructor
      */
@@ -277,15 +306,21 @@ export class LandingCheckoutComponent implements OnInit {
         private _ipAddressService: IpAddressService,
         private _cookieService: CookieService,
         @Inject(DOCUMENT) private _document: Document,
-        private httpClient: HttpClient
+        private httpClient: HttpClient,
+        private ngZone: NgZone
     ) {
         this.mapsApiLoaded = httpClient
             .jsonp(
-                'https://maps.googleapis.com/maps/api/js?key=AIzaSyCFhf1LxbPWNQSDmxpfQlx69agW-I-xBIw',
+                'https://maps.googleapis.com/maps/api/js?key=AIzaSyCFhf1LxbPWNQSDmxpfQlx69agW-I-xBIw&libraries=places',
                 'callback'
             )
             .pipe(
-                map(() => true),
+                map(() => {
+                    this.mapSearchService =
+                        new google.maps.places.AutocompleteService();
+                    this.geocoder = new google.maps.Geocoder();
+                    return true;
+                }),
                 catchError(() => of(false))
             );
     }
@@ -2790,6 +2825,94 @@ export class LandingCheckoutComponent implements OnInit {
             .subscribe(() => {
                 this.stateCitySelector.compareWith = (a: any, b: any) =>
                     a === b;
+            });
+    }
+
+    private searchAddress(): void {
+        const address = this.checkoutForm.get('address').value;
+        this.mapSearchService.getPlacePredictions(
+            { input: address },
+            (
+                predictions:
+                    | google.maps.places.QueryAutocompletePrediction[]
+                    | null,
+                status: google.maps.places.PlacesServiceStatus
+            ) => {
+                this.addressSearchPredictions = [];
+                if (
+                    status !== google.maps.places.PlacesServiceStatus.OK ||
+                    !predictions
+                ) {
+                    console.log('Status: ' + status);
+                    return;
+                }
+                this.addressSearchPredictions = predictions;
+            }
+        );
+    }
+
+    private onSelectAddress(
+        selectedAddress: google.maps.places.QueryAutocompletePrediction
+    ): void {
+        this.addressSearchPredictions = [];
+        console.log('Selected ' + selectedAddress);
+        this.checkoutForm
+            .get('address')
+            .patchValue(selectedAddress.description);
+        this.geocoder
+            .geocode({ placeId: selectedAddress.place_id })
+            .then(({ results }) => {
+                if (results[0]) {
+                    console.log(results[0]);
+                    const location = results[0].geometry.location;
+
+                    this.lat = location.lat();
+                    this.lng = location.lng();
+
+                    this.markerPosition = location;
+                    this.markerLabel = {
+                        color: 'green',
+                        text: selectedAddress.description,
+                    };
+
+                    this.mapCenter = {
+                        lat: location.lat(),
+                        lng: location.lng(),
+                    };
+
+                    this.mapZoom = 12;
+                }
+            });
+    }
+
+    private onMapClicked(event: google.maps.MapMouseEvent): void {
+        // this.marker.position.lat = event.latLng.lat();
+        // this.marker.position.lng = event.latLng.lng();
+        const coordinates = {
+            lat: event.latLng.lat(),
+            lng: event.latLng.lng(),
+        };
+
+        this.lat = coordinates.lat;
+        this.lng = coordinates.lng;
+
+        this.markerPosition = coordinates;
+        this.fillAddressBar(coordinates);
+    }
+
+    private fillAddressBar(coordinates: any): void {
+        this.isAddressLoading = true;
+        this.geocoder
+            .geocode({ location: coordinates })
+            .then((response) => {
+                if (response.results[0]) {
+                    this.checkoutForm
+                        .get('address')
+                        .patchValue(response.results[0].formatted_address);
+                }
+            })
+            .finally(() => {
+                this.isAddressLoading = false;
             });
     }
 }

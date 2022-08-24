@@ -22,6 +22,11 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { VoucherModalComponent } from './voucher-modal/voucher-modal.component';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { GoogleMapsModule } from '@angular/google-maps';
+import {
+    HttpClient,
+    HttpClientJsonpModule,
+    HttpClientModule,
+} from '@angular/common/http';
 
 @NgModule({
     declarations: [
@@ -47,7 +52,10 @@ import { GoogleMapsModule } from '@angular/google-maps';
         SharedModule,
         MatExpansionModule,
         NgxMatSelectSearchModule,
+
         GoogleMapsModule,
+        HttpClientModule,
+        HttpClientJsonpModule,
         // AgmCoreModule.forRoot({
         //     apiKey: 'AIzaSyCFhf1LxbPWNQSDmxpfQlx69agW-I-xBIw' ,
         //     libraries: ['places']

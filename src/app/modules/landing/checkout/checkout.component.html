@@ -1265,7 +1265,9 @@
                         </ng-container>
 
                         <!-- Address -->
-                        <div class="w-full">
+                        <div
+                            class="flex flex-row w-full justify-between items-center"
+                        >
                             <!-- Address for normal delivery-->
                             <mat-form-field
                                 *ngIf="
@@ -1283,10 +1285,11 @@
                                         checkoutInputField.address.placeholder
                                     "
                                     autocomplete="disabled"
-                                    (change)="addressFormChanges()"
                                     [required]="true"
                                     (keydown.enter)="$event.preventDefault()"
                                     (change)="addressFormChanges()"
+                                    [matAutoComplete]="auto"
+                                    [readOnly]="isAddressLoading"
                                     #search
                                 />
                                 <mat-error
@@ -1299,6 +1302,23 @@
                                     Address information is required
                                 </mat-error>
                             </mat-form-field>
+
+                            <button
+                                *ngIf="
+                                    countryId === 'PAK' && mapsApiLoaded | async
+                                "
+                                [disabled]="isLoading"
+                                class="ml-2 w-auto font-semibold py-2 px-3 rounded"
+                                [ngClass]="
+                                    isLoading
+                                        ? 'cursor-wait bg-gray-200'
+                                        : 'bg-primary-500 hover:bg-primary-600'
+                                "
+                                (click)="searchAddress()"
+                            >
+                                <!-- (click)="" -->
+                                <span>Find</span>
+                            </button>
 
                             <!-- Store address if self pickup-->
                             <div
@@ -1337,39 +1357,43 @@
                                     </div>
                                 </fieldset>
                             </div>
-
-                            <!-- <mat-form-field *ngIf="checkoutForm.get('storePickup').value"
-                                class="w-full" 
-                                floatLabel="always"
-                            >
-                                <mat-label>Store Address</mat-label>
-                                <textarea 
-                                    class="text-gray-500"
-                                    maxlength="500" 
-                                    [value]="store.address + ' ' + store.city + ' ' + store.postcode + ' ' + store.regionCountryStateId + ' ' + store.regionCountry.name" 
-                                    matTextareaAutosize 
-                                    readonly
-                                    matInput></textarea>
-                                <textarea 
-                                    class="text-gray-500"
-                                    maxlength="500" 
-                                    value="Contact Us &#13;&#10;Email: {{store.email}} &#13;&#10;Phone no: {{store.phoneNumber}}" 
-                                    matTextareaAutosize 
-                                    readonly
-                                    matInput></textarea>
-                            </mat-form-field> -->
                         </div>
 
                         <!-- Map (mapClick)="onMapClicked($event)" -->
 
-                        <div *ngIf="countryId === 'PAK'" class="w-full mb-2">
-                            <mat-label
-                                >Drag the pin to the location of your
-                                address.</mat-label
+                        <div class="w-full bg-white rounded-lg my-2">
+                            <ul class="divide-y divide-gray-100">
+                                <li
+                                    *ngFor="
+                                        let option of addressSearchPredictions
+                                    "
+                                    class="p-3 bg-slate-100 cursor-pointer hover:bg-blue-600 hover:text-blue-200"
+                                    (click)="onSelectAddress(option)"
+                                >
+                                    {{ option.description }}
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div
+                            *ngIf="countryId === 'PAK' && mapsApiLoaded | async"
+                            class="w-full mb-2"
+                        >
+                            <google-map
+                                height="500px"
+                                width="100%"
+                                [center]="mapCenter"
+                                [zoom]="mapZoom"
+                                [options]="mapOptions"
+                                (mapClick)="onMapClicked($event)"
                             >
-                            <div *ngIf="apiLoaded | async">
-                                <google-map></google-map>
-                            </div>
+                                <map-marker
+                                    *ngIf="markerPosition"
+                                    [position]="markerPosition"
+                                    [label]="markerLabel"
+                                >
+                                </map-marker>
+                            </google-map>
                         </div>
 
                         <!-- Additional info & save future order -->
