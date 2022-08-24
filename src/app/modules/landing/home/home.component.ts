@@ -44,6 +44,8 @@ export class LandingHomeComponent implements OnInit
 
     ngOnInit() {
 
+console.log("Hello world");
+
         // Get platform data
         this._platformService.platform$
             .pipe(takeUntil(this._unsubscribeAll))

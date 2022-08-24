@@ -230,6 +230,7 @@ export class LandingCheckoutComponent implements OnInit
     }
 
     ngOnInit() {
+        console.log("Hello World");
         
         // Create the support form
         this.checkoutForm = this._formBuilder.group({
@@ -366,8 +367,7 @@ export class LandingCheckoutComponent implements OnInit
                         this.setCurrentLocation();
                         this.geoCoder = new google.maps.Geocoder();
                         let autocomplete = new google.maps.places.Autocomplete(
-                          this.searchElementRef.nativeElement
-                        );
+                          this.searchElementRef.nativeElement);
                         autocomplete.addListener("place_changed", () => {
                             this.ngZone.run(() => {
                                 //get the place result
@@ -2068,34 +2068,49 @@ export class LandingCheckoutComponent implements OnInit
     }
 
     private setCurrentLocation() {
-        if ("geolocation" in navigator) {
-          navigator.geolocation.getCurrentPosition((position) => {
-            this.lat = position.coords.latitude;
-            this.lng = position.coords.longitude;
-            this.zoom = 8;
-            //this.getAddress(this.lat, this.lng);
-          });
-      }
+        this.getAddress(this.lat, this.lng);
+    //     if ("geolocation" in navigator) {
+    //       navigator.geolocation.getCurrentPosition((position) => {
+    //         this.lat = position.coords.latitude;
+    //         this.lng = position.coords.longitude;
+    //         this.zoom = 8;
+    //         //this.getAddress(this.lat, this.lng);
+    //       });
+    //   }
     }
 
     markerDragEnd($event: MouseEvent ){
         console.log($event);
+        console.log('HEloo', $event)
         this.lat = $event.coords.lat;
         this.lng = $event.coords.lng;
         this.getAddress(this.lat, this.lng);
         // console.log('Marker Dragged',  'Lat' , this.latitude + ' Lng', this.longitude)
       }
     getAddress(lat: number, lng: number) {
-        const geocoder = new google.maps.Geocoder();
-        const latlng = new google.maps.LatLng(lat, lng);
-        const request: any = {
-          latLng: latlng
-        }
-        return new Promise((resolve, reject) => {
-          geocoder.geocode(request, results => {
-            results.length ? resolve(results[0].formatted_address) : reject(null);
-          });
+        this.geoCoder.geocode({ 'location': {lat: this.lat, lng: this.lng}}, (results, status)=> {
+            if(status === 'OK'){
+                if(results[0]){
+                    this.zoom = 12;
+                    this.address = results[0].formatted_address;
+                }
+                else{
+                    window.alert('No address found');
+                }
+            }else{
+                window.alert('Geocoder failed due to: ' + status)
+            }
         })
+        // const geocoder = new google.maps.Geocoder();
+        // const latlng = new google.maps.LatLng(lat, lng);
+        // const request: any = {
+        //   latLng: latlng
+        // }
+        // return new Promise((resolve, reject) => {
+        //   geocoder.geocode(request, results => {
+        //     results.length ? resolve(results[0].formatted_address) : reject(null);
+        //   });
+        // })
      }
      
       centerChange(coords: LatLngLiteral) {
