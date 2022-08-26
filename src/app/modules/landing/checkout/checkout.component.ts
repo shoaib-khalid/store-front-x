@@ -194,9 +194,9 @@ export class LandingCheckoutComponent implements OnInit
   geoCoder: google.maps.Geocoder;
   map: google.maps.Map<HTMLElement>;
   address: string;
-  centerLatitude = this.lat;
-  centerLongitude = this.lng;
-  searchElementRef: any;
+ 
+  @ViewChild('search')
+  public searchElementRef: ElementRef;
     // Promo
     promoText: PromoText;
     sanatiseUrl: string;
@@ -230,7 +230,7 @@ export class LandingCheckoutComponent implements OnInit
     }
 
     ngOnInit() {
-        console.log("Hello World");
+       
         
         // Create the support form
         this.checkoutForm = this._formBuilder.group({
@@ -361,28 +361,25 @@ export class LandingCheckoutComponent implements OnInit
 
                 if (this.countryId === 'PAK') {
                     this.mapsAPILoader.load().then(() => {
-                        this.map = new google.maps.Map(
-                          document.getElementById("map") as HTMLElement 
-                        );
                         this.setCurrentLocation();
-                        this.geoCoder = new google.maps.Geocoder();
-                        let autocomplete = new google.maps.places.Autocomplete(
-                          this.searchElementRef.nativeElement);
+                        this.geoCoder = new google.maps.Geocoder;
+                  
+                        let autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement);
                         autocomplete.addListener("place_changed", () => {
-                            this.ngZone.run(() => {
-                                //get the place result
-                                let place: google.maps.places.PlaceResult = autocomplete.getPlace();
-                    
-                                //verify result
-                                if (place.geometry === undefined || place.geometry === null) {
-                                return;
-                                }
-                                //set latitude, longitude and zoom
-                                this.lat = place.geometry.location.lat();
-                                this.lng = place.geometry.location.lng();
-                                this.zoom = 12;
-                                // console.log('Location Entered', 'Lat' , this.latitude + ' Lng', this.longitude)
-                            });
+                          this.ngZone.run(() => {
+                            //get the place result
+                            let place: google.maps.places.PlaceResult = autocomplete.getPlace();
+                  
+                            //verify result
+                            if (place.geometry === undefined || place.geometry === null) {
+                              return;
+                            }
+                  
+                            //set latitude, longitude and zoom
+                            this.lat = place.geometry.location.lat();
+                            this.lng = place.geometry.location.lng();
+                            this.zoom = 12;
+                          });
                         });
                       });
                 }
@@ -596,6 +593,36 @@ export class LandingCheckoutComponent implements OnInit
                 // Mark for check
                 this._changeDetectorRef.markForCheck();
             });
+    }
+    private setCurrentLocation() {
+        if ('geolocation' in navigator) {
+            navigator.geolocation.getCurrentPosition((position) => {
+              this.lat = position.coords.latitude;
+              this.lng = position.coords.longitude;
+              this.zoom = 8;
+              this.getAddress(this.lat, this.lng);
+            });
+          }
+    }
+    markerDragEnd($event: MouseEvent) {
+        this.lat = $event.coords.lat;
+        this.lng = $event.coords.lng;
+        this.getAddress(this.lat, this.lng);
+      }
+    getAddress(lat: number, lng: number) {
+        this.geoCoder.geocode({ 'location': { lat: this.lat, lng: this.lng } }, (results, status) => {
+            if (status === 'OK') {
+              if (results[0]) {
+                this.zoom = 12;
+                this.address = results[0].formatted_address;
+              } else {
+                window.alert('No results found');
+              }
+            } else {
+              window.alert('Geocoder failed due to: ' + status);
+            }
+      
+          });
     }
     
     /**
@@ -2118,55 +2145,48 @@ export class LandingCheckoutComponent implements OnInit
             });
     }
 
-    private setCurrentLocation() {
-        this.getAddress(this.lat, this.lng);
-    //     if ("geolocation" in navigator) {
-    //       navigator.geolocation.getCurrentPosition((position) => {
-    //         this.lat = position.coords.latitude;
-    //         this.lng = position.coords.longitude;
-    //         this.zoom = 8;
-    //         //this.getAddress(this.lat, this.lng);
-    //       });
-    //   }
-    }
+    // private setCurrentLocation() {
+    //     this.getAddress(this.lat, this.lng);
+    // //     if ("geolocation" in navigator) {
+    // //       navigator.geolocation.getCurrentPosition((position) => {
+    // //         this.lat = position.coords.latitude;
+    // //         this.lng = position.coords.longitude;
+    // //         this.zoom = 8;
+    // //         //this.getAddress(this.lat, this.lng);
+    // //       });
+    // //   }
+    // }
 
-    markerDragEnd($event: MouseEvent ){
-        console.log($event);
-        console.log('HEloo', $event)
-        this.lat = $event.coords.lat;
-        this.lng = $event.coords.lng;
-        this.getAddress(this.lat, this.lng);
-        // console.log('Marker Dragged',  'Lat' , this.latitude + ' Lng', this.longitude)
-      }
-    getAddress(lat: number, lng: number) {
-        this.geoCoder.geocode({ 'location': {lat: this.lat, lng: this.lng}}, (results, status)=> {
-            if(status === 'OK'){
-                if(results[0]){
-                    this.zoom = 12;
-                    this.address = results[0].formatted_address;
-                }
-                else{
-                    window.alert('No address found');
-                }
-            }else{
-                window.alert('Geocoder failed due to: ' + status)
-            }
-        })
-        // const geocoder = new google.maps.Geocoder();
-        // const latlng = new google.maps.LatLng(lat, lng);
-        // const request: any = {
-        //   latLng: latlng
-        // }
-        // return new Promise((resolve, reject) => {
-        //   geocoder.geocode(request, results => {
-        //     results.length ? resolve(results[0].formatted_address) : reject(null);
-        //   });
-        // })
-     }
-     
-      centerChange(coords: LatLngLiteral) {
-        //console.log(event);
-        this.centerLatitude = coords.lat;
-        this.centerLongitude = coords.lng;
-      }
+    // markerDragEnd($event: MouseEvent ){
+    //     console.log($event);
+    //     this.lat = $event.coords.lat;
+    //     this.lng = $event.coords.lng;
+    //     this.getAddress(this.lat, this.lng);
+    //     // console.log('Marker Dragged',  'Lat' , this.latitude + ' Lng', this.longitude)
+    //   }
+    // getAddress(lat: number, lng: number) {
+    //     this.geoCoder.geocode({ 'location': {lat: this.lat, lng: this.lng}}, (results, status)=> {
+    //         if(status === 'OK'){
+    //             if(results[0]){
+    //                 this.zoom = 12;
+    //                 this.address = results[0].formatted_address;
+    //             }
+    //             else{
+    //                 window.alert('No address found');
+    //             }
+    //         }else{
+    //             window.alert('Geocoder failed due to: ' + status)
+    //         }
+    //     })
+    //     // const geocoder = new google.maps.Geocoder();
+    //     // const latlng = new google.maps.LatLng(lat, lng);
+    //     // const request: any = {
+    //     //   latLng: latlng
+    //     // }
+    //     // return new Promise((resolve, reject) => {
+    //     //   geocoder.geocode(request, results => {
+    //     //     results.length ? resolve(results[0].formatted_address) : reject(null);
+    //     //   });
+    //     // })
+    //  }
 }

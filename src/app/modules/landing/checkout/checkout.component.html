@@ -460,7 +460,7 @@
 
                         <div *ngIf="countryId === 'PAK'" class="w-full mb-2">
                             <mat-label>Drag the pin to the location of your address.</mat-label>
-                            <agm-map style=" height: 250px; width: 100%;" [latitude]="lat" [longitude]="lng" [zoom]="zoom" [disableDefaultUI]="true" [zoomControl]="true" (centerChange)="centerChange($event)">
+                            <agm-map style=" height: 250px; width: 100%;" [latitude]="lat" [longitude]="lng" [zoom]="zoom" [disableDefaultUI]="true" [zoomControl]="true">
                                 <agm-marker [latitude]="lat" [longitude]="lng" [markerDraggable]="true" (dragEnd)="markerDragEnd($event)">
                                 </agm-marker>
                             </agm-map>
@@ -815,22 +815,12 @@
                                     <ng-container *ngIf="guestVouchers">
                                         <mat-form-field class="fuse-mat-no-subscript fuse-mat-dense w-full mt-1 text-sm" floatLabel="always">
                                             <mat-label class="text-base ">Voucher Discount</mat-label>
-                                            <input
-                                            matInput
-                                            readonly
-                                            [(ngModel)]="guestVouchers.voucher.name"
-                                            [ngModelOptions]="{standalone: true}"
-                                            >
-                                            <button
-                                                mat-icon-button
-                                                type="button"
-                                                *ngIf="voucherApplied"
-                                                (click)="deselectVoucher(); $event.stopPropagation()"
-                                                matSuffix>
+                                            <input matInput readonly [(ngModel)]="guestVouchers.voucher.name" [ngModelOptions]="{standalone: true}">
+                                            <button mat-icon-button type="button" *ngIf="voucherApplied" (click)="deselectVoucher(); $event.stopPropagation()" matSuffix>
                                                 <mat-icon
                                                     class="text-gray-500 icon-size-4 ml-2"
                                                     [svgIcon]="'heroicons_solid:trash'"></mat-icon>
-                                            </button>                                              
+                                            </button>
                                         </mat-form-field>
                                     </ng-container>
 
