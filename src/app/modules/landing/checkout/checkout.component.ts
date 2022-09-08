@@ -458,10 +458,11 @@ export class LandingCheckoutComponent implements OnInit {
                 this.store = response;
 
                 // -------------------------
-                // Set Dialing code
+                // Set Dialing code and Coordinate
                 // -------------------------
 
                 this.countryId = this.store.regionCountry.id;
+
 
                 let symplifiedCountryStateId =
                     this.checkoutForm.get('state').value;
@@ -470,11 +471,21 @@ export class LandingCheckoutComponent implements OnInit {
                     case 'MYS':
                         this.dialingCode = '60';
                         this.checkoutForm.get('state').setValue('Selangor');
+                        this.mapCenter = {
+                            lat: 3.078101,
+                            lng: 101.586527,
+                        };
+        
                         break;
 
                     case 'PAK':
                         this.dialingCode = '92';
                         this.checkoutForm.get('state').setValue('Federal');
+                        this.mapCenter = {
+                            lat: 29.863823279065763,
+                            lng: 69.66914923422128,
+                        };
+        
                         break;
 
                     default:
@@ -1839,10 +1850,25 @@ export class LandingCheckoutComponent implements OnInit {
         // Set Loading to true
         this.isLoading = true;
 
+        const voucherCode = {
+            platformVoucher:
+                this.voucherApplied &&
+                this.voucherApplied.voucher.voucherType === 'PLATFORM'
+                    ? this.voucherApplied.voucher.voucherCode
+                    : null,
+            storeVoucher:
+                this.voucherApplied &&
+                this.voucherApplied.voucher.voucherType === 'STORE'
+                    ? this.voucherApplied.voucher.voucherCode
+                    : null,
+        };
+
         const orderBody = {
             cartId: this._cartService.cartId$,
             customerId: this.checkoutForm.get('id').value,
             customerNotes: this.checkoutForm.get('specialInstruction').value,
+            voucherCode: voucherCode.platformVoucher,
+            storeVoucherCode: voucherCode.storeVoucher,
             orderPaymentDetails: {
                 accountName: this.checkoutForm.get('fullName').value, // ni mace saloh
                 deliveryQuotationReferenceId:
