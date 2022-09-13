@@ -818,6 +818,7 @@ export class LandingCheckoutComponent implements OnInit {
                         email: this.user
                             ? null
                             : this.checkoutForm.get('email').value,
+                        storeId: this.store.id
                     };
                     // recheck the getDiscountOfCart
                     this._checkoutService
@@ -839,6 +840,8 @@ export class LandingCheckoutComponent implements OnInit {
                                 };
                             }
                         );
+                    // Mark for check
+                    this._changeDetectorRef.markForCheck();
                 });
         }
     }
@@ -1237,6 +1240,7 @@ export class LandingCheckoutComponent implements OnInit {
                                 email: this.user
                                     ? null
                                     : this.checkoutForm.get('email').value,
+                                storeId: this.store.id
                             };
 
                             // get getDiscountOfCart
@@ -1350,6 +1354,7 @@ export class LandingCheckoutComponent implements OnInit {
                 storeVoucherCode: voucherCode.storeVoucher,
                 customerId: this.user ? this.user.id : null,
                 email: this.user ? null : this.checkoutForm.get('email').value,
+                storeId: this.store.id
             };
             // Get discount for store pickup
             this._checkoutService.getDiscountOfCart(discountParams).subscribe(
@@ -1561,6 +1566,7 @@ export class LandingCheckoutComponent implements OnInit {
                     email: this.user
                         ? null
                         : this.checkoutForm.get('email').value,
+                    storeId: this.store.id
                 };
 
                 this._checkoutService
@@ -2693,11 +2699,38 @@ export class LandingCheckoutComponent implements OnInit {
                     }
                 );
         } else {
+            if (!this.checkoutForm.get('email').value) {
+                const confirmation = this._fuseConfirmationService.open({
+                    title: 'Email address required',
+                    message: 'Please add your email address to redeem the voucher.',
+                    icon: {
+                        show: true,
+                        name: 'heroicons_outline:exclamation',
+                        color: 'warn',
+                    },
+                    actions: {
+                        confirm: {
+                            show: true,
+                            label: 'OK',
+                            color: 'warn',
+                        },
+                        cancel: {
+                            show: false,
+                            label: 'Cancel',
+                        },
+                    },
+                    dismissible: true,
+                });
+
+                return;
+            }
+
             this._checkoutService
-                .getAvailableVoucher({ voucherCode: this.promoCode })
-                .subscribe((vouchers: Voucher[]) => {
-                    if (vouchers.length > 0) {
-                        let voucher = vouchers[0];
+                .verifyVoucher({ voucherCode: this.promoCode, storeId: this.store.id, customerEmail: this.checkoutForm.get('email').value })
+                .subscribe((voucherResponse: Voucher) => {
+                    if (voucherResponse) {
+                        
+                        let voucher = voucherResponse;
                         this.promoCode = '';
 
                         // find the verticalcode in the voucher list
@@ -2752,7 +2785,7 @@ export class LandingCheckoutComponent implements OnInit {
                         // if voucher is invalid
                         this.openVoucherModal(
                             'heroicons_outline:x',
-                            'Promo code does not exist!',
+                            'Promo code is invalid!',
                             'Please enter a different code',
                             null,
                             true

@@ -216,6 +216,7 @@ export class CheckoutService
             voucherCode         : string,
             storeVoucherCode    : string,
             customerId          : string,
+            storeId             : string
         } = {
             id                  : null,
             deliveryQuotationId : null,
@@ -223,6 +224,7 @@ export class CheckoutService
             voucherCode         : null,
             storeVoucherCode    : null,
             customerId          : null,
+            storeId             : null
         }): Observable<CartDiscount>
     {
         let orderService = this._apiServer.settings.apiServer.orderService;
@@ -279,7 +281,8 @@ export class CheckoutService
             headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
             params: {
                 cartId,
-                saveCustomerInformation: saveInfo
+                saveCustomerInformation: saveInfo,
+                storeId: this._storesService.storeId$
             }
         };
 
@@ -464,6 +467,36 @@ export class CheckoutService
         //             return response["data"];
         //         })
         //     );
+    }
+
+    verifyVoucher(params: { voucherCode: string, storeId: string, customerEmail: string } = { voucherCode : null, storeId: null, customerEmail: null }) : Observable<Voucher> 
+    {
+        let orderService = this._apiServer.settings.apiServer.orderService;
+        let accessToken = "accessToken";
+
+        const header = {  
+            headers: new HttpHeaders().set("Authorization", `Bearer ${accessToken}`),
+        };
+
+        // Delete empty value
+        Object.keys(params).forEach(key => {
+            if (Array.isArray(params[key])) {
+                params[key] = params[key].filter(element => element !== null)
+            }
+            
+            if (!params[key] || (Array.isArray(params[key]) && params[key].length === 0)) {
+                delete params[key];
+            }
+        });  
+
+        return this._httpClient.get<any>(orderService + '/voucher/verify/' + params.customerEmail + '/' + params.voucherCode + '/' + params.storeId, header)
+            .pipe(
+                map((response) => {
+                    this._logging.debug("Response from OrderService (verifyVoucher)", response);
+
+                    return response["data"]
+                })
+            );
     }
 
     getPromoTextByEventId(eventId:string, verticalCode: string = ''): Observable<PromoText>
