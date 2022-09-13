@@ -2793,6 +2793,26 @@ export class LandingCheckoutComponent implements OnInit {
 
                         this.promoCode = '';
                     }
+                },
+                (error) => {
+
+                    if (error['status'] === 409) {
+
+                        if (error.error.message) {
+                            this.openVoucherModal(
+                                'heroicons_outline:x',
+                                'Error!',
+                                error.error.message,
+                                null,
+                                true
+                            );
+                        }
+                        this.promoCode = '';
+
+                        // Mark for check
+                        this._changeDetectorRef.markForCheck();
+                    }
+                    
                 });
         }
     }
