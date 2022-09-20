@@ -759,13 +759,9 @@ export class LandingCheckoutComponent implements OnInit {
         operator: string = null
     ) {
         if (operator === 'decrement')
-            quantity > this.minQuantity
-                ? quantity--
-                : (quantity = this.minQuantity);
+            quantity > this.minQuantity ? quantity-- : (quantity = this.minQuantity);
         else if (operator === 'increment')
-            quantity < this.maxQuantity
-                ? quantity++
-                : (quantity = this.maxQuantity);
+            quantity < this.maxQuantity ? quantity++ : (quantity = this.maxQuantity);
         else {
             if (quantity < this.minQuantity) quantity = this.minQuantity;
             else if (quantity > this.maxQuantity) quantity = this.maxQuantity;
@@ -780,10 +776,7 @@ export class LandingCheckoutComponent implements OnInit {
         };
 
         if (
-            !(
-                cartItem.quantity === quantity &&
-                (quantity === this.minQuantity || quantity === this.maxQuantity)
-            )
+            !(cartItem.quantity === quantity && (quantity === this.minQuantity || quantity === this.maxQuantity))
         ) {
             this._cartService
                 .putCartItem(
