@@ -1551,8 +1551,10 @@ export class LandingCheckoutComponent implements OnInit {
 
                 let discountParams = {
                     id: this._cartService.cartId$,
-                    deliveryQuotationId: null,
-                    deliveryType: 'PICKUP',
+                    deliveryQuotationId:
+                        this.selectedDeliveryProvider?.refId,
+                    deliveryType:
+                        this.selectedDeliveryProvider?.deliveryType,
                     voucherCode: voucherCode.platformVoucher,
                     storeVoucherCode: voucherCode.storeVoucher,
                     customerId: this.user ? this.user.id : null,
