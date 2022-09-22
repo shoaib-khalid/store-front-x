@@ -178,7 +178,7 @@ export class LandingCatalogueComponent implements OnInit
                                 this.oldPaginationIndex = this.pagination ? this.pagination.page : 0;
                             }
     
-                            this._productsService.getProducts(this.oldPaginationIndex, 12, "name", "asc", "", 'ACTIVE,OUTOFSTOCK', this.storeCategory ? this.storeCategory.id : '')
+                            this._productsService.getProducts(this.oldPaginationIndex, 12, "name", "asc", "", 'ACTIVE,OUTOFSTOCK', this.storeCategory ? this.storeCategory.id : null)
                                 .pipe(takeUntil(this._unsubscribeAll))
                                 .subscribe(()=>{
                                     // set loading to false
@@ -217,7 +217,7 @@ export class LandingCatalogueComponent implements OnInit
                     // set loading to true
                     this.isLoading = true;
                     
-                    return this._productsService.getProducts(0, 12, this.sortName, this.sortOrder, this.searchName, "ACTIVE,OUTOFSTOCK" , this.storeCategory ? this.storeCategory.id : '');
+                    return this._productsService.getProducts(0, 12, this.sortName, this.sortOrder, this.searchName, "ACTIVE,OUTOFSTOCK" , this.storeCategory ? this.storeCategory.id : null);
                 }),
                 map(() => {
                     // set loading to false
@@ -256,7 +256,7 @@ export class LandingCatalogueComponent implements OnInit
                     // set loading to true
                     this.isLoading = true;
 
-                    return this._productsService.getProducts(0, 12, this.sortName, this.sortOrder, this.searchName, "ACTIVE,OUTOFSTOCK" , this.storeCategory ? this.storeCategory.id : '');
+                    return this._productsService.getProducts(0, 12, this.sortName, this.sortOrder, this.searchName, "ACTIVE,OUTOFSTOCK" , this.storeCategory ? this.storeCategory.id : null);
                 }),
                 map(() => {
                     // set loading to false
@@ -345,7 +345,7 @@ export class LandingCatalogueComponent implements OnInit
             // set loading to true
             this.isLoading = true;
 
-            this._productsService.getProducts(this.pageOfItems['currentPage'] - 1, this.pageOfItems['pageSize'], this.sortName, this.sortOrder, this.searchName, "ACTIVE,OUTOFSTOCK" , this.storeCategory ? this.storeCategory.id : '')
+            this._productsService.getProducts(this.pageOfItems['currentPage'] - 1, this.pageOfItems['pageSize'], this.sortName, this.sortOrder, this.searchName, "ACTIVE,OUTOFSTOCK" , this.storeCategory ? this.storeCategory.id : null)
                 .subscribe(()=>{
                     // set loading to false
                     this.isLoading = false;
