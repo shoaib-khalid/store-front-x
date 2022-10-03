@@ -10,6 +10,7 @@ import { NgxGalleryOptions, NgxGalleryImage, NgxGalleryAnimation } from 'ngx-gal
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { AppConfig } from 'app/config/service.config';
 import { DOCUMENT, PlatformLocation } from '@angular/common';
+import { Meta, Title } from '@angular/platform-browser';
 
 @Component({
     selector     : 'landing-product-details',
@@ -105,7 +106,9 @@ export class LandingProductDetailsComponent implements OnInit
         private _router: Router,
         private _apiServer: AppConfig,
         private _formBuilder: FormBuilder,
-        private _changeDetectorRef: ChangeDetectorRef
+        private _changeDetectorRef: ChangeDetectorRef,
+        private _titleService: Title,
+        private _meta: Meta
 
     )
     {
@@ -164,6 +167,7 @@ export class LandingProductDetailsComponent implements OnInit
             .subscribe((response: Product) => {
                 this.product = response;
 
+                this._titleService.setTitle(this.product.name)
                 // ----------------------------------
                 // Get category info by category id
                 // ----------------------------------
@@ -303,10 +307,9 @@ export class LandingProductDetailsComponent implements OnInit
                     // -----------------------
 
                     if (this.product.description) {
-                        const meta = document.createElement('meta');
-                        meta.name = 'description';
-                        meta.content = this.product.description;
-                        document.head.appendChild(meta);
+                        this._meta.addTag({property: "og:title", content: this.product.name})
+                        this._meta.addTag({name: "description", content: this.product.description})
+                        this._meta.addTag({property: "og:description", content: this.product.description})
                     }
                 } else {
                     // this means there is no data in product inventory, loading the default image

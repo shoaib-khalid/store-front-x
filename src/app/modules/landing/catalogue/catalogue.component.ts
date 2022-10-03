@@ -14,7 +14,7 @@ import { Cart } from 'app/core/cart/cart.types';
 import { FormArray, FormControl, FormGroup } from '@angular/forms';
 import { fuseAnimations } from '@fuse/animations';
 import { MatIconRegistry } from "@angular/material/icon";
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, Meta, Title } from '@angular/platform-browser';
 import { CatalogueService } from './catalogue.service';
 import { HttpStatService } from 'app/mock-api/httpstat/httpstat.service';
 
@@ -113,7 +113,9 @@ export class LandingCatalogueComponent implements OnInit
         private _matIconRegistry: MatIconRegistry,
         private _router: Router,
         private _activatedRoute: ActivatedRoute,
-        private _httpstatService: HttpStatService
+        private _httpstatService: HttpStatService,
+        private _titleService: Title,
+        private _meta: Meta
 
     )
     {
@@ -168,6 +170,9 @@ export class LandingCatalogueComponent implements OnInit
                             this.catalogueSlug = this.catalogueSlug ? this.catalogueSlug : this._activatedRoute.snapshot.paramMap.get('catalogue-slug');
                             let index = this.storeCategories.findIndex(item => item.name.toLowerCase().replace(/ /g, '-').replace(/[-]+/g, '-').replace(/[^\w-]+/g, '') === this.catalogueSlug);
                             this.storeCategory = (index > -1) ? this.storeCategories[index] : null;
+                            const category  = this.storeCategory ? this.storeCategory.name : "All Products"
+                            this._titleService.setTitle(category)
+                            this._meta.addTag({property: "og:title", content: category})
                             
                             // move selected category to the front
                             this.storeCategories = this.moveArray(this.storeCategories, index, 0)
