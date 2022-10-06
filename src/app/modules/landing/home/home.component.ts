@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewEncapsulation, Inject, ViewChild, ChangeDetectorRef } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { Meta } from '@angular/platform-browser';
+import { Meta, Title } from '@angular/platform-browser';
 import { PlatformService } from 'app/core/platform/platform.service';
 import { Platform } from 'app/core/platform/platform.types';
 import { StoresService } from 'app/core/store/store.service';
@@ -39,7 +39,8 @@ export class LandingHomeComponent implements OnInit
         private _platformService: PlatformService,
         private _storesService: StoresService,
         private _changeDetectorRef: ChangeDetectorRef,
-        private _meta: Meta
+        private _meta: Meta,
+        private _titleService: Title
     )
     {
     }
@@ -63,9 +64,11 @@ export class LandingHomeComponent implements OnInit
             .subscribe((storeResponse) => {
                 if (storeResponse) {
                     this.store = storeResponse;
+                    this._titleService.setTitle(this.store.name);
                     this._meta.addTag({property: "og:title", content: this.store.name})
                     this._meta.addTag({name: "description", content: this.store.storeDescription})
                     this._meta.addTag({property: "og:description", content: this.store.storeDescription})
+                    this._meta.addTag({property: "og:image", content:  this.displayStoreLogo(this.store.storeAssets)})
                 }
                 // Mark for check
                 this._changeDetectorRef.markForCheck();

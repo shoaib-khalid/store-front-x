@@ -306,11 +306,14 @@ export class LandingProductDetailsComponent implements OnInit
                     // Create meta description for product
                     // -----------------------
 
-                    if (this.product.description) {
+                    if (this.product.name)
                         this._meta.addTag({property: "og:title", content: this.product.name})
+                    if (this.product.description) {
                         this._meta.addTag({name: "description", content: this.product.description})
                         this._meta.addTag({property: "og:description", content: this.product.description})
                     }
+                    if (this.product.thumbnailUrl)
+                        this._meta.addTag({property: "og:image", content: this.product.thumbnailUrl})
                 } else {
                     // this means there is no data in product inventory, loading the default image
                     this.galleryImages = [{

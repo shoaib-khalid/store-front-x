@@ -78,7 +78,7 @@ export class AppComponent
                     this.store = response;
                     
                     // Set Title
-                    this._titleService.setTitle(this.store.name);
+                    // this._titleService.setTitle(this.store.name);
 
                     let haveFaviconIndex = (this.store.storeAssets.length > 0) ? this.store.storeAssets.findIndex(item => item.assetType === "FaviconUrl" && item.id != null) : -1;
 
