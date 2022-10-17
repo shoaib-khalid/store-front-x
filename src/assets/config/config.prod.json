@@ -11,11 +11,11 @@
         "orderService"          : "https://api.symplified.biz/order-service/v1",
         "reportService"         : "https://api.symplified.biz/report-service/v1",
         "deliveryService"       : "https://api.symplified.biz/delivery-service/v1",
-        "paymentService"        : "https://api.symplified.biz/payment-service/v1",
+        "paymentService"        : "https://api.easydukan.co/payment-service/v1",
         "analyticService"       : "https://api.symplified.biz/analytic-service/v1"
     },
-    "marketplaceDomain"         : "deliverin.my",
-    "storeFrontDomain"          : ".deliverin.my",
-    "merchantPortalDomain"      : "merchant.symplified.biz",
-    "logging": 0
+    "storeFrontDomain"          : ".easydukan.co",
+    "marketplaceDomain"         : "easydukan.co",
+    "merchantPortalDomain"      : "merchant.easydukan.co",
+    "logging": 6
 }

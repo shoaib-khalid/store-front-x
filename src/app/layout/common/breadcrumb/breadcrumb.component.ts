@@ -134,10 +134,10 @@ export class BreadcrumbComponent implements OnInit
         let subDomainName = domain.split('.')[0];
                 
         if (subDomainName === "payment") {
-            let homeUrl = "https://" + this.store.domain + "/home";
+            let homeUrl = "https://" + this.store.domain;
             this._document.location.href = homeUrl;
         } else {
-            this._router.navigate(['/home']);
+            this._router.navigate(['']);
         }
     }
 

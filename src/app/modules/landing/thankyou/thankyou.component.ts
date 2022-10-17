@@ -1,5 +1,6 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { DOCUMENT, PlatformLocation } from '@angular/common';
+import { Component, Inject, OnInit, ViewEncapsulation } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'app/core/auth/auth.service';
 import { CartService } from 'app/core/cart/cart.service';
 import { Cart } from 'app/core/cart/cart.types';
@@ -26,9 +27,12 @@ export class LandingThankyouComponent
      * Constructor
      */
     constructor(
+        @Inject(DOCUMENT) private _document: Document,
         private _storesService: StoresService,
         private _activatedRoute: ActivatedRoute,
+        private _platformLocation: PlatformLocation,
         private _jwtService: JwtService,
+        private _router: Router,
         private _authService: AuthService,
         private _cartService: CartService
     )
@@ -74,6 +78,27 @@ export class LandingThankyouComponent
             this._cartService.getCartItems(cartId)
             .subscribe((response)=>{
             });
+        }
+    }
+
+    goToHome()
+    {
+        // ----------------------
+        // Get store by URL
+        // ----------------------
+
+        let fullUrl = (this._platformLocation as any).location.origin;
+        let domain = fullUrl.replace(/^(https?:|)\/\//, '').split(':')[0]; // this will get the domain from the URL
+
+        let domainNameArr = domain.split('.'); domainNameArr.shift();
+        let domainName = domainNameArr.join("."); 
+        let subDomainName = domain.split('.')[0];
+                
+        if (subDomainName === "payment") {
+            let homeUrl = "https://" + this.store.domain;
+            this._document.location.href = homeUrl;
+        } else {
+            this._router.navigate(['']);
         }
     }
 

@@ -138,6 +138,8 @@ export class LandingCheckoutComponent implements OnInit {
     storeStateCities: string[] = [];
     storeStateCities$: Observable<City[]>;
 
+    fetched: boolean = false
+    type: string = null
     checkoutForm: FormGroup;
     store: Store;
     user: User = null;
@@ -758,13 +760,26 @@ export class LandingCheckoutComponent implements OnInit {
         quantity: number,
         operator: string = null
     ) {
+        var oiginalQuantity = quantity
         if (operator === 'decrement')
-            quantity > this.minQuantity ? quantity-- : (quantity = this.minQuantity);
+            if (quantity > this.minQuantity) {
+                quantity--;
+                cartItem.quantity--
+            }
+            else
+                quantity = this.minQuantity;
         else if (operator === 'increment')
-            quantity < this.maxQuantity ? quantity++ : (quantity = this.maxQuantity);
+            if (quantity < this.maxQuantity) {
+                quantity++;
+                cartItem.quantity++;
+            }
+            else {
+                quantity = this.maxQuantity;
+            }
         else {
             if (quantity < this.minQuantity) quantity = this.minQuantity;
             else if (quantity > this.maxQuantity) quantity = this.maxQuantity;
+            cartItem.quantity = quantity
         }
 
         const cartItemBody = {
@@ -776,7 +791,7 @@ export class LandingCheckoutComponent implements OnInit {
         };
 
         if (
-            !(cartItem.quantity === quantity && (quantity === this.minQuantity || quantity === this.maxQuantity))
+            !(cartItem.quantity === oiginalQuantity && (quantity === this.minQuantity || quantity === this.maxQuantity))
         ) {
             this._cartService
                 .putCartItem(
@@ -868,6 +883,25 @@ export class LandingCheckoutComponent implements OnInit {
         this.checkoutForm
             .get('storePickup')
             .setValue(this.checkoutForm.get('storePickup').value);
+            this.markerPosition = null
+            this.markerLabel = null
+            
+        if (this.checkoutForm.get('storePickup').value === true) {
+
+            const coordinates = new google.maps.LatLng(this.store.latitude, this.store.longitude)
+            
+            this.lat = this.store.latitude;
+            this.lng = this.store.longitude
+
+            this.markerPosition = coordinates;
+
+            this.mapCenter = {
+                lat: coordinates.lat(),
+                lng: coordinates.lng(),
+            };
+            this.markerLabel = null
+            this.mapZoom = 12;
+        }
     }
 
     goBack() {
@@ -936,6 +970,13 @@ export class LandingCheckoutComponent implements OnInit {
 
         // Mark for check
         this._changeDetectorRef.markForCheck();
+        if (!this.fetched) {
+            if (this.type === 'email' && this.checkoutForm.get('email').value !== '') {
+                this.checkCustomerInfo('email', this.checkoutForm.get('email').value)
+            } else if (this.type === 'phoneNumber' && this.checkoutForm.get('phoneNumber').value !== '') {
+                this.checkCustomerInfo('phoneNumber', this.checkoutForm.get('phoneNumber').value)
+            }
+        }
     }
 
     sanitizePhoneNumber(phoneNumber: string) {
@@ -967,6 +1008,12 @@ export class LandingCheckoutComponent implements OnInit {
     }
 
     checkCustomerInfo(type: string, data: string) {
+        // if self pickup, don't call getCustomerInfo
+        if (this.checkoutForm.get('storePickup').value === true) {
+            this.fetched = false
+            this.type = type
+            return;
+        }
         const email = type === 'email' ? data : null;
         let phoneNumber = type === 'phoneNumber' ? data : null;
 
@@ -975,13 +1022,12 @@ export class LandingCheckoutComponent implements OnInit {
             phoneNumber = this.sanitizePhoneNumber(phoneNumber);
             this.checkoutForm.get('phoneNumber').patchValue(phoneNumber);
 
-            // if type phone number and self pickup, just sanitize it and dont call getCustomerInfo
-            if (this.checkoutForm.get('storePickup').value === true) return;
         }
 
         this._checkoutService
             .getCustomerInfo(email, phoneNumber)
             .subscribe((response) => {
+                this.fetched = true
                 if (response && response.customerAddress.length > 0) {
                     let dialogRef = this._dialog.open(
                         ChooseDeliveryAddressComponent,
@@ -2960,6 +3006,7 @@ export class LandingCheckoutComponent implements OnInit {
     }
 
     private onMapClicked(event: google.maps.MapMouseEvent): void {
+        if (this.checkoutForm.get('storePickup').value) return
         // this.marker.position.lat = event.latLng.lat();
         // this.marker.position.lng = event.latLng.lng();
         const coordinates = {

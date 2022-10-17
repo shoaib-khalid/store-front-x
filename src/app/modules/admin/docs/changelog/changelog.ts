@@ -9,6 +9,30 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v1.5.12
+        {
+            version    : 'v1.5.12',
+            releaseDate: 'Oct 17, 2022',
+            changes    : [
+                {
+                    type: 'Fixed',
+                    list: [
+                        '(CheckoutPage) Fixed "Delivery Address Found" dialog on self-pickup"',
+                        '(CheckoutPage) Fixed Increment/Decrement button to work',
+                        '(CheckoutPage) Marked map to store\'s location if self-pickup',
+                        '(CheckoutPage) Redirect custom domains to payment.easydukan.co instead of payment.deliverin.my',
+                        '(ThankyouPage) Redirect to homepage instead of deliverin.my',
+                        '(Config) Changed "deliverin.my" to "easydukan.co"'
+                    ]
+                },
+                {
+                    type: "Removed",
+                    list: [
+                        '(HomePage) Removed /home from homepage url'
+                    ]
+                }
+            ]
+        },
         // v1.5.11
         {
             version    : 'v1.5.11',

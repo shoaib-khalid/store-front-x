@@ -46,6 +46,8 @@ export interface Store
     category?: string;
     storeTiming?: StoreTiming[];
     type?: string;
+    latitude: number;
+    longitude?: number;
     totalSteps?: number;
     updatedAt?: number;
     progress?: {

@@ -8,7 +8,7 @@ export const landingThankyouRoutes: Route[] = [
     },
     {
         path     : '',
-        redirectTo: '/home',
+        redirectTo: '',
         component: LandingThankyouComponent
     }
 ];

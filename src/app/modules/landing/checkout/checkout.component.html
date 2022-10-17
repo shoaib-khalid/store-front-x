@@ -1304,7 +1304,7 @@
                             </mat-form-field>
 
                             <button
-                                *ngIf="mapsApiLoaded | async"
+                                *ngIf="!checkoutForm.get('storePickup').value && (mapsApiLoaded | async)"
                                 [disabled]="isLoading"
                                 class="ml-2 w-auto font-semibold py-2 px-3 rounded"
                                 [ngClass]="
