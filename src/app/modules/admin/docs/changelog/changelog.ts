@@ -9,6 +9,20 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 export class ChangelogComponent
 {
     changelog: any[] = [
+        // v1.5.13
+        {
+            version    : 'v1.5.13',
+            releaseDate: 'Oct 21, 2022',
+            changes    : [
+                {
+                    type: 'Fixed',
+                    list: [
+                        '(HomePage) Fixed only one category issue on Homepage',
+                        '(CheckoutPage) No "calcualte charges" on self-pickup'
+                    ]
+                }
+            ]
+        },
         // v1.5.12
         {
             version    : 'v1.5.12',

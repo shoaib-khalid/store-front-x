@@ -9,16 +9,8 @@
                     [svgIcon]="'heroicons_solid:chevron-left'"></mat-icon>
             </button>
         </div>
-        <swiper
-            [slidesPerView]="swiperSlidesPerView"
-            [spaceBetween]="swiperSpaceBetween"
-            [loop]="true"
-            [slidesPerGroup]="swiperSlidesPerGroup"
-            [centeredSlides]="swiperCenteredSlides"
-            [effect]="swiperEffect"
-            [coverflowEffect]="{ rotate: 0, stretch: -22, depth: 100, modifier: 1, slideShadows: false }"
-            class="mySwiper">
-            <ng-template swiperSlide *ngFor="let category of storeCategories">
+        <owl-carousel-o [options]="customOptions" class="mySwiper">
+            <ng-template carouselSlide *ngFor="let category of storeCategories">
                 <div class="carousel-cell group">
                     <input
                         [id]="'category-button' + category.id"
@@ -44,7 +36,7 @@
                     </label>
                 </div>
             </ng-template>
-        </swiper>
+        </owl-carousel-o>
         <div class="flex items-center pb-4 pr-2 sm:pr-0 pl-2">
             <button 
             class="inline-flex items-center justify-center w-10 h-10 transition-colors duration-150 bg-amber-400 rounded-full focus:shadow-outline hover:bg-amber-500"

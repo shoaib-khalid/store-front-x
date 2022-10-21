@@ -15,6 +15,7 @@ import { BannerModule } from 'app/layout/common/banner/banner.module';
 import { PaginationModule } from 'app/layout/common/pagination/pagination.module';
 import { SwiperBannerModule } from 'app/layout/common/swiper-banner/swiper-banner.module';
 import { _StoreLogoModule } from 'app/layout/common/_store-logo/store-logo.module';
+import { CarouselModule } from 'ngx-owl-carousel-o';
 
 
 
@@ -36,7 +37,8 @@ import { _StoreLogoModule } from 'app/layout/common/_store-logo/store-logo.modul
         FontAwesomeModule,
         PaginationModule,
         _StoreLogoModule,
-        SwiperBannerModule
+        SwiperBannerModule,
+        CarouselModule
     ]
 })
 export class LandingHomeModule 
