@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 // import Swiper core and required modules
 import SwiperCore, { Pagination, Navigation, EffectCoverflow } from "swiper";
 import { SwiperComponent } from 'swiper/angular';
+import { CarouselComponent, OwlOptions } from 'ngx-owl-carousel-o';
 
 SwiperCore.use([Pagination, Navigation, EffectCoverflow]);
 
@@ -53,6 +54,45 @@ SwiperCore.use([Pagination, Navigation, EffectCoverflow]);
         @import "swiper/css/navigation";
         @import "swiper/css/effect-cards";
 
+        owl-carousel-o {
+            width: 100%;
+            height: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            overflow: hidden;
+            list-style: none;
+            padding: 0;
+            z-index: 1;
+        }
+
+        .carousel-slide {
+            text-align: center;
+            font-size: 18px;
+            background: #fff;
+          
+            /* Center slide text vertically */
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            -webkit-box-pack: center;
+            -ms-flex-pack: center;
+            -webkit-justify-content: center;
+            justify-content: center;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            -webkit-align-items: center;
+            align-items: center;
+        }
+
+        owl-carousel-o img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+
         .swiper {
             width: 100%;
             height: 100%;
@@ -93,7 +133,33 @@ export class CategoryCarouselComponent
 {    
 
     @ViewChild(SwiperComponent) swiper: SwiperComponent;
+    @ViewChild(CarouselComponent) carousel: CarouselComponent
     
+    customOptions: OwlOptions = {
+        loop: false,
+        mouseDrag: false,
+        touchDrag: false,
+        pullDrag: false,
+        dots: false,
+        navSpeed: 700,
+        navText: ['', ''],
+        responsive: {
+          0: {
+            items: 1
+          },
+          400: {
+            items: 2
+          },
+          740: {
+            items: 3
+          },
+          940: {
+            items: 4
+          }
+        },
+        nav: false
+      }
+
     store: Store;
     storeCategories: StoreCategory[] = [];
 
@@ -248,10 +314,10 @@ export class CategoryCarouselComponent
     }
 
     swipePrev() {
-        this.swiper.swiperRef.slidePrev();
+        this.carousel.prev();
     }
     swipeNext() {
-        this.swiper.swiperRef.slideNext();
+        this.carousel.next();
     }
 
     // -----------------------------------------------------------------------------------------------------

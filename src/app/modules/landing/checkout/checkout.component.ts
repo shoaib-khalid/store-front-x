@@ -901,6 +901,8 @@ export class LandingCheckoutComponent implements OnInit {
             };
             this.markerLabel = null
             this.mapZoom = 12;
+            
+            this.calculateCharges()
         }
     }
 
@@ -1122,22 +1124,24 @@ export class LandingCheckoutComponent implements OnInit {
         // Do nothing if the form is invalid
         let BreakException = {};
         try {
-            Object.keys(this.checkoutForm.controls).forEach((key) => {
-                const controlErrors: ValidationErrors =
-                    this.checkoutForm.get(key).errors;
-                if (controlErrors != null) {
-                    Object.keys(controlErrors).forEach((keyError) => {
-                        const checkoutFormInfo = this.checkoutForm.get(key);
-                        checkoutFormInfo['info'] = this.checkoutInputField[key];
+            if (this.checkoutForm.get('storePickup').value === false) {
+                Object.keys(this.checkoutForm.controls).forEach((key) => {
+                    const controlErrors: ValidationErrors =
+                        this.checkoutForm.get(key).errors;
+                    if (controlErrors != null) {
+                        Object.keys(controlErrors).forEach((keyError) => {
+                            const checkoutFormInfo = this.checkoutForm.get(key);
+                            checkoutFormInfo['info'] = this.checkoutInputField[key];
 
-                        this.displayError(
-                            'Please fill in the required field(s)'
-                        );
-                        // this.displayError(CheckoutValidationService.getValidatorErrorMessage(keyError, checkoutFormInfo));
-                        throw BreakException;
-                    });
-                }
-            });
+                            this.displayError(
+                                'Please fill in the required field(s)'
+                            );
+                            // this.displayError(CheckoutValidationService.getValidatorErrorMessage(keyError, checkoutFormInfo));
+                            throw BreakException;
+                        });
+                    }
+                });
+            }
         } catch (error) {
             // Set Loading to false
             this.isCalculating = false;
@@ -1896,6 +1900,34 @@ export class LandingCheckoutComponent implements OnInit {
     cashOnDeliveryPay() {
         // Set Loading to true
         this.isLoading = true;
+
+        let BreakException = {};
+        try {
+            if (this.checkoutForm.get('storePickup').value === true) {
+                Object.keys(this.checkoutForm.controls).forEach((key) => {
+                    const controlErrors: ValidationErrors =
+                        this.checkoutForm.get(key).errors;
+                    if (controlErrors != null) {
+                        Object.keys(controlErrors).forEach((keyError) => {
+                            const checkoutFormInfo = this.checkoutForm.get(key);
+                            checkoutFormInfo['info'] = this.checkoutInputField[key];
+
+                            this.displayError(
+                                'Please fill in the required field(s)'
+                            );
+                            // this.displayError(CheckoutValidationService.getValidatorErrorMessage(keyError, checkoutFormInfo));
+                            throw BreakException;
+                        });
+                    }
+                });
+            }
+        } catch (error) {
+            // Set Loading to false
+            this.isCalculating = false;
+            this.isLoading = false;
+
+            return;
+        }
 
         const voucherCode = {
             platformVoucher:
