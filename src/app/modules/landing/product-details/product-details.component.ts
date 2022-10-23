@@ -477,9 +477,19 @@ export class LandingProductDetailsComponent implements OnInit
                     "dismissible": true
                   });
             }, (error) => {
+
+                // OS-CART-401 mean it does not exists / deleted
+                if (error.error.errorCode === "OS-CART-401") {
+                    // Reset cartId
+                    this._cartService.cartId = "";
+
+                    // then reload
+                    location.reload();
+                }
+                
                 const confirmation = this._fuseConfirmationService.open({
-                    "title": "Out of Stock!",
-                    "message": "Sorry, this item is currently out of stock",
+                    "title": "Error, " + error.error.error,
+                    "message": error.error.message,
                     "icon": {
                       "show": true,
                       "name": "heroicons_outline:exclamation",

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, of, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable, of, ReplaySubject } from 'rxjs';
 import { catchError, map, switchMap, take, tap } from 'rxjs/operators';
 import { Cart, CartItem, CustomerCart, CartById } from 'app/core/cart/cart.types';
 import { AppConfig } from 'app/config/service.config';
@@ -14,9 +14,9 @@ import { FloatingBannerService } from '../floating-banner/floating-banner.servic
 })
 export class CartService
 {
-    private _cart: ReplaySubject<Cart> = new ReplaySubject<Cart>(1);
-    private _cartItems: ReplaySubject<CartItem[]> = new ReplaySubject<CartItem[]>(1);
-    private _customerCarts: ReplaySubject<CustomerCart> = new ReplaySubject<CustomerCart>(1);
+    private _cart: BehaviorSubject<Cart> = new BehaviorSubject<Cart>(null);
+    private _cartItems: BehaviorSubject<CartItem[]> = new BehaviorSubject<CartItem[]>(null);
+    private _customerCarts: BehaviorSubject<CustomerCart> = new BehaviorSubject<CustomerCart>(null);
 
     /**
      * Constructor
