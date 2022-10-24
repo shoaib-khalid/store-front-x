@@ -527,7 +527,7 @@ export class StoresService
         const header = {
             headers: new HttpHeaders().set("Authorization", `Bearer ${this._authService.publicToken}`),
             params: {
-                "domain": "thebootables.com"
+                "domain": domain
             }
         };
         
