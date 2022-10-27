@@ -52,6 +52,59 @@ import { HttpStatService } from 'app/mock-api/httpstat/httpstat.service';
             border-color: var(--fuse-primary);
         }
 
+        .heading-divider:not(.heading-divider--vertical) {
+            border-color: #606060;
+            border-style: solid;
+            border-width: 2px;
+            border-bottom: none;
+        }
+
+        .heading-divider--short {
+            width: 70px;
+        }
+
+        .animated {
+            animation-duration: 1s;
+            animation-fill-mode: both;
+        }
+
+        .zoomIn {
+            animation-name: zoomIn;
+        }
+
+        .has-no-side-gutter .one-whole {
+            width: 100%;
+        }
+
+        h1 {
+            font-family: Roboto, sans-serif;
+        }
+
+        .has-no-side-gutter .one-whole .has-no-side-gutter .one-half .has-no-side-gutter .eight .has-no-side-gutter .one-third .has-no-side-gutter .two-thirds .has-no-side-gutter .one-fourth .has-no-side-gutter .four, .has-no-side-gutter .one-fifth .has-no-side-gutter .three-fifths .has-no-side-gutter .two-fifths .has-no-side-gutter .one-sixth .has-no-side-gutter .one-seventh .has-no-side-gutter .one-eighth .has-no-side-gutter .two {
+            margin-right: 0;
+            margin-left: 0;
+        }
+
+        .sixteen .one-whole {
+            width: calc(100% - 20px);
+        }
+
+        .is-flex-column {
+            flex-direction: column;
+        }
+
+        .is-align-start .is-align-left {
+            align-items: flex-start;
+        }
+
+        .is-flex {
+            display: flex;
+        }
+
+        .text-align-left .text-align-start {
+            text-align: left;
+        }
+
         `
     ],
     encapsulation: ViewEncapsulation.None,

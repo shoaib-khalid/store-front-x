@@ -337,13 +337,16 @@ export class LandingCheckoutComponent implements OnInit {
             // lastName            : ['', Validators.required],
             email: [
                 '',
-                [Validators.required, CheckoutValidationService.emailValidator],
+                [
+                    CheckoutValidationService.emailValidator
+                ],
             ],
             phoneNumber: [
                 '',
                 [
                     CheckoutValidationService.phonenumberValidator,
-                    Validators.maxLength(30),
+                    Validators.maxLength(10),
+                    Validators.minLength(10),
                 ],
             ],
             address: ['', Validators.required],
@@ -1017,14 +1020,13 @@ export class LandingCheckoutComponent implements OnInit {
             return;
         }
         const email = type === 'email' ? data : null;
-        let phoneNumber = type === 'phoneNumber' ? data : null;
+        let phoneNumber = type === 'phoneNumber' ? this.dialingCode + data : null;
 
         // phone number sanitization
-        if (type === 'phoneNumber') {
-            phoneNumber = this.sanitizePhoneNumber(phoneNumber);
-            this.checkoutForm.get('phoneNumber').patchValue(phoneNumber);
-
-        }
+        // if (type === 'phoneNumber') {
+            // phoneNumber = this.sanitizePhoneNumber(phoneNumber);
+            // this.checkoutForm.get('phoneNumber').patchValue(phoneNumber);
+        // }
 
         this._checkoutService
             .getCustomerInfo(email, phoneNumber)
@@ -1187,7 +1189,7 @@ export class LandingCheckoutComponent implements OnInit {
                     deliveryContactName:
                         this.checkoutForm.get('fullName').value,
                     deliveryContactPhone:
-                        this.checkoutForm.get('phoneNumber').value,
+                        this.dialingCode + this.checkoutForm.get('phoneNumber').value,
                     latitude: this.lat,
                     longitude: this.lng,
                 },
@@ -1696,7 +1698,7 @@ export class LandingCheckoutComponent implements OnInit {
                 city: this.checkoutForm.get('city').value,
                 country: this.checkoutForm.get('country').value,
                 email: this.checkoutForm.get('email').value,
-                phoneNumber: this.checkoutForm.get('phoneNumber').value,
+                phoneNumber: this.dialingCode + this.checkoutForm.get('phoneNumber').value,
                 receiverName: this.checkoutForm.get('fullName').value,
                 state: this.checkoutForm.get('state').value,
                 storePickup: this.checkoutForm.get('storePickup').value,
@@ -1960,7 +1962,7 @@ export class LandingCheckoutComponent implements OnInit {
                 city: this.checkoutForm.get('city').value,
                 country: this.checkoutForm.get('country').value,
                 email: this.checkoutForm.get('email').value,
-                phoneNumber: this.checkoutForm.get('phoneNumber').value,
+                phoneNumber: this.dialingCode + this.checkoutForm.get('phoneNumber').value,
                 receiverName: this.checkoutForm.get('fullName').value,
                 state: this.checkoutForm.get('state').value,
                 storePickup: this.checkoutForm.get('storePickup').value,
@@ -3067,5 +3069,16 @@ export class LandingCheckoutComponent implements OnInit {
             .finally(() => {
                 this.isAddressLoading = false;
             });
+    }
+
+    validateName(event) {
+    
+        let charCode = (event.which) ? event.which : event.keyCode;
+        if ((charCode > 64 && charCode < 91) || (charCode > 96 && charCode < 123) || charCode === 32) {
+            return true;
+        } else {
+            event.preventDefault();
+            return false;
+        }
     }
 }

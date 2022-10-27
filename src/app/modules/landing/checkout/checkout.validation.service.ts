@@ -19,7 +19,7 @@ export class CheckoutValidationService {
         let config = {
             required: validatorValue.info.name + ' is required',
             invalidEmailAddress: 'Invalid email address',
-            invalidPhonenumber: 'Invalid phonenumber',
+            invalidPhonenumber: 'Invalid phone number',
             invalidPostcode: 'Invalid postcode',
             minlength: `Minimum length of ${validatorValue.info.name.toLowerCase()} not meet`,
             deliveryProviderHasError: `Error found in delivery service provider ${validatorValue}`
@@ -37,6 +37,11 @@ export class CheckoutValidationService {
     }
   
     static emailValidator(control) {
+
+        if (!control.value || control.value === null){
+          return { required: true };
+        }
+
         // RFC 2822 compliant regex
         if (
             control.value.match(
@@ -55,19 +60,23 @@ export class CheckoutValidationService {
           return { required: true };
         }
 
-        // https://regexr.com/3c53v
-        if (
-          // control.value.match(
-          //   /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/
-          // )
-          control.value.match(
-            /^\+?[0-9]+$/
-          )
-        ) {
-          return null;
-        } else {
-          return { invalidPhonenumber: true };
+        if (!control.value.match(/^3[0-9]{9}/)) {
+          return { invalidPhoneNumber: true }
         }
+
+        // https://regexr.com/3c53v
+        // if (
+        //   // control.value.match(
+        //   //   /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/
+        //   // )
+        //   control.value.match(
+        //     /^\+?[0-9]+$/
+        //   )
+        // ) {
+        //   return null;
+        // } else {
+        //   return { invalidPhonenumber: true };
+        // }
     }
 
     static postcodeValidator(control) {

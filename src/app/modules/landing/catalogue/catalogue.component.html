@@ -1,8 +1,19 @@
 <div class="flex flex-col w-full">
     <!-- Category Title -->
-    <h1 class="text-4xl font-semibold leading-none items-center underline mb-6">
-        {{storeCategory ? storeCategory.name : "All Products"}}
-    </h1>
+    <div class="heading-wrapper--collection
+            mb-6
+            heading-wrapper--short
+            one-whole column
+            is-flex
+            is-flex-column
+            is-align-left
+            text-align-left">
+        <h1 class="text-3xl font-semibold leading-none items-center mb-2">
+            {{storeCategory ? storeCategory.name : "All Products"}}
+        </h1>
+        <div class="heading-divider heading-divider--short animated zoomIn" data-scroll-class="zoomIn"></div>
+
+    </div>
     <div class="relative flex flex-col items-center w-full h-full">
         <!-- Main menu -->
         <div class="flex flex-col items-center w-full h-auto p-2 sm:px-0">

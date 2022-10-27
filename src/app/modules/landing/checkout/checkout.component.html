@@ -159,6 +159,7 @@
                                             "
                                             autocomplete="disabled"
                                             [required]="true"
+                                            (keypress)="validateName($event)"
                                         />
                                         <mat-error
                                             *ngIf="
@@ -183,6 +184,8 @@
                                         <mat-label>Phone Number</mat-label>
                                         <input
                                             matInput
+                                            maxlength ="10" 
+                                            type="tel"
                                             (change)="
                                                 checkCustomerInfo(
                                                     'phoneNumber',
@@ -193,11 +196,12 @@
                                             "
                                             [formControlName]="'phoneNumber'"
                                             [placeholder]="
-                                                dialingCode + '123456789'
+                                                123456789
                                             "
                                             autocomplete="disabled"
                                             [required]="true"
                                         />
+                                        <span matPrefix>{{dialingCode}}</span>
                                         <mat-error
                                             *ngIf="
                                                 checkoutForm
@@ -212,7 +216,7 @@
                                                 checkoutForm
                                                     .get('phoneNumber')
                                                     .hasError(
-                                                        'invalidPhonenumber'
+                                                        'invalidPhoneNumber'
                                                     )
                                             "
                                         >
@@ -1014,7 +1018,7 @@
                                             *ngIf="
                                                 checkoutForm
                                                     .get('email')
-                                                    .hasError('email')
+                                                    .hasError('invalidEmailAddress')
                                             "
                                         >
                                             Enter a valid email address
@@ -1042,6 +1046,7 @@
                                         "
                                         autocomplete="disabled"
                                         [required]="true"
+                                        (keypress)="validateName($event)"
                                     />
                                     <mat-error
                                         *ngIf="
@@ -1062,6 +1067,8 @@
                                     <mat-label>Phone Number</mat-label>
                                     <input
                                         matInput
+                                        maxlength ="10" 
+                                        type="tel"
                                         (change)="
                                             checkCustomerInfo(
                                                 'phoneNumber',
@@ -1072,11 +1079,12 @@
                                         "
                                         [formControlName]="'phoneNumber'"
                                         [placeholder]="
-                                            dialingCode + '123456789'
+                                            '123456789'
                                         "
                                         autocomplete="disabled"
                                         [required]="true"
                                     />
+                                    <span matPrefix>{{dialingCode}}</span>
                                     <mat-error
                                         *ngIf="
                                             checkoutForm
@@ -1090,7 +1098,7 @@
                                         *ngIf="
                                             checkoutForm
                                                 .get('phoneNumber')
-                                                .hasError('invalidPhonenumber')
+                                                .hasError('invalidPhoneNumber')
                                         "
                                     >
                                         Invalid phone number
