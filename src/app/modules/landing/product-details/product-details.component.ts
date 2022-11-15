@@ -12,6 +12,7 @@ import { AppConfig } from 'app/config/service.config';
 import { DOCUMENT, PlatformLocation } from '@angular/common';
 import { Meta, Title } from '@angular/platform-browser';
 
+declare let gtag: Function;
 @Component({
     selector     : 'landing-product-details',
     templateUrl  : './product-details.component.html',
@@ -168,6 +169,20 @@ export class LandingProductDetailsComponent implements OnInit
                 this.product = response;
 
                 this._titleService.setTitle(this.product.name)
+
+                if (this.store.googleAnalyticId) {
+                    gtag("event", "view_item", {
+                        items: [
+                            {
+                                id: this.product.id,
+                                name: this.product.name,
+                                quantity: this.product.productInventories[0].quantity,
+                                price: this.product.productInventories[0].price
+                            }
+                        ]
+                    });
+                }
+                
                 // ----------------------------------
                 // Get category info by category id
                 // ----------------------------------
@@ -455,6 +470,20 @@ export class LandingProductDetailsComponent implements OnInit
 
         this._cartService.postCartItem(this._cartService.cartId$, cartItemBody)
             .subscribe(()=>{
+
+                if (this.store.googleAnalyticId) {
+                    gtag("event", "add_to_cart", {
+                        items: [
+                            {
+                                id: this.product.id,
+                                name: this.product.name,
+                                quantity: cartItemBody.quantity,
+                                price: cartItemBody.price
+                            }
+                        ]
+                    });
+                }
+
                 const confirmation = this._fuseConfirmationService.open({
                     "title": "Great!",
                     "message": "Item successfully added to cart",

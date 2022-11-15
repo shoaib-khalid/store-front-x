@@ -82,6 +82,7 @@ import { IpAddressService } from 'app/core/ip-address/ip-address.service';
 import { CookieService } from 'ngx-cookie-service';
 import { GoogleMap } from '@angular/google-maps';
 
+declare let gtag: Function;
 @Component({
     selector: 'landing-checkout',
     templateUrl: './checkout.component.html',
@@ -612,6 +613,20 @@ export class LandingCheckoutComponent implements OnInit {
                     .subscribe((response: CartItem[]) => {
                         this.cartItems = response;
 
+                        if (this.store.googleAnalyticId) {
+                            const items = []
+                            this.cartItems.forEach((cartItem) => items.push({
+                                id: cartItem.productId,
+                                name: cartItem.productName,
+                                quantity: cartItem.quantity,
+                                price: cartItem.productPrice
+                            }))
+                
+                            gtag("event", "begin_checkout", {
+                                items: items
+                            })
+                        }
+
                         if (this.cartItems && this.cartItems.length) {
                             let subTotalArr = this.cartItems.map((item) => {
                                 return item.price;
@@ -865,7 +880,7 @@ export class LandingCheckoutComponent implements OnInit {
                 disableClose: true,
                 data: {
                     cartId: this._cartService.cartId$,
-                    itemId: cartItem.id,
+                    cartItem: cartItem,
                 },
             }
         );
@@ -1293,6 +1308,19 @@ export class LandingCheckoutComponent implements OnInit {
                                 .getDiscountOfCart(discountParams)
                                 .subscribe(
                                     (response) => {
+                                        if (this.store.googleAnalyticId) {
+                                            const items = []
+                                            this.cartItems.forEach((cartItem) => items.push({
+                                                id: cartItem.productId,
+                                                name: cartItem.productName,
+                                                quantity: cartItem.quantity,
+                                                price: cartItem.productPrice
+                                            }))
+
+                                            gtag("event", "checkout_progress", {
+                                                items: items
+                                            })
+                                        }
                                         this.paymentDetails = {
                                             ...this.paymentDetails,
                                             ...response,
@@ -1404,6 +1432,19 @@ export class LandingCheckoutComponent implements OnInit {
             // Get discount for store pickup
             this._checkoutService.getDiscountOfCart(discountParams).subscribe(
                 (response) => {
+                    if (this.store.googleAnalyticId) {
+                        const items = []
+                        this.cartItems.forEach((cartItem) => items.push({
+                            id: cartItem.productId,
+                            name: cartItem.productName,
+                            quantity: cartItem.quantity,
+                            price: cartItem.productPrice
+                        }))
+
+                        gtag("event", "checkout_progress", {
+                            items: items
+                        })
+                    }
                     this.paymentDetails = {
                         ...this.paymentDetails,
                         ...response,
@@ -1985,6 +2026,23 @@ export class LandingCheckoutComponent implements OnInit {
             )
             .subscribe(
                 (response) => {
+                    if (this.store.googleAnalyticId) {
+                        const items = []
+                        this.cartItems.forEach((cartItem) => items.push({
+                            id: cartItem.productId,
+                            name: cartItem.productName,
+                            quantity: cartItem.quantity,
+                            price: cartItem.productPrice
+                        }))
+            
+                        gtag("event", "purchase", {
+                            transaction_id: orderBody.cartId,
+                            value: this.paymentDetails.cartSubTotal,
+                            currency: this.store.regionCountry.currencyCode,
+                            shipping: this.paymentDetails.deliveryCharges,
+                            items: items
+                        })
+                    }
                     // after success set the cartItem to empty array
                     this.cartItems = [];
                     // set in cart service

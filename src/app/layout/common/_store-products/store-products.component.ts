@@ -7,6 +7,7 @@ import { DOCUMENT } from '@angular/common';
 import { StoreAssets } from 'app/core/store/store.types';
 import { Product } from 'app/core/product/product.types';
 
+declare let gtag: Function;
 @Component({
     selector     : 'store-products',
     templateUrl  : './store-products.component.html',
@@ -52,6 +53,21 @@ export class _StoreProductsComponent implements OnInit, OnDestroy
             .subscribe((platform: Platform)=>{
                 this.platform = platform;
             })   
+
+            
+        if (this.store.googleAnalyticId) {
+            const items = []
+            this.products.forEach((product) => items.push({
+                id: product.id,
+                name: product.name,
+                quantity: product.productInventories[0].quantity,
+                price: product.productInventories[0].price
+            }))
+
+            gtag("event", "view_item_list", {
+                items: items
+            })
+        }
     }
 
     /**
@@ -84,9 +100,22 @@ export class _StoreProductsComponent implements OnInit, OnDestroy
         this._router.navigate(['/store/' + slug]);
     }
 
-    redirectToProduct(url: string) {
+    redirectToProduct(product: Product) {
         // this._document.location.href = url;
-        this._router.navigate(['/catalogue/' + '/' + this.catalogueSlug + '/' + url]);
+        if (this.store.googleAnalyticId) {
+            gtag("event", "select_content", {
+                content_type: "product",
+                items: [
+                    {
+                        id: product.id,
+                        name: product.name,
+                        quantity: product.productInventories[0].quantity,
+                        price: product.productInventories[0].price
+                    }
+                ]
+            }
+        )}
+        this._router.navigate(['/catalogue/' + '/' + this.catalogueSlug + '/' + product.seoName]);
         
     }
 
