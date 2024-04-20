@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  store-front-x:
+    container_name: store-front-x
+    image: store-front-x:1.5.19
+    ports:
+      - 8080:80
+    restart: always
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    platform: "linux/amd64"
